@@ -1,17 +1,20 @@
 library app_utils;
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:crypto/crypto.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:digit_components/theme/digit_theme.dart';
 import 'package:digit_components/utils/date_utils.dart';
-import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_dialog.dart';
 import 'package:digit_components/widgets/digit_sync_dialog.dart';
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -656,9 +659,9 @@ dynamic getValueByKey(List<Map<String, dynamic>> data, String key) {
 
 class UniqueIdGeneration {
   Future<String> generateUniqueId(
-      String localityCode,
-      String loggedInUserId,
-      ) async {
+    String localityCode,
+    String loggedInUserId,
+  ) async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
 
@@ -684,7 +687,7 @@ class UniqueIdGeneration {
     // Add a hyphen every 4 characters, except the last
     String formattedUniqueId = uniqueId.replaceAllMapped(
       RegExp(r'.{1,4}'),
-          (match) => '${match.group(0)}-',
+      (match) => '${match.group(0)}-',
     );
 
     // Remove the last hyphen
