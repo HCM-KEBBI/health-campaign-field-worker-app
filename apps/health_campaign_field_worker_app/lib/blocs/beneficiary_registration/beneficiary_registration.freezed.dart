@@ -19,6 +19,8 @@ mixin _$BeneficiaryRegistrationEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(AddressModel model) saveAddress,
+    required TResult Function(HouseholdModel household, bool isConsent)
+        saveHouseholdConsent,
     required TResult Function(
             HouseholdModel household, DateTime registrationDate)
         saveHouseholdDetails,
@@ -45,6 +47,8 @@ mixin _$BeneficiaryRegistrationEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(AddressModel model)? saveAddress,
+    TResult? Function(HouseholdModel household, bool isConsent)?
+        saveHouseholdConsent,
     TResult? Function(HouseholdModel household, DateTime registrationDate)?
         saveHouseholdDetails,
     TResult? Function(IndividualModel model, bool isHeadOfHousehold)?
@@ -69,6 +73,8 @@ mixin _$BeneficiaryRegistrationEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(AddressModel model)? saveAddress,
+    TResult Function(HouseholdModel household, bool isConsent)?
+        saveHouseholdConsent,
     TResult Function(HouseholdModel household, DateTime registrationDate)?
         saveHouseholdDetails,
     TResult Function(IndividualModel model, bool isHeadOfHousehold)?
@@ -95,6 +101,9 @@ mixin _$BeneficiaryRegistrationEvent {
     required TResult Function(BeneficiaryRegistrationSaveAddressEvent value)
         saveAddress,
     required TResult Function(
+            BeneficiaryRegistrationSaveHouseholdConsentEvent value)
+        saveHouseholdConsent,
+    required TResult Function(
             BeneficiaryRegistrationSaveHouseholdDetailsEvent value)
         saveHouseholdDetails,
     required TResult Function(
@@ -115,6 +124,8 @@ mixin _$BeneficiaryRegistrationEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(BeneficiaryRegistrationSaveAddressEvent value)?
         saveAddress,
+    TResult? Function(BeneficiaryRegistrationSaveHouseholdConsentEvent value)?
+        saveHouseholdConsent,
     TResult? Function(BeneficiaryRegistrationSaveHouseholdDetailsEvent value)?
         saveHouseholdDetails,
     TResult? Function(BeneficiaryRegistrationSaveIndividualDetailsEvent value)?
@@ -132,6 +143,8 @@ mixin _$BeneficiaryRegistrationEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(BeneficiaryRegistrationSaveAddressEvent value)?
         saveAddress,
+    TResult Function(BeneficiaryRegistrationSaveHouseholdConsentEvent value)?
+        saveHouseholdConsent,
     TResult Function(BeneficiaryRegistrationSaveHouseholdDetailsEvent value)?
         saveHouseholdDetails,
     TResult Function(BeneficiaryRegistrationSaveIndividualDetailsEvent value)?
@@ -240,6 +253,8 @@ class _$BeneficiaryRegistrationSaveAddressEventImpl
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(AddressModel model) saveAddress,
+    required TResult Function(HouseholdModel household, bool isConsent)
+        saveHouseholdConsent,
     required TResult Function(
             HouseholdModel household, DateTime registrationDate)
         saveHouseholdDetails,
@@ -269,6 +284,8 @@ class _$BeneficiaryRegistrationSaveAddressEventImpl
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(AddressModel model)? saveAddress,
+    TResult? Function(HouseholdModel household, bool isConsent)?
+        saveHouseholdConsent,
     TResult? Function(HouseholdModel household, DateTime registrationDate)?
         saveHouseholdDetails,
     TResult? Function(IndividualModel model, bool isHeadOfHousehold)?
@@ -296,6 +313,8 @@ class _$BeneficiaryRegistrationSaveAddressEventImpl
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(AddressModel model)? saveAddress,
+    TResult Function(HouseholdModel household, bool isConsent)?
+        saveHouseholdConsent,
     TResult Function(HouseholdModel household, DateTime registrationDate)?
         saveHouseholdDetails,
     TResult Function(IndividualModel model, bool isHeadOfHousehold)?
@@ -328,6 +347,9 @@ class _$BeneficiaryRegistrationSaveAddressEventImpl
     required TResult Function(BeneficiaryRegistrationSaveAddressEvent value)
         saveAddress,
     required TResult Function(
+            BeneficiaryRegistrationSaveHouseholdConsentEvent value)
+        saveHouseholdConsent,
+    required TResult Function(
             BeneficiaryRegistrationSaveHouseholdDetailsEvent value)
         saveHouseholdDetails,
     required TResult Function(
@@ -351,6 +373,8 @@ class _$BeneficiaryRegistrationSaveAddressEventImpl
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(BeneficiaryRegistrationSaveAddressEvent value)?
         saveAddress,
+    TResult? Function(BeneficiaryRegistrationSaveHouseholdConsentEvent value)?
+        saveHouseholdConsent,
     TResult? Function(BeneficiaryRegistrationSaveHouseholdDetailsEvent value)?
         saveHouseholdDetails,
     TResult? Function(BeneficiaryRegistrationSaveIndividualDetailsEvent value)?
@@ -371,6 +395,8 @@ class _$BeneficiaryRegistrationSaveAddressEventImpl
   TResult maybeMap<TResult extends Object?>({
     TResult Function(BeneficiaryRegistrationSaveAddressEvent value)?
         saveAddress,
+    TResult Function(BeneficiaryRegistrationSaveHouseholdConsentEvent value)?
+        saveHouseholdConsent,
     TResult Function(BeneficiaryRegistrationSaveHouseholdDetailsEvent value)?
         saveHouseholdDetails,
     TResult Function(BeneficiaryRegistrationSaveIndividualDetailsEvent value)?
@@ -399,6 +425,273 @@ abstract class BeneficiaryRegistrationSaveAddressEvent
   @JsonKey(ignore: true)
   _$$BeneficiaryRegistrationSaveAddressEventImplCopyWith<
           _$BeneficiaryRegistrationSaveAddressEventImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$BeneficiaryRegistrationSaveHouseholdConsentEventImplCopyWith<
+    $Res> {
+  factory _$$BeneficiaryRegistrationSaveHouseholdConsentEventImplCopyWith(
+          _$BeneficiaryRegistrationSaveHouseholdConsentEventImpl value,
+          $Res Function(_$BeneficiaryRegistrationSaveHouseholdConsentEventImpl)
+              then) =
+      __$$BeneficiaryRegistrationSaveHouseholdConsentEventImplCopyWithImpl<
+          $Res>;
+  @useResult
+  $Res call({HouseholdModel household, bool isConsent});
+}
+
+/// @nodoc
+class __$$BeneficiaryRegistrationSaveHouseholdConsentEventImplCopyWithImpl<$Res>
+    extends _$BeneficiaryRegistrationEventCopyWithImpl<$Res,
+        _$BeneficiaryRegistrationSaveHouseholdConsentEventImpl>
+    implements
+        _$$BeneficiaryRegistrationSaveHouseholdConsentEventImplCopyWith<$Res> {
+  __$$BeneficiaryRegistrationSaveHouseholdConsentEventImplCopyWithImpl(
+      _$BeneficiaryRegistrationSaveHouseholdConsentEventImpl _value,
+      $Res Function(_$BeneficiaryRegistrationSaveHouseholdConsentEventImpl)
+          _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? household = null,
+    Object? isConsent = null,
+  }) {
+    return _then(_$BeneficiaryRegistrationSaveHouseholdConsentEventImpl(
+      household: null == household
+          ? _value.household
+          : household // ignore: cast_nullable_to_non_nullable
+              as HouseholdModel,
+      isConsent: null == isConsent
+          ? _value.isConsent
+          : isConsent // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$BeneficiaryRegistrationSaveHouseholdConsentEventImpl
+    implements BeneficiaryRegistrationSaveHouseholdConsentEvent {
+  const _$BeneficiaryRegistrationSaveHouseholdConsentEventImpl(
+      {required this.household, required this.isConsent});
+
+  @override
+  final HouseholdModel household;
+  @override
+  final bool isConsent;
+
+  @override
+  String toString() {
+    return 'BeneficiaryRegistrationEvent.saveHouseholdConsent(household: $household, isConsent: $isConsent)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$BeneficiaryRegistrationSaveHouseholdConsentEventImpl &&
+            (identical(other.household, household) ||
+                other.household == household) &&
+            (identical(other.isConsent, isConsent) ||
+                other.isConsent == isConsent));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, household, isConsent);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$BeneficiaryRegistrationSaveHouseholdConsentEventImplCopyWith<
+          _$BeneficiaryRegistrationSaveHouseholdConsentEventImpl>
+      get copyWith =>
+          __$$BeneficiaryRegistrationSaveHouseholdConsentEventImplCopyWithImpl<
+                  _$BeneficiaryRegistrationSaveHouseholdConsentEventImpl>(
+              this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(AddressModel model) saveAddress,
+    required TResult Function(HouseholdModel household, bool isConsent)
+        saveHouseholdConsent,
+    required TResult Function(
+            HouseholdModel household, DateTime registrationDate)
+        saveHouseholdDetails,
+    required TResult Function(IndividualModel model, bool isHeadOfHousehold)
+        saveIndividualDetails,
+    required TResult Function(
+            HouseholdModel householdModel,
+            IndividualModel individualModel,
+            AddressModel addressModel,
+            String userUuid,
+            String projectId,
+            BeneficiaryType beneficiaryType)
+        addMember,
+    required TResult Function(
+            HouseholdModel household, AddressModel? addressModel)
+        updateHouseholdDetails,
+    required TResult Function(IndividualModel model, AddressModel addressModel)
+        updateIndividualDetails,
+    required TResult Function(
+            String userUuid, String projectId, BoundaryModel boundary)
+        create,
+  }) {
+    return saveHouseholdConsent(household, isConsent);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(AddressModel model)? saveAddress,
+    TResult? Function(HouseholdModel household, bool isConsent)?
+        saveHouseholdConsent,
+    TResult? Function(HouseholdModel household, DateTime registrationDate)?
+        saveHouseholdDetails,
+    TResult? Function(IndividualModel model, bool isHeadOfHousehold)?
+        saveIndividualDetails,
+    TResult? Function(
+            HouseholdModel householdModel,
+            IndividualModel individualModel,
+            AddressModel addressModel,
+            String userUuid,
+            String projectId,
+            BeneficiaryType beneficiaryType)?
+        addMember,
+    TResult? Function(HouseholdModel household, AddressModel? addressModel)?
+        updateHouseholdDetails,
+    TResult? Function(IndividualModel model, AddressModel addressModel)?
+        updateIndividualDetails,
+    TResult? Function(
+            String userUuid, String projectId, BoundaryModel boundary)?
+        create,
+  }) {
+    return saveHouseholdConsent?.call(household, isConsent);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(AddressModel model)? saveAddress,
+    TResult Function(HouseholdModel household, bool isConsent)?
+        saveHouseholdConsent,
+    TResult Function(HouseholdModel household, DateTime registrationDate)?
+        saveHouseholdDetails,
+    TResult Function(IndividualModel model, bool isHeadOfHousehold)?
+        saveIndividualDetails,
+    TResult Function(
+            HouseholdModel householdModel,
+            IndividualModel individualModel,
+            AddressModel addressModel,
+            String userUuid,
+            String projectId,
+            BeneficiaryType beneficiaryType)?
+        addMember,
+    TResult Function(HouseholdModel household, AddressModel? addressModel)?
+        updateHouseholdDetails,
+    TResult Function(IndividualModel model, AddressModel addressModel)?
+        updateIndividualDetails,
+    TResult Function(String userUuid, String projectId, BoundaryModel boundary)?
+        create,
+    required TResult orElse(),
+  }) {
+    if (saveHouseholdConsent != null) {
+      return saveHouseholdConsent(household, isConsent);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(BeneficiaryRegistrationSaveAddressEvent value)
+        saveAddress,
+    required TResult Function(
+            BeneficiaryRegistrationSaveHouseholdConsentEvent value)
+        saveHouseholdConsent,
+    required TResult Function(
+            BeneficiaryRegistrationSaveHouseholdDetailsEvent value)
+        saveHouseholdDetails,
+    required TResult Function(
+            BeneficiaryRegistrationSaveIndividualDetailsEvent value)
+        saveIndividualDetails,
+    required TResult Function(BeneficiaryRegistrationAddMemberEvent value)
+        addMember,
+    required TResult Function(
+            BeneficiaryRegistrationUpdateHouseholdDetailsEvent value)
+        updateHouseholdDetails,
+    required TResult Function(
+            BeneficiaryRegistrationUpdateIndividualDetailsEvent value)
+        updateIndividualDetails,
+    required TResult Function(BeneficiaryRegistrationCreateEvent value) create,
+  }) {
+    return saveHouseholdConsent(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(BeneficiaryRegistrationSaveAddressEvent value)?
+        saveAddress,
+    TResult? Function(BeneficiaryRegistrationSaveHouseholdConsentEvent value)?
+        saveHouseholdConsent,
+    TResult? Function(BeneficiaryRegistrationSaveHouseholdDetailsEvent value)?
+        saveHouseholdDetails,
+    TResult? Function(BeneficiaryRegistrationSaveIndividualDetailsEvent value)?
+        saveIndividualDetails,
+    TResult? Function(BeneficiaryRegistrationAddMemberEvent value)? addMember,
+    TResult? Function(BeneficiaryRegistrationUpdateHouseholdDetailsEvent value)?
+        updateHouseholdDetails,
+    TResult? Function(
+            BeneficiaryRegistrationUpdateIndividualDetailsEvent value)?
+        updateIndividualDetails,
+    TResult? Function(BeneficiaryRegistrationCreateEvent value)? create,
+  }) {
+    return saveHouseholdConsent?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(BeneficiaryRegistrationSaveAddressEvent value)?
+        saveAddress,
+    TResult Function(BeneficiaryRegistrationSaveHouseholdConsentEvent value)?
+        saveHouseholdConsent,
+    TResult Function(BeneficiaryRegistrationSaveHouseholdDetailsEvent value)?
+        saveHouseholdDetails,
+    TResult Function(BeneficiaryRegistrationSaveIndividualDetailsEvent value)?
+        saveIndividualDetails,
+    TResult Function(BeneficiaryRegistrationAddMemberEvent value)? addMember,
+    TResult Function(BeneficiaryRegistrationUpdateHouseholdDetailsEvent value)?
+        updateHouseholdDetails,
+    TResult Function(BeneficiaryRegistrationUpdateIndividualDetailsEvent value)?
+        updateIndividualDetails,
+    TResult Function(BeneficiaryRegistrationCreateEvent value)? create,
+    required TResult orElse(),
+  }) {
+    if (saveHouseholdConsent != null) {
+      return saveHouseholdConsent(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class BeneficiaryRegistrationSaveHouseholdConsentEvent
+    implements BeneficiaryRegistrationEvent {
+  const factory BeneficiaryRegistrationSaveHouseholdConsentEvent(
+          {required final HouseholdModel household,
+          required final bool isConsent}) =
+      _$BeneficiaryRegistrationSaveHouseholdConsentEventImpl;
+
+  HouseholdModel get household;
+  bool get isConsent;
+  @JsonKey(ignore: true)
+  _$$BeneficiaryRegistrationSaveHouseholdConsentEventImplCopyWith<
+          _$BeneficiaryRegistrationSaveHouseholdConsentEventImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -491,6 +784,8 @@ class _$BeneficiaryRegistrationSaveHouseholdDetailsEventImpl
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(AddressModel model) saveAddress,
+    required TResult Function(HouseholdModel household, bool isConsent)
+        saveHouseholdConsent,
     required TResult Function(
             HouseholdModel household, DateTime registrationDate)
         saveHouseholdDetails,
@@ -520,6 +815,8 @@ class _$BeneficiaryRegistrationSaveHouseholdDetailsEventImpl
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(AddressModel model)? saveAddress,
+    TResult? Function(HouseholdModel household, bool isConsent)?
+        saveHouseholdConsent,
     TResult? Function(HouseholdModel household, DateTime registrationDate)?
         saveHouseholdDetails,
     TResult? Function(IndividualModel model, bool isHeadOfHousehold)?
@@ -547,6 +844,8 @@ class _$BeneficiaryRegistrationSaveHouseholdDetailsEventImpl
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(AddressModel model)? saveAddress,
+    TResult Function(HouseholdModel household, bool isConsent)?
+        saveHouseholdConsent,
     TResult Function(HouseholdModel household, DateTime registrationDate)?
         saveHouseholdDetails,
     TResult Function(IndividualModel model, bool isHeadOfHousehold)?
@@ -579,6 +878,9 @@ class _$BeneficiaryRegistrationSaveHouseholdDetailsEventImpl
     required TResult Function(BeneficiaryRegistrationSaveAddressEvent value)
         saveAddress,
     required TResult Function(
+            BeneficiaryRegistrationSaveHouseholdConsentEvent value)
+        saveHouseholdConsent,
+    required TResult Function(
             BeneficiaryRegistrationSaveHouseholdDetailsEvent value)
         saveHouseholdDetails,
     required TResult Function(
@@ -602,6 +904,8 @@ class _$BeneficiaryRegistrationSaveHouseholdDetailsEventImpl
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(BeneficiaryRegistrationSaveAddressEvent value)?
         saveAddress,
+    TResult? Function(BeneficiaryRegistrationSaveHouseholdConsentEvent value)?
+        saveHouseholdConsent,
     TResult? Function(BeneficiaryRegistrationSaveHouseholdDetailsEvent value)?
         saveHouseholdDetails,
     TResult? Function(BeneficiaryRegistrationSaveIndividualDetailsEvent value)?
@@ -622,6 +926,8 @@ class _$BeneficiaryRegistrationSaveHouseholdDetailsEventImpl
   TResult maybeMap<TResult extends Object?>({
     TResult Function(BeneficiaryRegistrationSaveAddressEvent value)?
         saveAddress,
+    TResult Function(BeneficiaryRegistrationSaveHouseholdConsentEvent value)?
+        saveHouseholdConsent,
     TResult Function(BeneficiaryRegistrationSaveHouseholdDetailsEvent value)?
         saveHouseholdDetails,
     TResult Function(BeneficiaryRegistrationSaveIndividualDetailsEvent value)?
@@ -746,6 +1052,8 @@ class _$BeneficiaryRegistrationSaveIndividualDetailsEventImpl
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(AddressModel model) saveAddress,
+    required TResult Function(HouseholdModel household, bool isConsent)
+        saveHouseholdConsent,
     required TResult Function(
             HouseholdModel household, DateTime registrationDate)
         saveHouseholdDetails,
@@ -775,6 +1083,8 @@ class _$BeneficiaryRegistrationSaveIndividualDetailsEventImpl
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(AddressModel model)? saveAddress,
+    TResult? Function(HouseholdModel household, bool isConsent)?
+        saveHouseholdConsent,
     TResult? Function(HouseholdModel household, DateTime registrationDate)?
         saveHouseholdDetails,
     TResult? Function(IndividualModel model, bool isHeadOfHousehold)?
@@ -802,6 +1112,8 @@ class _$BeneficiaryRegistrationSaveIndividualDetailsEventImpl
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(AddressModel model)? saveAddress,
+    TResult Function(HouseholdModel household, bool isConsent)?
+        saveHouseholdConsent,
     TResult Function(HouseholdModel household, DateTime registrationDate)?
         saveHouseholdDetails,
     TResult Function(IndividualModel model, bool isHeadOfHousehold)?
@@ -834,6 +1146,9 @@ class _$BeneficiaryRegistrationSaveIndividualDetailsEventImpl
     required TResult Function(BeneficiaryRegistrationSaveAddressEvent value)
         saveAddress,
     required TResult Function(
+            BeneficiaryRegistrationSaveHouseholdConsentEvent value)
+        saveHouseholdConsent,
+    required TResult Function(
             BeneficiaryRegistrationSaveHouseholdDetailsEvent value)
         saveHouseholdDetails,
     required TResult Function(
@@ -857,6 +1172,8 @@ class _$BeneficiaryRegistrationSaveIndividualDetailsEventImpl
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(BeneficiaryRegistrationSaveAddressEvent value)?
         saveAddress,
+    TResult? Function(BeneficiaryRegistrationSaveHouseholdConsentEvent value)?
+        saveHouseholdConsent,
     TResult? Function(BeneficiaryRegistrationSaveHouseholdDetailsEvent value)?
         saveHouseholdDetails,
     TResult? Function(BeneficiaryRegistrationSaveIndividualDetailsEvent value)?
@@ -877,6 +1194,8 @@ class _$BeneficiaryRegistrationSaveIndividualDetailsEventImpl
   TResult maybeMap<TResult extends Object?>({
     TResult Function(BeneficiaryRegistrationSaveAddressEvent value)?
         saveAddress,
+    TResult Function(BeneficiaryRegistrationSaveHouseholdConsentEvent value)?
+        saveHouseholdConsent,
     TResult Function(BeneficiaryRegistrationSaveHouseholdDetailsEvent value)?
         saveHouseholdDetails,
     TResult Function(BeneficiaryRegistrationSaveIndividualDetailsEvent value)?
@@ -1041,6 +1360,8 @@ class _$BeneficiaryRegistrationAddMemberEventImpl
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(AddressModel model) saveAddress,
+    required TResult Function(HouseholdModel household, bool isConsent)
+        saveHouseholdConsent,
     required TResult Function(
             HouseholdModel household, DateTime registrationDate)
         saveHouseholdDetails,
@@ -1071,6 +1392,8 @@ class _$BeneficiaryRegistrationAddMemberEventImpl
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(AddressModel model)? saveAddress,
+    TResult? Function(HouseholdModel household, bool isConsent)?
+        saveHouseholdConsent,
     TResult? Function(HouseholdModel household, DateTime registrationDate)?
         saveHouseholdDetails,
     TResult? Function(IndividualModel model, bool isHeadOfHousehold)?
@@ -1099,6 +1422,8 @@ class _$BeneficiaryRegistrationAddMemberEventImpl
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(AddressModel model)? saveAddress,
+    TResult Function(HouseholdModel household, bool isConsent)?
+        saveHouseholdConsent,
     TResult Function(HouseholdModel household, DateTime registrationDate)?
         saveHouseholdDetails,
     TResult Function(IndividualModel model, bool isHeadOfHousehold)?
@@ -1132,6 +1457,9 @@ class _$BeneficiaryRegistrationAddMemberEventImpl
     required TResult Function(BeneficiaryRegistrationSaveAddressEvent value)
         saveAddress,
     required TResult Function(
+            BeneficiaryRegistrationSaveHouseholdConsentEvent value)
+        saveHouseholdConsent,
+    required TResult Function(
             BeneficiaryRegistrationSaveHouseholdDetailsEvent value)
         saveHouseholdDetails,
     required TResult Function(
@@ -1155,6 +1483,8 @@ class _$BeneficiaryRegistrationAddMemberEventImpl
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(BeneficiaryRegistrationSaveAddressEvent value)?
         saveAddress,
+    TResult? Function(BeneficiaryRegistrationSaveHouseholdConsentEvent value)?
+        saveHouseholdConsent,
     TResult? Function(BeneficiaryRegistrationSaveHouseholdDetailsEvent value)?
         saveHouseholdDetails,
     TResult? Function(BeneficiaryRegistrationSaveIndividualDetailsEvent value)?
@@ -1175,6 +1505,8 @@ class _$BeneficiaryRegistrationAddMemberEventImpl
   TResult maybeMap<TResult extends Object?>({
     TResult Function(BeneficiaryRegistrationSaveAddressEvent value)?
         saveAddress,
+    TResult Function(BeneficiaryRegistrationSaveHouseholdConsentEvent value)?
+        saveHouseholdConsent,
     TResult Function(BeneficiaryRegistrationSaveHouseholdDetailsEvent value)?
         saveHouseholdDetails,
     TResult Function(BeneficiaryRegistrationSaveIndividualDetailsEvent value)?
@@ -1309,6 +1641,8 @@ class _$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(AddressModel model) saveAddress,
+    required TResult Function(HouseholdModel household, bool isConsent)
+        saveHouseholdConsent,
     required TResult Function(
             HouseholdModel household, DateTime registrationDate)
         saveHouseholdDetails,
@@ -1338,6 +1672,8 @@ class _$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(AddressModel model)? saveAddress,
+    TResult? Function(HouseholdModel household, bool isConsent)?
+        saveHouseholdConsent,
     TResult? Function(HouseholdModel household, DateTime registrationDate)?
         saveHouseholdDetails,
     TResult? Function(IndividualModel model, bool isHeadOfHousehold)?
@@ -1365,6 +1701,8 @@ class _$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(AddressModel model)? saveAddress,
+    TResult Function(HouseholdModel household, bool isConsent)?
+        saveHouseholdConsent,
     TResult Function(HouseholdModel household, DateTime registrationDate)?
         saveHouseholdDetails,
     TResult Function(IndividualModel model, bool isHeadOfHousehold)?
@@ -1397,6 +1735,9 @@ class _$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl
     required TResult Function(BeneficiaryRegistrationSaveAddressEvent value)
         saveAddress,
     required TResult Function(
+            BeneficiaryRegistrationSaveHouseholdConsentEvent value)
+        saveHouseholdConsent,
+    required TResult Function(
             BeneficiaryRegistrationSaveHouseholdDetailsEvent value)
         saveHouseholdDetails,
     required TResult Function(
@@ -1420,6 +1761,8 @@ class _$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(BeneficiaryRegistrationSaveAddressEvent value)?
         saveAddress,
+    TResult? Function(BeneficiaryRegistrationSaveHouseholdConsentEvent value)?
+        saveHouseholdConsent,
     TResult? Function(BeneficiaryRegistrationSaveHouseholdDetailsEvent value)?
         saveHouseholdDetails,
     TResult? Function(BeneficiaryRegistrationSaveIndividualDetailsEvent value)?
@@ -1440,6 +1783,8 @@ class _$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl
   TResult maybeMap<TResult extends Object?>({
     TResult Function(BeneficiaryRegistrationSaveAddressEvent value)?
         saveAddress,
+    TResult Function(BeneficiaryRegistrationSaveHouseholdConsentEvent value)?
+        saveHouseholdConsent,
     TResult Function(BeneficiaryRegistrationSaveHouseholdDetailsEvent value)?
         saveHouseholdDetails,
     TResult Function(BeneficiaryRegistrationSaveIndividualDetailsEvent value)?
@@ -1566,6 +1911,8 @@ class _$BeneficiaryRegistrationUpdateIndividualDetailsEventImpl
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(AddressModel model) saveAddress,
+    required TResult Function(HouseholdModel household, bool isConsent)
+        saveHouseholdConsent,
     required TResult Function(
             HouseholdModel household, DateTime registrationDate)
         saveHouseholdDetails,
@@ -1595,6 +1942,8 @@ class _$BeneficiaryRegistrationUpdateIndividualDetailsEventImpl
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(AddressModel model)? saveAddress,
+    TResult? Function(HouseholdModel household, bool isConsent)?
+        saveHouseholdConsent,
     TResult? Function(HouseholdModel household, DateTime registrationDate)?
         saveHouseholdDetails,
     TResult? Function(IndividualModel model, bool isHeadOfHousehold)?
@@ -1622,6 +1971,8 @@ class _$BeneficiaryRegistrationUpdateIndividualDetailsEventImpl
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(AddressModel model)? saveAddress,
+    TResult Function(HouseholdModel household, bool isConsent)?
+        saveHouseholdConsent,
     TResult Function(HouseholdModel household, DateTime registrationDate)?
         saveHouseholdDetails,
     TResult Function(IndividualModel model, bool isHeadOfHousehold)?
@@ -1654,6 +2005,9 @@ class _$BeneficiaryRegistrationUpdateIndividualDetailsEventImpl
     required TResult Function(BeneficiaryRegistrationSaveAddressEvent value)
         saveAddress,
     required TResult Function(
+            BeneficiaryRegistrationSaveHouseholdConsentEvent value)
+        saveHouseholdConsent,
+    required TResult Function(
             BeneficiaryRegistrationSaveHouseholdDetailsEvent value)
         saveHouseholdDetails,
     required TResult Function(
@@ -1677,6 +2031,8 @@ class _$BeneficiaryRegistrationUpdateIndividualDetailsEventImpl
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(BeneficiaryRegistrationSaveAddressEvent value)?
         saveAddress,
+    TResult? Function(BeneficiaryRegistrationSaveHouseholdConsentEvent value)?
+        saveHouseholdConsent,
     TResult? Function(BeneficiaryRegistrationSaveHouseholdDetailsEvent value)?
         saveHouseholdDetails,
     TResult? Function(BeneficiaryRegistrationSaveIndividualDetailsEvent value)?
@@ -1697,6 +2053,8 @@ class _$BeneficiaryRegistrationUpdateIndividualDetailsEventImpl
   TResult maybeMap<TResult extends Object?>({
     TResult Function(BeneficiaryRegistrationSaveAddressEvent value)?
         saveAddress,
+    TResult Function(BeneficiaryRegistrationSaveHouseholdConsentEvent value)?
+        saveHouseholdConsent,
     TResult Function(BeneficiaryRegistrationSaveHouseholdDetailsEvent value)?
         saveHouseholdDetails,
     TResult Function(BeneficiaryRegistrationSaveIndividualDetailsEvent value)?
@@ -1824,6 +2182,8 @@ class _$BeneficiaryRegistrationCreateEventImpl
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(AddressModel model) saveAddress,
+    required TResult Function(HouseholdModel household, bool isConsent)
+        saveHouseholdConsent,
     required TResult Function(
             HouseholdModel household, DateTime registrationDate)
         saveHouseholdDetails,
@@ -1853,6 +2213,8 @@ class _$BeneficiaryRegistrationCreateEventImpl
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(AddressModel model)? saveAddress,
+    TResult? Function(HouseholdModel household, bool isConsent)?
+        saveHouseholdConsent,
     TResult? Function(HouseholdModel household, DateTime registrationDate)?
         saveHouseholdDetails,
     TResult? Function(IndividualModel model, bool isHeadOfHousehold)?
@@ -1880,6 +2242,8 @@ class _$BeneficiaryRegistrationCreateEventImpl
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(AddressModel model)? saveAddress,
+    TResult Function(HouseholdModel household, bool isConsent)?
+        saveHouseholdConsent,
     TResult Function(HouseholdModel household, DateTime registrationDate)?
         saveHouseholdDetails,
     TResult Function(IndividualModel model, bool isHeadOfHousehold)?
@@ -1912,6 +2276,9 @@ class _$BeneficiaryRegistrationCreateEventImpl
     required TResult Function(BeneficiaryRegistrationSaveAddressEvent value)
         saveAddress,
     required TResult Function(
+            BeneficiaryRegistrationSaveHouseholdConsentEvent value)
+        saveHouseholdConsent,
+    required TResult Function(
             BeneficiaryRegistrationSaveHouseholdDetailsEvent value)
         saveHouseholdDetails,
     required TResult Function(
@@ -1935,6 +2302,8 @@ class _$BeneficiaryRegistrationCreateEventImpl
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(BeneficiaryRegistrationSaveAddressEvent value)?
         saveAddress,
+    TResult? Function(BeneficiaryRegistrationSaveHouseholdConsentEvent value)?
+        saveHouseholdConsent,
     TResult? Function(BeneficiaryRegistrationSaveHouseholdDetailsEvent value)?
         saveHouseholdDetails,
     TResult? Function(BeneficiaryRegistrationSaveIndividualDetailsEvent value)?
@@ -1955,6 +2324,8 @@ class _$BeneficiaryRegistrationCreateEventImpl
   TResult maybeMap<TResult extends Object?>({
     TResult Function(BeneficiaryRegistrationSaveAddressEvent value)?
         saveAddress,
+    TResult Function(BeneficiaryRegistrationSaveHouseholdConsentEvent value)?
+        saveHouseholdConsent,
     TResult Function(BeneficiaryRegistrationSaveHouseholdDetailsEvent value)?
         saveHouseholdDetails,
     TResult Function(BeneficiaryRegistrationSaveIndividualDetailsEvent value)?

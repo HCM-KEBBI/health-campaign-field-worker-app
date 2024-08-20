@@ -316,6 +316,17 @@ class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    HouseHoldConsentRoute.name: (routeData) {
+      final args = routeData.argsAs<HouseHoldConsentRouteArgs>(
+          orElse: () => const HouseHoldConsentRouteArgs());
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: HouseHoldConsentPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
     HouseholdLocationRoute.name: (routeData) {
       final args = routeData.argsAs<HouseholdLocationRouteArgs>(
           orElse: () => const HouseholdLocationRouteArgs());
@@ -739,6 +750,11 @@ class _$AppRouter extends RootStackRouter {
                 RouteConfig(
                   HouseHoldDetailsRoute.name,
                   path: 'household-details',
+                  parent: BeneficiaryRegistrationWrapperRoute.name,
+                ),
+                RouteConfig(
+                  HouseHoldConsentRoute.name,
+                  path: 'household-consent',
                   parent: BeneficiaryRegistrationWrapperRoute.name,
                 ),
                 RouteConfig(
@@ -1992,6 +2008,40 @@ class HouseHoldDetailsRouteArgs {
   @override
   String toString() {
     return 'HouseHoldDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
+/// [HouseHoldConsentPage]
+class HouseHoldConsentRoute extends PageRouteInfo<HouseHoldConsentRouteArgs> {
+  HouseHoldConsentRoute({
+    Key? key,
+    AppLocalizations? appLocalizations,
+  }) : super(
+          HouseHoldConsentRoute.name,
+          path: 'household-consent',
+          args: HouseHoldConsentRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+          ),
+        );
+
+  static const String name = 'HouseHoldConsentRoute';
+}
+
+class HouseHoldConsentRouteArgs {
+  const HouseHoldConsentRouteArgs({
+    this.key,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final AppLocalizations? appLocalizations;
+
+  @override
+  String toString() {
+    return 'HouseHoldConsentRouteArgs{key: $key, appLocalizations: $appLocalizations}';
   }
 }
 

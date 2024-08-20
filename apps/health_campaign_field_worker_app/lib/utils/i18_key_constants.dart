@@ -28,7 +28,6 @@ const syncDialog = SyncDialog();
 const referBeneficiary = ReferBeneficiary();
 const ineligibilityReasons = IneligibilityReasons();
 
-
 class Common {
   const Common();
 
@@ -268,7 +267,6 @@ class Home {
   String get db => 'HOME_DB_LABEL';
   String get beneficiaryReferralLabel => 'HOME_BENEFICIARY_REFERRAL_LABEL';
   String get manageAttendanceLabel => 'HOME_MANAGE_ATTENDANCE_LABEL';
-
 }
 
 class SearchBeneficiary {
@@ -501,6 +499,12 @@ class HouseholdDetails {
   String get noOfMembersCountLabel => 'NO_OF_MEMBERS_COUNT_LABEL';
   String get viewHouseHoldDetailsAction =>
       'VIEW_HOUSEHOLD_DETAILS_ACTION_LABEL';
+
+  String get cardTitle => 'CONSENT_CARD_TITLE';
+  String get validationForSelection => 'CONSENT_SUBMIT_VALIDATION';
+  String get submitYes => 'SUBMIT_YES';
+  String get submitNo => 'SUBMIT_NO';
+  String get householdConsentLabel => 'HOUSEHOLD_CONSENT_LABEL';
 }
 
 class HouseholdOverView {

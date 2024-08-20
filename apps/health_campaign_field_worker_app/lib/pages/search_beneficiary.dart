@@ -348,47 +348,37 @@ class _SearchBeneficiaryPageState
                 },
               ),
             ),
-            bottomNavigationBar: isKeyboardVisible
-                ? null
-                : SizedBox(
-                    child: DigitCard(
-                      margin: const EdgeInsets.only(left: 0, right: 0, top: 10),
-                      child: BlocBuilder<SearchHouseholdsBloc,
-                          SearchHouseholdsState>(
-                        builder: (context, state) {
-                          final router = context.router;
+            bottomNavigationBar: SizedBox(
+              child: DigitCard(
+                margin: const EdgeInsets.only(left: 0, right: 0, top: 10),
+                child: BlocBuilder<SearchHouseholdsBloc, SearchHouseholdsState>(
+                  builder: (context, state) {
+                    final router = context.router;
 
-                          final searchQuery = state.searchQuery;
-                          VoidCallback? onPressed;
+                    VoidCallback? onPressed;
 
-                          onPressed = state.loading ||
-                                  searchQuery == null ||
-                                  searchQuery.isEmpty
-                              ? null
-                              : () {
-                                  FocusManager.instance.primaryFocus?.unfocus();
+                    onPressed = () {
+                      FocusManager.instance.primaryFocus?.unfocus();
 
-                                  router
-                                      .push(BeneficiaryRegistrationWrapperRoute(
-                                    initialState:
-                                        BeneficiaryRegistrationCreateState(
-                                      searchQuery: state.searchQuery,
-                                    ),
-                                  ));
-                                };
+                      router.push(BeneficiaryRegistrationWrapperRoute(
+                        initialState: BeneficiaryRegistrationCreateState(
+                          searchQuery: state.searchQuery,
+                        ),
+                      ));
+                    };
 
-                          return DigitElevatedButton(
-                            onPressed: onPressed,
-                            child: Center(
-                              child: Text(localizations.translate(
-                                i18.searchBeneficiary.beneficiaryAddActionLabel,
-                              )),
-                            ),
-                          );
-                        },
+                    return DigitElevatedButton(
+                      onPressed: onPressed,
+                      child: Center(
+                        child: Text(localizations.translate(
+                          i18.searchBeneficiary.beneficiaryAddActionLabel,
+                        )),
                       ),
-                    ),
-                  ),
+                    );
+                  },
+                ),
+              ),
+            ),
           );
         },
       ),
