@@ -81,12 +81,7 @@ class BeneficiaryRegistrationBloc
       },
       create: (value) async {
         await householdRepository.create(
-          household.copyWith(
-            additionalFields: HouseholdAdditionalFields(
-              version: 1,
-              fields: [AdditionalField("isConsent", event.isConsent)],
-            ),
-          ),
+          household,
         );
 
         emit(value.copyWith(

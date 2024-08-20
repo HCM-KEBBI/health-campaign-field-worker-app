@@ -102,6 +102,12 @@ class _HouseHoldConsentPageState extends LocalizedState<HouseHoldConsentPage> {
                                 address: address,
                                 latitude: locationState.latitude,
                                 longitude: locationState.longitude,
+                                additionalFields: HouseholdAdditionalFields(
+                                  version: 1,
+                                  fields: [
+                                    AdditionalField("isConsent", isConsent),
+                                  ],
+                                ),
                               );
 
                               household = household.copyWith(
