@@ -2,6 +2,7 @@ import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/atoms/digit_radio_button_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../blocs/household_overview/household_overview.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import '../../blocs/beneficiary_registration/beneficiary_registration.dart';
@@ -65,12 +66,12 @@ class _HouseHoldConsentPageState extends LocalizedState<HouseHoldConsentPage> {
                             isHeadOfHousehold,
                           ) {
                             final isConsent =
-                                (form.control(_consent).value as int) == 0
+                                (form.control(_consent).value as KeyValue)
+                                            .key ==
+                                        0
                                     ? false
                                     : true;
-                            if (!isConsent &&
-                                householdModel != null &&
-                                addressModel != null) {
+                            if (!isConsent && addressModel != null) {
                               var address = addressModel.copyWith(
                                 latitude: locationState.latitude ??
                                     addressModel.latitude,
@@ -79,8 +80,34 @@ class _HouseHoldConsentPageState extends LocalizedState<HouseHoldConsentPage> {
                                 locationAccuracy: locationState.accuracy ??
                                     addressModel.locationAccuracy,
                               );
-                              var household =
-                                  householdModel.copyWith(address: address);
+                              var household = householdModel;
+                              household ??= HouseholdModel(
+                                tenantId: envConfig.variables.tenantId,
+                                clientReferenceId: IdGen.i.identifier,
+                                rowVersion: 1,
+                                clientAuditDetails: ClientAuditDetails(
+                                  createdBy: context.loggedInUserUuid,
+                                  createdTime: context.millisecondsSinceEpoch(),
+                                  lastModifiedBy: context.loggedInUserUuid,
+                                  lastModifiedTime:
+                                      context.millisecondsSinceEpoch(),
+                                ),
+                                auditDetails: AuditDetails(
+                                  createdBy: context.loggedInUserUuid,
+                                  createdTime: context.millisecondsSinceEpoch(),
+                                  lastModifiedBy: context.loggedInUserUuid,
+                                  lastModifiedTime:
+                                      context.millisecondsSinceEpoch(),
+                                ),
+                                address: address,
+                                latitude: locationState.latitude,
+                                longitude: locationState.longitude,
+                              );
+
+                              household = household.copyWith(
+                                memberCount: 0,
+                              );
+
                               bloc.add(
                                 BeneficiaryRegistrationSaveHouseholdConsentEvent(
                                   household: household,
@@ -88,7 +115,7 @@ class _HouseHoldConsentPageState extends LocalizedState<HouseHoldConsentPage> {
                                 ),
                               );
                               context.router
-                                  .push(HouseholdAcknowledgementRoute());
+                                  .push(ConsentHouseholdAcknowledgementRoute());
                             } else {
                               context.router.push(HouseHoldDetailsRoute());
                             }

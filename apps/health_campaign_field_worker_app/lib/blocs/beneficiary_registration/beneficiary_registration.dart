@@ -70,7 +70,7 @@ class BeneficiaryRegistrationBloc
     BeneficiaryRegistrationEmitter emit,
   ) async {
     final household = event.household;
-    state.maybeMap(
+    await state.maybeMap(
       orElse: () {
         throw const InvalidRegistrationStateException();
       },

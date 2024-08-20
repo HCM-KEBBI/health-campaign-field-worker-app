@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:health_campaign_field_worker_app/pages/beneficiary/widgets/consent_household_acknowledgement.dart';
 
 import '../blocs/beneficiary_registration/beneficiary_registration.dart';
 import '../blocs/inventory_report/inventory_report.dart';
@@ -108,6 +109,10 @@ part 'app_router.gr.dart';
               page: HouseholdLocationPage,
               path: 'household-location',
               initial: true,
+            ),
+            AutoRoute(
+              page: ConsentHouseholdAcknowledgementPage,
+              path: 'consent-household-acknowledgement',
             ),
           ],
         ),
