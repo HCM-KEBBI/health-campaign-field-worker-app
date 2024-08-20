@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+
 import '../../data/local_store/no_sql/schema/app_configuration.dart';
 import '../../data/local_store/no_sql/schema/localization.dart';
 import 'app_localizations_delegate.dart';
@@ -37,15 +38,15 @@ class AppLocalizations {
     return true;
   }
 
-  String translate(String localizedValues) {
+  String translate(String localizedValue) {
     if (_localizedStrings.isEmpty) {
-      return localizedValues;
+      return localizedValue;
     } else {
       final index = _localizedStrings.indexWhere(
-        (medium) => medium.code == localizedValues,
+        (medium) => medium.code == localizedValue,
       );
 
-      return index != -1 ? _localizedStrings[index].message : localizedValues;
+      return index != -1 ? _localizedStrings[index].message : localizedValue;
     }
   }
 }

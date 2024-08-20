@@ -2,18 +2,19 @@
 import 'package:dart_mappable/dart_mappable.dart';
 import 'package:drift/drift.dart';
 
-import '../data_model.dart';
 import '../../data/local_store/sql_store/sql_store.dart';
+import '../data_model.dart';
 
 part 'service_definition.mapper.dart';
 
 @MappableClass(ignoreNull: true, discriminatorValue: MappableClass.useAsDefault)
-class ServiceDefinitionSearchModel extends EntitySearchModel with ServiceDefinitionSearchModelMappable {
+class ServiceDefinitionSearchModel extends EntitySearchModel
+    with ServiceDefinitionSearchModelMappable {
   final String? id;
   final String? tenantId;
   final List<String>? code;
   final bool? isActive;
-  
+
   ServiceDefinitionSearchModel({
     this.id,
     this.tenantId,
@@ -21,7 +22,7 @@ class ServiceDefinitionSearchModel extends EntitySearchModel with ServiceDefinit
     this.isActive,
     super.boundaryCode,
     super.isDeleted,
-  }):  super();
+  }) : super();
 
   @MappableConstructor()
   ServiceDefinitionSearchModel.ignoreDeleted({
@@ -30,12 +31,12 @@ class ServiceDefinitionSearchModel extends EntitySearchModel with ServiceDefinit
     this.code,
     this.isActive,
     super.boundaryCode,
-  }):  super(isDeleted: false);
+  }) : super(isDeleted: false);
 }
 
 @MappableClass(ignoreNull: true, discriminatorValue: MappableClass.useAsDefault)
-class ServiceDefinitionModel extends EntityModel with ServiceDefinitionModelMappable {
-
+class ServiceDefinitionModel extends EntityModel
+    with ServiceDefinitionModelMappable {
   static const schemaName = 'ServiceDefinition';
 
   final String? id;
@@ -56,9 +57,10 @@ class ServiceDefinitionModel extends EntityModel with ServiceDefinitionModelMapp
     this.nonRecoverableError = false,
     this.rowVersion,
     this.attributes,
-    super.auditDetails,super.clientAuditDetails,
+    super.auditDetails,
+    super.clientAuditDetails,
     super.isDeleted = false,
-  }): super();
+  }) : super();
 
   ServiceDefinitionCompanion get companion {
     return ServiceDefinitionCompanion(
@@ -78,16 +80,16 @@ class ServiceDefinitionModel extends EntityModel with ServiceDefinitionModelMapp
       isActive: Value(isActive),
       nonRecoverableError: Value(nonRecoverableError),
       rowVersion: Value(rowVersion),
-      );
+    );
   }
 }
 
 @MappableClass(ignoreNull: true, discriminatorValue: MappableClass.useAsDefault)
-class ServiceDefinitionAdditionalFields extends AdditionalFields with ServiceDefinitionAdditionalFieldsMappable {
+class ServiceDefinitionAdditionalFields extends AdditionalFields
+    with ServiceDefinitionAdditionalFieldsMappable {
   ServiceDefinitionAdditionalFields({
     super.schema = 'ServiceDefinition',
     required super.version,
     super.fields,
   });
 }
-
