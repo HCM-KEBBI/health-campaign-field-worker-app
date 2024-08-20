@@ -28,39 +28,35 @@ class _ConsentHouseholdAcknowledgementPageState
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        body: BlocBuilder<HouseholdOverviewBloc, HouseholdOverviewState>(
-          builder: (context, householdState) {
-            return DigitAcknowledgement.success(
-              action: () {
-                final parent = context.router.parent() as StackRouter;
-                // Pop twice to navigate back to the previous screen
-                parent
-                  ..pop()
-                  ..pop();
-              },
-              secondaryAction: () {
-                final wrapper = context
-                    .read<HouseholdOverviewBloc>()
-                    .state
-                    .householdMemberWrapper;
+        body: DigitAcknowledgement.success(
+          action: () {
+            final parent = context.router.parent() as StackRouter;
+            // Pop twice to navigate back to the previous screen
+            parent
+              ..pop()
+              ..pop();
+          },
+          secondaryAction: () {
+            final wrapper = context
+                .read<HouseholdOverviewBloc>()
+                .state
+                .householdMemberWrapper;
 
-                context.router.popAndPush(
-                  BeneficiaryWrapperRoute(wrapper: wrapper),
-                );
-              },
-              enableViewHousehold: widget.enableViewHousehold ?? false,
-              secondaryLabel: localizations.translate(
-                i18.householdDetails.viewHouseHoldDetailsAction,
-              ),
-              actionLabel: localizations
-                  .translate(i18.acknowledgementSuccess.actionLabelText),
-              description: localizations.translate(
-                i18.acknowledgementSuccess.acknowledgementDescriptionText,
-              ),
-              label: localizations.translate(
-                  i18.acknowledgementSuccess.acknowledgementLabelText),
+            context.router.popAndPush(
+              BeneficiaryWrapperRoute(wrapper: wrapper),
             );
           },
+          enableViewHousehold: widget.enableViewHousehold ?? false,
+          secondaryLabel: localizations.translate(
+            i18.householdDetails.viewHouseHoldDetailsAction,
+          ),
+          actionLabel: localizations
+              .translate(i18.acknowledgementSuccess.actionLabelText),
+          description: localizations.translate(
+            i18.acknowledgementSuccess.acknowledgementDescriptionText,
+          ),
+          label: localizations
+              .translate(i18.acknowledgementSuccess.acknowledgementLabelText),
         ),
       ),
     );
