@@ -49,6 +49,7 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
   static const _referralReason = 'referralReason';
   static const _referralCode = 'referralCode';
   static const _referralComments = 'referralComments';
+  static const _beneficiaryIdKey = 'beneficiaryId';
   final clickedStatus = ValueNotifier<bool>(false);
 
   @override
@@ -97,7 +98,7 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
           child: Scaffold(
             body: Scaffold(
               body: ReactiveFormBuilder(
-                form: buildForm,
+                form: () => buildForm(facilities),
                 builder: (context, form, child) => ScrollableContent(
                   enableFixedButton: true,
                   header: Column(children: [
@@ -382,6 +383,18 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
                               isRequired: true,
                             ),
                             DigitTextFormField(
+                              formControlName: _beneficiaryIdKey,
+                              label: localizations.translate(
+                                i18.referBeneficiary.beneficiaryIdLabel,
+                              ),
+                              isRequired: true,
+                              validationMessages: {
+                                'required': (_) => localizations.translate(
+                                      i18.common.corecommonRequired,
+                                    ),
+                              },
+                            ),
+                            DigitTextFormField(
                               valueAccessor: FacilityValueAccessor(
                                 facilities,
                               ),
@@ -483,7 +496,7 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
     );
   }
 
-  FormGroup buildForm() {
+  FormGroup buildForm(List<FacilityModel> healthFacilities) {
     return fb.group(<String, Object>{
       _dateOfReferralKey: FormControl<DateTime>(value: DateTime.now()),
       _administrativeUnitKey: FormControl<String>(value: context.boundary.name),
@@ -491,9 +504,15 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
         value: context.loggedInUser.userName,
         validators: [Validators.required],
       ),
-      _referredToKey:
-          FormControl<FacilityModel>(validators: [Validators.required]),
+      _referredToKey: FormControl<FacilityModel>(
+        value:
+            healthFacilities.length > 1 ? null : healthFacilities.firstOrNull,
+        validators: [
+          Validators.required,
+        ],
+      ),
       _referralReason: FormControl<KeyValue>(value: null),
+      _beneficiaryIdKey: FormControl<String>(validators: [Validators.required]),
       _referralComments: FormControl<String>(value: null),
       _referralCode: FormControl<String>(validators: [Validators.required]),
     });

@@ -48,6 +48,8 @@ class _DeliverInterventionPageState
   static const _dateOfAdministrationKey = 'dateOfAdministration';
   static const _defaultQuantity = 1;
   static const _administeredQuantity = 2;
+  static const _beneficiaryIdKey = 'beneficiaryId';
+
   // Variable to track dose administration status
   bool doseAdministered = false;
 
@@ -582,6 +584,24 @@ class _DeliverInterventionPageState
                                                               },
                                                             ))
                                                         .toList(),
+                                                    DigitTextFormField(
+                                                      formControlName:
+                                                          _beneficiaryIdKey,
+                                                      label: localizations
+                                                          .translate(
+                                                        i18.referBeneficiary
+                                                            .beneficiaryIdLabel,
+                                                      ),
+                                                      isRequired: true,
+                                                      validationMessages: {
+                                                        'required': (_) =>
+                                                            localizations
+                                                                .translate(
+                                                              i18.common
+                                                                  .corecommonRequired,
+                                                            ),
+                                                      },
+                                                    ),
                                                   ],
                                                 ),
                                               ),
@@ -710,6 +730,8 @@ class _DeliverInterventionPageState
         ((form.control(_resourceDeliveredKey) as FormArray).value
             as List<ProductVariantModel?>);
 
+    final beneficiaryId = form.control(_beneficiaryIdKey).value as String?;
+
     // Update the task with information from the form and other context
     task = task.copyWith(
       projectId: context.projectId,
@@ -779,6 +801,11 @@ class _DeliverInterventionPageState
             AdditionalFieldsType.deliveryStrategy.toValue(),
             deliveryStrategy,
           ),
+          if (beneficiaryId != null && beneficiaryId.trim().isNotEmpty)
+            AdditionalField(
+              AdditionalFieldsType.beneficiaryId.toValue(),
+              latitude,
+            ),
           if (latitude != null)
             AdditionalField(
               AdditionalFieldsType.latitude.toValue(),
@@ -816,6 +843,9 @@ class _DeliverInterventionPageState
             '${localizations.translate(i18.deliverIntervention.cycle)} ${bloc.cycle == 0 ? (bloc.cycle + 1) : bloc.cycle}'
                 .toString(),
         validators: [],
+      ),
+      _beneficiaryIdKey: FormControl<String>(
+        validators: [Validators.required],
       ),
       _deliveryCommentKey: FormControl<String>(
         validators: [],

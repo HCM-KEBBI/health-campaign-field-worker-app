@@ -41,6 +41,7 @@ class _RecordReferralDetailsPageState
   static const _referredByKey = 'referredBy';
   static const _referralCodeKey = 'referralCode';
   final clickedStatus = ValueNotifier<bool>(false);
+  static const _beneficiaryIdKey = 'beneficiaryId';
 
   @override
   void dispose() {
@@ -169,7 +170,10 @@ class _RecordReferralDetailsPageState
                                                   form.control(_cycleKey).value;
                                               final nameOfChild = form
                                                   .control(_nameOfChildKey)
-                                                  .value as String;
+                                                  .value as String?;
+                                              final beneficiaryID = form
+                                                  .control(_beneficiaryIdKey)
+                                                  .value as String?;
                                               final referralCode = form
                                                   .control(_referralCodeKey)
                                                   .value as String?;
@@ -210,7 +214,10 @@ class _RecordReferralDetailsPageState
                                                         facilityId,
                                                     projectId:
                                                         context.projectId,
-                                                    name: nameOfChild.trim(),
+                                                    name: (nameOfChild ?? '')
+                                                        .trim(),
+                                                    beneficiaryId:
+                                                        beneficiaryID,
                                                     referralCode: referralCode,
                                                     symptom: symptom.key,
                                                     tenantId: envConfig
@@ -778,6 +785,20 @@ class _RecordReferralDetailsPageState
                                         },
                                       ),
                                       DigitTextFormField(
+                                        formControlName: _beneficiaryIdKey,
+                                        label: localizations.translate(
+                                          i18.referBeneficiary
+                                              .beneficiaryIdLabel,
+                                        ),
+                                        isRequired: true,
+                                        validationMessages: {
+                                          'required': (_) =>
+                                              localizations.translate(
+                                                i18.common.corecommonRequired,
+                                              ),
+                                        },
+                                      ),
+                                      DigitTextFormField(
                                         formControlName: _referralCodeKey,
                                         label: localizations.translate(
                                           i18.referBeneficiary
@@ -890,6 +911,18 @@ class _RecordReferralDetailsPageState
                   .first
                   .value
               : value.hfReferralModel?.name ?? '',
+        ),
+        disabled: referralState.mapOrNull(
+              create: (value) => value.viewOnly,
+            ) ??
+            false,
+        validators: [
+          Validators.required,
+        ],
+      ),
+      _beneficiaryIdKey: FormControl<String>(
+        value: referralState.mapOrNull(
+          create: (value) => value.hfReferralModel?.beneficiaryId,
         ),
         disabled: referralState.mapOrNull(
               create: (value) => value.viewOnly,
