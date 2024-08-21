@@ -38,7 +38,6 @@ class IndividualDetailsPage extends LocalizedStatefulWidget {
 class _IndividualDetailsPageState
     extends LocalizedState<IndividualDetailsPage> {
   static const _individualNameKey = 'individualName';
-  static const _individualLastNameKey = 'individualLastName';
   static const _dobKey = 'dob';
   static const _genderKey = 'gender';
   static const _mobileNumberKey = 'mobileNumber';
@@ -82,200 +81,196 @@ class _IndividualDetailsPageState
                 BackNavigationHelpHeaderWidget(),
               ]),
               footer: DigitCard(
-                  margin: const EdgeInsets.only(left: 0, right: 0, top: 10),
-                  child: DigitElevatedButton(
-                    onPressed: () async {
-                      if (form.control(_dobKey).value == null) {
-                        form.control(_dobKey).setErrors({'': true});
-                      }
-                      final userId = context.loggedInUserUuid;
-                      final projectId = context.projectId;
-                      form.markAllAsTouched();
-                      if (!form.valid) return;
-                      FocusManager.instance.primaryFocus?.unfocus();
+                margin: const EdgeInsets.only(left: 0, right: 0, top: 10),
+                child: DigitElevatedButton(
+                  onPressed: () async {
+                    if (form.control(_dobKey).value == null) {
+                      form.control(_dobKey).setErrors({'': true});
+                    }
+                    final userId = context.loggedInUserUuid;
+                    final projectId = context.projectId;
+                    form.markAllAsTouched();
+                    if (!form.valid) return;
+                    FocusManager.instance.primaryFocus?.unfocus();
 
-                      state.maybeWhen(
-                        orElse: () {
-                          return;
-                        },
-                        create: (
-                          addressModel,
-                          householdModel,
-                          individualModel,
-                          registrationDate,
-                          searchQuery,
-                          loading,
-                          isHeadOfHousehold,
-                        ) async {
-                          final individual = _getIndividualModel(
-                            context,
-                            form: form,
-                            oldIndividual: null,
-                          );
+                    state.maybeWhen(
+                      orElse: () {
+                        return;
+                      },
+                      create: (
+                        addressModel,
+                        householdModel,
+                        individualModel,
+                        registrationDate,
+                        searchQuery,
+                        loading,
+                        isHeadOfHousehold,
+                      ) async {
+                        final individual = _getIndividualModel(
+                          context,
+                          form: form,
+                          oldIndividual: null,
+                        );
 
-                          final locationBloc = context.read<LocationBloc>();
-                          final locationInitialState = locationBloc.state;
-                          final initialLat = locationInitialState.latitude;
-                          final initialLng = locationInitialState.longitude;
-                          final initialAccuracy = locationInitialState.accuracy;
-                          if (addressModel != null &&
-                              (addressModel.latitude == null ||
-                                  addressModel.longitude == null ||
-                                  addressModel.locationAccuracy == null)) {
-                            bloc.add(
-                              BeneficiaryRegistrationSaveAddressEvent(
-                                addressModel.copyWith(
-                                  latitude: initialLat ??
-                                      addressModel.locationAccuracy,
-                                  longitude: initialLng ??
-                                      addressModel.locationAccuracy,
-                                  locationAccuracy: initialAccuracy ??
-                                      addressModel.locationAccuracy,
-                                ),
-                              ),
-                            );
-                          }
-
-                          final boundary = context.boundary;
-
+                        final locationBloc = context.read<LocationBloc>();
+                        final locationInitialState = locationBloc.state;
+                        final initialLat = locationInitialState.latitude;
+                        final initialLng = locationInitialState.longitude;
+                        final initialAccuracy = locationInitialState.accuracy;
+                        if (addressModel != null &&
+                            (addressModel.latitude == null ||
+                                addressModel.longitude == null ||
+                                addressModel.locationAccuracy == null)) {
                           bloc.add(
-                            BeneficiaryRegistrationSaveIndividualDetailsEvent(
-                              model: individual,
-                              isHeadOfHousehold: widget.isHeadOfHousehold,
+                            BeneficiaryRegistrationSaveAddressEvent(
+                              addressModel.copyWith(
+                                latitude:
+                                    initialLat ?? addressModel.locationAccuracy,
+                                longitude:
+                                    initialLng ?? addressModel.locationAccuracy,
+                                locationAccuracy: initialAccuracy ??
+                                    addressModel.locationAccuracy,
+                              ),
                             ),
                           );
+                        }
 
-                          final submit = await DigitDialog.show<bool>(
-                            context,
-                            options: DigitDialogOptions(
-                              titleText: localizations.translate(
-                                i18.deliverIntervention.dialogTitle,
+                        final boundary = context.boundary;
+
+                        bloc.add(
+                          BeneficiaryRegistrationSaveIndividualDetailsEvent(
+                            model: individual,
+                            isHeadOfHousehold: widget.isHeadOfHousehold,
+                          ),
+                        );
+
+                        final submit = await DigitDialog.show<bool>(
+                          context,
+                          options: DigitDialogOptions(
+                            titleText: localizations.translate(
+                              i18.deliverIntervention.dialogTitle,
+                            ),
+                            contentText: localizations.translate(
+                              i18.deliverIntervention.dialogContent,
+                            ),
+                            primaryAction: DigitDialogActions(
+                              label: localizations.translate(
+                                i18.common.coreCommonSubmit,
                               ),
-                              contentText: localizations.translate(
-                                i18.deliverIntervention.dialogContent,
-                              ),
-                              primaryAction: DigitDialogActions(
-                                label: localizations.translate(
-                                  i18.common.coreCommonSubmit,
-                                ),
-                                action: (context) {
-                                  Navigator.of(
-                                    context,
-                                    rootNavigator: true,
-                                  ).pop(true);
-                                },
-                              ),
-                              secondaryAction: DigitDialogActions(
-                                label: localizations.translate(
-                                  i18.common.coreCommonCancel,
-                                ),
-                                action: (context) => Navigator.of(
+                              action: (context) {
+                                Navigator.of(
                                   context,
                                   rootNavigator: true,
-                                ).pop(false),
-                              ),
+                                ).pop(true);
+                              },
                             ),
-                          );
-
-                          if (submit ?? false) {
-                            bloc.add(
-                              BeneficiaryRegistrationCreateEvent(
-                                projectId: projectId,
-                                userUuid: userId,
-                                boundary: boundary,
+                            secondaryAction: DigitDialogActions(
+                              label: localizations.translate(
+                                i18.common.coreCommonCancel,
                               ),
-                            );
-                          }
-                        },
-                        editIndividual: (
-                          householdModel,
-                          individualModel,
-                          addressModel,
-                          loading,
-                        ) {
-                          final individual = _getIndividualModel(
-                            context,
-                            form: form,
-                            oldIndividual: individualModel,
-                          );
-
-                          bloc.add(
-                            BeneficiaryRegistrationUpdateIndividualDetailsEvent(
-                              addressModel: addressModel,
-                              model: individual.copyWith(
-                                clientAuditDetails: (individual
-                                                .clientAuditDetails
-                                                ?.createdBy !=
-                                            null &&
-                                        individual.clientAuditDetails
-                                                ?.createdTime !=
-                                            null)
-                                    ? ClientAuditDetails(
-                                        createdBy: individual
-                                            .clientAuditDetails!.createdBy,
-                                        createdTime: individual
-                                            .clientAuditDetails!.createdTime,
-                                        lastModifiedBy:
-                                            context.loggedInUserUuid,
-                                        lastModifiedTime:
-                                            context.millisecondsSinceEpoch(),
-                                      )
-                                    : null,
-                                auditDetails: (individual
-                                                .auditDetails?.createdBy !=
-                                            null &&
-                                        individual.auditDetails?.createdTime !=
-                                            null)
-                                    ? AuditDetails(
-                                        createdBy:
-                                            individual.auditDetails!.createdBy,
-                                        createdTime: individual
-                                            .auditDetails!.createdTime,
-                                        lastModifiedBy:
-                                            context.loggedInUserUuid,
-                                        lastModifiedTime:
-                                            context.millisecondsSinceEpoch(),
-                                      )
-                                    : null,
-                              ),
+                              action: (context) => Navigator.of(
+                                context,
+                                rootNavigator: true,
+                              ).pop(false),
                             ),
-                          );
-                        },
-                        addMember: (
-                          addressModel,
-                          householdModel,
-                          loading,
-                        ) {
-                          final individual = _getIndividualModel(
-                            context,
-                            form: form,
-                          );
+                          ),
+                        );
 
+                        if (submit ?? false) {
                           bloc.add(
-                            BeneficiaryRegistrationAddMemberEvent(
-                              beneficiaryType: context.beneficiaryType,
-                              householdModel: householdModel,
-                              individualModel: individual,
-                              addressModel: addressModel,
+                            BeneficiaryRegistrationCreateEvent(
+                              projectId: projectId,
                               userUuid: userId,
-                              projectId: context.projectId,
+                              boundary: boundary,
                             ),
                           );
-                        },
-                      );
-                    },
-                    child: Center(
-                      child: Text(
-                        state.mapOrNull(
-                              editIndividual: (value) => localizations
-                                  .translate(i18.common.coreCommonSave),
-                            ) ??
-                            localizations
-                                .translate(i18.common.coreCommonSubmit),
-                      ),
+                        }
+                      },
+                      editIndividual: (
+                        householdModel,
+                        individualModel,
+                        addressModel,
+                        loading,
+                      ) {
+                        final individual = _getIndividualModel(
+                          context,
+                          form: form,
+                          oldIndividual: individualModel,
+                        );
+
+                        bloc.add(
+                          BeneficiaryRegistrationUpdateIndividualDetailsEvent(
+                            addressModel: addressModel,
+                            model: individual.copyWith(
+                              clientAuditDetails: (individual
+                                              .clientAuditDetails?.createdBy !=
+                                          null &&
+                                      individual.clientAuditDetails
+                                              ?.createdTime !=
+                                          null)
+                                  ? ClientAuditDetails(
+                                      createdBy: individual
+                                          .clientAuditDetails!.createdBy,
+                                      createdTime: individual
+                                          .clientAuditDetails!.createdTime,
+                                      lastModifiedBy: context.loggedInUserUuid,
+                                      lastModifiedTime:
+                                          context.millisecondsSinceEpoch(),
+                                    )
+                                  : null,
+                              auditDetails: (individual
+                                              .auditDetails?.createdBy !=
+                                          null &&
+                                      individual.auditDetails?.createdTime !=
+                                          null)
+                                  ? AuditDetails(
+                                      createdBy:
+                                          individual.auditDetails!.createdBy,
+                                      createdTime:
+                                          individual.auditDetails!.createdTime,
+                                      lastModifiedBy: context.loggedInUserUuid,
+                                      lastModifiedTime:
+                                          context.millisecondsSinceEpoch(),
+                                    )
+                                  : null,
+                            ),
+                          ),
+                        );
+                      },
+                      addMember: (
+                        addressModel,
+                        householdModel,
+                        loading,
+                      ) {
+                        final individual = _getIndividualModel(
+                          context,
+                          form: form,
+                        );
+
+                        bloc.add(
+                          BeneficiaryRegistrationAddMemberEvent(
+                            beneficiaryType: context.beneficiaryType,
+                            householdModel: householdModel,
+                            individualModel: individual,
+                            addressModel: addressModel,
+                            userUuid: userId,
+                            projectId: context.projectId,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  child: Center(
+                    child: Text(
+                      state.mapOrNull(
+                            editIndividual: (value) => localizations
+                                .translate(i18.common.coreCommonSave),
+                          ) ??
+                          localizations.translate(i18.common.coreCommonSubmit),
                     ),
                   ),
                 ),
+              ),
               children: [
                 DigitCard(
                   child: Column(
@@ -320,32 +315,33 @@ class _IndividualDetailsPageState
                                   ),
                             },
                           ),
-                          DigitTextFormField(
-                            formControlName: _individualLastNameKey,
-                            label: localizations.translate(
-                              widget.isHeadOfHousehold
-                                  ? i18.individualDetails.lastNameHeadLabelText
-                                  : i18
-                                      .individualDetails.childLastNameLabelText,
-                            ),
-                            maxLength: 200,
-                            isRequired: true,
-                            validationMessages: {
-                              'required': (object) => localizations.translate(
-                                    i18.individualDetails
-                                        .lastNameIsRequiredError,
-                                  ),
-                              'minLength': (object) => localizations.translate(
-                                    i18.individualDetails.lastNameLengthError,
-                                  ),
-                              'maxLength': (object) => localizations.translate(
-                                    i18.individualDetails.lastNameLengthError,
-                                  ),
-                              "min3": (object) => localizations.translate(
-                                    i18.common.min3CharsRequired,
-                                  ),
-                            },
-                          ),
+                          // solution customisation
+                          // DigitTextFormField(
+                          //   formControlName: _individualLastNameKey,
+                          //   label: localizations.translate(
+                          //     widget.isHeadOfHousehold
+                          //         ? i18.individualDetails.lastNameHeadLabelText
+                          //         : i18
+                          //             .individualDetails.childLastNameLabelText,
+                          //   ),
+                          //   maxLength: 200,
+                          //   isRequired: true,
+                          //   validationMessages: {
+                          //     'required': (object) => localizations.translate(
+                          //           i18.individualDetails
+                          //               .lastNameIsRequiredError,
+                          //         ),
+                          //     'minLength': (object) => localizations.translate(
+                          //           i18.individualDetails.lastNameLengthError,
+                          //         ),
+                          //     'maxLength': (object) => localizations.translate(
+                          //           i18.individualDetails.lastNameLengthError,
+                          //         ),
+                          //     "min3": (object) => localizations.translate(
+                          //           i18.common.min3CharsRequired,
+                          //         ),
+                          //   },
+                          // ),
                           Offstage(
                             offstage: !widget.isHeadOfHousehold,
                             child: DigitCheckbox(
@@ -434,7 +430,7 @@ class _IndividualDetailsPageState
                               label: localizations.translate(
                                 i18.individualDetails.mobileNumberLabelText,
                               ),
-                              maxLength: 9,
+                              maxLength: 10,
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(
                                   RegExp("[0-9]"),
@@ -532,12 +528,11 @@ class _IndividualDetailsPageState
         lastModifiedTime: context.millisecondsSinceEpoch(),
       ),
     );
+    String? individualName = form.control(_individualNameKey).value as String?;
 
     individual = individual.copyWith(
       name: name.copyWith(
-        givenName: form.control(_individualNameKey).value,
-        familyName:
-            (form.control(_individualLastNameKey).value as String).trim(),
+        givenName: individualName?.trim(),
       ),
       gender: form.control(_genderKey).value == null
           ? null
@@ -577,14 +572,6 @@ class _IndividualDetailsPageState
           Validators.maxLength(validation.individual.nameMaxLength),
         ],
         value: individual?.name?.givenName ?? searchQuery?.trim(),
-      ),
-      _individualLastNameKey: FormControl<String>(
-        validators: [
-          Validators.required,
-          CustomValidator.requiredMin3,
-          Validators.maxLength(validation.individual.nameMaxLength),
-        ],
-        value: individual?.name?.familyName ?? '',
       ),
       _dobKey: FormControl<DateTime>(
         value: individual?.dateOfBirth != null
