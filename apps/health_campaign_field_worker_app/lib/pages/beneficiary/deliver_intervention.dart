@@ -804,7 +804,7 @@ class _DeliverInterventionPageState
           if (beneficiaryId != null && beneficiaryId.trim().isNotEmpty)
             AdditionalField(
               AdditionalFieldsType.beneficiaryId.toValue(),
-              latitude,
+              beneficiaryId,
             ),
           if (latitude != null)
             AdditionalField(
