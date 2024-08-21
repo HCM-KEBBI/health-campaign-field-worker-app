@@ -62,9 +62,11 @@ class _ReferralFacilityPageState extends LocalizedState<ReferralFacilityPage> {
                 .where((e) => e.id != 'N/A' && e.id != 'Delivery Team')
                 .toList();
 
-            projectFacility = projectFacilities.firstWhereOrNull((element) =>
-                ctx.loggedInUser.permanentCity ==
-                facilityMap[element.facilityId]);
+            projectFacility = projectFacilities.length >= 2
+                ? projectFacilities.firstWhereOrNull((element) =>
+                    ctx.loggedInUser.permanentCity ==
+                    facilityMap[element.facilityId])
+                : projectFacilities.firstOrNull;
 
             return Scaffold(
               body: BlocBuilder<RecordHFReferralBloc, RecordHFReferralState>(
