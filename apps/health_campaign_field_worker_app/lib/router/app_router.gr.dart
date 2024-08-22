@@ -384,6 +384,18 @@ class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    EligibilityChecklistViewRoute.name: (routeData) {
+      final args = routeData.argsAs<EligibilityChecklistViewRouteArgs>(
+          orElse: () => const EligibilityChecklistViewRouteArgs());
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: EligibilityChecklistViewPage(
+          key: args.key,
+          referralClientRefId: args.referralClientRefId,
+          appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
     SideEffectsRoute.name: (routeData) {
       final args = routeData.argsAs<SideEffectsRouteArgs>();
       return MaterialPageX<List<TaskModel>>(
@@ -806,6 +818,11 @@ class _$AppRouter extends RootStackRouter {
                 RouteConfig(
                   DeliverInterventionRoute.name,
                   path: 'deliver-intervention',
+                  parent: BeneficiaryWrapperRoute.name,
+                ),
+                RouteConfig(
+                  EligibilityChecklistViewRoute.name,
+                  path: 'eligibility-checklist',
                   parent: BeneficiaryWrapperRoute.name,
                 ),
                 RouteConfig(
@@ -2242,6 +2259,46 @@ class DeliverInterventionRouteArgs {
   @override
   String toString() {
     return 'DeliverInterventionRouteArgs{key: $key, appLocalizations: $appLocalizations, isEditing: $isEditing}';
+  }
+}
+
+/// generated route for
+/// [EligibilityChecklistViewPage]
+class EligibilityChecklistViewRoute
+    extends PageRouteInfo<EligibilityChecklistViewRouteArgs> {
+  EligibilityChecklistViewRoute({
+    Key? key,
+    String? referralClientRefId,
+    AppLocalizations? appLocalizations,
+  }) : super(
+          EligibilityChecklistViewRoute.name,
+          path: 'eligibility-checklist',
+          args: EligibilityChecklistViewRouteArgs(
+            key: key,
+            referralClientRefId: referralClientRefId,
+            appLocalizations: appLocalizations,
+          ),
+        );
+
+  static const String name = 'EligibilityChecklistViewRoute';
+}
+
+class EligibilityChecklistViewRouteArgs {
+  const EligibilityChecklistViewRouteArgs({
+    this.key,
+    this.referralClientRefId,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final String? referralClientRefId;
+
+  final AppLocalizations? appLocalizations;
+
+  @override
+  String toString() {
+    return 'EligibilityChecklistViewRouteArgs{key: $key, referralClientRefId: $referralClientRefId, appLocalizations: $appLocalizations}';
   }
 }
 

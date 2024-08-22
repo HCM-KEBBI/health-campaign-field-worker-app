@@ -174,7 +174,8 @@ class _HouseHoldConsentPageState extends LocalizedState<HouseHoldConsentPage> {
                         ),
                         isRequired: true,
                         errorMessage: localizations.translate(
-                            i18.householdDetails.validationForSelection),
+                          i18.householdDetails.validationForSelection,
+                        ),
                         formControlName: _consent,
                         options: [
                           KeyValue(i18.householdDetails.submitYes, 1),
