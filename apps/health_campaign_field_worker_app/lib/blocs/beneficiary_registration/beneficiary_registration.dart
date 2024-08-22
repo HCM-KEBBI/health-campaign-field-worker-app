@@ -44,6 +44,7 @@ class BeneficiaryRegistrationBloc
     on(_handleUpdateHousehold);
     on(_handleUpdateIndividual);
     on(_handleAddMember);
+    on(_handleSaveHouseholdConsent);
   }
 
   //_handleSaveAddress event can be used for saving address details to the form
@@ -60,6 +61,32 @@ class BeneficiaryRegistrationBloc
       },
       create: (value) {
         emit(value.copyWith(addressModel: event.model));
+      },
+    );
+  }
+
+  FutureOr<void> _handleSaveHouseholdConsent(
+    BeneficiaryRegistrationSaveHouseholdConsentEvent event,
+    BeneficiaryRegistrationEmitter emit,
+  ) async {
+    final household = event.household;
+    await state.maybeMap(
+      orElse: () {
+        throw const InvalidRegistrationStateException();
+      },
+      editHousehold: (value) {
+        emit(value.copyWith(
+          householdModel: event.household,
+        ));
+      },
+      create: (value) async {
+        await householdRepository.create(
+          household,
+        );
+
+        emit(value.copyWith(
+          householdModel: event.household,
+        ));
       },
     );
   }
@@ -454,6 +481,11 @@ class BeneficiaryRegistrationEvent with _$BeneficiaryRegistrationEvent {
   const factory BeneficiaryRegistrationEvent.saveAddress(
     AddressModel model,
   ) = BeneficiaryRegistrationSaveAddressEvent;
+
+  const factory BeneficiaryRegistrationEvent.saveHouseholdConsent({
+    required HouseholdModel household,
+    required bool isConsent,
+  }) = BeneficiaryRegistrationSaveHouseholdConsentEvent;
 
   const factory BeneficiaryRegistrationEvent.saveHouseholdDetails({
     required HouseholdModel household,

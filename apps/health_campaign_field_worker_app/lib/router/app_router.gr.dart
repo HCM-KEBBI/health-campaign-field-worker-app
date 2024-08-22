@@ -316,6 +316,17 @@ class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    HouseHoldConsentRoute.name: (routeData) {
+      final args = routeData.argsAs<HouseHoldConsentRouteArgs>(
+          orElse: () => const HouseHoldConsentRouteArgs());
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: HouseHoldConsentPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
     HouseholdLocationRoute.name: (routeData) {
       final args = routeData.argsAs<HouseholdLocationRouteArgs>(
           orElse: () => const HouseholdLocationRouteArgs());
@@ -324,6 +335,18 @@ class _$AppRouter extends RootStackRouter {
         child: HouseholdLocationPage(
           key: args.key,
           appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
+    ConsentHouseholdAcknowledgementRoute.name: (routeData) {
+      final args = routeData.argsAs<ConsentHouseholdAcknowledgementRouteArgs>(
+          orElse: () => const ConsentHouseholdAcknowledgementRouteArgs());
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: ConsentHouseholdAcknowledgementPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+          enableViewHousehold: args.enableViewHousehold,
         ),
       );
     },
@@ -742,8 +765,18 @@ class _$AppRouter extends RootStackRouter {
                   parent: BeneficiaryRegistrationWrapperRoute.name,
                 ),
                 RouteConfig(
+                  HouseHoldConsentRoute.name,
+                  path: 'household-consent',
+                  parent: BeneficiaryRegistrationWrapperRoute.name,
+                ),
+                RouteConfig(
                   HouseholdLocationRoute.name,
                   path: 'household-location',
+                  parent: BeneficiaryRegistrationWrapperRoute.name,
+                ),
+                RouteConfig(
+                  ConsentHouseholdAcknowledgementRoute.name,
+                  path: 'consent-household-acknowledgement',
                   parent: BeneficiaryRegistrationWrapperRoute.name,
                 ),
               ],
@@ -1996,6 +2029,40 @@ class HouseHoldDetailsRouteArgs {
 }
 
 /// generated route for
+/// [HouseHoldConsentPage]
+class HouseHoldConsentRoute extends PageRouteInfo<HouseHoldConsentRouteArgs> {
+  HouseHoldConsentRoute({
+    Key? key,
+    AppLocalizations? appLocalizations,
+  }) : super(
+          HouseHoldConsentRoute.name,
+          path: 'household-consent',
+          args: HouseHoldConsentRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+          ),
+        );
+
+  static const String name = 'HouseHoldConsentRoute';
+}
+
+class HouseHoldConsentRouteArgs {
+  const HouseHoldConsentRouteArgs({
+    this.key,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final AppLocalizations? appLocalizations;
+
+  @override
+  String toString() {
+    return 'HouseHoldConsentRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
 /// [HouseholdLocationPage]
 class HouseholdLocationRoute extends PageRouteInfo<HouseholdLocationRouteArgs> {
   HouseholdLocationRoute({
@@ -2026,6 +2093,46 @@ class HouseholdLocationRouteArgs {
   @override
   String toString() {
     return 'HouseholdLocationRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
+/// [ConsentHouseholdAcknowledgementPage]
+class ConsentHouseholdAcknowledgementRoute
+    extends PageRouteInfo<ConsentHouseholdAcknowledgementRouteArgs> {
+  ConsentHouseholdAcknowledgementRoute({
+    Key? key,
+    AppLocalizations? appLocalizations,
+    bool? enableViewHousehold,
+  }) : super(
+          ConsentHouseholdAcknowledgementRoute.name,
+          path: 'consent-household-acknowledgement',
+          args: ConsentHouseholdAcknowledgementRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+            enableViewHousehold: enableViewHousehold,
+          ),
+        );
+
+  static const String name = 'ConsentHouseholdAcknowledgementRoute';
+}
+
+class ConsentHouseholdAcknowledgementRouteArgs {
+  const ConsentHouseholdAcknowledgementRouteArgs({
+    this.key,
+    this.appLocalizations,
+    this.enableViewHousehold,
+  });
+
+  final Key? key;
+
+  final AppLocalizations? appLocalizations;
+
+  final bool? enableViewHousehold;
+
+  @override
+  String toString() {
+    return 'ConsentHouseholdAcknowledgementRouteArgs{key: $key, appLocalizations: $appLocalizations, enableViewHousehold: $enableViewHousehold}';
   }
 }
 

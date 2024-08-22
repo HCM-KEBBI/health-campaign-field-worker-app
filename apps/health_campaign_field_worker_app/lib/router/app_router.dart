@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:health_campaign_field_worker_app/pages/beneficiary/widgets/consent_household_acknowledgement.dart';
 
 import '../blocs/beneficiary_registration/beneficiary_registration.dart';
 import '../blocs/inventory_report/inventory_report.dart';
@@ -42,6 +43,7 @@ import '../pages/complaints/registration/complaints_details.dart';
 import '../pages/complaints/registration/complaints_location.dart';
 import '../pages/complaints/registration/complaints_registration_wrapper.dart';
 import '../pages/complaints_acknowledgement.dart';
+import '../pages/consent/household_consent.dart';
 import '../pages/health_field_worker/create_referral/create_hf_referral_wrapper.dart';
 import '../pages/health_field_worker/create_referral/reason_checklist_preview.dart';
 import '../pages/health_field_worker/create_referral/record_facility_details.dart';
@@ -102,10 +104,15 @@ part 'app_router.gr.dart';
           children: [
             AutoRoute(page: IndividualDetailsPage, path: 'individual-details'),
             AutoRoute(page: HouseHoldDetailsPage, path: 'household-details'),
+            AutoRoute(page: HouseHoldConsentPage, path: 'household-consent'),
             AutoRoute(
               page: HouseholdLocationPage,
               path: 'household-location',
               initial: true,
+            ),
+            AutoRoute(
+              page: ConsentHouseholdAcknowledgementPage,
+              path: 'consent-household-acknowledgement',
             ),
           ],
         ),
