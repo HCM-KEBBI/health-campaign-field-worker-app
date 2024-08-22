@@ -192,6 +192,8 @@ class Checklist {
 
   String get checklistDialogDescription => 'CHECKLIST_DIALOG_DESCRITPTION';
 
+  String get checklistDialogDynamicDescription =>
+      'CHECKLIST_DIALOG_DYNAMIC_DESCRIPTION';
   String get checklistDialogPrimaryAction => 'CHECKLIST_DIALOG_PRIMARY_ACTION';
 
   String get checklistDialogSecondaryAction =>

@@ -237,9 +237,34 @@ class MemberCard extends StatelessWidget {
                                       ),
                                     ),
                                     onPressed: () async {
-                                      context.router.push(
-                                        EligibilityChecklistViewRoute(),
-                                      );
+                                      final bloc =
+                                          context.read<HouseholdOverviewBloc>();
+                                      Future.delayed(
+                                        const Duration(milliseconds: 200),
+                                        () {
+                                          bloc.add(
+                                            HouseholdOverviewReloadEvent(
+                                              projectId: context.projectId,
+                                              projectBeneficiaryType:
+                                                  beneficiaryType,
+                                            ),
+                                          );
+                                          bloc.add(
+                                            HouseholdOverviewEvent
+                                                .selectedIndividual(
+                                              individualModel: individual,
+                                            ),
+                                          );
+                                        },
+                                      ).then((value) => {
+                                            context.router.push(
+                                              EligibilityChecklistViewRoute(
+                                                projectBeneficiaryClientReferenceId:
+                                                    projectBeneficiaryClientReferenceId,
+                                                individual: individual,
+                                              ),
+                                            ),
+                                          });
                                     },
                                   )
                                 //       ),, onPressed: onPressed)

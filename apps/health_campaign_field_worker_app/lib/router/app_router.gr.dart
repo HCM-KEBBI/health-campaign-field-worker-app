@@ -392,6 +392,9 @@ class _$AppRouter extends RootStackRouter {
         child: EligibilityChecklistViewPage(
           key: args.key,
           referralClientRefId: args.referralClientRefId,
+          individual: args.individual,
+          projectBeneficiaryClientReferenceId:
+              args.projectBeneficiaryClientReferenceId,
           appLocalizations: args.appLocalizations,
         ),
       );
@@ -2269,6 +2272,8 @@ class EligibilityChecklistViewRoute
   EligibilityChecklistViewRoute({
     Key? key,
     String? referralClientRefId,
+    IndividualModel? individual,
+    String? projectBeneficiaryClientReferenceId,
     AppLocalizations? appLocalizations,
   }) : super(
           EligibilityChecklistViewRoute.name,
@@ -2276,6 +2281,9 @@ class EligibilityChecklistViewRoute
           args: EligibilityChecklistViewRouteArgs(
             key: key,
             referralClientRefId: referralClientRefId,
+            individual: individual,
+            projectBeneficiaryClientReferenceId:
+                projectBeneficiaryClientReferenceId,
             appLocalizations: appLocalizations,
           ),
         );
@@ -2287,6 +2295,8 @@ class EligibilityChecklistViewRouteArgs {
   const EligibilityChecklistViewRouteArgs({
     this.key,
     this.referralClientRefId,
+    this.individual,
+    this.projectBeneficiaryClientReferenceId,
     this.appLocalizations,
   });
 
@@ -2294,11 +2304,15 @@ class EligibilityChecklistViewRouteArgs {
 
   final String? referralClientRefId;
 
+  final IndividualModel? individual;
+
+  final String? projectBeneficiaryClientReferenceId;
+
   final AppLocalizations? appLocalizations;
 
   @override
   String toString() {
-    return 'EligibilityChecklistViewRouteArgs{key: $key, referralClientRefId: $referralClientRefId, appLocalizations: $appLocalizations}';
+    return 'EligibilityChecklistViewRouteArgs{key: $key, referralClientRefId: $referralClientRefId, individual: $individual, projectBeneficiaryClientReferenceId: $projectBeneficiaryClientReferenceId, appLocalizations: $appLocalizations}';
   }
 }
 
