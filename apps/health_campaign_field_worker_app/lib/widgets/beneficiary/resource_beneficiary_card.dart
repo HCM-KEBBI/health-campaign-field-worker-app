@@ -37,7 +37,7 @@ class ResourceBeneficiaryCard extends LocalizedStatefulWidget {
 class _ResourceBeneficiaryCardState
     extends LocalizedState<ResourceBeneficiaryCard> {
   bool doseAdministered = false;
-  static const _deliveryCommentKey = 'deliveryComment';
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -79,28 +79,6 @@ class _ResourceBeneficiaryCardState
                 },
               );
             },
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: DigitCheckbox(
-              label: localizations.translate(
-                i18.deliverIntervention.deliverInteventionAdministeredLabel,
-              ),
-              value: doseAdministered,
-              onChanged: (value) {
-                setState(() {
-                  doseAdministered = value!;
-                  widget.checkDoseAdministration(value);
-                  if (!value) {
-                    widget.form
-                        .control(
-                          _deliveryCommentKey,
-                        )
-                        .value = null;
-                  }
-                });
-              },
-            ),
           ),
           DigitTextFormField(
             formControlName: 'quantityWasted.${widget.cardIndex}',
