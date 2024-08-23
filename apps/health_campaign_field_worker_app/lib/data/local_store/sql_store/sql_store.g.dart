@@ -6865,8 +6865,7 @@ class $IdentifierTable extends Identifier
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey =>
-      {auditCreatedBy, clientReferenceId, identifierType};
+  Set<GeneratedColumn> get $primaryKey => {auditCreatedBy, clientReferenceId};
   @override
   IdentifierData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';

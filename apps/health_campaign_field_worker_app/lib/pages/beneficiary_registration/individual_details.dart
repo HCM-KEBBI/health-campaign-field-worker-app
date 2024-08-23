@@ -9,7 +9,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
-import '../../../utils/validations.dart' as validation;
 import '../../blocs/app_initialization/app_initialization.dart';
 import '../../blocs/beneficiary_registration/beneficiary_registration.dart';
 import '../../blocs/search_households/search_households.dart';
@@ -21,6 +20,7 @@ import '../../utils/i18_key_constants.dart' as i18;
 import '../../utils/utils.dart';
 import '../../widgets/header/back_navigation_help_header.dart';
 import '../../widgets/localized.dart';
+import '../../../utils/validations.dart' as validation;
 
 class IndividualDetailsPage extends LocalizedStatefulWidget {
   final bool isHeadOfHousehold;
@@ -82,196 +82,200 @@ class _IndividualDetailsPageState
                 BackNavigationHelpHeaderWidget(),
               ]),
               footer: DigitCard(
-                margin: const EdgeInsets.only(left: 0, right: 0, top: 10),
-                child: DigitElevatedButton(
-                  onPressed: () async {
-                    if (form.control(_dobKey).value == null) {
-                      form.control(_dobKey).setErrors({'': true});
-                    }
-                    final userId = context.loggedInUserUuid;
-                    final projectId = context.projectId;
-                    form.markAllAsTouched();
-                    if (!form.valid) return;
-                    FocusManager.instance.primaryFocus?.unfocus();
+                  margin: const EdgeInsets.only(left: 0, right: 0, top: 10),
+                  child: DigitElevatedButton(
+                    onPressed: () async {
+                      if (form.control(_dobKey).value == null) {
+                        form.control(_dobKey).setErrors({'': true});
+                      }
+                      final userId = context.loggedInUserUuid;
+                      final projectId = context.projectId;
+                      form.markAllAsTouched();
+                      if (!form.valid) return;
+                      FocusManager.instance.primaryFocus?.unfocus();
 
-                    state.maybeWhen(
-                      orElse: () {
-                        return;
-                      },
-                      create: (
-                        addressModel,
-                        householdModel,
-                        individualModel,
-                        registrationDate,
-                        searchQuery,
-                        loading,
-                        isHeadOfHousehold,
-                      ) async {
-                        final individual = _getIndividualModel(
-                          context,
-                          form: form,
-                          oldIndividual: null,
-                        );
+                      state.maybeWhen(
+                        orElse: () {
+                          return;
+                        },
+                        create: (
+                          addressModel,
+                          householdModel,
+                          individualModel,
+                          registrationDate,
+                          searchQuery,
+                          loading,
+                          isHeadOfHousehold,
+                        ) async {
+                          final individual = _getIndividualModel(
+                            context,
+                            form: form,
+                            oldIndividual: null,
+                          );
 
-                        final locationBloc = context.read<LocationBloc>();
-                        final locationInitialState = locationBloc.state;
-                        final initialLat = locationInitialState.latitude;
-                        final initialLng = locationInitialState.longitude;
-                        final initialAccuracy = locationInitialState.accuracy;
-                        if (addressModel != null &&
-                            (addressModel.latitude == null ||
-                                addressModel.longitude == null ||
-                                addressModel.locationAccuracy == null)) {
-                          bloc.add(
-                            BeneficiaryRegistrationSaveAddressEvent(
-                              addressModel.copyWith(
-                                latitude:
-                                    initialLat ?? addressModel.locationAccuracy,
-                                longitude:
-                                    initialLng ?? addressModel.locationAccuracy,
-                                locationAccuracy: initialAccuracy ??
-                                    addressModel.locationAccuracy,
+                          final locationBloc = context.read<LocationBloc>();
+                          final locationInitialState = locationBloc.state;
+                          final initialLat = locationInitialState.latitude;
+                          final initialLng = locationInitialState.longitude;
+                          final initialAccuracy = locationInitialState.accuracy;
+                          if (addressModel != null &&
+                              (addressModel.latitude == null ||
+                                  addressModel.longitude == null ||
+                                  addressModel.locationAccuracy == null)) {
+                            bloc.add(
+                              BeneficiaryRegistrationSaveAddressEvent(
+                                addressModel.copyWith(
+                                  latitude: initialLat ??
+                                      addressModel.locationAccuracy,
+                                  longitude: initialLng ??
+                                      addressModel.locationAccuracy,
+                                  locationAccuracy: initialAccuracy ??
+                                      addressModel.locationAccuracy,
+                                ),
                               ),
+                            );
+                          }
+
+                          final boundary = context.boundary;
+
+                          bloc.add(
+                            BeneficiaryRegistrationSaveIndividualDetailsEvent(
+                              model: individual,
+                              isHeadOfHousehold: widget.isHeadOfHousehold,
                             ),
                           );
-                        }
 
-                        final boundary = context.boundary;
-
-                        bloc.add(
-                          BeneficiaryRegistrationSaveIndividualDetailsEvent(
-                            model: individual,
-                            isHeadOfHousehold: widget.isHeadOfHousehold,
-                          ),
-                        );
-
-                        final submit = await DigitDialog.show<bool>(
-                          context,
-                          options: DigitDialogOptions(
-                            titleText: localizations.translate(
-                              i18.deliverIntervention.dialogTitle,
-                            ),
-                            contentText: localizations.translate(
-                              i18.deliverIntervention.dialogContent,
-                            ),
-                            primaryAction: DigitDialogActions(
-                              label: localizations.translate(
-                                i18.common.coreCommonSubmit,
+                          final submit = await DigitDialog.show<bool>(
+                            context,
+                            options: DigitDialogOptions(
+                              titleText: localizations.translate(
+                                i18.deliverIntervention.dialogTitle,
                               ),
-                              action: (context) {
-                                Navigator.of(
+                              contentText: localizations.translate(
+                                i18.deliverIntervention.dialogContent,
+                              ),
+                              primaryAction: DigitDialogActions(
+                                label: localizations.translate(
+                                  i18.common.coreCommonSubmit,
+                                ),
+                                action: (context) {
+                                  Navigator.of(
+                                    context,
+                                    rootNavigator: true,
+                                  ).pop(true);
+                                },
+                              ),
+                              secondaryAction: DigitDialogActions(
+                                label: localizations.translate(
+                                  i18.common.coreCommonCancel,
+                                ),
+                                action: (context) => Navigator.of(
                                   context,
                                   rootNavigator: true,
-                                ).pop(true);
-                              },
-                            ),
-                            secondaryAction: DigitDialogActions(
-                              label: localizations.translate(
-                                i18.common.coreCommonCancel,
+                                ).pop(false),
                               ),
-                              action: (context) => Navigator.of(
-                                context,
-                                rootNavigator: true,
-                              ).pop(false),
-                            ),
-                          ),
-                        );
-
-                        if (submit ?? false) {
-                          bloc.add(
-                            BeneficiaryRegistrationCreateEvent(
-                              projectId: projectId,
-                              userUuid: userId,
-                              boundary: boundary,
                             ),
                           );
-                        }
-                      },
-                      editIndividual: (
-                        householdModel,
-                        individualModel,
-                        addressModel,
-                        loading,
-                      ) {
-                        final individual = _getIndividualModel(
-                          context,
-                          form: form,
-                          oldIndividual: individualModel,
-                        );
 
-                        bloc.add(
-                          BeneficiaryRegistrationUpdateIndividualDetailsEvent(
-                            addressModel: addressModel,
-                            model: individual.copyWith(
-                              clientAuditDetails: (individual
-                                              .clientAuditDetails?.createdBy !=
-                                          null &&
-                                      individual.clientAuditDetails
-                                              ?.createdTime !=
-                                          null)
-                                  ? ClientAuditDetails(
-                                      createdBy: individual
-                                          .clientAuditDetails!.createdBy,
-                                      createdTime: individual
-                                          .clientAuditDetails!.createdTime,
-                                      lastModifiedBy: context.loggedInUserUuid,
-                                      lastModifiedTime:
-                                          context.millisecondsSinceEpoch(),
-                                    )
-                                  : null,
-                              auditDetails: (individual
-                                              .auditDetails?.createdBy !=
-                                          null &&
-                                      individual.auditDetails?.createdTime !=
-                                          null)
-                                  ? AuditDetails(
-                                      createdBy:
-                                          individual.auditDetails!.createdBy,
-                                      createdTime:
-                                          individual.auditDetails!.createdTime,
-                                      lastModifiedBy: context.loggedInUserUuid,
-                                      lastModifiedTime:
-                                          context.millisecondsSinceEpoch(),
-                                    )
-                                  : null,
+                          if (submit ?? false) {
+                            bloc.add(
+                              BeneficiaryRegistrationCreateEvent(
+                                projectId: projectId,
+                                userUuid: userId,
+                                boundary: boundary,
+                              ),
+                            );
+                          }
+                        },
+                        editIndividual: (
+                          householdModel,
+                          individualModel,
+                          addressModel,
+                          loading,
+                        ) {
+                          final individual = _getIndividualModel(
+                            context,
+                            form: form,
+                            oldIndividual: individualModel,
+                          );
+
+                          bloc.add(
+                            BeneficiaryRegistrationUpdateIndividualDetailsEvent(
+                              addressModel: addressModel,
+                              model: individual.copyWith(
+                                clientAuditDetails: (individual
+                                                .clientAuditDetails
+                                                ?.createdBy !=
+                                            null &&
+                                        individual.clientAuditDetails
+                                                ?.createdTime !=
+                                            null)
+                                    ? ClientAuditDetails(
+                                        createdBy: individual
+                                            .clientAuditDetails!.createdBy,
+                                        createdTime: individual
+                                            .clientAuditDetails!.createdTime,
+                                        lastModifiedBy:
+                                            context.loggedInUserUuid,
+                                        lastModifiedTime:
+                                            context.millisecondsSinceEpoch(),
+                                      )
+                                    : null,
+                                auditDetails: (individual
+                                                .auditDetails?.createdBy !=
+                                            null &&
+                                        individual.auditDetails?.createdTime !=
+                                            null)
+                                    ? AuditDetails(
+                                        createdBy:
+                                            individual.auditDetails!.createdBy,
+                                        createdTime: individual
+                                            .auditDetails!.createdTime,
+                                        lastModifiedBy:
+                                            context.loggedInUserUuid,
+                                        lastModifiedTime:
+                                            context.millisecondsSinceEpoch(),
+                                      )
+                                    : null,
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                      addMember: (
-                        addressModel,
-                        householdModel,
-                        loading,
-                      ) {
-                        final individual = _getIndividualModel(
-                          context,
-                          form: form,
-                        );
+                          );
+                        },
+                        addMember: (
+                          addressModel,
+                          householdModel,
+                          loading,
+                        ) {
+                          final individual = _getIndividualModel(
+                            context,
+                            form: form,
+                          );
 
-                        bloc.add(
-                          BeneficiaryRegistrationAddMemberEvent(
-                            beneficiaryType: context.beneficiaryType,
-                            householdModel: householdModel,
-                            individualModel: individual,
-                            addressModel: addressModel,
-                            userUuid: userId,
-                            projectId: context.projectId,
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  child: Center(
-                    child: Text(
-                      state.mapOrNull(
-                            editIndividual: (value) => localizations
-                                .translate(i18.common.coreCommonSave),
-                          ) ??
-                          localizations.translate(i18.common.coreCommonSubmit),
+                          bloc.add(
+                            BeneficiaryRegistrationAddMemberEvent(
+                              beneficiaryType: context.beneficiaryType,
+                              householdModel: householdModel,
+                              individualModel: individual,
+                              addressModel: addressModel,
+                              userUuid: userId,
+                              projectId: context.projectId,
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: Center(
+                      child: Text(
+                        state.mapOrNull(
+                              editIndividual: (value) => localizations
+                                  .translate(i18.common.coreCommonSave),
+                            ) ??
+                            localizations
+                                .translate(i18.common.coreCommonSubmit),
+                      ),
                     ),
                   ),
                 ),
-              ),
               children: [
                 DigitCard(
                   child: Column(
@@ -543,7 +547,7 @@ class _IndividualDetailsPageState
       dateOfBirth: dobString,
       identifiers: [
         identifier.copyWith(
-          identifierId: context.loggedInUserUuid,
+          identifierId: 'DEFAULT',
           identifierType: 'DEFAULT',
         ),
       ],
