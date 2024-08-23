@@ -14,6 +14,7 @@ import '../pages/beneficiary/beneficiary_details.dart';
 import '../pages/beneficiary/beneficiary_wrapper.dart';
 import '../pages/beneficiary/deliver_intervention.dart';
 import '../pages/beneficiary/dose_administered.dart';
+import '../pages/beneficiary/dose_administered_verification.dart';
 import '../pages/beneficiary/household_overview.dart';
 import '../pages/beneficiary/ineligibility_reasons.dart';
 import '../pages/beneficiary/record_past_delivery_details.dart';
@@ -149,6 +150,10 @@ part 'app_router.gr.dart';
             AutoRoute(
               page: IneligibilityReasonsPage,
               path: 'ineligibility-reasons',
+            ),
+            AutoRoute(
+              page: DoseAdministeredVerificationPage,
+              path: 'dose-administered-verification',
             ),
             AutoRoute(
               page: DoseAdministeredPage,

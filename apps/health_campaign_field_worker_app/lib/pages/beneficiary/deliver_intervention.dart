@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/atoms/digit_stepper.dart';
@@ -42,11 +44,10 @@ class _DeliverInterventionPageState
   // Constants for form control keys
   static const _resourceDeliveredKey = 'resourceDelivered';
   static const _quantityDistributedKey = 'quantityDistributed';
-  static const _quantityWastedKey = 'quantityWasted';
   static const _doseAdministrationKey = 'doseAdministered';
   static const _dateOfAdministrationKey = 'dateOfAdministration';
-  static const _defaultQuantity = 1;
-  static const _administeredQuantity = 2;
+  static const _doseAdministeredByKey = 'doseAdministeredBy';
+
   // Variable to track dose administration status
   bool doseAdministered = false;
 
@@ -202,17 +203,28 @@ class _DeliverInterventionPageState
                                                         theme,
                                                       ),
                                                     );
+                                                  } else if ((((form.control(
+                                                            _quantityDistributedKey,
+                                                          ) as FormArray)
+                                                              .value) ??
+                                                          [])
+                                                      .any((e) => e == 0)) {
+                                                    await DigitToast.show(
+                                                      context,
+                                                      options:
+                                                          DigitToastOptions(
+                                                        localizations.translate(i18
+                                                            .deliverIntervention
+                                                            .resourceCannotBeZero),
+                                                        true,
+                                                        theme,
+                                                      ),
+                                                    );
                                                   } else {
                                                     final lat =
                                                         locationState.latitude;
                                                     final long =
                                                         locationState.longitude;
-
-                                                    String? wastedCount =
-                                                        (((form.control(_quantityWastedKey)
-                                                                    as FormArray)
-                                                                .value)?[0])
-                                                            .toString();
 
                                                     final shouldSubmit =
                                                         await DigitDialog.show<
@@ -222,32 +234,14 @@ class _DeliverInterventionPageState
                                                           DigitDialogOptions(
                                                         titleText: localizations
                                                             .translate(
-                                                          (doseAdministered &&
-                                                                  wastedCount
-                                                                      .isNotEmpty &&
-                                                                  wastedCount !=
-                                                                      'null')
-                                                              ? i18
-                                                                  .deliverIntervention
-                                                                  .wastedDialogTitle
-                                                              : i18
-                                                                  .deliverIntervention
-                                                                  .dialogTitle,
+                                                          i18.deliverIntervention
+                                                              .dialogTitle,
                                                         ),
                                                         contentText:
                                                             localizations
                                                                 .translate(
-                                                          (doseAdministered &&
-                                                                  wastedCount
-                                                                      .isNotEmpty &&
-                                                                  wastedCount !=
-                                                                      'null')
-                                                              ? i18
-                                                                  .deliverIntervention
-                                                                  .wastedDialogContent
-                                                              : i18
-                                                                  .deliverIntervention
-                                                                  .dialogContent,
+                                                          i18.deliverIntervention
+                                                              .dialogContent,
                                                         ),
                                                         primaryAction:
                                                             DigitDialogActions(
@@ -338,8 +332,8 @@ class _DeliverInterventionPageState
                                                                 true) {
                                                           context.router.push(
                                                             SplashAcknowledgementRoute(
-                                                              enableBackToSearch:
-                                                                  false,
+                                                              doseAdministrationVerification:
+                                                                  true,
                                                             ),
                                                           );
                                                         } else {
@@ -438,6 +432,17 @@ class _DeliverInterventionPageState
                                                         top: kPadding,
                                                       ),
                                                     ),
+                                                    DigitTextFormField(
+                                                      readOnly: true,
+                                                      formControlName:
+                                                          _doseAdministeredByKey,
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                      label: localizations
+                                                          .translate(i18
+                                                              .deliverIntervention
+                                                              .doseAdministeredBy),
+                                                    ),
                                                   ],
                                                 ),
                                               ),
@@ -463,14 +468,13 @@ class _DeliverInterventionPageState
                                                               cardIndex:
                                                                   _controllers
                                                                       .indexOf(
-                                                                          e),
+                                                                e,
+                                                              ),
                                                               totalItems:
                                                                   _controllers
                                                                       .length,
                                                               isAdministered:
                                                                   doseAdministered,
-                                                              checkDoseAdministration:
-                                                                  checkDoseAdministration,
                                                               onDelete:
                                                                   (index) {
                                                                 (form.control(
@@ -481,12 +485,6 @@ class _DeliverInterventionPageState
                                                                 );
                                                                 (form.control(
                                                                   _quantityDistributedKey,
-                                                                ) as FormArray)
-                                                                    .removeAt(
-                                                                  index,
-                                                                );
-                                                                (form.control(
-                                                                  _quantityWastedKey,
                                                                 ) as FormArray)
                                                                     .removeAt(
                                                                   index,
@@ -528,8 +526,6 @@ class _DeliverInterventionPageState
     (form.control(_resourceDeliveredKey) as FormArray)
         .add(FormControl<ProductVariantModel>());
     (form.control(_quantityDistributedKey) as FormArray)
-        .add(FormControl<String>(validators: [Validators.required]));
-    (form.control(_quantityWastedKey) as FormArray)
         .add(FormControl<String>(validators: [Validators.required]));
   }
 
@@ -581,9 +577,9 @@ class _DeliverInterventionPageState
                 taskId: task?.id,
                 tenantId: envConfig.variables.tenantId,
                 rowVersion: oldTask?.rowVersion ?? 1,
-                quantity: doseAdministered
-                    ? _administeredQuantity.toString()
-                    : _defaultQuantity.toString(),
+                quantity: (((form.control(_quantityDistributedKey) as FormArray)
+                        .value)?[productvariantList.indexOf(e)])
+                    .toString(),
                 clientAuditDetails: ClientAuditDetails(
                   createdBy: context.loggedInUserUuid,
                   createdTime: context.millisecondsSinceEpoch(),
@@ -592,15 +588,6 @@ class _DeliverInterventionPageState
                   createdBy: context.loggedInUserUuid,
                   createdTime: context.millisecondsSinceEpoch(),
                 ),
-                additionalFields:
-                    TaskResourceAdditionalFields(version: 1, fields: [
-                  AdditionalField(
-                    _quantityWastedKey,
-                    (((form.control(_quantityWastedKey) as FormArray)
-                            .value)?[productvariantList.indexOf(e)])
-                        .toString(),
-                  ),
-                ]),
               ))
           .toList(),
       address: address?.copyWith(
@@ -693,16 +680,22 @@ class _DeliverInterventionPageState
               )),
         ],
       ),
-      _quantityDistributedKey: FormArray<String>([
+      _quantityDistributedKey: FormArray<int>([
         ..._controllers.map(
-          (e) => FormControl<String>(validators: [Validators.required]),
+          (e) => FormControl<int>(
+            validators: [
+              Validators.required,
+              Validators.min(0),
+              Validators.max(1),
+            ],
+            value: 0,
+          ),
         ),
       ]),
-      _quantityWastedKey: FormArray<String>([
-        ..._controllers.map(
-          (e) => FormControl<String>(),
-        ),
-      ]),
+      _doseAdministeredByKey: FormControl<String>(
+        validators: [],
+        value: context.loggedInUser.userName,
+      ),
     });
   }
 }

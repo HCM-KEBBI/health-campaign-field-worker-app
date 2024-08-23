@@ -680,6 +680,13 @@ class DeliverIntervention {
       'DELIVER_INTERVENTION_PAST_DELIVERY_DETAILS';
   String get wasDosePastDeliveryDetails =>
       'DELIVER_INTERVENTION_PAST_DOSE_DELIVERY_DETAILS';
+  String get doseAdministeredBy => 'DELIVER_INTERVENTION_DOSE_ADMINISTERED_BY';
+  String get doseGivenCareGiver => 'DELIVER_INTERVENTION_DOSE_GIVEN_CARE_GIVER';
+  String get infoWrittenInChildCard =>
+      'DELIVER_INTERVENTION_DOSE_INFO_IN_CHILD_CARD_ADDED';
+  String get healthTalkGivenOnSPAQ =>
+      'DELIVER_INTERVENTION_DOSE_HEALTH_TALK_GIVEN_SPAQ';
+
   //[todo] need to change the 24
   String get wasDosePastRecordDeliveryDetails =>
       'DELIVER_INTERVENTION_PAST_RECORD_DOSE_DELIVERY_DETAILS';
