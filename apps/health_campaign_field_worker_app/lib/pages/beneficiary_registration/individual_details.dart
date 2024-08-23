@@ -38,6 +38,7 @@ class IndividualDetailsPage extends LocalizedStatefulWidget {
 class _IndividualDetailsPageState
     extends LocalizedState<IndividualDetailsPage> {
   static const _individualNameKey = 'individualName';
+  static const _individualLastNameKey = 'individualLastName';
   static const _dobKey = 'dob';
   static const _genderKey = 'gender';
   static const _mobileNumberKey = 'mobileNumber';
@@ -315,33 +316,32 @@ class _IndividualDetailsPageState
                                   ),
                             },
                           ),
-                          // solution customisation
-                          // DigitTextFormField(
-                          //   formControlName: _individualLastNameKey,
-                          //   label: localizations.translate(
-                          //     widget.isHeadOfHousehold
-                          //         ? i18.individualDetails.lastNameHeadLabelText
-                          //         : i18
-                          //             .individualDetails.childLastNameLabelText,
-                          //   ),
-                          //   maxLength: 200,
-                          //   isRequired: true,
-                          //   validationMessages: {
-                          //     'required': (object) => localizations.translate(
-                          //           i18.individualDetails
-                          //               .lastNameIsRequiredError,
-                          //         ),
-                          //     'minLength': (object) => localizations.translate(
-                          //           i18.individualDetails.lastNameLengthError,
-                          //         ),
-                          //     'maxLength': (object) => localizations.translate(
-                          //           i18.individualDetails.lastNameLengthError,
-                          //         ),
-                          //     "min3": (object) => localizations.translate(
-                          //           i18.common.min3CharsRequired,
-                          //         ),
-                          //   },
-                          // ),
+                          DigitTextFormField(
+                            formControlName: _individualLastNameKey,
+                            label: localizations.translate(
+                              widget.isHeadOfHousehold
+                                  ? i18.individualDetails.lastNameHeadLabelText
+                                  : i18
+                                      .individualDetails.childLastNameLabelText,
+                            ),
+                            maxLength: 200,
+                            isRequired: true,
+                            validationMessages: {
+                              'required': (object) => localizations.translate(
+                                    i18.individualDetails
+                                        .lastNameIsRequiredError,
+                                  ),
+                              'minLength': (object) => localizations.translate(
+                                    i18.individualDetails.lastNameLengthError,
+                                  ),
+                              'maxLength': (object) => localizations.translate(
+                                    i18.individualDetails.lastNameLengthError,
+                                  ),
+                              "min3": (object) => localizations.translate(
+                                    i18.common.min3CharsRequired,
+                                  ),
+                            },
+                          ),
                           Offstage(
                             offstage: !widget.isHeadOfHousehold,
                             child: DigitCheckbox(
@@ -528,11 +528,13 @@ class _IndividualDetailsPageState
         lastModifiedTime: context.millisecondsSinceEpoch(),
       ),
     );
-    String? individualName = form.control(_individualNameKey).value as String?;
+    // String? individualName = form.control(_individualNameKey).value as String?;
 
     individual = individual.copyWith(
       name: name.copyWith(
-        givenName: individualName?.trim(),
+        givenName: form.control(_individualNameKey).value,
+        familyName:
+            (form.control(_individualLastNameKey).value as String).trim(),
       ),
       gender: form.control(_genderKey).value == null
           ? null
@@ -572,6 +574,14 @@ class _IndividualDetailsPageState
           Validators.maxLength(validation.individual.nameMaxLength),
         ],
         value: individual?.name?.givenName ?? searchQuery?.trim(),
+      ),
+      _individualLastNameKey: FormControl<String>(
+        validators: [
+          Validators.required,
+          CustomValidator.requiredMin3,
+          Validators.maxLength(validation.individual.nameMaxLength),
+        ],
+        value: individual?.name?.familyName ?? '',
       ),
       _dobKey: FormControl<DateTime>(
         value: individual?.dateOfBirth != null
