@@ -443,10 +443,12 @@ class _HomePageState extends LocalizedState<HomePage> {
     ];
 
     final List<String> filteredLabels = homeItemsLabel
-        .where((element) => state.actionsWrapper.actions
-            .map((e) => e.displayName)
-            .toList()
-            .contains(element))
+        .where((element) =>
+            state.actionsWrapper.actions
+                .map((e) => e.displayName)
+                .toList()
+                .contains(element) ||
+            element == 'DB')
         .toList();
 
     final List<Widget> widgetList =
