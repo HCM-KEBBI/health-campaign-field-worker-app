@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../models/data_model.dart';
+import '../../models/entities/identifier_types.dart';
 import '../../utils/environment_config.dart';
 import '../../utils/typedefs.dart';
 import '../../utils/utils.dart';
@@ -189,7 +190,7 @@ class BeneficiaryRegistrationBloc
           identifiers?.add(IdentifierModel(
             clientReferenceId: value.individualModel!.clientReferenceId,
             identifierId: beneficiaryId.first,
-            identifierType: 'uniqueBeneficiaryID',
+            identifierType: IdentifierTypes.uniqueBeneficiaryID.toValue(),
             clientAuditDetails: individual.clientAuditDetails,
             auditDetails: individual.auditDetails,
           ));
@@ -419,7 +420,7 @@ class BeneficiaryRegistrationBloc
           identifiers?.add(IdentifierModel(
             clientReferenceId: event.individualModel.clientReferenceId,
             identifierId: beneficiaryId.first,
-            identifierType: 'uniqueBeneficiaryID',
+            identifierType: IdentifierTypes.uniqueBeneficiaryID.toValue(),
             clientAuditDetails: ClientAuditDetails(
               createdTime: createdAt,
               lastModifiedTime: initialModifiedAt,

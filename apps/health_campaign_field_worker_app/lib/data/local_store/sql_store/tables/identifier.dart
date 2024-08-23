@@ -25,6 +25,10 @@ class Identifier extends Table {
   TextColumn get additionalFields => text().nullable()();
 
   @override
-  Set<Column> get primaryKey =>
-      {auditCreatedBy, clientReferenceId, identifierType};
+  Set<Column> get primaryKey => {
+        auditCreatedBy,
+        clientReferenceId,
+        identifierType,
+        identifierId,
+      };
 }

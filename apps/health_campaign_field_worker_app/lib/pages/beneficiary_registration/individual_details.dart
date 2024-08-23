@@ -15,6 +15,7 @@ import '../../blocs/beneficiary_registration/beneficiary_registration.dart';
 import '../../blocs/search_households/search_households.dart';
 import '../../data/local_store/no_sql/schema/app_configuration.dart';
 import '../../models/data_model.dart';
+import '../../models/entities/identifier_types.dart';
 import '../../router/app_router.dart';
 import '../../utils/environment_config.dart';
 import '../../utils/i18_key_constants.dart' as i18;
@@ -544,7 +545,7 @@ class _IndividualDetailsPageState
       identifiers: [
         identifier.copyWith(
           identifierId: context.loggedInUserUuid,
-          identifierType: 'DEFAULT',
+          identifierType: IdentifierTypes.defaultID.toValue(),
         ),
       ],
     );
