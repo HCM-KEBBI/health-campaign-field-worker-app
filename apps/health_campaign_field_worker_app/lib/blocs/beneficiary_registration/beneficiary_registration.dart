@@ -121,7 +121,7 @@ class BeneficiaryRegistrationBloc
       orElse: () {
         throw const InvalidRegistrationStateException();
       },
-      create: (value) {
+      create: (value) async {
         emit(value.copyWith(
           isHeadOfHousehold: event.isHeadOfHousehold,
           individualModel: event.model,
@@ -144,7 +144,20 @@ class BeneficiaryRegistrationBloc
         throw const InvalidRegistrationStateException();
       },
       create: (value) async {
-        final individual = value.individualModel;
+        List<IdentifierModel>? identifiers = value.individualModel?.identifiers;
+        String localityCode = value.addressModel!.locality!.code;
+        final beneficiaryId = await UniqueIdGeneration().generateUniqueId(
+          localityCode: localityCode,
+          loggedInUserId: value.individualModel!.clientAuditDetails!.createdBy!,
+          returnBothIds: false,
+        );
+        identifiers?.add(IdentifierModel(
+          clientReferenceId: value.individualModel!.clientReferenceId,
+          identifierId: beneficiaryId.first,
+          identifierType: 'uniqueBeneficiaryID',
+        ));
+        final individual =
+            value.individualModel?.copyWith(identifiers: identifiers);
         final household = value.householdModel;
         final address = value.addressModel;
         final dateOfRegistration = value.registrationDate;
@@ -392,9 +405,23 @@ class BeneficiaryRegistrationBloc
         try {
           final createdAt = DateTime.now().millisecondsSinceEpoch;
           final initialModifiedAt = DateTime.now().millisecondsSinceEpoch;
+          List<IdentifierModel>? identifiers =
+              event.individualModel.identifiers;
+          String localityCode = value.addressModel.locality!.code;
+          final beneficiaryId = await UniqueIdGeneration().generateUniqueId(
+            localityCode: localityCode,
+            loggedInUserId: event.individualModel.clientAuditDetails!.createdBy,
+            returnBothIds: false,
+          );
+          identifiers?.add(IdentifierModel(
+            clientReferenceId: event.individualModel.clientReferenceId,
+            identifierId: beneficiaryId.first,
+            identifierType: 'uniqueBeneficiaryID',
+          ));
 
           await individualRepository.create(
             event.individualModel.copyWith(
+              identifiers: identifiers,
               address: [
                 value.addressModel.copyWith(
                   id: null,
