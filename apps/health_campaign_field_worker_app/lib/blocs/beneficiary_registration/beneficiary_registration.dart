@@ -144,7 +144,20 @@ class BeneficiaryRegistrationBloc
         throw const InvalidRegistrationStateException();
       },
       create: (value) async {
-        final individual = value.individualModel;
+        List<IdentifierModel>? identifiers = value.individualModel?.identifiers;
+        String localityCode = value.addressModel!.locality!.code;
+        final beneficiaryId = await UniqueIdGeneration().generateUniqueId(
+          localityCode: localityCode,
+          loggedInUserId: value.individualModel!.clientAuditDetails!.createdBy!,
+          returnBothIds: false,
+        );
+        identifiers?.add(IdentifierModel(
+          clientReferenceId: value.individualModel!.clientReferenceId,
+          identifierId: beneficiaryId.first,
+          identifierType: 'uniqueBeneficiaryID',
+        ));
+        final individual =
+            value.individualModel?.copyWith(identifiers: identifiers);
         final household = value.householdModel;
         final address = value.addressModel;
         final dateOfRegistration = value.registrationDate;
@@ -178,21 +191,6 @@ class BeneficiaryRegistrationBloc
           final locality = code == null || name == null
               ? null
               : LocalityModel(code: code, name: name);
-          List<IdentifierModel>? identifiers =
-              value.individualModel?.identifiers;
-          String localityCode = locality!.code;
-          final beneficiaryId = await UniqueIdGeneration().generateUniqueId(
-            localityCode: localityCode,
-            loggedInUserId: event.userUuid,
-            returnBothIds: false,
-          );
-          identifiers?.add(IdentifierModel(
-            clientReferenceId: value.individualModel!.clientReferenceId,
-            identifierId: beneficiaryId.first,
-            identifierType: 'uniqueBeneficiaryID',
-            clientAuditDetails: individual.clientAuditDetails,
-            auditDetails: individual.auditDetails,
-          ));
 
           await householdRepository.create(
             household.copyWith(
@@ -207,7 +205,6 @@ class BeneficiaryRegistrationBloc
           final initialModifiedAt = DateTime.now().millisecondsSinceEpoch;
           await individualRepository.create(
             individual.copyWith(
-              identifiers: identifiers,
               address: [
                 address.copyWith(
                   relatedClientReferenceId: individual.clientReferenceId,
@@ -413,25 +410,13 @@ class BeneficiaryRegistrationBloc
           String localityCode = value.addressModel.locality!.code;
           final beneficiaryId = await UniqueIdGeneration().generateUniqueId(
             localityCode: localityCode,
-            loggedInUserId: event.userUuid,
+            loggedInUserId: event.individualModel.clientAuditDetails!.createdBy,
             returnBothIds: false,
           );
           identifiers?.add(IdentifierModel(
             clientReferenceId: event.individualModel.clientReferenceId,
             identifierId: beneficiaryId.first,
             identifierType: 'uniqueBeneficiaryID',
-            clientAuditDetails: ClientAuditDetails(
-              createdTime: createdAt,
-              lastModifiedTime: initialModifiedAt,
-              lastModifiedBy: event.userUuid,
-              createdBy: event.userUuid,
-            ),
-            auditDetails: AuditDetails(
-              createdBy: event.userUuid,
-              createdTime: createdAt,
-              lastModifiedTime: createdAt,
-              lastModifiedBy: event.userUuid,
-            ),
           ));
 
           await individualRepository.create(
