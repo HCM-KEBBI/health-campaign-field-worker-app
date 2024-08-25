@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:drift/drift.dart';
-
 import '../../../models/data_model.dart';
 import '../../../utils/utils.dart';
 import 'base/stock_base.dart';
@@ -33,8 +31,10 @@ class StockLocalRepository extends StockLocalBaseRepository {
             buildAnd(
               [
                 if (query.id != null) sql.stock.id.equals(query.id!),
-                if (query.facilityId != null)
-                  sql.stock.facilityId.equals(query.facilityId!),
+                if (query.receiverId != null)
+                  sql.stock.receiverId.equals(query.receiverId!),
+                if (query.senderId != null)
+                  sql.stock.senderId.equals(query.senderId!),
                 if (query.productVariantId != null)
                   sql.stock.productVariantId.equals(query.productVariantId!),
                 if (query.clientReferenceId != null)
@@ -72,6 +72,10 @@ class StockLocalRepository extends StockLocalBaseRepository {
         facilityId: data.facilityId,
         productVariantId: data.productVariantId,
         referenceId: data.referenceId,
+        receiverId: data.receiverId,
+        receiverType: data.receiverType,
+        senderId: data.senderId,
+        senderType: data.senderType,
         referenceIdType: data.referenceIdType,
         transactionType: data.transactionType,
         transactionReason: data.transactionReason,

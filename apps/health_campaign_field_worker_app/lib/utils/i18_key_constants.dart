@@ -27,6 +27,7 @@ const inventoryReportDetails = InventoryReportDetails();
 const syncDialog = SyncDialog();
 const referBeneficiary = ReferBeneficiary();
 const ineligibilityReasons = IneligibilityReasons();
+const scanner = Scanner();
 
 class Common {
   const Common();
@@ -817,6 +818,7 @@ class StockDetails {
 
   String get countDialogCancel =>
       'STOCK_DETAILS_COUNT_DIALOG_CANCEL_ACTION_LABEL';
+  String get scannedResources => 'SCANNED_RESOURCES';
 }
 
 class StockReconciliationDetails {
@@ -934,6 +936,9 @@ class ManageStock {
   String get recordSpaqReturnedToFacility => 'RECORD_SPAQ_RETURNED_TO_FACILITY';
   String get recordSpaqDamaged => 'RECORD_SPAQ_DAMAGED';
   String get recordListOfSpaqDamaged => 'RECORD_LIST_OF_SPAQ_DAMAGED';
+  String get cddTeamCodeLabel => 'STOCK_CDD_TEAM_CODE_LABEL';
+  String get facilityRequired => 'STOCK_DETAILS_FACILITY_IS_REQUIRED';
+  String get teamCodeRequired => 'STOCK_DETAILS_TEAM_CODE_IS_REQUIRED';
 }
 
 class Complaints {
@@ -1285,4 +1290,28 @@ class IneligibilityReasons {
   String get dialogContent => 'INELIGIBILITY_REASONS_DIALOG_CONTENT';
   String get ineligibilityReasonsLabel => 'INELIGIBILITY_REASONS_LABEL';
   String get selectReasonsLabel => 'INELIGIBILITY_REASONS_SELECT_LABEL';
+}
+
+class Scanner {
+  const Scanner();
+
+  String get changingCameraLens => 'CHANGING_CAMERA_LENS';
+  String get flashOn => 'FLASH_ON';
+  String get flashOff => 'FLASH_OFF';
+  String get scannerLabel => 'SCANNER_LABEL';
+  String get barCodeScannerLabel => 'BARCODE_SCANNER';
+  String get manualScan => 'MANUAL_SCAN';
+  String get enterManualCode => 'ENTER_MANUAL_CODE';
+  String get resourcesScanned => 'RESOURCE_SCANNED';
+  String get resourceAlreadyScanned => 'RESOURCES_ALREADY_SCANNED';
+  String get manualCodeDescription => 'MANUAL_CODE_DESC';
+  String get resourceCode => 'RESOURCE_CODE';
+  String get scannerDialogTitle => 'SCANNER_DIALOG_TITLE';
+  String get scannerDialogContent => 'SCANNER_DIALOG_CONTENT';
+  String get scannerDialogPrimaryAction => 'SCANNER_DIALOG_PRIMARY_ACTION';
+  String get scannerDialogSecondaryAction => 'SCANNER_DIALOG_SECONDARY_ACTION';
+  String get scannedResourceCountMisMatch => 'SCANNED_RESOURCE_COUNT_MISMATCH';
+  String get barCodesFound => 'BARCODES_FOUND';
+  String get barCode => 'BARCODE';
+  String get scanBales => 'CORE_COMMON_SCAN_BALES';
 }

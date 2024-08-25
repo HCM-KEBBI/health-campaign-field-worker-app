@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../blocs/digit_scanner/digit_scanner.dart';
 import '../../../blocs/project/project.dart';
 import '../../../blocs/record_stock/record_stock.dart';
 import '../../../models/data_model.dart';
@@ -58,7 +59,12 @@ class RecordStockWrapperPage extends StatelessWidget with AutoRouteWrapper {
                 ),
                 stockRepository: stockRepository,
               ),
-              child: this,
+              child: BlocProvider(
+                create: (_) => DigitScannerBloc(
+                  const DigitScannerState(),
+                ),
+                child: this,
+              ),
             ),
           ),
         );

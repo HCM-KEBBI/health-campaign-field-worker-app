@@ -133,6 +133,21 @@ extension ContextUtilityExtensions on BuildContext {
     }
   }
 
+  bool get isWarehouseMgr {
+    try {
+      bool isWarehouseMgr = loggedInUserRoles
+          .where(
+            (role) => role.code == RolesType.healthFacilitySupervisor.toValue(),
+          )
+          .toList()
+          .isNotEmpty;
+
+      return isDownSyncEnabled;
+    } catch (_) {
+      return false;
+    }
+  }
+
   bool get isHealthFacilitySupervisor {
     try {
       bool isDownSyncEnabled = loggedInUserRoles

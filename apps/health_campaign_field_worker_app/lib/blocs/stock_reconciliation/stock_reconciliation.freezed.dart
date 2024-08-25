@@ -18,33 +18,52 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$StockReconciliationEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(FacilityModel facilityModel) selectFacility,
-    required TResult Function(String? productVariantId) selectProduct,
-    required TResult Function(DateTime? dateOfReconciliation)
+    required TResult Function(FacilityModel facilityModel, bool isDistributor,
+            String loggedInUserId, String? teamCode)
+        selectFacility,
+    required TResult Function(
+            String? productVariantId, bool isDistributor, String loggedInUserId)
+        selectProduct,
+    required TResult Function(
+            DateTime? dateOfReconciliation, String loggedInUserId)
         selectDateOfReconciliation,
-    required TResult Function() calculate,
+    required TResult Function(
+            bool isDistributor, String? teamCode, String loggedInUserId)
+        calculate,
     required TResult Function(StockReconciliationModel stockReconciliationModel)
         create,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(FacilityModel facilityModel)? selectFacility,
-    TResult? Function(String? productVariantId)? selectProduct,
-    TResult? Function(DateTime? dateOfReconciliation)?
+    TResult? Function(FacilityModel facilityModel, bool isDistributor,
+            String loggedInUserId, String? teamCode)?
+        selectFacility,
+    TResult? Function(String? productVariantId, bool isDistributor,
+            String loggedInUserId)?
+        selectProduct,
+    TResult? Function(DateTime? dateOfReconciliation, String loggedInUserId)?
         selectDateOfReconciliation,
-    TResult? Function()? calculate,
+    TResult? Function(
+            bool isDistributor, String? teamCode, String loggedInUserId)?
+        calculate,
     TResult? Function(StockReconciliationModel stockReconciliationModel)?
         create,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(FacilityModel facilityModel)? selectFacility,
-    TResult Function(String? productVariantId)? selectProduct,
-    TResult Function(DateTime? dateOfReconciliation)?
+    TResult Function(FacilityModel facilityModel, bool isDistributor,
+            String loggedInUserId, String? teamCode)?
+        selectFacility,
+    TResult Function(String? productVariantId, bool isDistributor,
+            String loggedInUserId)?
+        selectProduct,
+    TResult Function(DateTime? dateOfReconciliation, String loggedInUserId)?
         selectDateOfReconciliation,
-    TResult Function()? calculate,
+    TResult Function(
+            bool isDistributor, String? teamCode, String loggedInUserId)?
+        calculate,
     TResult Function(StockReconciliationModel stockReconciliationModel)? create,
     required TResult orElse(),
   }) =>
@@ -116,7 +135,11 @@ abstract class _$$StockReconciliationSelectFacilityEventImplCopyWith<$Res> {
           $Res Function(_$StockReconciliationSelectFacilityEventImpl) then) =
       __$$StockReconciliationSelectFacilityEventImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({FacilityModel facilityModel});
+  $Res call(
+      {FacilityModel facilityModel,
+      bool isDistributor,
+      String loggedInUserId,
+      String? teamCode});
 }
 
 /// @nodoc
@@ -133,12 +156,27 @@ class __$$StockReconciliationSelectFacilityEventImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? facilityModel = null,
+    Object? isDistributor = null,
+    Object? loggedInUserId = null,
+    Object? teamCode = freezed,
   }) {
     return _then(_$StockReconciliationSelectFacilityEventImpl(
       null == facilityModel
           ? _value.facilityModel
           : facilityModel // ignore: cast_nullable_to_non_nullable
               as FacilityModel,
+      isDistributor: null == isDistributor
+          ? _value.isDistributor
+          : isDistributor // ignore: cast_nullable_to_non_nullable
+              as bool,
+      loggedInUserId: null == loggedInUserId
+          ? _value.loggedInUserId
+          : loggedInUserId // ignore: cast_nullable_to_non_nullable
+              as String,
+      teamCode: freezed == teamCode
+          ? _value.teamCode
+          : teamCode // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -147,14 +185,24 @@ class __$$StockReconciliationSelectFacilityEventImplCopyWithImpl<$Res>
 
 class _$StockReconciliationSelectFacilityEventImpl
     implements StockReconciliationSelectFacilityEvent {
-  const _$StockReconciliationSelectFacilityEventImpl(this.facilityModel);
+  const _$StockReconciliationSelectFacilityEventImpl(this.facilityModel,
+      {this.isDistributor = false,
+      required this.loggedInUserId,
+      this.teamCode});
 
   @override
   final FacilityModel facilityModel;
+  @override
+  @JsonKey()
+  final bool isDistributor;
+  @override
+  final String loggedInUserId;
+  @override
+  final String? teamCode;
 
   @override
   String toString() {
-    return 'StockReconciliationEvent.selectFacility(facilityModel: $facilityModel)';
+    return 'StockReconciliationEvent.selectFacility(facilityModel: $facilityModel, isDistributor: $isDistributor, loggedInUserId: $loggedInUserId, teamCode: $teamCode)';
   }
 
   @override
@@ -163,11 +211,18 @@ class _$StockReconciliationSelectFacilityEventImpl
         (other.runtimeType == runtimeType &&
             other is _$StockReconciliationSelectFacilityEventImpl &&
             (identical(other.facilityModel, facilityModel) ||
-                other.facilityModel == facilityModel));
+                other.facilityModel == facilityModel) &&
+            (identical(other.isDistributor, isDistributor) ||
+                other.isDistributor == isDistributor) &&
+            (identical(other.loggedInUserId, loggedInUserId) ||
+                other.loggedInUserId == loggedInUserId) &&
+            (identical(other.teamCode, teamCode) ||
+                other.teamCode == teamCode));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, facilityModel);
+  int get hashCode => Object.hash(
+      runtimeType, facilityModel, isDistributor, loggedInUserId, teamCode);
 
   @JsonKey(ignore: true)
   @override
@@ -181,44 +236,66 @@ class _$StockReconciliationSelectFacilityEventImpl
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(FacilityModel facilityModel) selectFacility,
-    required TResult Function(String? productVariantId) selectProduct,
-    required TResult Function(DateTime? dateOfReconciliation)
+    required TResult Function(FacilityModel facilityModel, bool isDistributor,
+            String loggedInUserId, String? teamCode)
+        selectFacility,
+    required TResult Function(
+            String? productVariantId, bool isDistributor, String loggedInUserId)
+        selectProduct,
+    required TResult Function(
+            DateTime? dateOfReconciliation, String loggedInUserId)
         selectDateOfReconciliation,
-    required TResult Function() calculate,
+    required TResult Function(
+            bool isDistributor, String? teamCode, String loggedInUserId)
+        calculate,
     required TResult Function(StockReconciliationModel stockReconciliationModel)
         create,
   }) {
-    return selectFacility(facilityModel);
+    return selectFacility(
+        facilityModel, isDistributor, loggedInUserId, teamCode);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(FacilityModel facilityModel)? selectFacility,
-    TResult? Function(String? productVariantId)? selectProduct,
-    TResult? Function(DateTime? dateOfReconciliation)?
+    TResult? Function(FacilityModel facilityModel, bool isDistributor,
+            String loggedInUserId, String? teamCode)?
+        selectFacility,
+    TResult? Function(String? productVariantId, bool isDistributor,
+            String loggedInUserId)?
+        selectProduct,
+    TResult? Function(DateTime? dateOfReconciliation, String loggedInUserId)?
         selectDateOfReconciliation,
-    TResult? Function()? calculate,
+    TResult? Function(
+            bool isDistributor, String? teamCode, String loggedInUserId)?
+        calculate,
     TResult? Function(StockReconciliationModel stockReconciliationModel)?
         create,
   }) {
-    return selectFacility?.call(facilityModel);
+    return selectFacility?.call(
+        facilityModel, isDistributor, loggedInUserId, teamCode);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(FacilityModel facilityModel)? selectFacility,
-    TResult Function(String? productVariantId)? selectProduct,
-    TResult Function(DateTime? dateOfReconciliation)?
+    TResult Function(FacilityModel facilityModel, bool isDistributor,
+            String loggedInUserId, String? teamCode)?
+        selectFacility,
+    TResult Function(String? productVariantId, bool isDistributor,
+            String loggedInUserId)?
+        selectProduct,
+    TResult Function(DateTime? dateOfReconciliation, String loggedInUserId)?
         selectDateOfReconciliation,
-    TResult Function()? calculate,
+    TResult Function(
+            bool isDistributor, String? teamCode, String loggedInUserId)?
+        calculate,
     TResult Function(StockReconciliationModel stockReconciliationModel)? create,
     required TResult orElse(),
   }) {
     if (selectFacility != null) {
-      return selectFacility(facilityModel);
+      return selectFacility(
+          facilityModel, isDistributor, loggedInUserId, teamCode);
     }
     return orElse();
   }
@@ -278,10 +355,15 @@ class _$StockReconciliationSelectFacilityEventImpl
 abstract class StockReconciliationSelectFacilityEvent
     implements StockReconciliationEvent {
   const factory StockReconciliationSelectFacilityEvent(
-          final FacilityModel facilityModel) =
-      _$StockReconciliationSelectFacilityEventImpl;
+      final FacilityModel facilityModel,
+      {final bool isDistributor,
+      required final String loggedInUserId,
+      final String? teamCode}) = _$StockReconciliationSelectFacilityEventImpl;
 
   FacilityModel get facilityModel;
+  bool get isDistributor;
+  String get loggedInUserId;
+  String? get teamCode;
   @JsonKey(ignore: true)
   _$$StockReconciliationSelectFacilityEventImplCopyWith<
           _$StockReconciliationSelectFacilityEventImpl>
@@ -295,7 +377,8 @@ abstract class _$$StockReconciliationSelectProductEventImplCopyWith<$Res> {
           $Res Function(_$StockReconciliationSelectProductEventImpl) then) =
       __$$StockReconciliationSelectProductEventImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({String? productVariantId});
+  $Res call(
+      {String? productVariantId, bool isDistributor, String loggedInUserId});
 }
 
 /// @nodoc
@@ -312,12 +395,22 @@ class __$$StockReconciliationSelectProductEventImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? productVariantId = freezed,
+    Object? isDistributor = null,
+    Object? loggedInUserId = null,
   }) {
     return _then(_$StockReconciliationSelectProductEventImpl(
       freezed == productVariantId
           ? _value.productVariantId
           : productVariantId // ignore: cast_nullable_to_non_nullable
               as String?,
+      isDistributor: null == isDistributor
+          ? _value.isDistributor
+          : isDistributor // ignore: cast_nullable_to_non_nullable
+              as bool,
+      loggedInUserId: null == loggedInUserId
+          ? _value.loggedInUserId
+          : loggedInUserId // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -326,14 +419,20 @@ class __$$StockReconciliationSelectProductEventImplCopyWithImpl<$Res>
 
 class _$StockReconciliationSelectProductEventImpl
     implements StockReconciliationSelectProductEvent {
-  const _$StockReconciliationSelectProductEventImpl(this.productVariantId);
+  const _$StockReconciliationSelectProductEventImpl(this.productVariantId,
+      {this.isDistributor = false, required this.loggedInUserId});
 
   @override
   final String? productVariantId;
+  @override
+  @JsonKey()
+  final bool isDistributor;
+  @override
+  final String loggedInUserId;
 
   @override
   String toString() {
-    return 'StockReconciliationEvent.selectProduct(productVariantId: $productVariantId)';
+    return 'StockReconciliationEvent.selectProduct(productVariantId: $productVariantId, isDistributor: $isDistributor, loggedInUserId: $loggedInUserId)';
   }
 
   @override
@@ -342,11 +441,16 @@ class _$StockReconciliationSelectProductEventImpl
         (other.runtimeType == runtimeType &&
             other is _$StockReconciliationSelectProductEventImpl &&
             (identical(other.productVariantId, productVariantId) ||
-                other.productVariantId == productVariantId));
+                other.productVariantId == productVariantId) &&
+            (identical(other.isDistributor, isDistributor) ||
+                other.isDistributor == isDistributor) &&
+            (identical(other.loggedInUserId, loggedInUserId) ||
+                other.loggedInUserId == loggedInUserId));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, productVariantId);
+  int get hashCode =>
+      Object.hash(runtimeType, productVariantId, isDistributor, loggedInUserId);
 
   @JsonKey(ignore: true)
   @override
@@ -359,44 +463,63 @@ class _$StockReconciliationSelectProductEventImpl
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(FacilityModel facilityModel) selectFacility,
-    required TResult Function(String? productVariantId) selectProduct,
-    required TResult Function(DateTime? dateOfReconciliation)
+    required TResult Function(FacilityModel facilityModel, bool isDistributor,
+            String loggedInUserId, String? teamCode)
+        selectFacility,
+    required TResult Function(
+            String? productVariantId, bool isDistributor, String loggedInUserId)
+        selectProduct,
+    required TResult Function(
+            DateTime? dateOfReconciliation, String loggedInUserId)
         selectDateOfReconciliation,
-    required TResult Function() calculate,
+    required TResult Function(
+            bool isDistributor, String? teamCode, String loggedInUserId)
+        calculate,
     required TResult Function(StockReconciliationModel stockReconciliationModel)
         create,
   }) {
-    return selectProduct(productVariantId);
+    return selectProduct(productVariantId, isDistributor, loggedInUserId);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(FacilityModel facilityModel)? selectFacility,
-    TResult? Function(String? productVariantId)? selectProduct,
-    TResult? Function(DateTime? dateOfReconciliation)?
+    TResult? Function(FacilityModel facilityModel, bool isDistributor,
+            String loggedInUserId, String? teamCode)?
+        selectFacility,
+    TResult? Function(String? productVariantId, bool isDistributor,
+            String loggedInUserId)?
+        selectProduct,
+    TResult? Function(DateTime? dateOfReconciliation, String loggedInUserId)?
         selectDateOfReconciliation,
-    TResult? Function()? calculate,
+    TResult? Function(
+            bool isDistributor, String? teamCode, String loggedInUserId)?
+        calculate,
     TResult? Function(StockReconciliationModel stockReconciliationModel)?
         create,
   }) {
-    return selectProduct?.call(productVariantId);
+    return selectProduct?.call(productVariantId, isDistributor, loggedInUserId);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(FacilityModel facilityModel)? selectFacility,
-    TResult Function(String? productVariantId)? selectProduct,
-    TResult Function(DateTime? dateOfReconciliation)?
+    TResult Function(FacilityModel facilityModel, bool isDistributor,
+            String loggedInUserId, String? teamCode)?
+        selectFacility,
+    TResult Function(String? productVariantId, bool isDistributor,
+            String loggedInUserId)?
+        selectProduct,
+    TResult Function(DateTime? dateOfReconciliation, String loggedInUserId)?
         selectDateOfReconciliation,
-    TResult Function()? calculate,
+    TResult Function(
+            bool isDistributor, String? teamCode, String loggedInUserId)?
+        calculate,
     TResult Function(StockReconciliationModel stockReconciliationModel)? create,
     required TResult orElse(),
   }) {
     if (selectProduct != null) {
-      return selectProduct(productVariantId);
+      return selectProduct(productVariantId, isDistributor, loggedInUserId);
     }
     return orElse();
   }
@@ -456,10 +579,14 @@ class _$StockReconciliationSelectProductEventImpl
 abstract class StockReconciliationSelectProductEvent
     implements StockReconciliationEvent {
   const factory StockReconciliationSelectProductEvent(
-          final String? productVariantId) =
+          final String? productVariantId,
+          {final bool isDistributor,
+          required final String loggedInUserId}) =
       _$StockReconciliationSelectProductEventImpl;
 
   String? get productVariantId;
+  bool get isDistributor;
+  String get loggedInUserId;
   @JsonKey(ignore: true)
   _$$StockReconciliationSelectProductEventImplCopyWith<
           _$StockReconciliationSelectProductEventImpl>
@@ -477,7 +604,7 @@ abstract class _$$StockReconciliationSelectDateOfReconciliationEventImplCopyWith
       __$$StockReconciliationSelectDateOfReconciliationEventImplCopyWithImpl<
           $Res>;
   @useResult
-  $Res call({DateTime? dateOfReconciliation});
+  $Res call({DateTime? dateOfReconciliation, String loggedInUserId});
 }
 
 /// @nodoc
@@ -498,12 +625,17 @@ class __$$StockReconciliationSelectDateOfReconciliationEventImplCopyWithImpl<
   @override
   $Res call({
     Object? dateOfReconciliation = freezed,
+    Object? loggedInUserId = null,
   }) {
     return _then(_$StockReconciliationSelectDateOfReconciliationEventImpl(
       freezed == dateOfReconciliation
           ? _value.dateOfReconciliation
           : dateOfReconciliation // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      loggedInUserId: null == loggedInUserId
+          ? _value.loggedInUserId
+          : loggedInUserId // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -513,14 +645,17 @@ class __$$StockReconciliationSelectDateOfReconciliationEventImplCopyWithImpl<
 class _$StockReconciliationSelectDateOfReconciliationEventImpl
     implements StockReconciliationSelectDateOfReconciliationEvent {
   const _$StockReconciliationSelectDateOfReconciliationEventImpl(
-      this.dateOfReconciliation);
+      this.dateOfReconciliation,
+      {required this.loggedInUserId});
 
   @override
   final DateTime? dateOfReconciliation;
+  @override
+  final String loggedInUserId;
 
   @override
   String toString() {
-    return 'StockReconciliationEvent.selectDateOfReconciliation(dateOfReconciliation: $dateOfReconciliation)';
+    return 'StockReconciliationEvent.selectDateOfReconciliation(dateOfReconciliation: $dateOfReconciliation, loggedInUserId: $loggedInUserId)';
   }
 
   @override
@@ -529,11 +664,14 @@ class _$StockReconciliationSelectDateOfReconciliationEventImpl
         (other.runtimeType == runtimeType &&
             other is _$StockReconciliationSelectDateOfReconciliationEventImpl &&
             (identical(other.dateOfReconciliation, dateOfReconciliation) ||
-                other.dateOfReconciliation == dateOfReconciliation));
+                other.dateOfReconciliation == dateOfReconciliation) &&
+            (identical(other.loggedInUserId, loggedInUserId) ||
+                other.loggedInUserId == loggedInUserId));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, dateOfReconciliation);
+  int get hashCode =>
+      Object.hash(runtimeType, dateOfReconciliation, loggedInUserId);
 
   @JsonKey(ignore: true)
   @override
@@ -548,44 +686,64 @@ class _$StockReconciliationSelectDateOfReconciliationEventImpl
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(FacilityModel facilityModel) selectFacility,
-    required TResult Function(String? productVariantId) selectProduct,
-    required TResult Function(DateTime? dateOfReconciliation)
+    required TResult Function(FacilityModel facilityModel, bool isDistributor,
+            String loggedInUserId, String? teamCode)
+        selectFacility,
+    required TResult Function(
+            String? productVariantId, bool isDistributor, String loggedInUserId)
+        selectProduct,
+    required TResult Function(
+            DateTime? dateOfReconciliation, String loggedInUserId)
         selectDateOfReconciliation,
-    required TResult Function() calculate,
+    required TResult Function(
+            bool isDistributor, String? teamCode, String loggedInUserId)
+        calculate,
     required TResult Function(StockReconciliationModel stockReconciliationModel)
         create,
   }) {
-    return selectDateOfReconciliation(dateOfReconciliation);
+    return selectDateOfReconciliation(dateOfReconciliation, loggedInUserId);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(FacilityModel facilityModel)? selectFacility,
-    TResult? Function(String? productVariantId)? selectProduct,
-    TResult? Function(DateTime? dateOfReconciliation)?
+    TResult? Function(FacilityModel facilityModel, bool isDistributor,
+            String loggedInUserId, String? teamCode)?
+        selectFacility,
+    TResult? Function(String? productVariantId, bool isDistributor,
+            String loggedInUserId)?
+        selectProduct,
+    TResult? Function(DateTime? dateOfReconciliation, String loggedInUserId)?
         selectDateOfReconciliation,
-    TResult? Function()? calculate,
+    TResult? Function(
+            bool isDistributor, String? teamCode, String loggedInUserId)?
+        calculate,
     TResult? Function(StockReconciliationModel stockReconciliationModel)?
         create,
   }) {
-    return selectDateOfReconciliation?.call(dateOfReconciliation);
+    return selectDateOfReconciliation?.call(
+        dateOfReconciliation, loggedInUserId);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(FacilityModel facilityModel)? selectFacility,
-    TResult Function(String? productVariantId)? selectProduct,
-    TResult Function(DateTime? dateOfReconciliation)?
+    TResult Function(FacilityModel facilityModel, bool isDistributor,
+            String loggedInUserId, String? teamCode)?
+        selectFacility,
+    TResult Function(String? productVariantId, bool isDistributor,
+            String loggedInUserId)?
+        selectProduct,
+    TResult Function(DateTime? dateOfReconciliation, String loggedInUserId)?
         selectDateOfReconciliation,
-    TResult Function()? calculate,
+    TResult Function(
+            bool isDistributor, String? teamCode, String loggedInUserId)?
+        calculate,
     TResult Function(StockReconciliationModel stockReconciliationModel)? create,
     required TResult orElse(),
   }) {
     if (selectDateOfReconciliation != null) {
-      return selectDateOfReconciliation(dateOfReconciliation);
+      return selectDateOfReconciliation(dateOfReconciliation, loggedInUserId);
     }
     return orElse();
   }
@@ -645,10 +803,12 @@ class _$StockReconciliationSelectDateOfReconciliationEventImpl
 abstract class StockReconciliationSelectDateOfReconciliationEvent
     implements StockReconciliationEvent {
   const factory StockReconciliationSelectDateOfReconciliationEvent(
-          final DateTime? dateOfReconciliation) =
+          final DateTime? dateOfReconciliation,
+          {required final String loggedInUserId}) =
       _$StockReconciliationSelectDateOfReconciliationEventImpl;
 
   DateTime? get dateOfReconciliation;
+  String get loggedInUserId;
   @JsonKey(ignore: true)
   _$$StockReconciliationSelectDateOfReconciliationEventImplCopyWith<
           _$StockReconciliationSelectDateOfReconciliationEventImpl>
@@ -661,6 +821,8 @@ abstract class _$$StockReconciliationCalculateEventImplCopyWith<$Res> {
           _$StockReconciliationCalculateEventImpl value,
           $Res Function(_$StockReconciliationCalculateEventImpl) then) =
       __$$StockReconciliationCalculateEventImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({bool isDistributor, String? teamCode, String loggedInUserId});
 }
 
 /// @nodoc
@@ -672,70 +834,138 @@ class __$$StockReconciliationCalculateEventImplCopyWithImpl<$Res>
       _$StockReconciliationCalculateEventImpl _value,
       $Res Function(_$StockReconciliationCalculateEventImpl) _then)
       : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? isDistributor = null,
+    Object? teamCode = freezed,
+    Object? loggedInUserId = null,
+  }) {
+    return _then(_$StockReconciliationCalculateEventImpl(
+      isDistributor: null == isDistributor
+          ? _value.isDistributor
+          : isDistributor // ignore: cast_nullable_to_non_nullable
+              as bool,
+      teamCode: freezed == teamCode
+          ? _value.teamCode
+          : teamCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      loggedInUserId: null == loggedInUserId
+          ? _value.loggedInUserId
+          : loggedInUserId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
 }
 
 /// @nodoc
 
 class _$StockReconciliationCalculateEventImpl
     implements StockReconciliationCalculateEvent {
-  const _$StockReconciliationCalculateEventImpl();
+  const _$StockReconciliationCalculateEventImpl(
+      {this.isDistributor = false,
+      this.teamCode,
+      required this.loggedInUserId});
+
+  @override
+  @JsonKey()
+  final bool isDistributor;
+  @override
+  final String? teamCode;
+  @override
+  final String loggedInUserId;
 
   @override
   String toString() {
-    return 'StockReconciliationEvent.calculate()';
+    return 'StockReconciliationEvent.calculate(isDistributor: $isDistributor, teamCode: $teamCode, loggedInUserId: $loggedInUserId)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$StockReconciliationCalculateEventImpl);
+            other is _$StockReconciliationCalculateEventImpl &&
+            (identical(other.isDistributor, isDistributor) ||
+                other.isDistributor == isDistributor) &&
+            (identical(other.teamCode, teamCode) ||
+                other.teamCode == teamCode) &&
+            (identical(other.loggedInUserId, loggedInUserId) ||
+                other.loggedInUserId == loggedInUserId));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode =>
+      Object.hash(runtimeType, isDistributor, teamCode, loggedInUserId);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$StockReconciliationCalculateEventImplCopyWith<
+          _$StockReconciliationCalculateEventImpl>
+      get copyWith => __$$StockReconciliationCalculateEventImplCopyWithImpl<
+          _$StockReconciliationCalculateEventImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(FacilityModel facilityModel) selectFacility,
-    required TResult Function(String? productVariantId) selectProduct,
-    required TResult Function(DateTime? dateOfReconciliation)
+    required TResult Function(FacilityModel facilityModel, bool isDistributor,
+            String loggedInUserId, String? teamCode)
+        selectFacility,
+    required TResult Function(
+            String? productVariantId, bool isDistributor, String loggedInUserId)
+        selectProduct,
+    required TResult Function(
+            DateTime? dateOfReconciliation, String loggedInUserId)
         selectDateOfReconciliation,
-    required TResult Function() calculate,
+    required TResult Function(
+            bool isDistributor, String? teamCode, String loggedInUserId)
+        calculate,
     required TResult Function(StockReconciliationModel stockReconciliationModel)
         create,
   }) {
-    return calculate();
+    return calculate(isDistributor, teamCode, loggedInUserId);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(FacilityModel facilityModel)? selectFacility,
-    TResult? Function(String? productVariantId)? selectProduct,
-    TResult? Function(DateTime? dateOfReconciliation)?
+    TResult? Function(FacilityModel facilityModel, bool isDistributor,
+            String loggedInUserId, String? teamCode)?
+        selectFacility,
+    TResult? Function(String? productVariantId, bool isDistributor,
+            String loggedInUserId)?
+        selectProduct,
+    TResult? Function(DateTime? dateOfReconciliation, String loggedInUserId)?
         selectDateOfReconciliation,
-    TResult? Function()? calculate,
+    TResult? Function(
+            bool isDistributor, String? teamCode, String loggedInUserId)?
+        calculate,
     TResult? Function(StockReconciliationModel stockReconciliationModel)?
         create,
   }) {
-    return calculate?.call();
+    return calculate?.call(isDistributor, teamCode, loggedInUserId);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(FacilityModel facilityModel)? selectFacility,
-    TResult Function(String? productVariantId)? selectProduct,
-    TResult Function(DateTime? dateOfReconciliation)?
+    TResult Function(FacilityModel facilityModel, bool isDistributor,
+            String loggedInUserId, String? teamCode)?
+        selectFacility,
+    TResult Function(String? productVariantId, bool isDistributor,
+            String loggedInUserId)?
+        selectProduct,
+    TResult Function(DateTime? dateOfReconciliation, String loggedInUserId)?
         selectDateOfReconciliation,
-    TResult Function()? calculate,
+    TResult Function(
+            bool isDistributor, String? teamCode, String loggedInUserId)?
+        calculate,
     TResult Function(StockReconciliationModel stockReconciliationModel)? create,
     required TResult orElse(),
   }) {
     if (calculate != null) {
-      return calculate();
+      return calculate(isDistributor, teamCode, loggedInUserId);
     }
     return orElse();
   }
@@ -794,8 +1024,19 @@ class _$StockReconciliationCalculateEventImpl
 
 abstract class StockReconciliationCalculateEvent
     implements StockReconciliationEvent {
-  const factory StockReconciliationCalculateEvent() =
+  const factory StockReconciliationCalculateEvent(
+          {final bool isDistributor,
+          final String? teamCode,
+          required final String loggedInUserId}) =
       _$StockReconciliationCalculateEventImpl;
+
+  bool get isDistributor;
+  String? get teamCode;
+  String get loggedInUserId;
+  @JsonKey(ignore: true)
+  _$$StockReconciliationCalculateEventImplCopyWith<
+          _$StockReconciliationCalculateEventImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -870,11 +1111,18 @@ class _$StockReconciliationCreateEventImpl
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(FacilityModel facilityModel) selectFacility,
-    required TResult Function(String? productVariantId) selectProduct,
-    required TResult Function(DateTime? dateOfReconciliation)
+    required TResult Function(FacilityModel facilityModel, bool isDistributor,
+            String loggedInUserId, String? teamCode)
+        selectFacility,
+    required TResult Function(
+            String? productVariantId, bool isDistributor, String loggedInUserId)
+        selectProduct,
+    required TResult Function(
+            DateTime? dateOfReconciliation, String loggedInUserId)
         selectDateOfReconciliation,
-    required TResult Function() calculate,
+    required TResult Function(
+            bool isDistributor, String? teamCode, String loggedInUserId)
+        calculate,
     required TResult Function(StockReconciliationModel stockReconciliationModel)
         create,
   }) {
@@ -884,11 +1132,17 @@ class _$StockReconciliationCreateEventImpl
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(FacilityModel facilityModel)? selectFacility,
-    TResult? Function(String? productVariantId)? selectProduct,
-    TResult? Function(DateTime? dateOfReconciliation)?
+    TResult? Function(FacilityModel facilityModel, bool isDistributor,
+            String loggedInUserId, String? teamCode)?
+        selectFacility,
+    TResult? Function(String? productVariantId, bool isDistributor,
+            String loggedInUserId)?
+        selectProduct,
+    TResult? Function(DateTime? dateOfReconciliation, String loggedInUserId)?
         selectDateOfReconciliation,
-    TResult? Function()? calculate,
+    TResult? Function(
+            bool isDistributor, String? teamCode, String loggedInUserId)?
+        calculate,
     TResult? Function(StockReconciliationModel stockReconciliationModel)?
         create,
   }) {
@@ -898,11 +1152,17 @@ class _$StockReconciliationCreateEventImpl
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(FacilityModel facilityModel)? selectFacility,
-    TResult Function(String? productVariantId)? selectProduct,
-    TResult Function(DateTime? dateOfReconciliation)?
+    TResult Function(FacilityModel facilityModel, bool isDistributor,
+            String loggedInUserId, String? teamCode)?
+        selectFacility,
+    TResult Function(String? productVariantId, bool isDistributor,
+            String loggedInUserId)?
+        selectProduct,
+    TResult Function(DateTime? dateOfReconciliation, String loggedInUserId)?
         selectDateOfReconciliation,
-    TResult Function()? calculate,
+    TResult Function(
+            bool isDistributor, String? teamCode, String loggedInUserId)?
+        calculate,
     TResult Function(StockReconciliationModel stockReconciliationModel)? create,
     required TResult orElse(),
   }) {

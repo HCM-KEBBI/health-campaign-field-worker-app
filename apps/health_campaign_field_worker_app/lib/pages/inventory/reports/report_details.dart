@@ -173,80 +173,87 @@ class _InventoryReportDetailsPageState
                                   DigitCard(
                                     child: Column(
                                       children: [
-                                        BlocConsumer<FacilityBloc,
-                                            FacilityState>(
-                                          listener: (context, state) =>
-                                              state.whenOrNull(
-                                            empty: () =>
-                                                NoFacilitiesAssignedDialog.show(
-                                              context,
-                                            ),
-                                          ),
-                                          builder: (context, state) {
-                                            final facilities = state.whenOrNull(
-                                                  fetched:
-                                                      (facilities, _, __) =>
-                                                          facilities,
-                                                ) ??
-                                                [];
-                                            final allFacilities =
+                                        if (context.isWarehouseMgr)
+                                          BlocConsumer<FacilityBloc,
+                                              FacilityState>(
+                                            listener: (context, state) =>
                                                 state.whenOrNull(
-                                                      fetched: (
-                                                        _,
-                                                        allFacilities,
-                                                        __,
-                                                      ) =>
+                                              empty: () =>
+                                                  NoFacilitiesAssignedDialog
+                                                      .show(
+                                                context,
+                                              ),
+                                            ),
+                                            builder: (context, state) {
+                                              final facilities =
+                                                  state.whenOrNull(
+                                                        fetched: (facilities, _,
+                                                                __) =>
+                                                            facilities,
+                                                      ) ??
+                                                      [];
+                                              final allFacilities =
+                                                  state.whenOrNull(
+                                                        fetched: (
+                                                          _,
                                                           allFacilities,
-                                                    ) ??
-                                                    [];
-                                            for (var element in allFacilities) {
-                                              facilityMap[element.id] = element;
-                                            }
+                                                          __,
+                                                        ) =>
+                                                            allFacilities,
+                                                      ) ??
+                                                      [];
+                                              for (var element
+                                                  in allFacilities) {
+                                                facilityMap[element.id] =
+                                                    element;
+                                              }
 
-                                            return DigitTextFormField(
-                                              valueAccessor:
-                                                  FacilityValueAccessor(
-                                                facilities,
-                                              ),
-                                              label: localizations.translate(
-                                                i18.stockReconciliationDetails
-                                                    .facilityName,
-                                              ),
-                                              suffix: const Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Icon(Icons.search),
-                                              ),
-                                              formControlName: _facilityKey,
-                                              readOnly: true,
-                                              isRequired: true,
-                                              onTap: () async {
-                                                final stockReconciliationBloc =
-                                                    context.read<
-                                                        StockReconciliationBloc>();
+                                              return DigitTextFormField(
+                                                valueAccessor:
+                                                    FacilityValueAccessor(
+                                                  facilities,
+                                                ),
+                                                label: localizations.translate(
+                                                  i18.stockReconciliationDetails
+                                                      .facilityName,
+                                                ),
+                                                suffix: const Padding(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child: Icon(Icons.search),
+                                                ),
+                                                formControlName: _facilityKey,
+                                                readOnly: true,
+                                                isRequired: true,
+                                                onTap: () async {
+                                                  final stockReconciliationBloc =
+                                                      context.read<
+                                                          StockReconciliationBloc>();
 
-                                                final facility = await context
-                                                    .router
-                                                    .push<FacilityModel>(
-                                                  FacilitySelectionRoute(
-                                                    facilities: facilities,
-                                                  ),
-                                                );
+                                                  final facility = await context
+                                                      .router
+                                                      .push<FacilityModel>(
+                                                    FacilitySelectionRoute(
+                                                      facilities: facilities,
+                                                    ),
+                                                  );
 
-                                                if (facility == null) return;
-                                                form
-                                                    .control(_facilityKey)
-                                                    .value = facility;
-                                                stockReconciliationBloc.add(
-                                                  StockReconciliationSelectFacilityEvent(
-                                                    facility,
-                                                  ),
-                                                );
+                                                  if (facility == null) return;
+                                                  form
+                                                      .control(_facilityKey)
+                                                      .value = facility;
+                                                  stockReconciliationBloc.add(
+                                                    StockReconciliationSelectFacilityEvent(
+                                                      facility,
+                                                      loggedInUserId: context
+                                                          .loggedInUserUuid,
+                                                    ),
+                                                  );
 
-                                                handleSelection(form);
-                                              },
-                                            );
-                                          },
-                                        ),
+                                                  handleSelection(form);
+                                                },
+                                              );
+                                            },
+                                          ),
                                         BlocBuilder<ProductVariantBloc,
                                             ProductVariantState>(
                                           builder: (context, state) {

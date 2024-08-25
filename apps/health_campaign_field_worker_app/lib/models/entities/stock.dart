@@ -2,8 +2,8 @@
 import 'package:dart_mappable/dart_mappable.dart';
 import 'package:drift/drift.dart';
 
-import '../data_model.dart';
 import '../../data/local_store/sql_store/sql_store.dart';
+import '../data_model.dart';
 
 part 'stock.mapper.dart';
 
@@ -21,7 +21,11 @@ class StockSearchModel extends EntitySearchModel with StockSearchModelMappable {
   final List<TransactionType>? transactionType;
   final List<TransactionReason>? transactionReason;
   final DateTime? dateOfEntryTime;
-  
+  final String? receiverId;
+  final String? receiverType;
+  final String? senderId;
+  final String? senderType;
+
   StockSearchModel({
     this.id,
     this.tenantId,
@@ -35,12 +39,16 @@ class StockSearchModel extends EntitySearchModel with StockSearchModelMappable {
     this.transactionType,
     this.transactionReason,
     int? dateOfEntry,
+    this.receiverId,
+    this.receiverType,
+    this.senderId,
+    this.senderType,
     super.boundaryCode,
     super.isDeleted,
-  }): dateOfEntryTime = dateOfEntry == null
-      ? null
-      : DateTime.fromMillisecondsSinceEpoch(dateOfEntry),
-   super();
+  })  : dateOfEntryTime = dateOfEntry == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(dateOfEntry),
+        super();
 
   @MappableConstructor()
   StockSearchModel.ignoreDeleted({
@@ -55,20 +63,22 @@ class StockSearchModel extends EntitySearchModel with StockSearchModelMappable {
     this.clientReferenceId,
     this.transactionType,
     this.transactionReason,
+    this.receiverId,
+    this.receiverType,
+    this.senderId,
+    this.senderType,
     int? dateOfEntry,
     super.boundaryCode,
-  }): dateOfEntryTime = dateOfEntry == null
-  ? null
-      : DateTime.fromMillisecondsSinceEpoch(dateOfEntry),
-   super(isDeleted: false);
+  })  : dateOfEntryTime = dateOfEntry == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(dateOfEntry),
+        super(isDeleted: false);
 
   int? get dateOfEntry => dateOfEntryTime?.millisecondsSinceEpoch;
-  
 }
 
 @MappableClass(ignoreNull: true, discriminatorValue: MappableClass.useAsDefault)
 class StockModel extends EntityModel with StockModelMappable {
-
   static const schemaName = 'Stock';
 
   final String? id;
@@ -88,6 +98,10 @@ class StockModel extends EntityModel with StockModelMappable {
   final TransactionReason? transactionReason;
   final DateTime? dateOfEntryTime;
   final StockAdditionalFields? additionalFields;
+  final String? receiverId;
+  final String? receiverType;
+  final String? senderId;
+  final String? senderType;
 
   StockModel({
     this.additionalFields,
@@ -107,15 +121,19 @@ class StockModel extends EntityModel with StockModelMappable {
     this.transactionType,
     this.transactionReason,
     int? dateOfEntry,
-    super.auditDetails,super.clientAuditDetails,
+    this.receiverId,
+    this.receiverType,
+    this.senderId,
+    this.senderType,
+    super.auditDetails,
+    super.clientAuditDetails,
     super.isDeleted = false,
-  }): dateOfEntryTime = dateOfEntry == null
-          ? null
-          : DateTime.fromMillisecondsSinceEpoch(dateOfEntry),
-      super();
+  })  : dateOfEntryTime = dateOfEntry == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(dateOfEntry),
+        super();
 
-  int?  get dateOfEntry => dateOfEntryTime?.millisecondsSinceEpoch;
-  
+  int? get dateOfEntry => dateOfEntryTime?.millisecondsSinceEpoch;
 
   StockCompanion get companion {
     return StockCompanion(
@@ -145,16 +163,16 @@ class StockModel extends EntityModel with StockModelMappable {
       dateOfEntry: Value(dateOfEntry),
       transactionType: Value(transactionType),
       transactionReason: Value(transactionReason),
-      );
+    );
   }
 }
 
 @MappableClass(ignoreNull: true, discriminatorValue: MappableClass.useAsDefault)
-class StockAdditionalFields extends AdditionalFields with StockAdditionalFieldsMappable {
+class StockAdditionalFields extends AdditionalFields
+    with StockAdditionalFieldsMappable {
   StockAdditionalFields({
     super.schema = 'Stock',
     required super.version,
     super.fields,
   });
 }
-

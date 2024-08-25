@@ -34,7 +34,10 @@ class StockReconciliationBloc
     StockReconciliationEmitter emit,
   ) async {
     emit(state.copyWith(facilityModel: event.facilityModel));
-    add(const StockReconciliationCalculateEvent());
+    add(StockReconciliationCalculateEvent(
+      isDistributor: event.isDistributor,
+      loggedInUserId: event.loggedInUserId,
+    ));
   }
 
   FutureOr<void> _handleSelectProduct(
@@ -42,7 +45,10 @@ class StockReconciliationBloc
     StockReconciliationEmitter emit,
   ) async {
     emit(state.copyWith(productVariantId: event.productVariantId));
-    add(const StockReconciliationCalculateEvent());
+    add(StockReconciliationCalculateEvent(
+      isDistributor: event.isDistributor,
+      loggedInUserId: event.loggedInUserId,
+    ));
   }
 
   FutureOr<void> _handleSelectDateOfReconciliation(
@@ -50,7 +56,7 @@ class StockReconciliationBloc
     StockReconciliationEmitter emit,
   ) async {
     emit(state.copyWith(dateOfReconciliation: event.dateOfReconciliation!));
-    add(const StockReconciliationCalculateEvent());
+    add(const StockReconciliationCalculateEvent(loggedInUserId: ''));
   }
 
   FutureOr<void> _handleCalculate(
@@ -60,19 +66,45 @@ class StockReconciliationBloc
     emit(state.copyWith(loading: true, stockModels: []));
 
     final productVariantId = state.productVariantId;
-    final facilityId = state.facilityModel?.id;
+    final facilityId = state.facilityModel?.id != 'Delivery Team'
+        ? state.facilityModel?.id
+        : null;
     final dateOfReconciliation = state.dateOfReconciliation;
 
     if (productVariantId == null || facilityId == null) return;
 
-    final stocks = await stockRepository.search(
+    // Fetching the stock reconciliation details
+    final receivedStocks = (await stockRepository.search(
       StockSearchModel(
         productVariantId: productVariantId,
-        facilityId: facilityId,
+        receiverId: facilityId,
+        transactionType: [TransactionType.received.toValue()],
       ),
-    );
+    ))
+        .where(
+          (element) =>
+              element.auditDetails != null &&
+              element.auditDetails?.createdBy == event.loggedInUserId,
+        )
+        .toList();
+    final sentStocks = (await stockRepository.search(
+      StockSearchModel(
+        productVariantId: productVariantId,
+        senderId: facilityId,
+        transactionType: [TransactionType.dispatched.toValue()],
+      ),
+    ))
+        .where(
+          (element) =>
+              element.auditDetails != null &&
+              element.auditDetails?.createdBy == event.loggedInUserId,
+        )
+        .toList();
 
-    final dateFilteredStocks = stocks
+    final dateFilteredStocks = ([
+      ...receivedStocks,
+      ...sentStocks,
+    ])
         .where(
           (e) =>
               e.dateOfEntryTime!.year < dateOfReconciliation.year ||
@@ -123,19 +155,28 @@ class StockReconciliationBloc
 @freezed
 class StockReconciliationEvent with _$StockReconciliationEvent {
   const factory StockReconciliationEvent.selectFacility(
-    FacilityModel facilityModel,
-  ) = StockReconciliationSelectFacilityEvent;
+    FacilityModel facilityModel, {
+    @Default(false) bool isDistributor,
+    required String loggedInUserId,
+    String? teamCode,
+  }) = StockReconciliationSelectFacilityEvent;
 
   const factory StockReconciliationEvent.selectProduct(
-    String? productVariantId,
-  ) = StockReconciliationSelectProductEvent;
+    String? productVariantId, {
+    @Default(false) bool isDistributor,
+    required String loggedInUserId,
+  }) = StockReconciliationSelectProductEvent;
 
   const factory StockReconciliationEvent.selectDateOfReconciliation(
-    DateTime? dateOfReconciliation,
-  ) = StockReconciliationSelectDateOfReconciliationEvent;
+    DateTime? dateOfReconciliation, {
+    required String loggedInUserId,
+  }) = StockReconciliationSelectDateOfReconciliationEvent;
 
-  const factory StockReconciliationEvent.calculate() =
-      StockReconciliationCalculateEvent;
+  const factory StockReconciliationEvent.calculate({
+    @Default(false) bool isDistributor,
+    String? teamCode,
+    required String loggedInUserId,
+  }) = StockReconciliationCalculateEvent;
 
   const factory StockReconciliationEvent.create(
     StockReconciliationModel stockReconciliationModel,
