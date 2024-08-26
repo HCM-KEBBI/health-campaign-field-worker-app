@@ -142,7 +142,7 @@ extension ContextUtilityExtensions on BuildContext {
           .toList()
           .isNotEmpty;
 
-      return isDownSyncEnabled;
+      return isWarehouseMgr;
     } catch (_) {
       return false;
     }
