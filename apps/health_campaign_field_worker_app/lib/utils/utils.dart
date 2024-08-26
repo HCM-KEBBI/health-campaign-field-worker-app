@@ -656,12 +656,13 @@ dynamic getValueByKey(List<Map<String, dynamic>> data, String key) {
 
   return null; // Key not found
 }
-
+  
 class UniqueIdGeneration {
-  Future<String> generateUniqueId(
-    String localityCode,
-    String loggedInUserId,
-  ) async {
+  Future<Set<String>> generateUniqueId({
+    required String localityCode,
+    required String loggedInUserId,
+    required bool returnBothIds,
+  }) async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
 
@@ -674,10 +675,10 @@ class UniqueIdGeneration {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
 
     // Combine the Android ID with the timestamp
-    String input = '$loggedInUserId$androidId$localityCode$timestamp';
+    String combinedId = '$loggedInUserId$androidId$localityCode$timestamp';
 
     // Generate SHA-256 hash
-    List<int> bytes = utf8.encode(input);
+    List<int> bytes = utf8.encode(combinedId);
     Digest sha256Hash = sha256.convert(bytes);
 
     // Convert the hash to a 12-character string and make it uppercase
@@ -698,6 +699,8 @@ class UniqueIdGeneration {
       print('uniqueId : $formattedUniqueId');
     }
 
-    return formattedUniqueId;
+    return returnBothIds
+        ? {formattedUniqueId, combinedId}
+        : {formattedUniqueId};
   }
 }
