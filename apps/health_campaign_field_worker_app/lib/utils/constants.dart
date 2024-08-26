@@ -110,6 +110,7 @@ class Constants {
   static const String projectSearchApiPath = '/project/v1/_search';
   static const String logoutUserPath = '/user/_logout';
   static const String invalidAccessTokenKey = 'InvalidAccessTokenException';
+  static const String checklistViewDateFormat = 'dd/MM/yyyy hh:mm a';
 
   static List<LocalRepository> getLocalRepositories(
     LocalSqlDataStore sql,

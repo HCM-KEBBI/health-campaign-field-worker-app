@@ -192,6 +192,8 @@ class Checklist {
 
   String get checklistDialogDescription => 'CHECKLIST_DIALOG_DESCRITPTION';
 
+  String get checklistDialogDynamicDescription =>
+      'CHECKLIST_DIALOG_DYNAMIC_DESCRIPTION';
   String get checklistDialogPrimaryAction => 'CHECKLIST_DIALOG_PRIMARY_ACTION';
 
   String get checklistDialogSecondaryAction =>
@@ -553,6 +555,9 @@ class HouseholdOverView {
 
   String get householdOverViewActionText =>
       'HOUSEHOLD_OVER_VIEW_ACTION_TEXT_SPAQ';
+
+  String get householdOverViewAssessmentActionText =>
+      'HOUSEHOLD_OVER_VIEW_ASSESSMENT_ACTION_TEXT';
 
   String get viewDeliveryLabel => 'VIEW_DELIVERY_DETAILS_LABEL';
 
