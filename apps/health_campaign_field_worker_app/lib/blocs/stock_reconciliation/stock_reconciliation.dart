@@ -78,7 +78,7 @@ class StockReconciliationBloc
       StockSearchModel(
         productVariantId: productVariantId,
         receiverId: facilityId,
-        transactionType: [TransactionType.received.toValue()],
+        transactionType: [TransactionType.received],
       ),
     ))
         .where(
@@ -91,7 +91,7 @@ class StockReconciliationBloc
       StockSearchModel(
         productVariantId: productVariantId,
         senderId: facilityId,
-        transactionType: [TransactionType.dispatched.toValue()],
+        transactionType: [TransactionType.dispatched],
       ),
     ))
         .where(

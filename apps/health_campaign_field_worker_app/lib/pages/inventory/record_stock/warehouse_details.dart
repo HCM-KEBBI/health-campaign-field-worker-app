@@ -264,26 +264,12 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                                     ),
                                   ),
                                 ]),
-                                DigitTextFormField(
-                                  valueAccessor: FacilityValueAccessor(
-                                    facilities,
-                                  ),
-                                  isRequired: true,
-                                  label: localizations.translate(
-                                    i18.warehouseDetails
-                                        .usNameCommunitySupervisor,
-                                  ),
-                                  suffix: const Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: Icon(Icons.search),
-                                  ),
-                                  formControlName: _warehouseKey,
-                                  readOnly: false,
+                                InkWell(
                                   onTap: () async {
                                     final parent =
-                                        context.router.parent() as StackRouter;
+                                    context.router.parent() as StackRouter;
                                     final facility =
-                                        await parent.push<FacilityModel>(
+                                    await parent.push<FacilityModel>(
                                       FacilitySelectionRoute(
                                         facilities: facilities,
                                       ),
@@ -305,6 +291,50 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                                     form.control(_warehouseKey).value =
                                         facility;
                                   },
+                                  child: IgnorePointer(
+                                    child: DigitTextFormField(
+                                      valueAccessor: FacilityValueAccessor(
+                                        facilities,
+                                      ),
+                                      isRequired: true,
+                                      label: localizations.translate(
+                                        i18.warehouseDetails
+                                            .usNameCommunitySupervisor,
+                                      ),
+                                      suffix: const Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Icon(Icons.search),
+                                      ),
+                                      formControlName: _warehouseKey,
+                                      readOnly: false,
+                                      onTap: () async {
+                                        final parent =
+                                            context.router.parent() as StackRouter;
+                                        final facility =
+                                            await parent.push<FacilityModel>(
+                                          FacilitySelectionRoute(
+                                            facilities: facilities,
+                                          ),
+                                        );
+
+                                        if (facility == null) return;
+
+                                        if (facility.id == 'Delivery Team') {
+                                          form.control(_teamCodeKey).value =
+                                              context.loggedInUserUuid;
+                                          setState(() {
+                                            deliveryTeamSelected = true;
+                                          });
+                                        } else {
+                                          setState(() {
+                                            deliveryTeamSelected = false;
+                                          });
+                                        }
+                                        form.control(_warehouseKey).value =
+                                            facility;
+                                      },
+                                    ),
+                                  ),
                                 ),
                                 if (deliveryTeamSelected)
                                   DigitTextFormField(
