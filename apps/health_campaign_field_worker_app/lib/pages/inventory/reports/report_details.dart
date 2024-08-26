@@ -208,26 +208,11 @@ class _InventoryReportDetailsPageState
                                                     element;
                                               }
 
-                                              return DigitTextFormField(
-                                                valueAccessor:
-                                                    FacilityValueAccessor(
-                                                  facilities,
-                                                ),
-                                                label: localizations.translate(
-                                                  i18.stockReconciliationDetails
-                                                      .facilityName,
-                                                ),
-                                                suffix: const Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Icon(Icons.search),
-                                                ),
-                                                formControlName: _facilityKey,
-                                                readOnly: true,
-                                                isRequired: true,
+                                              return InkWell(
                                                 onTap: () async {
                                                   final stockReconciliationBloc =
-                                                      context.read<
-                                                          StockReconciliationBloc>();
+                                                  context.read<
+                                                      StockReconciliationBloc>();
 
                                                   final facility = await context
                                                       .router
@@ -251,6 +236,51 @@ class _InventoryReportDetailsPageState
 
                                                   handleSelection(form);
                                                 },
+                                                child: IgnorePointer(
+                                                  child: DigitTextFormField(
+                                                    valueAccessor:
+                                                        FacilityValueAccessor(
+                                                      facilities,
+                                                    ),
+                                                    label: localizations.translate(
+                                                      i18.stockReconciliationDetails
+                                                          .facilityName,
+                                                    ),
+                                                    suffix: const Padding(
+                                                      padding: EdgeInsets.all(8.0),
+                                                      child: Icon(Icons.search),
+                                                    ),
+                                                    formControlName: _facilityKey,
+                                                    isRequired: true,
+                                                    onTap: () async {
+                                                      final stockReconciliationBloc =
+                                                          context.read<
+                                                              StockReconciliationBloc>();
+
+                                                      final facility = await context
+                                                          .router
+                                                          .push<FacilityModel>(
+                                                        FacilitySelectionRoute(
+                                                          facilities: facilities,
+                                                        ),
+                                                      );
+
+                                                      if (facility == null) return;
+                                                      form
+                                                          .control(_facilityKey)
+                                                          .value = facility;
+                                                      stockReconciliationBloc.add(
+                                                        StockReconciliationSelectFacilityEvent(
+                                                          facility,
+                                                          loggedInUserId: context
+                                                              .loggedInUserUuid,
+                                                        ),
+                                                      );
+
+                                                      handleSelection(form);
+                                                    },
+                                                  ),
+                                                ),
                                               );
                                             },
                                           ),

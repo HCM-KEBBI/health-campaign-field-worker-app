@@ -694,22 +694,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                       ),
                                       BlocBuilder<FacilityBloc, FacilityState>(
                                         builder: (context, state) {
-                                          return DigitTextFormField(
-                                            valueAccessor:
-                                                FacilityValueAccessor(
-                                              teamFacilities,
-                                            ),
-                                            label: localizations.translate(
-                                              '${pageTitle}_${i18.stockReconciliationDetails.stockLabel}',
-                                            ),
-                                            isRequired: true,
-                                            suffix: const Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Icon(Icons.search),
-                                            ),
-                                            formControlName:
-                                                _transactingPartyKey,
-                                            readOnly: false,
+                                          return InkWell(
                                             onTap: () async {
                                               clearQRCodes();
                                               form
@@ -739,6 +724,54 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   .control(_transactingPartyKey)
                                                   .value = facility;
                                             },
+                                            child: IgnorePointer(
+                                              child: DigitTextFormField(
+                                                valueAccessor:
+                                                    FacilityValueAccessor(
+                                                  teamFacilities,
+                                                ),
+                                                label: localizations.translate(
+                                                  '${pageTitle}_${i18.stockReconciliationDetails.stockLabel}',
+                                                ),
+                                                isRequired: true,
+                                                suffix: const Padding(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child: Icon(Icons.search),
+                                                ),
+                                                formControlName:
+                                                    _transactingPartyKey,
+                                                readOnly: false,
+                                                onTap: () async {
+                                                  clearQRCodes();
+                                                  form
+                                                      .control(_deliveryTeamKey)
+                                                      .value = '';
+                                                  final parent = context.router
+                                                      .parent() as StackRouter;
+                                                  final facility = await parent
+                                                      .push<FacilityModel>(
+                                                    FacilitySelectionRoute(
+                                                      facilities: teamFacilities,
+                                                    ),
+                                                  );
+
+                                                  if (facility == null) return;
+                                                  if (facility.id ==
+                                                      'Delivery Team') {
+                                                    setState(() {
+                                                      deliveryTeamSelected = true;
+                                                    });
+                                                  } else {
+                                                    setState(() {
+                                                      deliveryTeamSelected = false;
+                                                    });
+                                                  }
+                                                  form
+                                                      .control(_transactingPartyKey)
+                                                      .value = facility;
+                                                },
+                                              ),
+                                            ),
                                           );
                                         },
                                       ),
