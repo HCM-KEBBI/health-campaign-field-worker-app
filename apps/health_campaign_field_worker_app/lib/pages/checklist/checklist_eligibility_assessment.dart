@@ -872,7 +872,9 @@ class _EligibilityChecklistViewPageState
   }
 
   bool isIneligible(
-      Map<String?, String> responses, String ineligibilityReason) {
+    Map<String?, String> responses,
+    String ineligibilityReason,
+  ) {
     var isIneligible = false;
     var q3Key = "KBEA3";
     var q5Key = "KBEA4";
@@ -881,14 +883,14 @@ class _EligibilityChecklistViewPageState
       if (responses.containsKey(q3Key) && responses[q3Key]!.isNotEmpty) {
         isIneligible = responses[q3Key] == yes ? true : false;
         ineligibilityReason = isIneligible
-            ? '$ineligibilityReason${",NOT_ADMINISTERED"}'
+            ? '$ineligibilityReason${",NOT_ADMINISTERED_IN_PREVIOUS_CYCLE"}'
             : ineligibilityReason;
       }
       if (!isIneligible &&
           (responses.containsKey(q5Key) && responses[q5Key]!.isNotEmpty)) {
         isIneligible = responses[q5Key] == yes ? true : false;
         ineligibilityReason = isIneligible
-            ? '$ineligibilityReason${",ANOTHER_MEDICATION"}'
+            ? '$ineligibilityReason${",CHILD_ON_MEDICATION_1"}'
             : ineligibilityReason;
       }
     }
