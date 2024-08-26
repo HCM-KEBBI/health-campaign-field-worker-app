@@ -3,7 +3,6 @@ import 'package:digit_components/widgets/atoms/digit_radio_button_list.dart';
 import 'package:digit_components/widgets/atoms/digit_reactive_search_dropdown.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
@@ -11,7 +10,6 @@ import '../../../blocs/app_initialization/app_initialization.dart';
 import '../../../blocs/hf_referrals/record_referral.dart';
 import '../../../blocs/service/service.dart';
 import '../../../blocs/service_definition/service_definition.dart';
-import '../../../data/local_store/no_sql/schema/app_configuration.dart';
 import '../../../models/data_model.dart';
 import '../../../router/app_router.dart';
 import '../../../utils/environment_config.dart';
@@ -43,6 +41,7 @@ class _RecordReferralDetailsPageState
   static const _referredByKey = 'referredBy';
   static const _referralCodeKey = 'referralCode';
   final clickedStatus = ValueNotifier<bool>(false);
+  static const _beneficiaryIdKey = 'beneficiaryId';
 
   @override
   void dispose() {
@@ -171,7 +170,10 @@ class _RecordReferralDetailsPageState
                                                   form.control(_cycleKey).value;
                                               final nameOfChild = form
                                                   .control(_nameOfChildKey)
-                                                  .value as String;
+                                                  .value as String?;
+                                              final beneficiaryID = form
+                                                  .control(_beneficiaryIdKey)
+                                                  .value as String?;
                                               final referralCode = form
                                                   .control(_referralCodeKey)
                                                   .value as String?;
@@ -212,7 +214,10 @@ class _RecordReferralDetailsPageState
                                                         facilityId,
                                                     projectId:
                                                         context.projectId,
-                                                    name: nameOfChild.trim(),
+                                                    name: (nameOfChild ?? '')
+                                                        .trim(),
+                                                    beneficiaryId:
+                                                        beneficiaryID,
                                                     referralCode: referralCode,
                                                     symptom: symptom.key,
                                                     tenantId: envConfig
@@ -346,318 +351,376 @@ class _RecordReferralDetailsPageState
                               ),
                             ),
                             serviceSearch: (value1, value2, value3) {
-                              return DigitCard(
-                                margin: const EdgeInsets.fromLTRB(
-                                    0, kPadding, 0, 0),
-                                padding: const EdgeInsets.fromLTRB(
-                                    kPadding, 0, kPadding, 0),
-                                child: ValueListenableBuilder(
-                                  valueListenable: clickedStatus,
-                                  builder: (context, bool isClicked, _) {
-                                    return DigitElevatedButton(
-                                      onPressed: isClicked
-                                          ? null
-                                          : () {
-                                              if (form
-                                                      .control(_cycleKey)
-                                                      .value ==
-                                                  null) {
-                                                clickedStatus.value = false;
-                                                form
-                                                    .control(_cycleKey)
-                                                    .setErrors({'': true});
-                                              } else if (form
-                                                      .control(_referralReason)
-                                                      .value ==
-                                                  null) {
-                                                clickedStatus.value = false;
-                                                form
-                                                    .control(_referralReason)
-                                                    .setErrors({'': true});
-                                              }
-                                              form.markAllAsTouched();
+                              return BlocBuilder<AppInitializationBloc,
+                                  AppInitializationState>(
+                                builder: (context, state) {
+                                  return state.maybeWhen(
+                                    orElse: () => const Offstage(),
+                                    initialized: (appConfiguration, _) {
+                                      final List<KeyValue> reasons =
+                                          (appConfiguration.referralReasons ??
+                                                  [])
+                                              .map(
+                                                (e) => KeyValue(e.code, e.code),
+                                              )
+                                              .toList();
 
-                                              if (viewOnly) {
-                                                final symptom = form
-                                                    .control(_referralReason)
-                                                    .value as KeyValue;
-                                                if (value1.isNotEmpty) {
-                                                  context
-                                                      .read<
-                                                          ServiceDefinitionBloc>()
-                                                      .add(
-                                                        ServiceDefinitionSelectionEvent(
-                                                          serviceDefinition: value
-                                                              .serviceDefinitionList
-                                                              .where((e) => e
-                                                                  .code!
-                                                                  .contains(
-                                                                      symptom
-                                                                          .key))
-                                                              .first,
-                                                        ),
-                                                      );
-                                                  context
-                                                      .read<ServiceBloc>()
-                                                      .add(
-                                                        ServiceSearchEvent(
-                                                          serviceSearchModel:
-                                                              ServiceSearchModel(
-                                                            clientId:
-                                                                recordState
-                                                                    .mapOrNull(
-                                                              create: (value) => value
-                                                                      .viewOnly
-                                                                  ? value
-                                                                      .hfReferralModel
-                                                                      ?.clientReferenceId
-                                                                  : null,
+                                      return DigitCard(
+                                        margin: const EdgeInsets.fromLTRB(
+                                            0, kPadding, 0, 0),
+                                        padding: const EdgeInsets.fromLTRB(
+                                            kPadding, 0, kPadding, 0),
+                                        child: ValueListenableBuilder(
+                                          valueListenable: clickedStatus,
+                                          builder:
+                                              (context, bool isClicked, _) {
+                                            return DigitElevatedButton(
+                                              onPressed: isClicked
+                                                  ? null
+                                                  : () {
+                                                      if (form
+                                                              .control(
+                                                                  _cycleKey)
+                                                              .value ==
+                                                          null) {
+                                                        clickedStatus.value =
+                                                            false;
+                                                        form
+                                                            .control(_cycleKey)
+                                                            .setErrors(
+                                                                {'': true});
+                                                      } else if (form
+                                                              .control(
+                                                                  _referralReason)
+                                                              .value ==
+                                                          null) {
+                                                        clickedStatus.value =
+                                                            false;
+                                                        form
+                                                            .control(
+                                                                _referralReason)
+                                                            .setErrors(
+                                                                {'': true});
+                                                      }
+                                                      form.markAllAsTouched();
+
+                                                      if (viewOnly) {
+                                                        final symptom = form
+                                                            .control(
+                                                                _referralReason)
+                                                            .value as KeyValue;
+                                                        if (value1.isNotEmpty) {
+                                                          context
+                                                              .read<
+                                                                  ServiceDefinitionBloc>()
+                                                              .add(
+                                                                ServiceDefinitionSelectionEvent(
+                                                                  serviceDefinition: value
+                                                                      .serviceDefinitionList
+                                                                      .where((e) => e
+                                                                          .code!
+                                                                          .contains(
+                                                                              symptom.key))
+                                                                      .first,
+                                                                ),
+                                                              );
+                                                          context
+                                                              .read<
+                                                                  ServiceBloc>()
+                                                              .add(
+                                                                ServiceSearchEvent(
+                                                                  serviceSearchModel:
+                                                                      ServiceSearchModel(
+                                                                    clientId:
+                                                                        recordState
+                                                                            .mapOrNull(
+                                                                      create: (value) => value
+                                                                              .viewOnly
+                                                                          ? value
+                                                                              .hfReferralModel
+                                                                              ?.clientReferenceId
+                                                                          : null,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              );
+                                                          context.router.push(
+                                                            ReferralReasonCheckListPreviewRoute(),
+                                                          );
+                                                        } else {
+                                                          final hfClientRefId =
+                                                              recordState
+                                                                  .mapOrNull(
+                                                            create: (value) => value
+                                                                .hfReferralModel
+                                                                ?.clientReferenceId,
+                                                          );
+                                                          context
+                                                              .read<
+                                                                  ServiceDefinitionBloc>()
+                                                              .add(
+                                                                ServiceDefinitionSelectionEvent(
+                                                                  serviceDefinition: value
+                                                                      .serviceDefinitionList
+                                                                      .where((e) => e
+                                                                          .code!
+                                                                          .contains(
+                                                                              symptom.key))
+                                                                      .first,
+                                                                ),
+                                                              );
+                                                          final parent = context
+                                                                  .router
+                                                                  .parent()
+                                                              as StackRouter;
+                                                          parent.push(
+                                                            ReferralReasonChecklistRoute(
+                                                              referralClientRefId:
+                                                                  hfClientRefId,
+                                                            ),
+                                                          );
+                                                        }
+                                                      } else if (!form.valid) {
+                                                        return;
+                                                      } else if (value
+                                                          .serviceDefinitionList
+                                                          .any((service) {
+                                                        return reasons
+                                                            .any((symptom) {
+                                                          return (service
+                                                                      .code ??
+                                                                  '')
+                                                              .contains(
+                                                                  symptom.key);
+                                                        });
+                                                      })) {
+                                                        DigitToast.show(
+                                                          context,
+                                                          options:
+                                                              DigitToastOptions(
+                                                            i18.referBeneficiary
+                                                                .noChecklistFound,
+                                                            true,
+                                                            DigitTheme.instance
+                                                                .mobileTheme,
+                                                          ),
+                                                        );
+                                                      } else {
+                                                        final hfState =
+                                                            BlocProvider.of<
+                                                                RecordHFReferralBloc>(
+                                                          context,
+                                                        ).state;
+                                                        clickedStatus.value =
+                                                            true;
+                                                        final cycle = form
+                                                            .control(_cycleKey)
+                                                            .value;
+                                                        final nameOfChild = form
+                                                            .control(
+                                                                _nameOfChildKey)
+                                                            .value as String;
+                                                        final referralCode = form
+                                                            .control(
+                                                                _referralCodeKey)
+                                                            .value as String?;
+                                                        final symptom = form
+                                                            .control(
+                                                                _referralReason)
+                                                            .value as KeyValue;
+                                                        final hfCoordinator =
+                                                            hfState.mapOrNull(
+                                                          create: (val) => val
+                                                              .healthFacilityCord,
+                                                        );
+                                                        final referredBy =
+                                                            hfState.mapOrNull(
+                                                          create: (val) =>
+                                                              val.referredBy,
+                                                        );
+                                                        final dateOfEvaluation =
+                                                            hfState
+                                                                .mapOrNull(
+                                                                  create: (val) =>
+                                                                      val.dateOfEvaluation,
+                                                                )
+                                                                ?.millisecondsSinceEpoch;
+                                                        final facilityId =
+                                                            hfState.mapOrNull(
+                                                          create: (val) =>
+                                                              val.facilityId,
+                                                        );
+                                                        final hfClientRefId =
+                                                            IdGen.i.identifier;
+
+                                                        final event = context.read<
+                                                            RecordHFReferralBloc>();
+                                                        event.add(
+                                                          RecordHFReferralCreateEntryEvent(
+                                                            hfReferralModel:
+                                                                HFReferralModel(
+                                                              clientReferenceId:
+                                                                  hfClientRefId,
+                                                              projectFacilityId:
+                                                                  facilityId,
+                                                              projectId: context
+                                                                  .projectId,
+                                                              name: nameOfChild
+                                                                  .trim(),
+                                                              referralCode:
+                                                                  referralCode,
+                                                              symptom:
+                                                                  symptom.key,
+                                                              tenantId:
+                                                                  envConfig
+                                                                      .variables
+                                                                      .tenantId,
+                                                              rowVersion: 1,
+                                                              auditDetails:
+                                                                  AuditDetails(
+                                                                createdBy: context
+                                                                    .loggedInUserUuid,
+                                                                createdTime: context
+                                                                    .millisecondsSinceEpoch(),
+                                                                lastModifiedBy:
+                                                                    context
+                                                                        .loggedInUserUuid,
+                                                                lastModifiedTime:
+                                                                    context
+                                                                        .millisecondsSinceEpoch(),
+                                                              ),
+                                                              clientAuditDetails:
+                                                                  ClientAuditDetails(
+                                                                createdBy: context
+                                                                    .loggedInUserUuid,
+                                                                createdTime: context
+                                                                    .millisecondsSinceEpoch(),
+                                                                lastModifiedBy:
+                                                                    context
+                                                                        .loggedInUserUuid,
+                                                                lastModifiedTime:
+                                                                    context
+                                                                        .millisecondsSinceEpoch(),
+                                                              ),
+                                                              additionalFields:
+                                                                  HFReferralAdditionalFields(
+                                                                version: 1,
+                                                                fields: [
+                                                                  if (hfCoordinator !=
+                                                                          null &&
+                                                                      hfCoordinator
+                                                                          .toString()
+                                                                          .trim()
+                                                                          .isNotEmpty)
+                                                                    AdditionalField(
+                                                                      AdditionalFieldsType
+                                                                          .hFCoordinator
+                                                                          .toValue(),
+                                                                      hfCoordinator,
+                                                                    ),
+                                                                  if (referredBy !=
+                                                                          null &&
+                                                                      referredBy
+                                                                          .toString()
+                                                                          .trim()
+                                                                          .isNotEmpty)
+                                                                    AdditionalField(
+                                                                      AdditionalFieldsType
+                                                                          .referredBy
+                                                                          .toValue(),
+                                                                      referredBy,
+                                                                    ),
+                                                                  if (dateOfEvaluation !=
+                                                                          null &&
+                                                                      dateOfEvaluation
+                                                                          .toString()
+                                                                          .trim()
+                                                                          .isNotEmpty)
+                                                                    AdditionalField(
+                                                                      AdditionalFieldsType
+                                                                          .dateOfEvaluation
+                                                                          .toValue(),
+                                                                      dateOfEvaluation,
+                                                                    ),
+                                                                  if (nameOfChild !=
+                                                                          null &&
+                                                                      nameOfChild
+                                                                          .toString()
+                                                                          .trim()
+                                                                          .isNotEmpty)
+                                                                    AdditionalField(
+                                                                      AdditionalFieldsType
+                                                                          .nameOfReferral
+                                                                          .toValue(),
+                                                                      nameOfChild,
+                                                                    ),
+                                                                  if (cycle !=
+                                                                          null &&
+                                                                      cycle
+                                                                          .toString()
+                                                                          .trim()
+                                                                          .isNotEmpty)
+                                                                    AdditionalField(
+                                                                      AdditionalFieldsType
+                                                                          .cycle
+                                                                          .toValue(),
+                                                                      cycle,
+                                                                    ),
+                                                                ],
+                                                              ),
                                                             ),
                                                           ),
-                                                        ),
-                                                      );
-                                                  context.router.push(
-                                                    ReferralReasonCheckListPreviewRoute(),
-                                                  );
-                                                } else {
-                                                  final hfClientRefId =
+                                                        );
+                                                        context
+                                                            .read<
+                                                                ServiceDefinitionBloc>()
+                                                            .add(
+                                                              ServiceDefinitionSelectionEvent(
+                                                                serviceDefinition: value
+                                                                    .serviceDefinitionList
+                                                                    .where((e) =>
+                                                                        e.code!
+                                                                            .contains(
+                                                                          symptom
+                                                                              .key,
+                                                                        ))
+                                                                    .first,
+                                                              ),
+                                                            );
+                                                        final parent = context
+                                                                .router
+                                                                .parent()
+                                                            as StackRouter;
+                                                        parent.push(
+                                                          ReferralReasonChecklistRoute(
+                                                            referralClientRefId:
+                                                                hfClientRefId,
+                                                          ),
+                                                        );
+                                                      }
+                                                    },
+                                              child: Center(
+                                                child: Text(
+                                                  localizations.translate(
                                                       recordState.mapOrNull(
-                                                    create: (value) => value
-                                                        .hfReferralModel
-                                                        ?.clientReferenceId,
-                                                  );
-                                                  context
-                                                      .read<
-                                                          ServiceDefinitionBloc>()
-                                                      .add(
-                                                        ServiceDefinitionSelectionEvent(
-                                                          serviceDefinition: value
-                                                              .serviceDefinitionList
-                                                              .where((e) => e
-                                                                  .code!
-                                                                  .contains(
-                                                                      symptom
-                                                                          .key))
-                                                              .first,
-                                                        ),
-                                                      );
-                                                  final parent = context.router
-                                                      .parent() as StackRouter;
-                                                  parent.push(
-                                                    ReferralReasonChecklistRoute(
-                                                      referralClientRefId:
-                                                          hfClientRefId,
-                                                    ),
-                                                  );
-                                                }
-                                              } else if (!form.valid) {
-                                                return;
-                                              } else if (value
-                                                  .serviceDefinitionList
-                                                  .isEmpty) {
-                                                DigitToast.show(
-                                                  context,
-                                                  options: DigitToastOptions(
-                                                    i18.referBeneficiary
-                                                        .noChecklistFound,
-                                                    true,
-                                                    DigitTheme
-                                                        .instance.mobileTheme,
-                                                  ),
-                                                );
-                                              } else {
-                                                final hfState = BlocProvider.of<
-                                                    RecordHFReferralBloc>(
-                                                  context,
-                                                ).state;
-                                                clickedStatus.value = true;
-                                                final cycle = form
-                                                    .control(_cycleKey)
-                                                    .value;
-                                                final nameOfChild = form
-                                                    .control(_nameOfChildKey)
-                                                    .value as String;
-                                                final referralCode = form
-                                                    .control(_referralCodeKey)
-                                                    .value as String?;
-                                                final symptom = form
-                                                    .control(_referralReason)
-                                                    .value as KeyValue;
-                                                final hfCoordinator =
-                                                    hfState.mapOrNull(
-                                                  create: (val) =>
-                                                      val.healthFacilityCord,
-                                                );
-                                                final referredBy =
-                                                    hfState.mapOrNull(
-                                                  create: (val) =>
-                                                      val.referredBy,
-                                                );
-                                                final dateOfEvaluation = hfState
-                                                    .mapOrNull(
-                                                      create: (val) =>
-                                                          val.dateOfEvaluation,
-                                                    )
-                                                    ?.millisecondsSinceEpoch;
-                                                final facilityId =
-                                                    hfState.mapOrNull(
-                                                  create: (val) =>
-                                                      val.facilityId,
-                                                );
-                                                final hfClientRefId =
-                                                    IdGen.i.identifier;
-
-                                                final event = context.read<
-                                                    RecordHFReferralBloc>();
-                                                event.add(
-                                                  RecordHFReferralCreateEntryEvent(
-                                                    hfReferralModel:
-                                                        HFReferralModel(
-                                                      clientReferenceId:
-                                                          hfClientRefId,
-                                                      projectFacilityId:
-                                                          facilityId,
-                                                      projectId:
-                                                          context.projectId,
-                                                      name: nameOfChild.trim(),
-                                                      referralCode:
-                                                          referralCode,
-                                                      symptom: symptom.key,
-                                                      tenantId: envConfig
-                                                          .variables.tenantId,
-                                                      rowVersion: 1,
-                                                      auditDetails:
-                                                          AuditDetails(
-                                                        createdBy: context
-                                                            .loggedInUserUuid,
-                                                        createdTime: context
-                                                            .millisecondsSinceEpoch(),
-                                                        lastModifiedBy: context
-                                                            .loggedInUserUuid,
-                                                        lastModifiedTime: context
-                                                            .millisecondsSinceEpoch(),
-                                                      ),
-                                                      clientAuditDetails:
-                                                          ClientAuditDetails(
-                                                        createdBy: context
-                                                            .loggedInUserUuid,
-                                                        createdTime: context
-                                                            .millisecondsSinceEpoch(),
-                                                        lastModifiedBy: context
-                                                            .loggedInUserUuid,
-                                                        lastModifiedTime: context
-                                                            .millisecondsSinceEpoch(),
-                                                      ),
-                                                      additionalFields:
-                                                          HFReferralAdditionalFields(
-                                                        version: 1,
-                                                        fields: [
-                                                          if (hfCoordinator !=
-                                                                  null &&
-                                                              hfCoordinator
-                                                                  .toString()
-                                                                  .trim()
-                                                                  .isNotEmpty)
-                                                            AdditionalField(
-                                                              AdditionalFieldsType
-                                                                  .hFCoordinator
-                                                                  .toValue(),
-                                                              hfCoordinator,
-                                                            ),
-                                                          if (referredBy !=
-                                                                  null &&
-                                                              referredBy
-                                                                  .toString()
-                                                                  .trim()
-                                                                  .isNotEmpty)
-                                                            AdditionalField(
-                                                              AdditionalFieldsType
-                                                                  .referredBy
-                                                                  .toValue(),
-                                                              referredBy,
-                                                            ),
-                                                          if (dateOfEvaluation !=
-                                                                  null &&
-                                                              dateOfEvaluation
-                                                                  .toString()
-                                                                  .trim()
-                                                                  .isNotEmpty)
-                                                            AdditionalField(
-                                                              AdditionalFieldsType
-                                                                  .dateOfEvaluation
-                                                                  .toValue(),
-                                                              dateOfEvaluation,
-                                                            ),
-                                                          if (nameOfChild !=
-                                                                  null &&
-                                                              nameOfChild
-                                                                  .toString()
-                                                                  .trim()
-                                                                  .isNotEmpty)
-                                                            AdditionalField(
-                                                              AdditionalFieldsType
-                                                                  .nameOfReferral
-                                                                  .toValue(),
-                                                              nameOfChild,
-                                                            ),
-                                                          if (cycle != null &&
-                                                              cycle
-                                                                  .toString()
-                                                                  .trim()
-                                                                  .isNotEmpty)
-                                                            AdditionalField(
-                                                              AdditionalFieldsType
-                                                                  .cycle
-                                                                  .toValue(),
-                                                              cycle,
-                                                            ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                                context
-                                                    .read<
-                                                        ServiceDefinitionBloc>()
-                                                    .add(
-                                                      ServiceDefinitionSelectionEvent(
-                                                        serviceDefinition: value
-                                                            .serviceDefinitionList
-                                                            .where((e) => e
-                                                                    .code!
-                                                                    .contains(
-                                                                  symptom.key,
-                                                                ))
-                                                            .first,
-                                                      ),
-                                                    );
-                                                final parent = context.router
-                                                    .parent() as StackRouter;
-                                                parent.push(
-                                                  ReferralReasonChecklistRoute(
-                                                    referralClientRefId:
-                                                        hfClientRefId,
-                                                  ),
-                                                );
-                                              }
-                                            },
-                                      child: Center(
-                                        child: Text(
-                                          localizations
-                                              .translate(recordState.mapOrNull(
-                                                    create: (value) => value
-                                                            .viewOnly
-                                                        ? i18.common
-                                                            .coreCommonNext
-                                                        : i18.common
-                                                            .coreCommonSubmit,
-                                                  ) ??
-                                                  i18.common.coreCommonSubmit),
+                                                            create: (value) => value
+                                                                    .viewOnly
+                                                                ? i18.common
+                                                                    .coreCommonNext
+                                                                : i18.common
+                                                                    .coreCommonSubmit,
+                                                          ) ??
+                                                          i18.common
+                                                              .coreCommonSubmit),
+                                                ),
+                                              ),
+                                            );
+                                          },
                                         ),
-                                      ),
-                                    );
-                                  },
-                                ),
+                                      );
+                                    },
+                                  );
+                                },
                               );
                             },
                           );
@@ -713,6 +776,20 @@ class _RecordReferralDetailsPageState
                                               .nameOfTheChildLabel,
                                         ),
                                         readOnly: viewOnly,
+                                        isRequired: true,
+                                        validationMessages: {
+                                          'required': (_) =>
+                                              localizations.translate(
+                                                i18.common.corecommonRequired,
+                                              ),
+                                        },
+                                      ),
+                                      DigitTextFormField(
+                                        formControlName: _beneficiaryIdKey,
+                                        label: localizations.translate(
+                                          i18.referBeneficiary
+                                              .beneficiaryIdLabel,
+                                        ),
                                         isRequired: true,
                                         validationMessages: {
                                           'required': (_) =>
@@ -834,6 +911,18 @@ class _RecordReferralDetailsPageState
                   .first
                   .value
               : value.hfReferralModel?.name ?? '',
+        ),
+        disabled: referralState.mapOrNull(
+              create: (value) => value.viewOnly,
+            ) ??
+            false,
+        validators: [
+          Validators.required,
+        ],
+      ),
+      _beneficiaryIdKey: FormControl<String>(
+        value: referralState.mapOrNull(
+          create: (value) => value.hfReferralModel?.beneficiaryId,
         ),
         disabled: referralState.mapOrNull(
               create: (value) => value.viewOnly,

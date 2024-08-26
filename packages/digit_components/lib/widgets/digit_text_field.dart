@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 class DigitTextField extends StatelessWidget {
   final String label;
+  final String? description;
   final TextEditingController? controller;
   final String prefixText;
   final int? maxLength;
@@ -26,10 +27,12 @@ class DigitTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final Widget? prefixIcon;
   final TextStyle? textStyle;
+  final TextStyle? descriptionStyle;
 
   const DigitTextField({
     super.key,
     required this.label,
+    this.description,
     this.prefixText = '',
     this.maxLength,
     this.controller,
@@ -51,6 +54,7 @@ class DigitTextField extends StatelessWidget {
     this.suffixIcon,
     this.prefixIcon,
     this.textStyle,
+    this.descriptionStyle,
   });
 
   @override
@@ -59,6 +63,8 @@ class DigitTextField extends StatelessWidget {
 
     return LabeledField(
       labelStyle: Theme.of(context).textTheme.bodyLarge,
+      description: description,
+      descriptionStyle: descriptionStyle,
       label: isRequired ? "$label *" : label,
       textStyle: textStyle,
       child: TextFormField(
