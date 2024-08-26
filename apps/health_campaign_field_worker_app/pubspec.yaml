@@ -96,9 +96,13 @@ flutter_icons:
 flutter:
   assets:
     - ./
+    - assets/icons/svg/
+    
   fonts:
     - family: Roboto
       fonts:
-        - asset: assets/fonts/Roboto/RobotoCondensed-Regular.ttf
         - asset: assets/fonts/Roboto/Roboto-Regular.ttf
+    - family: RobotoCondensed
+      fonts:
+        - asset: assets/fonts/Roboto/RobotoCondensed-Regular.ttf
   uses-material-design: true
