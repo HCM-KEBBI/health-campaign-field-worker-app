@@ -1,5 +1,6 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/atoms/digit_radio_button_list.dart';
+import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
@@ -24,6 +25,7 @@ class ReferBeneficiaryPage extends LocalizedStatefulWidget {
   final String projectBeneficiaryClientRefId;
   final IndividualModel individual;
   final bool isReadministrationUnSuccessful;
+  final String? referralReason;
   final String quantityWasted;
   final String? productVariantId;
 
@@ -36,6 +38,7 @@ class ReferBeneficiaryPage extends LocalizedStatefulWidget {
     this.isReadministrationUnSuccessful = false,
     this.quantityWasted = "00",
     this.productVariantId,
+    this.referralReason,
   });
   @override
   State<ReferBeneficiaryPage> createState() => _ReferBeneficiaryPageState();
@@ -46,9 +49,6 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
   static const _administrativeUnitKey = 'administrativeUnit';
   static const _referredByKey = 'referredBy';
   static const _referredToKey = 'referredTo';
-  static const _referralReason = 'referralReason';
-  static const _referralCode = 'referralCode';
-  static const _referralComments = 'referralComments';
   final clickedStatus = ValueNotifier<bool>(false);
 
   @override
@@ -91,6 +91,8 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
             ) ??
             [];
 
+        final reason = widget.referralReason ?? "";
+
         return WillPopScope(
           onWillPop: () =>
               _onBackPressed(context, widget.isReadministrationUnSuccessful),
@@ -117,15 +119,12 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
                         return DigitElevatedButton(
                           onPressed: isClicked
                               ? null
-                              : () {
-                                  if (form.control(_referralReason).value ==
-                                      null) {
-                                    clickedStatus.value = false;
-                                    form
-                                        .control(_referralReason)
-                                        .setErrors({'': true});
-                                  }
+                              : () async {
                                   form.markAllAsTouched();
+
+                                  if (reason.isEmpty) {
+                                    return;
+                                  }
 
                                   if (!form.valid) {
                                     return;
@@ -134,20 +133,13 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
                                     final recipient = form
                                         .control(_referredToKey)
                                         .value as FacilityModel;
-                                    final reason = form
-                                        .control(_referralReason)
-                                        .value as KeyValue;
+                                    final reason = widget.referralReason;
                                     final recipientType = recipient.id == 'APS'
                                         ? 'STAFF'
                                         : 'FACILITY';
                                     final recipientId = recipient.id == 'APS'
                                         ? context.loggedInUserUuid
                                         : recipient.id;
-                                    final referralComment =
-                                        form.control(_referralComments).value;
-
-                                    final referralCode =
-                                        form.control(_referralCode).value;
 
                                     final event = context.read<ReferralBloc>();
                                     event.add(ReferralSubmitEvent(
@@ -160,7 +152,7 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
                                         referrerId: context.loggedInUserUuid,
                                         recipientId: recipientId,
                                         recipientType: recipientType,
-                                        reasons: [reason.key],
+                                        reasons: [reason ?? ""],
                                         tenantId: envConfig.variables.tenantId,
                                         rowVersion: 1,
                                         auditDetails: AuditDetails(
@@ -184,28 +176,7 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
                                         additionalFields:
                                             ReferralAdditionalFields(
                                           version: 1,
-                                          fields: [
-                                            if (referralComment != null &&
-                                                referralComment
-                                                    .toString()
-                                                    .trim()
-                                                    .isNotEmpty)
-                                              AdditionalField(
-                                                AdditionalFieldsType
-                                                    .referralComments
-                                                    .toValue(),
-                                                referralComment,
-                                              ),
-                                            if (referralCode != null &&
-                                                referralCode
-                                                    .toString()
-                                                    .trim()
-                                                    .isNotEmpty)
-                                              AdditionalField(
-                                                _referralCode,
-                                                referralCode,
-                                              ),
-                                          ],
+                                          fields: [],
                                         ),
                                       ),
                                       false,
@@ -415,60 +386,6 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
                                 form.control(_referredToKey).value = facility;
                               },
                             ),
-                            BlocBuilder<AppInitializationBloc,
-                                AppInitializationState>(
-                              builder: (context, state) {
-                                return state.maybeWhen(
-                                  orElse: () => const Offstage(),
-                                  initialized: (appConfiguration, _) {
-                                    final List<KeyValue> reasons =
-                                        (appConfiguration.referralReasons ?? [])
-                                            .map(
-                                              (e) => KeyValue(e.code, e.code),
-                                            )
-                                            .toList();
-
-                                    return DigitRadioButtonList<KeyValue>(
-                                      labelStyle: DigitTheme.instance
-                                          .mobileTheme.textTheme.bodyLarge,
-                                      formControlName: _referralReason,
-                                      valueMapper: (val) =>
-                                          localizations.translate(val.label),
-                                      options: reasons,
-                                      labelText: localizations.translate(
-                                        i18.referBeneficiary.reasonForReferral,
-                                      ),
-                                      isRequired: true,
-                                      errorMessage: localizations.translate(
-                                        i18.common.corecommonRequired,
-                                      ),
-                                      onValueChange: (val) {
-                                        form.control(_referralReason).value =
-                                            val;
-                                      },
-                                    );
-                                  },
-                                );
-                              },
-                            ),
-                            DigitTextFormField(
-                              formControlName: _referralCode,
-                              isRequired: true,
-                              label: localizations.translate(
-                                i18.referBeneficiary.referralCodeLabel,
-                              ),
-                              validationMessages: {
-                                'required': (_) => localizations.translate(
-                                      i18.common.corecommonRequired,
-                                    ),
-                              },
-                            ),
-                            DigitTextFormField(
-                              formControlName: _referralComments,
-                              label: localizations.translate(
-                                i18.referBeneficiary.referralComments,
-                              ),
-                            ),
                           ]),
                         ],
                       ),
@@ -493,9 +410,6 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
       ),
       _referredToKey:
           FormControl<FacilityModel>(validators: [Validators.required]),
-      _referralReason: FormControl<KeyValue>(value: null),
-      _referralComments: FormControl<String>(value: null),
-      _referralCode: FormControl<String>(validators: [Validators.required]),
     });
   }
 
