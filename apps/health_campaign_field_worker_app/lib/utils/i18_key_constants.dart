@@ -559,6 +559,9 @@ class HouseholdOverView {
   String get householdOverViewAssessmentActionText =>
       'HOUSEHOLD_OVER_VIEW_ASSESSMENT_ACTION_TEXT';
 
+  String get householdOverViewRedoseActionText =>
+      'HOUSEHOLD_OVER_VIEW_REDOSE_ACTION_TEXT';
+
   String get viewDeliveryLabel => 'VIEW_DELIVERY_DETAILS_LABEL';
 
   String get householdOverViewAddActionText =>
@@ -606,6 +609,7 @@ class DeliverIntervention {
   const DeliverIntervention();
 
   String get deliverInterventionLabel => 'DELIVER_INTERVENTION_LABEL';
+  String get recordRedoseLabel => 'DELIVER_INTERVENTION_RECORD_REDOSE_LABEL';
 
   String get deliverInteventionAdministeredLabel =>
       'DELIVER_INTERVENTION_ADMINISTERED_LABEL';
@@ -630,6 +634,8 @@ class DeliverIntervention {
 
   String get deliveryCommentLabel =>
       'DELIVER_INTERVENTION_DELIVERY_COMMENT_LABEL';
+  String get reasonForRedoseLabel =>
+      'DELIVER_INTERVENTION_REASON_FOR_REDOSE_LABEL';
 
   String get idTypeText => 'DELIVER_INTERVENTION_ID_TYPE_TEXT';
 

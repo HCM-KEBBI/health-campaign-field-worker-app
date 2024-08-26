@@ -18,6 +18,7 @@ import '../pages/beneficiary/dose_administered_verification.dart';
 import '../pages/beneficiary/household_overview.dart';
 import '../pages/beneficiary/ineligibility_reasons.dart';
 import '../pages/beneficiary/record_past_delivery_details.dart';
+import '../pages/beneficiary/record_redose.dart';
 import '../pages/beneficiary/refer_beneficiary.dart';
 import '../pages/beneficiary/side_effects.dart';
 import '../pages/beneficiary/widgets/household_acknowledgement.dart';
@@ -158,6 +159,10 @@ part 'app_router.gr.dart';
             AutoRoute(
               page: DoseAdministeredPage,
               path: 'dose-administered',
+            ),
+            AutoRoute(
+              page: RecordRedosePage,
+              path: 'record-redose',
             ),
             AutoRoute(
               page: SplashAcknowledgementPage,

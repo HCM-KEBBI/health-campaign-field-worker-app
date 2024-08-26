@@ -463,6 +463,18 @@ class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    RecordRedoseRoute.name: (routeData) {
+      final args = routeData.argsAs<RecordRedoseRouteArgs>(
+          orElse: () => const RecordRedoseRouteArgs());
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: RecordRedosePage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+          isEditing: args.isEditing,
+        ),
+      );
+    },
     SplashAcknowledgementRoute.name: (routeData) {
       final args = routeData.argsAs<SplashAcknowledgementRouteArgs>(
           orElse: () => const SplashAcknowledgementRouteArgs());
@@ -863,6 +875,11 @@ class _$AppRouter extends RootStackRouter {
                 RouteConfig(
                   DoseAdministeredRoute.name,
                   path: 'dose-administered',
+                  parent: BeneficiaryWrapperRoute.name,
+                ),
+                RouteConfig(
+                  RecordRedoseRoute.name,
+                  path: 'record-redose',
                   parent: BeneficiaryWrapperRoute.name,
                 ),
                 RouteConfig(
@@ -2562,6 +2579,45 @@ class DoseAdministeredRouteArgs {
   @override
   String toString() {
     return 'DoseAdministeredRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
+/// [RecordRedosePage]
+class RecordRedoseRoute extends PageRouteInfo<RecordRedoseRouteArgs> {
+  RecordRedoseRoute({
+    Key? key,
+    AppLocalizations? appLocalizations,
+    bool isEditing = false,
+  }) : super(
+          RecordRedoseRoute.name,
+          path: 'record-redose',
+          args: RecordRedoseRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+            isEditing: isEditing,
+          ),
+        );
+
+  static const String name = 'RecordRedoseRoute';
+}
+
+class RecordRedoseRouteArgs {
+  const RecordRedoseRouteArgs({
+    this.key,
+    this.appLocalizations,
+    this.isEditing = false,
+  });
+
+  final Key? key;
+
+  final AppLocalizations? appLocalizations;
+
+  final bool isEditing;
+
+  @override
+  String toString() {
+    return 'RecordRedoseRouteArgs{key: $key, appLocalizations: $appLocalizations, isEditing: $isEditing}';
   }
 }
 

@@ -230,10 +230,15 @@ class MemberCard extends StatelessWidget {
                                                 i18.householdOverView
                                                     .viewDeliveryLabel,
                                               )
-                                            : localizations.translate(
-                                                i18.householdOverView
-                                                    .householdOverViewAssessmentActionText,
-                                              ),
+                                            : (tasks ?? []).isEmpty
+                                                ? localizations.translate(
+                                                    i18.householdOverView
+                                                        .householdOverViewAssessmentActionText,
+                                                  )
+                                                : localizations.translate(
+                                                    i18.householdOverView
+                                                        .householdOverViewRedoseActionText,
+                                                  ),
                                       ),
                                     ),
                                     onPressed: () async {
@@ -257,13 +262,25 @@ class MemberCard extends StatelessWidget {
                                           );
                                         },
                                       ).then((value) => {
-                                            context.router.push(
-                                              EligibilityChecklistViewRoute(
-                                                projectBeneficiaryClientReferenceId:
-                                                    projectBeneficiaryClientReferenceId,
-                                                individual: individual,
-                                              ),
-                                            ),
+                                            if ((tasks ?? []).isEmpty)
+                                              {
+                                                context.router.push(
+                                                  EligibilityChecklistViewRoute(
+                                                    projectBeneficiaryClientReferenceId:
+                                                        projectBeneficiaryClientReferenceId,
+                                                    individual: individual,
+                                                  ),
+                                                ),
+                                              }
+                                            else
+                                              {
+                                                if ((sideEffects ?? []).isEmpty)
+                                                  {
+                                                    context.router.push(
+                                                      RecordRedoseRoute(),
+                                                    ),
+                                                  },
+                                              },
                                           });
                                     },
                                   )
