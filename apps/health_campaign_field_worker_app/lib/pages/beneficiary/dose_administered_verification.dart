@@ -16,6 +16,7 @@ import '../../blocs/household_overview/household_overview.dart';
 import '../../blocs/localization/app_localization.dart';
 import '../../blocs/product_variant/product_variant.dart';
 import '../../models/data_model.dart';
+import '../../models/entities/identifier_types.dart';
 import '../../router/app_router.dart';
 import '../../utils/environment_config.dart';
 import '../../utils/utils.dart';
@@ -76,6 +77,17 @@ class _DoseAdministeredVerificationPageState
                   var quantity = deliveryInterventionstate
                           .oldTask?.resources?.first.quantity ??
                       0;
+
+                  var beneficiaryId = state.selectedIndividual?.identifiers
+                          ?.lastWhere(
+                            (e) =>
+                                e.identifierType ==
+                                IdentifierTypes.uniqueBeneficiaryID.toValue(),
+                          )
+                          .identifierId ??
+                      localizations.translate(
+                        i18.common.noResultsFound,
+                      );
 
                   return ReactiveFormBuilder(
                     form: () => buildForm(context),
@@ -177,7 +189,8 @@ class _DoseAdministeredVerificationPageState
                                       i18.deliverIntervention
                                           .infoWrittenInChildCard,
                                     )}")
-                                        .replaceFirst('()', beneficiaryName),
+                                        .replaceFirst('()', beneficiaryName)
+                                        .replaceFirst("{}", beneficiaryId),
                                     theme,
                                   ),
                                   _buildTextRow(

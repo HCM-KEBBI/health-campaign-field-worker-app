@@ -47,7 +47,7 @@ class _DeliverInterventionPageState
   static const _doseAdministrationKey = 'doseAdministered';
   static const _dateOfAdministrationKey = 'dateOfAdministration';
   static const _doseAdministeredByKey = 'doseAdministeredBy';
-  static const _beneficiaryIdKey = 'beneficiaryId';
+  // static const _beneficiaryIdKey = 'beneficiaryId';
 
   // Variable to track dose administration status
   bool doseAdministered = false;
@@ -500,24 +500,24 @@ class _DeliverInterventionPageState
                                                               },
                                                             ))
                                                         .toList(),
-                                                    DigitTextFormField(
-                                                      formControlName:
-                                                          _beneficiaryIdKey,
-                                                      label: localizations
-                                                          .translate(
-                                                        i18.referBeneficiary
-                                                            .beneficiaryIdLabel,
-                                                      ),
-                                                      isRequired: true,
-                                                      validationMessages: {
-                                                        'required': (_) =>
-                                                            localizations
-                                                                .translate(
-                                                              i18.common
-                                                                  .corecommonRequired,
-                                                            ),
-                                                      },
-                                                    ),
+                                                    // DigitTextFormField(
+                                                    //   formControlName:
+                                                    //       _beneficiaryIdKey,
+                                                    //   label: localizations
+                                                    //       .translate(
+                                                    //     i18.referBeneficiary
+                                                    //         .beneficiaryIdLabel,
+                                                    //   ),
+                                                    //   isRequired: true,
+                                                    //   validationMessages: {
+                                                    //     'required': (_) =>
+                                                    //         localizations
+                                                    //             .translate(
+                                                    //           i18.common
+                                                    //               .corecommonRequired,
+                                                    //         ),
+                                                    //   },
+                                                    // ),
                                                   ],
                                                 ),
                                               ),
@@ -584,7 +584,7 @@ class _DeliverInterventionPageState
         ((form.control(_resourceDeliveredKey) as FormArray).value
             as List<ProductVariantModel?>);
 
-    final beneficiaryId = form.control(_beneficiaryIdKey).value as String?;
+    // final beneficiaryId = form.control(_beneficiaryIdKey).value as String?;
 
     // Update the task with information from the form and other context
     task = task.copyWith(
@@ -645,11 +645,11 @@ class _DeliverInterventionPageState
             AdditionalFieldsType.deliveryStrategy.toValue(),
             deliveryStrategy,
           ),
-          if (beneficiaryId != null && beneficiaryId.trim().isNotEmpty)
-            AdditionalField(
-              AdditionalFieldsType.beneficiaryId.toValue(),
-              beneficiaryId,
-            ),
+          // if (beneficiaryId != null && beneficiaryId.trim().isNotEmpty)
+          //   AdditionalField(
+          //     AdditionalFieldsType.beneficiaryId.toValue(),
+          //     beneficiaryId,
+          //   ),
           if (latitude != null)
             AdditionalField(
               AdditionalFieldsType.latitude.toValue(),
@@ -688,9 +688,9 @@ class _DeliverInterventionPageState
                 .toString(),
         validators: [],
       ),
-      _beneficiaryIdKey: FormControl<String>(
-        validators: [Validators.required],
-      ),
+      // _beneficiaryIdKey: FormControl<String>(
+      //   validators: [Validators.required],
+      // ),
       _dateOfAdministrationKey:
           FormControl<DateTime>(value: DateTime.now(), validators: []),
       _resourceDeliveredKey: FormArray<ProductVariantModel>(
