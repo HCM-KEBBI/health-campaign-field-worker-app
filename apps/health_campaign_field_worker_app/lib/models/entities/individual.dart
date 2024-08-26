@@ -9,7 +9,8 @@ part 'individual.mapper.dart';
 
 @MappableClass(ignoreNull: true, discriminatorValue: MappableClass.useAsDefault)
 class IndividualSearchModel extends EntitySearchModel with IndividualSearchModelMappable {
-  final String? id;
+  final List<String>? id;
+  final List<String>? userUuid;
   final String? dateOfBirth;
   final int? limit;
   final int? offset;
@@ -21,6 +22,7 @@ class IndividualSearchModel extends EntitySearchModel with IndividualSearchModel
   
   IndividualSearchModel({
     this.id,
+    this.userUuid,
     this.dateOfBirth,
     this.limit,
     this.offset,
@@ -36,6 +38,7 @@ class IndividualSearchModel extends EntitySearchModel with IndividualSearchModel
   @MappableConstructor()
   IndividualSearchModel.ignoreDeleted({
     this.id,
+    this.userUuid,
     this.dateOfBirth,
     this.limit,
     this.offset,
@@ -54,7 +57,9 @@ class IndividualModel extends EntityModel with IndividualModelMappable {
   static const schemaName = 'Individual';
 
   final String? id;
+  final String? individualId;
   final String? userId;
+  final String? userUuid;
   final String? dateOfBirth;
   final String? mobileNumber;
   final String? altContactNumber;
@@ -76,7 +81,9 @@ class IndividualModel extends EntityModel with IndividualModelMappable {
   IndividualModel({
     this.additionalFields,
     this.id,
+    this.individualId,
     this.userId,
+    this.userUuid,
     this.dateOfBirth,
     this.mobileNumber,
     this.altContactNumber,
@@ -110,7 +117,9 @@ class IndividualModel extends EntityModel with IndividualModelMappable {
       additionalFields: Value(additionalFields?.toJson()),
       isDeleted: Value(isDeleted),
       id: Value(id),
+      individualId: Value(individualId),
       userId: Value(userId),
+      userUuid: Value(userUuid),
       dateOfBirth: Value(dateOfBirth),
       mobileNumber: Value(mobileNumber),
       altContactNumber: Value(altContactNumber),

@@ -131,18 +131,18 @@ class _HouseholdOverviewPageState
                                       ),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: kPadding,
-                                      right: kPadding,
-                                    ),
-                                    child: Text(
-                                      localizations.translate(i18
-                                          .householdOverView
-                                          .householdOverViewLabel),
-                                      style: theme.textTheme.displayMedium,
-                                    ),
-                                  ),
+                                  // Padding(
+                                  //   padding: const EdgeInsets.only(
+                                  //     left: kPadding,
+                                  //     right: kPadding,
+                                  //   ),
+                                  //   child: Text(
+                                  //     localizations.translate(i18
+                                  //         .householdOverView
+                                  //         .householdOverViewLabel),
+                                  //     style: theme.textTheme.displayMedium,
+                                  //   ),
+                                  // ),
                                   Padding(
                                     padding: const EdgeInsets.only(
                                       left: kPadding,
@@ -446,8 +446,9 @@ class _HouseholdOverviewPageState
                                                     )
                                                   : false,
                                               // TODO Need to handle the null check
-                                              name:
-                                                  '${e.name?.givenName ?? ' - '} ${e.name?.familyName ?? ' - '}',
+                                              name: e.name?.givenName ?? ' - ',
+                                              // name:
+                                              //     '${e.name?.givenName ?? ' - '} ${e.name?.familyName ?? ' - '}',
                                               years: (e.dateOfBirth == null
                                                       ? null
                                                       : DigitDateUtils

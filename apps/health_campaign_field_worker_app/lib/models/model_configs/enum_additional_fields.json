@@ -58,12 +58,16 @@
       "value": "age"
     },
     {
-      "name": "Longitutde",
-      "value": "longitutde"
+      "name": "Longitude",
+      "value": "longitude"
     },
     {
       "name": "Latitude",
       "value": "latitude"
+    },
+    {
+      "name": "BeneficiaryId",
+      "value": "beneficiaryId"
     }
   ],
   "isEnum": true
