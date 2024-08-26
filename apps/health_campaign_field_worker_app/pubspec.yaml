@@ -101,6 +101,8 @@ flutter_icons:
 flutter:
   assets:
     - ./
+    - assets/audio/add.wav
+    - assets/audio/buzzer.wav
   fonts:
     - family: Roboto
       fonts:

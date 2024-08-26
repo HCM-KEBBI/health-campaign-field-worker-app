@@ -208,6 +208,19 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                       builder: (context, form, child) {
                         return BlocBuilder<DigitScannerBloc, DigitScannerState>(
                           builder: (context, scannerState) {
+                            if (form
+                                    .control(_deliveryTeamKey)
+                                    .value
+                                    .toString()
+                                    .isEmpty ||
+                                form.control(_deliveryTeamKey).value == null ||
+                                scannerState.qrCodes.isNotEmpty) {
+                              form.control(_deliveryTeamKey).value =
+                                  scannerState.qrCodes.isNotEmpty
+                                      ? scannerState.qrCodes.last
+                                      : '';
+                            }
+
                             if (scannerState.barCodes.isNotEmpty) {
                               scannedResources.clear();
                               scannedResources.addAll(scannerState.barCodes);
@@ -241,22 +254,6 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                       kPadding, 0, kPadding, 0),
                                   child: ReactiveFormConsumer(
                                     builder: (context, form, child) {
-                                      if (form
-                                              .control(_deliveryTeamKey)
-                                              .value
-                                              .toString()
-                                              .isEmpty ||
-                                          form
-                                                  .control(_deliveryTeamKey)
-                                                  .value ==
-                                              null ||
-                                          scannerState.qrCodes.isNotEmpty) {
-                                        form.control(_deliveryTeamKey).value =
-                                            scannerState.qrCodes.isNotEmpty
-                                                ? scannerState.qrCodes.last
-                                                : '';
-                                      }
-
                                       return DigitElevatedButton(
                                         onPressed: form.hasErrors
                                             ? null
@@ -572,10 +569,21 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                               ),
                                                             if (hasLocationData) ...[
                                                               AdditionalField(
-                                                                  'lat', lat),
+                                                                'lat',
+                                                                lat,
+                                                              ),
                                                               AdditionalField(
-                                                                  'lng', lng),
+                                                                'lng',
+                                                                lng,
+                                                              ),
                                                             ],
+                                                            if (scannerState
+                                                                .barCodes
+                                                                .isNotEmpty)
+                                                              addBarCodesToFields(
+                                                                scannerState
+                                                                    .barCodes,
+                                                              ),
                                                           ],
                                                         )
                                                       : null,
@@ -751,7 +759,8 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   final facility = await parent
                                                       .push<FacilityModel>(
                                                     FacilitySelectionRoute(
-                                                      facilities: teamFacilities,
+                                                      facilities:
+                                                          teamFacilities,
                                                     ),
                                                   );
 
@@ -759,15 +768,19 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   if (facility.id ==
                                                       'Delivery Team') {
                                                     setState(() {
-                                                      deliveryTeamSelected = true;
+                                                      deliveryTeamSelected =
+                                                          true;
                                                     });
                                                   } else {
                                                     setState(() {
-                                                      deliveryTeamSelected = false;
+                                                      deliveryTeamSelected =
+                                                          false;
                                                     });
                                                   }
                                                   form
-                                                      .control(_transactingPartyKey)
+                                                      .control(
+                                                        _transactingPartyKey,
+                                                      )
                                                       .value = facility;
                                                 },
                                               ),
@@ -775,14 +788,15 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                           );
                                         },
                                       ),
-                                      if (deliveryTeamSelected)
-                                        DigitTextFormField(
+                                      Visibility(
+                                        visible: deliveryTeamSelected,
+                                        child: DigitTextFormField(
                                           label: localizations.translate(
                                             i18.manageStock.cddTeamCodeLabel,
                                           ),
-                                          formControlName: _deliveryTeamKey,
                                           onChanged: (val) {
-                                            String? value = val as String?;
+                                            String? value =
+                                                val.value as String?;
                                             if (value != null &&
                                                 value.trim().isNotEmpty) {
                                               context
@@ -799,14 +813,14 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                               clearQRCodes();
                                             }
                                           },
-                                          isRequired: true,
                                           suffix: IconButton(
                                             onPressed: () {
+                                              //[TODO: Add route to auto_route]
                                               Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                   builder: (context) =>
                                                       const DigitScannerPage(
-                                                    quantity: 1,
+                                                    quantity: 5,
                                                     isGS1code: false,
                                                     singleValue: false,
                                                   ),
@@ -822,7 +836,11 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   theme.colorScheme.secondary,
                                             ),
                                           ),
+                                          isRequired: deliveryTeamSelected,
+                                          maxLines: 3,
+                                          formControlName: _deliveryTeamKey,
                                         ),
+                                      ),
                                       DigitTextFormField(
                                         formControlName:
                                             _transactionQuantityKey,
@@ -1016,5 +1034,18 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
           barCode: [],
           qrCode: [],
         ));
+  }
+
+  /// @return A map where the keys and values are joined by '|'.
+  AdditionalField addBarCodesToFields(List<GS1Barcode> barCodes) {
+    List<String> keys = [];
+    List<String> values = [];
+    for (var element in barCodes) {
+      for (var e in element.elements.entries) {
+        keys.add(e.key.toString());
+        values.add(e.value.data.toString());
+      }
+    }
+    return AdditionalField(keys.join('|'), values.join('|'));
   }
 }
