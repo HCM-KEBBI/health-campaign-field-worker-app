@@ -93,6 +93,9 @@ class MainApplicationState extends State<MainApplication>
                   boundaryLocalRepository: ctx.read<
                       LocalRepository<BoundaryModel, BoundarySearchModel>>(),
                   mdmsRepository: MdmsRepository(widget.client),
+                  individualRemoteRepository: ctx.read<
+                      RemoteRepository<IndividualModel,
+                          IndividualSearchModel>>(),
                 )..add(
                     AuthAutoLoginEvent(
                       tenantId: envConfig.variables.tenantId,
@@ -218,6 +221,25 @@ class MainApplicationState extends State<MainApplication>
                             projectResourceRemoteRepository: ctx.read<
                                 RemoteRepository<ProjectResourceModel,
                                     ProjectResourceSearchModel>>(),
+                            attendanceLocalRepository: ctx.read<
+                                LocalRepository<HCMAttendanceRegisterModel,
+                                    HCMAttendanceSearchModel>>(),
+                            attendanceRemoteRepository: ctx.read<
+                                RemoteRepository<HCMAttendanceRegisterModel,
+                                    HCMAttendanceSearchModel>>(),
+                            individualLocalRepository: ctx.read<
+                                LocalRepository<IndividualModel,
+                                    IndividualSearchModel>>(),
+                            individualRemoteRepository: ctx.read<
+                                RemoteRepository<IndividualModel,
+                                    IndividualSearchModel>>(),
+                            attendanceLogLocalRepository: ctx.read<
+                                LocalRepository<HCMAttendanceLogModel,
+                                    HCMAttendanceLogSearchModel>>(),
+                            attendanceLogRemoteRepository: ctx.read<
+                                RemoteRepository<HCMAttendanceLogModel,
+                                    HCMAttendanceLogSearchModel>>(),
+                            context: context,
                           ),
                         ),
                       ],
@@ -321,7 +343,7 @@ class MainApplicationState extends State<MainApplication>
                                 orElse: () => [
                                   const UnauthenticatedRouteWrapper(),
                                 ],
-                                authenticated: (_, __, ___, ____) => [
+                                authenticated: (_, __, ___, ____, _____) => [
                                   AuthenticatedRouteWrapper(),
                                 ],
                               ),
