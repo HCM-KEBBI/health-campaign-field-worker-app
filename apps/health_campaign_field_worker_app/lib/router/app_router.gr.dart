@@ -275,6 +275,17 @@ class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    UserQRDetailsRoute.name: (routeData) {
+      final args = routeData.argsAs<UserQRDetailsRouteArgs>(
+          orElse: () => const UserQRDetailsRouteArgs());
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: UserQRDetailsPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
     ComplaintsInboxWrapperRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
         routeData: routeData,
@@ -998,6 +1009,11 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               BoundarySelectionRoute.name,
               path: 'select-boundary',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              UserQRDetailsRoute.name,
+              path: 'user-qr-code',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
@@ -1902,6 +1918,40 @@ class BoundarySelectionRouteArgs {
   @override
   String toString() {
     return 'BoundarySelectionRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
+/// [UserQRDetailsPage]
+class UserQRDetailsRoute extends PageRouteInfo<UserQRDetailsRouteArgs> {
+  UserQRDetailsRoute({
+    Key? key,
+    AppLocalizations? appLocalizations,
+  }) : super(
+          UserQRDetailsRoute.name,
+          path: 'user-qr-code',
+          args: UserQRDetailsRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+          ),
+        );
+
+  static const String name = 'UserQRDetailsRoute';
+}
+
+class UserQRDetailsRouteArgs {
+  const UserQRDetailsRouteArgs({
+    this.key,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final AppLocalizations? appLocalizations;
+
+  @override
+  String toString() {
+    return 'UserQRDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations}';
   }
 }
 

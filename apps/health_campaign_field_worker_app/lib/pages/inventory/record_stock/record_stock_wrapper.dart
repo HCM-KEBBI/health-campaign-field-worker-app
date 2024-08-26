@@ -8,7 +8,6 @@ import '../../../blocs/record_stock/record_stock.dart';
 import '../../../models/data_model.dart';
 import '../../../router/app_router.dart';
 import '../../../utils/extensions/extensions.dart';
-import '../../../widgets/boundary_selection_wrapper.dart';
 import '../../../widgets/component_wrapper/facility_bloc_wrapper.dart';
 import '../../../widgets/component_wrapper/product_variant_bloc_wrapper.dart';
 
@@ -22,9 +21,7 @@ class RecordStockWrapperPage extends StatelessWidget with AutoRouteWrapper {
 
   @override
   Widget build(BuildContext context) {
-    return const BoundarySelectionWrapper(
-      child: AutoRouter(),
-    );
+    return const AutoRouter();
   }
 
   @override

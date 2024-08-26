@@ -83,6 +83,7 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                     final teamFacilities = [
                       FacilityModel(
                         id: 'Delivery Team',
+                        name: 'Delivery Team',
                       ),
                     ];
                     teamFacilities.addAll(

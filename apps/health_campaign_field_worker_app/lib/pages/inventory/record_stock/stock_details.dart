@@ -196,6 +196,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                     final teamFacilities = [
                       FacilityModel(
                         id: 'Delivery Team',
+                        name: 'Delivery Team',
                       ),
                     ];
                     teamFacilities.addAll(
@@ -214,8 +215,23 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
 
                             return ScrollableContent(
                               enableFixedButton: true,
-                              header: const Column(children: [
-                                BackNavigationHelpHeaderWidget(),
+                              header: Column(children: [
+                                BackNavigationHelpHeaderWidget(
+                                  handleback: () {
+                                    final stockState =
+                                        context.read<RecordStockBloc>().state;
+                                    if (stockState.primaryId != null) {
+                                      context.read<DigitScannerBloc>().add(
+                                            DigitScannerEvent.handleScanner(
+                                              barCode: [],
+                                              qrCode: [
+                                                stockState.primaryId.toString(),
+                                              ],
+                                            ),
+                                          );
+                                    }
+                                  },
+                                ),
                               ]),
                               footer: SizedBox(
                                 child: DigitCard(
@@ -224,385 +240,412 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                   padding: const EdgeInsets.fromLTRB(
                                       kPadding, 0, kPadding, 0),
                                   child: ReactiveFormConsumer(
-                                    builder: (context, form, child) =>
-                                        DigitElevatedButton(
-                                      onPressed: form.hasErrors
-                                          ? null
-                                          : () async {
-                                              form.markAllAsTouched();
-                                              if (!form.valid) {
-                                                return;
-                                              }
-                                              FocusManager.instance.primaryFocus
-                                                  ?.unfocus();
+                                    builder: (context, form, child) {
+                                      if (form
+                                              .control(_deliveryTeamKey)
+                                              .value
+                                              .toString()
+                                              .isEmpty ||
+                                          form
+                                                  .control(_deliveryTeamKey)
+                                                  .value ==
+                                              null ||
+                                          scannerState.qrCodes.isNotEmpty) {
+                                        form.control(_deliveryTeamKey).value =
+                                            scannerState.qrCodes.isNotEmpty
+                                                ? scannerState.qrCodes.last
+                                                : '';
+                                      }
 
-                                              final bloc = context
-                                                  .read<RecordStockBloc>();
-
-                                              final productVariant = form
-                                                  .control(_productVariantKey)
-                                                  .value as ProductVariantModel;
-
-                                              switch (entryType) {
-                                                case StockRecordEntryType
-                                                      .receipt:
-                                                  transactionReason =
-                                                      TransactionReason
-                                                          .received;
-                                                  break;
-                                                case StockRecordEntryType
-                                                      .dispatch:
-                                                  transactionReason = null;
-                                                  break;
-                                                case StockRecordEntryType
-                                                      .returned:
-                                                  transactionReason =
-                                                      TransactionReason
-                                                          .returned;
-                                                  break;
-                                                default:
-                                                  transactionReason = null;
-                                                  break;
-                                              }
-
-                                              final transactingParty = form
-                                                  .control(_transactingPartyKey)
-                                                  .value as FacilityModel;
-
-                                              final quantity = form
-                                                  .control(
-                                                      _transactionQuantityKey)
-                                                  .value;
-
-                                              final damagedQuantity = form
-                                                  .control(
-                                                      _transactionDamagedQuantityKey)
-                                                  .value;
-
-                                              final lat =
-                                                  locationState.latitude;
-                                              final lng =
-                                                  locationState.longitude;
-
-                                              final hasLocationData =
-                                                  lat != null && lng != null;
-
-                                              final comments = form
-                                                  .control(_commentsKey)
-                                                  .value as String?;
-
-                                              String? transactingPartyType;
-
-                                              final fields = transactingParty
-                                                  .additionalFields?.fields;
-
-                                              if (fields != null &&
-                                                  fields.isNotEmpty) {
-                                                final type =
-                                                    fields.firstWhereOrNull(
-                                                  (element) =>
-                                                      element.key == 'type',
-                                                );
-                                                final value = type?.value;
-                                                if (value != null &&
-                                                    value is String &&
-                                                    value.isNotEmpty) {
-                                                  transactingPartyType = value;
+                                      return DigitElevatedButton(
+                                        onPressed: form.hasErrors
+                                            ? null
+                                            : () async {
+                                                form.markAllAsTouched();
+                                                if (!form.valid) {
+                                                  return;
                                                 }
-                                              }
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
 
-                                              transactingPartyType ??=
-                                                  'WAREHOUSE';
+                                                final bloc = context
+                                                    .read<RecordStockBloc>();
 
-                                              if (entryType ==
-                                                  StockRecordEntryType
-                                                      .dispatch) {
-                                                int issueQuantity =
-                                                    quantity ?? 0;
+                                                final productVariant = form
+                                                    .control(_productVariantKey)
+                                                    .value as ProductVariantModel;
 
-                                                List<StockModel>
-                                                    stocksByProductVAriant =
-                                                    stockState.existingStocks
-                                                        .where((element) =>
-                                                            element
-                                                                .productVariantId ==
-                                                            productVariant.id)
-                                                        .toList();
+                                                switch (entryType) {
+                                                  case StockRecordEntryType
+                                                        .receipt:
+                                                    transactionReason =
+                                                        TransactionReason
+                                                            .received;
+                                                    break;
+                                                  case StockRecordEntryType
+                                                        .dispatch:
+                                                    transactionReason = null;
+                                                    break;
+                                                  case StockRecordEntryType
+                                                        .returned:
+                                                    transactionReason =
+                                                        TransactionReason
+                                                            .returned;
+                                                    break;
+                                                  default:
+                                                    transactionReason = null;
+                                                    break;
+                                                }
 
-                                                num stockReceived =
-                                                    _getQuantityCount(
-                                                  stocksByProductVAriant.where(
-                                                      (e) =>
-                                                          e.transactionType ==
-                                                              TransactionType
-                                                                  .received &&
-                                                          e.transactionReason ==
-                                                              TransactionReason
-                                                                  .received),
-                                                );
+                                                final transactingParty = form
+                                                    .control(
+                                                        _transactingPartyKey)
+                                                    .value as FacilityModel;
 
-                                                num stockIssued =
-                                                    _getQuantityCount(
-                                                  stocksByProductVAriant.where(
-                                                      (e) =>
-                                                          e.transactionType ==
-                                                              TransactionType
-                                                                  .dispatched &&
-                                                          e.transactionReason ==
-                                                              null),
-                                                );
+                                                final quantity = form
+                                                    .control(
+                                                        _transactionQuantityKey)
+                                                    .value;
 
-                                                num stockReturned =
-                                                    _getQuantityCount(
-                                                  stocksByProductVAriant.where(
-                                                      (e) =>
-                                                          e.transactionType ==
-                                                              TransactionType
-                                                                  .received &&
-                                                          e.transactionReason ==
-                                                              TransactionReason
-                                                                  .returned),
-                                                );
+                                                final damagedQuantity = form
+                                                    .control(
+                                                        _transactionDamagedQuantityKey)
+                                                    .value;
 
-                                                num stockInHand =
-                                                    (stockReceived +
-                                                            stockReturned) -
-                                                        (stockIssued);
-                                                if (issueQuantity >
-                                                    stockInHand) {
-                                                  final alert =
-                                                      await DigitDialog.show<
-                                                          bool>(
-                                                    context,
-                                                    options: DigitDialogOptions(
-                                                      titleText: localizations
-                                                          .translate(
-                                                        i18.stockDetails
-                                                            .countDialogTitle,
-                                                      ),
-                                                      contentText: localizations
-                                                          .translate(
-                                                            i18.stockDetails
-                                                                .countContent,
-                                                          )
-                                                          .replaceAll(
-                                                            '{}',
-                                                            stockInHand
-                                                                .toString(),
-                                                          ),
-                                                      primaryAction:
-                                                          DigitDialogActions(
-                                                        label: localizations
-                                                            .translate(
-                                                          i18.stockDetails
-                                                              .countDialogSuccess,
-                                                        ),
-                                                        action: (context) {
-                                                          Navigator.of(
-                                                            context,
-                                                            rootNavigator: true,
-                                                          ).pop(false);
-                                                        },
-                                                      ),
-                                                    ),
+                                                final lat =
+                                                    locationState.latitude;
+                                                final lng =
+                                                    locationState.longitude;
+
+                                                final hasLocationData =
+                                                    lat != null && lng != null;
+
+                                                final comments = form
+                                                    .control(_commentsKey)
+                                                    .value as String?;
+
+                                                String? transactingPartyType;
+
+                                                final fields = transactingParty
+                                                    .additionalFields?.fields;
+
+                                                if (fields != null &&
+                                                    fields.isNotEmpty) {
+                                                  final type =
+                                                      fields.firstWhereOrNull(
+                                                    (element) =>
+                                                        element.key == 'type',
+                                                  );
+                                                  final value = type?.value;
+                                                  if (value != null &&
+                                                      value is String &&
+                                                      value.isNotEmpty) {
+                                                    transactingPartyType =
+                                                        value;
+                                                  }
+                                                }
+
+                                                transactingPartyType ??=
+                                                    'WAREHOUSE';
+
+                                                if (entryType ==
+                                                    StockRecordEntryType
+                                                        .dispatch) {
+                                                  int issueQuantity =
+                                                      quantity ?? 0;
+
+                                                  List<StockModel>
+                                                      stocksByProductVAriant =
+                                                      stockState.existingStocks
+                                                          .where((element) =>
+                                                              element
+                                                                  .productVariantId ==
+                                                              productVariant.id)
+                                                          .toList();
+
+                                                  num stockReceived =
+                                                      _getQuantityCount(
+                                                    stocksByProductVAriant
+                                                        .where((e) =>
+                                                            e.transactionType ==
+                                                                TransactionType
+                                                                    .received &&
+                                                            e.transactionReason ==
+                                                                TransactionReason
+                                                                    .received),
                                                   );
 
-                                                  if (!(alert ?? false)) {
-                                                    return;
+                                                  num stockIssued =
+                                                      _getQuantityCount(
+                                                    stocksByProductVAriant
+                                                        .where((e) =>
+                                                            e.transactionType ==
+                                                                TransactionType
+                                                                    .dispatched &&
+                                                            e.transactionReason ==
+                                                                null),
+                                                  );
+
+                                                  num stockReturned =
+                                                      _getQuantityCount(
+                                                    stocksByProductVAriant
+                                                        .where((e) =>
+                                                            e.transactionType ==
+                                                                TransactionType
+                                                                    .received &&
+                                                            e.transactionReason ==
+                                                                TransactionReason
+                                                                    .returned),
+                                                  );
+
+                                                  num stockInHand =
+                                                      (stockReceived +
+                                                              stockReturned) -
+                                                          (stockIssued);
+                                                  if (issueQuantity >
+                                                      stockInHand) {
+                                                    final alert =
+                                                        await DigitDialog.show<
+                                                            bool>(
+                                                      context,
+                                                      options:
+                                                          DigitDialogOptions(
+                                                        titleText: localizations
+                                                            .translate(
+                                                          i18.stockDetails
+                                                              .countDialogTitle,
+                                                        ),
+                                                        contentText:
+                                                            localizations
+                                                                .translate(
+                                                                  i18.stockDetails
+                                                                      .countContent,
+                                                                )
+                                                                .replaceAll(
+                                                                  '{}',
+                                                                  stockInHand
+                                                                      .toString(),
+                                                                ),
+                                                        primaryAction:
+                                                            DigitDialogActions(
+                                                          label: localizations
+                                                              .translate(
+                                                            i18.stockDetails
+                                                                .countDialogSuccess,
+                                                          ),
+                                                          action: (context) {
+                                                            Navigator.of(
+                                                              context,
+                                                              rootNavigator:
+                                                                  true,
+                                                            ).pop(false);
+                                                          },
+                                                        ),
+                                                      ),
+                                                    );
+
+                                                    if (!(alert ?? false)) {
+                                                      return;
+                                                    }
                                                   }
                                                 }
-                                              }
-                                              final deliveryTeamName = form
-                                                  .control(_deliveryTeamKey)
-                                                  .value as String?;
+                                                final deliveryTeamName = form
+                                                    .control(_deliveryTeamKey)
+                                                    .value as String?;
 
-                                              String? senderId;
-                                              String? senderType;
-                                              String? receiverId;
-                                              String? receiverType;
+                                                String? senderId;
+                                                String? senderType;
+                                                String? receiverId;
+                                                String? receiverType;
 
-                                              final primaryType = BlocProvider
-                                                  .of<RecordStockBloc>(
-                                                context,
-                                              ).state.primaryType;
+                                                final primaryType = BlocProvider
+                                                    .of<RecordStockBloc>(
+                                                  context,
+                                                ).state.primaryType;
 
-                                              final primaryId = BlocProvider.of<
-                                                  RecordStockBloc>(
-                                                context,
-                                              ).state.primaryId;
+                                                final primaryId = BlocProvider
+                                                    .of<RecordStockBloc>(
+                                                  context,
+                                                ).state.primaryId;
 
-                                              switch (entryType) {
-                                                case StockRecordEntryType
-                                                      .receipt:
-                                                case StockRecordEntryType.loss:
-                                                case StockRecordEntryType
-                                                      .damaged:
-                                                  if (deliveryTeamSelected) {
-                                                    senderId = deliveryTeamName;
-                                                    senderType = "STAFF";
-                                                  } else {
-                                                    senderId =
-                                                        transactingParty.id;
-                                                    senderType = "WAREHOUSE";
-                                                  }
-                                                  receiverId = primaryId;
-                                                  receiverType = primaryType;
+                                                switch (entryType) {
+                                                  case StockRecordEntryType
+                                                        .receipt:
+                                                  case StockRecordEntryType
+                                                        .loss:
+                                                  case StockRecordEntryType
+                                                        .damaged:
+                                                    if (deliveryTeamSelected) {
+                                                      senderId =
+                                                          deliveryTeamName;
+                                                      senderType = "STAFF";
+                                                    } else {
+                                                      senderId =
+                                                          transactingParty.id;
+                                                      senderType = "WAREHOUSE";
+                                                    }
+                                                    receiverId = primaryId;
+                                                    receiverType = primaryType;
 
-                                                  break;
-                                                case StockRecordEntryType
-                                                      .dispatch:
-                                                case StockRecordEntryType
-                                                      .returned:
-                                                  if (deliveryTeamSelected) {
-                                                    receiverId =
-                                                        deliveryTeamName;
-                                                    receiverType = "STAFF";
-                                                  } else {
-                                                    receiverId =
-                                                        transactingParty.id;
-                                                    receiverType = "WAREHOUSE";
-                                                  }
-                                                  senderId = primaryId;
-                                                  senderType = primaryType;
-                                                  break;
-                                              }
+                                                    break;
+                                                  case StockRecordEntryType
+                                                        .dispatch:
+                                                  case StockRecordEntryType
+                                                        .returned:
+                                                    if (deliveryTeamSelected) {
+                                                      receiverId =
+                                                          deliveryTeamName;
+                                                      receiverType = "STAFF";
+                                                    } else {
+                                                      receiverId =
+                                                          transactingParty.id;
+                                                      receiverType =
+                                                          "WAREHOUSE";
+                                                    }
+                                                    senderId = primaryId;
+                                                    senderType = primaryType;
+                                                    break;
+                                                }
 
-                                              final stockModel = StockModel(
-                                                clientReferenceId:
-                                                    IdGen.i.identifier,
-                                                productVariantId:
-                                                    productVariant.id,
-                                                transactingPartyId:
-                                                    transactingParty.id,
-                                                senderType: senderType,
-                                                senderId: senderId,
-                                                receiverType: receiverType,
-                                                receiverId: receiverId,
-                                                transactingPartyType:
-                                                    transactingPartyType,
-                                                transactionType:
-                                                    transactionType,
-                                                transactionReason:
-                                                    transactionReason,
-                                                referenceId:
-                                                    stockState.projectId,
-                                                referenceIdType: 'PROJECT',
-                                                quantity: quantity.toString(),
-                                                auditDetails: AuditDetails(
-                                                  createdBy:
-                                                      context.loggedInUserUuid,
-                                                  createdTime: context
-                                                      .millisecondsSinceEpoch(),
-                                                ),
-                                                clientAuditDetails:
-                                                    ClientAuditDetails(
-                                                  createdBy:
-                                                      context.loggedInUserUuid,
-                                                  createdTime: context
-                                                      .millisecondsSinceEpoch(),
-                                                  lastModifiedBy:
-                                                      context.loggedInUserUuid,
-                                                  lastModifiedTime: context
-                                                      .millisecondsSinceEpoch(),
-                                                ),
-                                                additionalFields: [
-                                                          comments,
-                                                          damagedQuantity,
-                                                        ].any((element) =>
-                                                            element != null) ||
-                                                        hasLocationData
-                                                    ? StockAdditionalFields(
-                                                        version: 1,
-                                                        fields: [
-                                                          if (damagedQuantity !=
-                                                              null)
-                                                            AdditionalField(
-                                                              'damaged_quantity',
-                                                              damagedQuantity,
-                                                            ),
-                                                          if (comments !=
-                                                                  null &&
-                                                              comments
-                                                                  .isNotEmpty)
-                                                            AdditionalField(
-                                                              'comments',
-                                                              comments,
-                                                            ),
-                                                          if (hasLocationData) ...[
-                                                            AdditionalField(
-                                                                'lat', lat),
-                                                            AdditionalField(
-                                                                'lng', lng),
+                                                final stockModel = StockModel(
+                                                  clientReferenceId:
+                                                      IdGen.i.identifier,
+                                                  productVariantId:
+                                                      productVariant.id,
+                                                  transactingPartyId:
+                                                      transactingParty.id,
+                                                  senderType: senderType,
+                                                  senderId: senderId,
+                                                  receiverType: receiverType,
+                                                  receiverId: receiverId,
+                                                  transactingPartyType:
+                                                      transactingPartyType,
+                                                  transactionType:
+                                                      transactionType,
+                                                  transactionReason:
+                                                      transactionReason,
+                                                  referenceId:
+                                                      stockState.projectId,
+                                                  referenceIdType: 'PROJECT',
+                                                  quantity: quantity.toString(),
+                                                  auditDetails: AuditDetails(
+                                                    createdBy: context
+                                                        .loggedInUserUuid,
+                                                    createdTime: context
+                                                        .millisecondsSinceEpoch(),
+                                                  ),
+                                                  clientAuditDetails:
+                                                      ClientAuditDetails(
+                                                    createdBy: context
+                                                        .loggedInUserUuid,
+                                                    createdTime: context
+                                                        .millisecondsSinceEpoch(),
+                                                    lastModifiedBy: context
+                                                        .loggedInUserUuid,
+                                                    lastModifiedTime: context
+                                                        .millisecondsSinceEpoch(),
+                                                  ),
+                                                  additionalFields: [
+                                                            comments,
+                                                            damagedQuantity,
+                                                          ].any((element) =>
+                                                              element !=
+                                                              null) ||
+                                                          hasLocationData
+                                                      ? StockAdditionalFields(
+                                                          version: 1,
+                                                          fields: [
+                                                            if (damagedQuantity !=
+                                                                null)
+                                                              AdditionalField(
+                                                                'damaged_quantity',
+                                                                damagedQuantity,
+                                                              ),
+                                                            if (comments !=
+                                                                    null &&
+                                                                comments
+                                                                    .isNotEmpty)
+                                                              AdditionalField(
+                                                                'comments',
+                                                                comments,
+                                                              ),
+                                                            if (hasLocationData) ...[
+                                                              AdditionalField(
+                                                                  'lat', lat),
+                                                              AdditionalField(
+                                                                  'lng', lng),
+                                                            ],
                                                           ],
-                                                        ],
-                                                      )
-                                                    : null,
-                                              );
+                                                        )
+                                                      : null,
+                                                );
 
-                                              bloc.add(
-                                                RecordStockSaveStockDetailsEvent(
-                                                  stockModel: stockModel,
-                                                ),
-                                              );
+                                                bloc.add(
+                                                  RecordStockSaveStockDetailsEvent(
+                                                    stockModel: stockModel,
+                                                  ),
+                                                );
 
-                                              final submit =
-                                                  await DigitDialog.show<bool>(
-                                                context,
-                                                options: DigitDialogOptions(
-                                                  titleText:
-                                                      localizations.translate(
-                                                    i18.stockDetails
-                                                        .dialogTitle,
-                                                  ),
-                                                  contentText:
-                                                      localizations.translate(
-                                                    i18.stockDetails
-                                                        .dialogContent,
-                                                  ),
-                                                  primaryAction:
-                                                      DigitDialogActions(
-                                                    label:
+                                                final submit = await DigitDialog
+                                                    .show<bool>(
+                                                  context,
+                                                  options: DigitDialogOptions(
+                                                    titleText:
                                                         localizations.translate(
-                                                      i18.common
-                                                          .coreCommonSubmit,
+                                                      i18.stockDetails
+                                                          .dialogTitle,
                                                     ),
-                                                    action: (context) {
-                                                      Navigator.of(
+                                                    contentText:
+                                                        localizations.translate(
+                                                      i18.stockDetails
+                                                          .dialogContent,
+                                                    ),
+                                                    primaryAction:
+                                                        DigitDialogActions(
+                                                      label: localizations
+                                                          .translate(
+                                                        i18.common
+                                                            .coreCommonSubmit,
+                                                      ),
+                                                      action: (context) {
+                                                        Navigator.of(
+                                                          context,
+                                                          rootNavigator: true,
+                                                        ).pop(true);
+                                                      },
+                                                    ),
+                                                    secondaryAction:
+                                                        DigitDialogActions(
+                                                      label: localizations
+                                                          .translate(
+                                                        i18.common
+                                                            .coreCommonCancel,
+                                                      ),
+                                                      action: (context) =>
+                                                          Navigator.of(
                                                         context,
                                                         rootNavigator: true,
-                                                      ).pop(true);
-                                                    },
-                                                  ),
-                                                  secondaryAction:
-                                                      DigitDialogActions(
-                                                    label:
-                                                        localizations.translate(
-                                                      i18.common
-                                                          .coreCommonCancel,
+                                                      ).pop(false),
                                                     ),
-                                                    action: (context) =>
-                                                        Navigator.of(
-                                                      context,
-                                                      rootNavigator: true,
-                                                    ).pop(false),
                                                   ),
-                                                ),
-                                              );
-
-                                              if (submit ?? false) {
-                                                bloc.add(
-                                                  const RecordStockCreateStockEntryEvent(),
                                                 );
-                                              }
-                                            },
-                                      child: Center(
-                                        child: Text(
-                                          localizations.translate(
-                                            i18.common.coreCommonSubmit,
+
+                                                if (submit ?? false) {
+                                                  bloc.add(
+                                                    const RecordStockCreateStockEntryEvent(),
+                                                  );
+                                                }
+                                              },
+                                        child: Center(
+                                          child: Text(
+                                            localizations.translate(
+                                              i18.common.coreCommonSubmit,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ),
+                                      );
+                                    },
                                   ),
                                 ),
                               ),
@@ -654,7 +697,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                           return DigitTextFormField(
                                             valueAccessor:
                                                 FacilityValueAccessor(
-                                              facilities,
+                                              teamFacilities,
                                             ),
                                             label: localizations.translate(
                                               '${pageTitle}_${i18.stockReconciliationDetails.stockLabel}',
@@ -668,6 +711,10 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                 _transactingPartyKey,
                                             readOnly: false,
                                             onTap: () async {
+                                              clearQRCodes();
+                                              form
+                                                  .control(_deliveryTeamKey)
+                                                  .value = '';
                                               final parent = context.router
                                                   .parent() as StackRouter;
                                               final facility = await parent
@@ -712,6 +759,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                         .handleScanner(
                                                       barCode: [],
                                                       qrCode: [value],
+                                                      manualCode: value,
                                                     ),
                                                   );
                                             } else {
