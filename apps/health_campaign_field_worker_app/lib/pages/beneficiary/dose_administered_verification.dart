@@ -66,8 +66,16 @@ class _DoseAdministeredVerificationPageState
                   DeliverInterventionState>(
                 builder: (context, deliveryInterventionstate) {
                   var beneficiaryName =
-                      state.selectedIndividual?.fatherName.toString() ?? "";
-                  // todo add quantityDistributed
+                      ('${state.selectedIndividual?.name?.familyName ?? "-"}'
+                              " "
+                              '${state.selectedIndividual?.name?.givenName ?? "-"}')
+                          .toString();
+
+                  // todo verify quantityDistributed
+
+                  var quantity = deliveryInterventionstate
+                          .oldTask?.resources?.first.quantity ??
+                      0;
 
                   return ReactiveFormBuilder(
                     form: () => buildForm(context),
@@ -159,9 +167,9 @@ class _DoseAdministeredVerificationPageState
                                 children: [
                                   _buildTextRow(
                                     "1. ${localizations.translate(
-                                      i18.deliverIntervention
-                                          .doseGivenCareGiver,
-                                    )}",
+                                          i18.deliverIntervention
+                                              .doseGivenCareGiver,
+                                        ).replaceFirst("{}", quantity.toString())}",
                                     theme,
                                   ),
                                   _buildTextRow(
