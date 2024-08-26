@@ -308,26 +308,11 @@ class _StockReconciliationPageState
                                               ) ??
                                               [];
 
-                                          return DigitTextFormField(
-                                            valueAccessor:
-                                                FacilityValueAccessor(
-                                              facilities,
-                                            ),
-                                            label: localizations.translate(
-                                              i18.stockReconciliationDetails
-                                                  .facilityName,
-                                            ),
-                                            suffix: const Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Icon(Icons.search),
-                                            ),
-                                            formControlName: _facilityKey,
-                                            readOnly: false,
-                                            isRequired: true,
+                                          return InkWell(
                                             onTap: () async {
                                               final stockReconciliationBloc =
-                                                  context.read<
-                                                      StockReconciliationBloc>();
+                                              context.read<
+                                                  StockReconciliationBloc>();
 
                                               final facility = await context
                                                   .router
@@ -345,13 +330,60 @@ class _StockReconciliationPageState
                                                 StockReconciliationSelectFacilityEvent(
                                                   facility,
                                                   loggedInUserId:
-                                                      context.loggedInUserUuid,
+                                                  context.loggedInUserUuid,
                                                   isDistributor: context
-                                                          .isDistributor &&
+                                                      .isDistributor &&
                                                       !context.isWarehouseMgr,
                                                 ),
                                               );
                                             },
+                                            child: IgnorePointer(
+                                              child: DigitTextFormField(
+                                                valueAccessor:
+                                                    FacilityValueAccessor(
+                                                  facilities,
+                                                ),
+                                                label: localizations.translate(
+                                                  i18.stockReconciliationDetails
+                                                      .facilityName,
+                                                ),
+                                                suffix: const Padding(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child: Icon(Icons.search),
+                                                ),
+                                                formControlName: _facilityKey,
+                                                readOnly: false,
+                                                isRequired: true,
+                                                onTap: () async {
+                                                  final stockReconciliationBloc =
+                                                      context.read<
+                                                          StockReconciliationBloc>();
+
+                                                  final facility = await context
+                                                      .router
+                                                      .push<FacilityModel>(
+                                                    FacilitySelectionRoute(
+                                                      facilities: facilities,
+                                                    ),
+                                                  );
+
+                                                  if (facility == null) return;
+
+                                                  form.control(_facilityKey).value =
+                                                      facility;
+                                                  stockReconciliationBloc.add(
+                                                    StockReconciliationSelectFacilityEvent(
+                                                      facility,
+                                                      loggedInUserId:
+                                                          context.loggedInUserUuid,
+                                                      isDistributor: context
+                                                              .isDistributor &&
+                                                          !context.isWarehouseMgr,
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
                                           );
                                         },
                                       ),
