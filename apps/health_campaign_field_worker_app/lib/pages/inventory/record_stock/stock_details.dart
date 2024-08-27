@@ -484,6 +484,13 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                       (a.auditDetails?.lastModifiedTime ?? 0),
                                     ));
 
+                                form.control(_transactingPartyKey).value =
+                                    facilities.length >= 2
+                                        ? null
+                                        : facilities.isNotEmpty
+                                            ? facilities.first
+                                            : null;
+
                                 return DigitTextFormField(
                                   valueAccessor: FacilityValueAccessor(
                                     facilities,

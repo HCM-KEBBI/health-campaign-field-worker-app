@@ -131,6 +131,17 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                           }
                         }
 
+                        // Request location from LocationBloc
+                        context
+                            .read<LocationBloc>()
+                            .add(const LocationEvent.load());
+
+                        // Wait for the location to be obtained
+                        final locationState =
+                            context.read<LocationBloc>().state;
+                        double? latitude = locationState.latitude;
+                        double? longitude = locationState.longitude;
+
                         final shouldSubmit = await DigitDialog.show(
                           context,
                           options: DigitDialogOptions(
@@ -149,64 +160,81 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                 List<ServiceAttributesModel> attributes = [];
                                 for (int i = 0; i < controller.length; i++) {
                                   final attribute = initialAttributes;
-                                  attributes.add(ServiceAttributesModel(
-                                    auditDetails: AuditDetails(
-                                      createdBy: context.loggedInUserUuid,
-                                      createdTime:
-                                          context.millisecondsSinceEpoch(),
+                                  attributes.add(
+                                    ServiceAttributesModel(
+                                      auditDetails: AuditDetails(
+                                        createdBy: context.loggedInUserUuid,
+                                        createdTime:
+                                            context.millisecondsSinceEpoch(),
+                                      ),
+                                      attributeCode: '${attribute?[i].code}',
+                                      dataType: attribute?[i].dataType,
+                                      clientReferenceId: IdGen.i.identifier,
+                                      referenceId: context
+                                                  .isHealthFacilitySupervisor &&
+                                              widget.referralClientRefId != null
+                                          ? widget.referralClientRefId
+                                          : referenceId,
+                                      value: attribute?[i].dataType !=
+                                              'SingleValueList'
+                                          ? controller[i]
+                                                  .text
+                                                  .toString()
+                                                  .trim()
+                                                  .isNotEmpty
+                                              ? controller[i].text.toString()
+                                              : (attribute?[i].dataType !=
+                                                      'Number'
+                                                  ? ''
+                                                  : '0')
+                                          : visibleChecklistIndexes.contains(i)
+                                              ? controller[i].text.toString()
+                                              : i18.checklist.notSelectedKey,
+                                      rowVersion: 1,
+                                      tenantId: attribute?[i].tenantId,
+                                      additionalDetails: context
+                                                  .isHealthFacilitySupervisor &&
+                                              widget.referralClientRefId != null
+                                          ? null
+                                          : ((attribute?[i].values?.length ==
+                                                          2 ||
+                                                      attribute?[i]
+                                                              .values
+                                                              ?.length ==
+                                                          3 ||
+                                                      attribute?[i]
+                                                              .values
+                                                              ?.length ==
+                                                          4) &&
+                                                  controller[i].text ==
+                                                      attribute?[i]
+                                                          .values?[1]
+                                                          .trim())
+                                              ? additionalController[i]
+                                                      .text
+                                                      .toString()
+                                                      .isEmpty
+                                                  ? null
+                                                  : additionalController[i]
+                                                      .text
+                                                      .toString()
+                                              : null,
+                                      additionalFields:
+                                          ServiceAttributesAdditionalFields(
+                                        version: 1,
+                                        fields: [
+                                          AdditionalField(
+                                            'latitude',
+                                            latitude,
+                                          ),
+                                          AdditionalField(
+                                            'longitude',
+                                            longitude,
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                    attributeCode: '${attribute?[i].code}',
-                                    dataType: attribute?[i].dataType,
-                                    clientReferenceId: IdGen.i.identifier,
-                                    referenceId: context
-                                                .isHealthFacilitySupervisor &&
-                                            widget.referralClientRefId != null
-                                        ? widget.referralClientRefId
-                                        : referenceId,
-                                    value: attribute?[i].dataType !=
-                                            'SingleValueList'
-                                        ? controller[i]
-                                                .text
-                                                .toString()
-                                                .trim()
-                                                .isNotEmpty
-                                            ? controller[i].text.toString()
-                                            : (attribute?[i].dataType !=
-                                                    'Number'
-                                                ? ''
-                                                : '0')
-                                        : visibleChecklistIndexes.contains(i)
-                                            ? controller[i].text.toString()
-                                            : i18.checklist.notSelectedKey,
-                                    rowVersion: 1,
-                                    tenantId: attribute?[i].tenantId,
-                                    additionalDetails: context
-                                                .isHealthFacilitySupervisor &&
-                                            widget.referralClientRefId != null
-                                        ? null
-                                        : ((attribute?[i].values?.length == 2 ||
-                                                    attribute?[i]
-                                                            .values
-                                                            ?.length ==
-                                                        3 ||
-                                                    attribute?[i]
-                                                            .values
-                                                            ?.length ==
-                                                        4) &&
-                                                controller[i].text ==
-                                                    attribute?[i]
-                                                        .values?[1]
-                                                        .trim())
-                                            ? additionalController[i]
-                                                    .text
-                                                    .toString()
-                                                    .isEmpty
-                                                ? null
-                                                : additionalController[i]
-                                                    .text
-                                                    .toString()
-                                            : null,
-                                  ));
+                                  );
                                 }
 
                                 context.read<ServiceBloc>().add(
@@ -309,43 +337,58 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                           ...initialAttributes!.map((
                             e,
                           ) {
+                            String code = e.code ?? '';
+                            String? description = e.additionalDetails?.entries
+                                .where((a) => a.key == 'helpText')
+                                .first
+                                .value;
                             int index = (initialAttributes ?? []).indexOf(e);
 
                             return Column(children: [
                               if (e.dataType == 'String' &&
-                                  !(e.code ?? '').contains('.')) ...[
-                                DigitTextField(
-                                  autoValidation:
-                                      AutovalidateMode.onUserInteraction,
-                                  isRequired: true,
-                                  controller: controller[index],
-                                  // inputFormatter: [
-                                  //   FilteringTextInputFormatter.allow(RegExp(
-                                  //     "[a-zA-Z0-9]",
-                                  //   )),
-                                  // ],
-                                  validator: (value) {
-                                    if (((value == null || value == '') &&
-                                        e.required == true)) {
-                                      return localizations.translate(
-                                        i18.common.corecommonRequired,
-                                      );
-                                    }
-                                    if (e.regex != null) {
-                                      return (RegExp(e.regex!).hasMatch(value!))
-                                          ? null
-                                          : localizations
-                                              .translate("${e.code}_REGEX");
-                                    }
+                                  !(code).contains('.')) ...[
+                                Column(
+                                  children: [
+                                    DigitTextField(
+                                      autoValidation:
+                                          AutovalidateMode.onUserInteraction,
+                                      isRequired: true,
+                                      controller: controller[index],
+                                      // inputFormatter: [
+                                      //   FilteringTextInputFormatter.allow(RegExp(
+                                      //     "[a-zA-Z0-9]",
+                                      //   )),
+                                      // ],
+                                      validator: (value) {
+                                        if (((value == null || value == '') &&
+                                            e.required == true)) {
+                                          return localizations.translate(
+                                            i18.common.corecommonRequired,
+                                          );
+                                        }
+                                        if (e.regex != null) {
+                                          return (RegExp(e.regex!)
+                                                  .hasMatch(value!))
+                                              ? null
+                                              : localizations
+                                                  .translate("${code}_REGEX");
+                                        }
 
-                                    return null;
-                                  },
-                                  label: localizations.translate(
-                                    '${value.selectedServiceDefinition?.code}.${e.code}',
-                                  ),
+                                        return null;
+                                      },
+                                      label: localizations.translate(
+                                        '${value.selectedServiceDefinition?.code}.$code',
+                                      ),
+                                      description: description != null
+                                          ? localizations.translate(
+                                              '${value.selectedServiceDefinition?.code}.$description',
+                                            )
+                                          : null,
+                                    ),
+                                  ],
                                 ),
                               ] else if (e.dataType == 'Number' &&
-                                  !(e.code ?? '').contains('.')) ...[
+                                  !(code).contains('.')) ...[
                                 DigitTextField(
                                   autoValidation:
                                       AutovalidateMode.onUserInteraction,
@@ -367,18 +410,23 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                       return (RegExp(e.regex!).hasMatch(value!))
                                           ? null
                                           : localizations
-                                              .translate("${e.code}_REGEX");
+                                              .translate("${code}_REGEX");
                                     }
 
                                     return null;
                                   },
                                   controller: controller[index],
                                   label: '${localizations.translate(
-                                        '${value.selectedServiceDefinition?.code}.${e.code}',
+                                        '${value.selectedServiceDefinition?.code}.$code',
                                       ).trim()} ${e.required == true ? '*' : ''}',
+                                  description: description != null
+                                      ? localizations.translate(
+                                          '${value.selectedServiceDefinition?.code}.$description',
+                                        )
+                                      : description,
                                 ),
                               ] else if (e.dataType == 'MultiValueList' &&
-                                  !(e.code ?? '').contains('.')) ...[
+                                  !(code).contains('.')) ...[
                                 Align(
                                   alignment: Alignment.topLeft,
                                   child: Padding(
@@ -387,10 +435,20 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                       children: [
                                         Text(
                                           '${localizations.translate(
-                                            '${value.selectedServiceDefinition?.code}.${e.code}',
+                                            '${value.selectedServiceDefinition?.code}.$code',
                                           )} ${e.required == true ? '*' : ''}',
                                           style: theme.textTheme.headlineSmall,
                                         ),
+                                        if (description != null)
+                                          Text(
+                                            '${localizations.translate(
+                                              '${value.selectedServiceDefinition?.code}.$description',
+                                            )} ${e.required == true ? '*' : ''}',
+                                            style: theme.textTheme.bodyMedium
+                                                ?.copyWith(
+                                              fontWeight: FontWeight.w100,
+                                            ),
+                                          ),
                                       ],
                                     ),
                                   ),
@@ -440,7 +498,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                   },
                                 ),
                               ] else if (e.dataType == 'SingleValueList') ...[
-                                if (!(e.code ?? '').contains('.'))
+                                if (!(code).contains('.'))
                                   DigitCard(
                                     child: _buildChecklist(
                                       e,
@@ -475,6 +533,10 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
     BuildContext context,
   ) {
     final theme = Theme.of(context);
+    String? itemDescription = item.additionalDetails?.entries
+        .where((a) => a.key == 'helpText')
+        .first
+        .value;
     /* Check the data type of the attribute*/
     if (item.dataType == 'SingleValueList') {
       final childItems = getNextQuestions(
@@ -502,11 +564,27 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
             alignment: Alignment.topLeft,
             child: Padding(
               padding: const EdgeInsets.all(16.0), // Add padding here
-              child: Text(
-                '${localizations.translate(
-                  '${selectedServiceDefinition?.code}.${item.code}',
-                )} ${item.required == true ? '*' : ''}',
-                style: theme.textTheme.headlineSmall,
+              child: Column(
+                children: [
+                  Text(
+                    '${localizations.translate(
+                      '${selectedServiceDefinition?.code}.${item.code}',
+                    )} ${item.required == true ? '*' : ''}',
+                    style: theme.textTheme.headlineSmall,
+                  ),
+                  if (item.additionalDetails != null &&
+                      (item.additionalDetails ?? {}).keys.contains('helpText'))
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        localizations.translate(
+                          '${selectedServiceDefinition?.code}.${item.additionalDetails?.entries.where((a) => a.key == 'helpText').first.value}',
+                        ),
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.w100),
+                      ),
+                    ),
+                ],
               ),
             ),
           ),
@@ -603,7 +681,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                         localizations.translate(
                           i18.common.corecommonRequired,
                         ),
-                        style: TextStyle(
+                        style: theme.textTheme.bodySmall?.apply(
                           color: theme.colorScheme.error,
                         ),
                       ),
@@ -648,6 +726,11 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
           label: localizations.translate(
             '${selectedServiceDefinition?.code}.${item.code}',
           ),
+          description: itemDescription != null
+              ? localizations.translate(
+                  '${selectedServiceDefinition?.code}.$itemDescription',
+                )
+              : null,
         ),
       );
     } else if (item.dataType == 'Number') {
@@ -678,6 +761,11 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
         label: '${localizations.translate(
               '${selectedServiceDefinition?.code}.${item.code}',
             ).trim()} ${item.required == true ? '*' : ''}',
+        description: itemDescription != null
+            ? localizations.translate(
+                '${selectedServiceDefinition?.code}.$itemDescription',
+              )
+            : null,
       );
     } else if (item.dataType == 'MultiValueList') {
       return Column(
@@ -694,6 +782,14 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                     )} ${item.required == true ? '*' : ''}',
                     style: theme.textTheme.headlineSmall,
                   ),
+                  if (item.additionalDetails != null &&
+                      (item.additionalDetails ?? {}).keys.contains('helpText'))
+                    Text(
+                      '${localizations.translate(
+                        '${selectedServiceDefinition?.code}.${item.additionalDetails?.entries.where((a) => a.key == 'helpText').first.value}',
+                      )} ${item.required == true ? '*' : ''}',
+                      style: theme.textTheme.headlineSmall,
+                    ),
                 ],
               ),
             ),

@@ -11,6 +11,7 @@ class LocalSecureStore {
   static const accessTokenKey = 'accessTokenKey';
   static const refreshTokenKey = 'refreshTokenKey';
   static const userObjectKey = 'userObject';
+  static const selectedIndividualKey = 'selectedIndividual';
   static const selectedProjectKey = 'selectedProject';
   static const hasAppRunBeforeKey = 'hasAppRunBefore';
   static const backgroundServiceKey = 'backgroundServiceKey';
@@ -53,6 +54,19 @@ class LocalSecureStore {
 
     try {
       final user = UserRequestModel.fromJson(json.decode(userBody));
+
+      return user;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<String?> get userIndividualId async {
+    final individualId = await storage.read(key: selectedIndividualKey);
+    if (individualId == null) return null;
+
+    try {
+      final user = individualId;
 
       return user;
     } catch (_) {

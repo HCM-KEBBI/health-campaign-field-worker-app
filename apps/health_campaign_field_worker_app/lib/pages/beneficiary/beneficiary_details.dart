@@ -13,6 +13,7 @@ import '../../blocs/localization/app_localization.dart';
 import '../../blocs/product_variant/product_variant.dart';
 import '../../blocs/project/project.dart';
 import '../../models/data_model.dart';
+import '../../models/entities/identifier_types.dart';
 import '../../router/app_router.dart';
 import '../../utils/i18_key_constants.dart' as i18;
 import '../../utils/utils.dart';
@@ -270,6 +271,35 @@ class _BeneficiaryDetailsPageState
                                               null
                                           ? '${state.selectedIndividual?.name?.givenName ?? ''} ${state.selectedIndividual?.name?.familyName ?? ''}'
                                           : '--',
+                                  localizations.translate(
+                                    i18.beneficiaryDetails.beneficiaryId,
+                                  ): context.beneficiaryType !=
+                                          BeneficiaryType.individual
+                                      ? householdMemberWrapper
+                                              .headOfHousehold.identifiers
+                                              ?.lastWhere(
+                                                (e) =>
+                                                    e.identifierType ==
+                                                    IdentifierTypes
+                                                        .uniqueBeneficiaryID
+                                                        .toValue(),
+                                              )
+                                              .identifierId ??
+                                          localizations.translate(
+                                            i18.common.noResultsFound,
+                                          )
+                                      : state.selectedIndividual?.identifiers
+                                              ?.lastWhere(
+                                                (e) =>
+                                                    e.identifierType ==
+                                                    IdentifierTypes
+                                                        .uniqueBeneficiaryID
+                                                        .toValue(),
+                                              )
+                                              .identifierId ??
+                                          localizations.translate(
+                                            i18.common.noResultsFound,
+                                          ),
                                   localizations.translate(
                                     i18.common.coreCommonAge,
                                   ): () {

@@ -18,7 +18,6 @@ class ManageAttendancePage extends LocalizedStatefulWidget {
   final String projectId;
   final String userId;
   final String appVersion;
-  //modify this
   final String boundaryName;
 
   const ManageAttendancePage({

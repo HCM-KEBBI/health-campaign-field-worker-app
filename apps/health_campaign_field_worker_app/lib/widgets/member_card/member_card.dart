@@ -6,6 +6,7 @@ import '../../blocs/delivery_intervention/deliver_intervention.dart';
 import '../../blocs/household_overview/household_overview.dart';
 import '../../blocs/localization/app_localization.dart';
 import '../../models/data_model.dart';
+import '../../models/entities/identifier_types.dart';
 import '../../router/app_router.dart';
 import '../../utils/environment_config.dart';
 import '../../utils/i18_key_constants.dart' as i18;
@@ -80,20 +81,60 @@ class MemberCard extends StatelessWidget {
         children: [
           Stack(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width / 1.8,
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(left: kPadding, top: kPadding),
-                      child: Text(
-                        name,
-                        style: theme.textTheme.headlineMedium,
+                  individual.identifiers != null
+                      ? Padding(
+                          padding: const EdgeInsets.all(kPadding),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: DigitTheme.instance.colorScheme.primary,
+                              ),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(kPadding),
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(
+                                kPadding,
+                              ),
+                              child: Text(
+                                individual.identifiers!
+                                        .lastWhere(
+                                          (e) =>
+                                              e.identifierType ==
+                                              IdentifierTypes
+                                                  .uniqueBeneficiaryID
+                                                  .toValue(),
+                                        )
+                                        .identifierId ??
+                                    localizations
+                                        .translate(i18.common.noResultsFound),
+                              ),
+                            ),
+                          ),
+                        )
+                      : const Offstage(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width / 1.8,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: kPadding,
+                            top: kPadding,
+                          ),
+                          child: Text(
+                            name,
+                            style: theme.textTheme.headlineMedium,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),
