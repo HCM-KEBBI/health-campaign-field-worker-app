@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/atoms/digit_stepper.dart';
@@ -42,13 +44,10 @@ class _DeliverInterventionPageState
   // Constants for form control keys
   static const _resourceDeliveredKey = 'resourceDelivered';
   static const _quantityDistributedKey = 'quantityDistributed';
-  static const _quantityWastedKey = 'quantityWasted';
-  static const _deliveryCommentKey = 'deliveryComment';
   static const _doseAdministrationKey = 'doseAdministered';
   static const _dateOfAdministrationKey = 'dateOfAdministration';
-  static const _defaultQuantity = 1;
-  static const _administeredQuantity = 2;
-  static const _beneficiaryIdKey = 'beneficiaryId';
+  static const _doseAdministeredByKey = 'doseAdministeredBy';
+  // static const _beneficiaryIdKey = 'beneficiaryId';
 
   // Variable to track dose administration status
   bool doseAdministered = false;
@@ -205,20 +204,19 @@ class _DeliverInterventionPageState
                                                         theme,
                                                       ),
                                                     );
-                                                  } else if (doseAdministered &&
-                                                      form
-                                                              .control(
-                                                                _deliveryCommentKey,
-                                                              )
-                                                              .value ==
-                                                          null) {
+                                                  } else if ((((form.control(
+                                                            _quantityDistributedKey,
+                                                          ) as FormArray)
+                                                              .value) ??
+                                                          [])
+                                                      .any((e) => e == 0)) {
                                                     await DigitToast.show(
                                                       context,
                                                       options:
                                                           DigitToastOptions(
                                                         localizations.translate(i18
                                                             .deliverIntervention
-                                                            .deliveryCommentRequired),
+                                                            .resourceCannotBeZero),
                                                         true,
                                                         theme,
                                                       ),
@@ -228,25 +226,6 @@ class _DeliverInterventionPageState
                                                         locationState.latitude;
                                                     final long =
                                                         locationState.longitude;
-                                                    bool isReferral = form
-                                                                .control(
-                                                                  _deliveryCommentKey,
-                                                                )
-                                                                .value !=
-                                                            null &&
-                                                        form
-                                                                .control(
-                                                                  _deliveryCommentKey,
-                                                                )
-                                                                .value ==
-                                                            "ADMINISTRATION_NOT_SUCCESSFUL" &&
-                                                        doseAdministered;
-
-                                                    String? wastedCount =
-                                                        (((form.control(_quantityWastedKey)
-                                                                    as FormArray)
-                                                                .value)?[0])
-                                                            .toString();
 
                                                     final shouldSubmit =
                                                         await DigitDialog.show<
@@ -256,51 +235,21 @@ class _DeliverInterventionPageState
                                                           DigitDialogOptions(
                                                         titleText: localizations
                                                             .translate(
-                                                          isReferral
-                                                              ? i18
-                                                                  .deliverIntervention
-                                                                  .referDialogTitle
-                                                              : (doseAdministered &&
-                                                                      wastedCount
-                                                                          .isNotEmpty &&
-                                                                      wastedCount !=
-                                                                          'null')
-                                                                  ? i18
-                                                                      .deliverIntervention
-                                                                      .wastedDialogTitle
-                                                                  : i18
-                                                                      .deliverIntervention
-                                                                      .dialogTitle,
+                                                          i18.deliverIntervention
+                                                              .dialogTitle,
                                                         ),
                                                         contentText:
                                                             localizations
                                                                 .translate(
-                                                          isReferral
-                                                              ? i18
-                                                                  .deliverIntervention
-                                                                  .referDialogContent
-                                                              : (doseAdministered &&
-                                                                      wastedCount
-                                                                          .isNotEmpty &&
-                                                                      wastedCount !=
-                                                                          'null')
-                                                                  ? i18
-                                                                      .deliverIntervention
-                                                                      .wastedDialogContent
-                                                                  : i18
-                                                                      .deliverIntervention
-                                                                      .dialogContent,
+                                                          i18.deliverIntervention
+                                                              .dialogContent,
                                                         ),
                                                         primaryAction:
                                                             DigitDialogActions(
                                                           label: localizations
                                                               .translate(
-                                                            isReferral
-                                                                ? i18
-                                                                    .deliverIntervention
-                                                                    .referDialogSubmit
-                                                                : i18.common
-                                                                    .coreCommonSubmit,
+                                                            i18.common
+                                                                .coreCommonSubmit,
                                                           ),
                                                           action: (ctx) {
                                                             Navigator.of(
@@ -334,104 +283,67 @@ class _DeliverInterventionPageState
                                                               .name,
                                                         );
 
-                                                        if (isReferral) {
-                                                          if (Navigator.canPop(
-                                                            context,
-                                                          )) {
-                                                            Navigator.of(
-                                                              context,
-                                                              rootNavigator:
-                                                                  true,
-                                                            ).pop(false);
-                                                          }
+                                                        context
+                                                            .read<
+                                                                DeliverInterventionBloc>()
+                                                            .add(
+                                                              DeliverInterventionSubmitEvent(
+                                                                [
+                                                                  _getTaskModel(
+                                                                    context,
+                                                                    form: form,
+                                                                    oldTask:
+                                                                        null,
+                                                                    projectBeneficiaryClientReferenceId:
+                                                                        projectBeneficiary
+                                                                            .first
+                                                                            .clientReferenceId,
+                                                                    dose: deliveryInterventionstate
+                                                                        .dose,
+                                                                    cycle: deliveryInterventionstate
+                                                                        .cycle,
+                                                                    deliveryStrategy:
+                                                                        getDeliveryStrategy,
+                                                                    address: householdMemberWrapper
+                                                                        .members
+                                                                        .first
+                                                                        .address
+                                                                        ?.first,
+                                                                    latitude:
+                                                                        lat,
+                                                                    longitude:
+                                                                        long,
+                                                                  ),
+                                                                ],
+                                                                false,
+                                                                context
+                                                                    .boundary,
+                                                              ),
+                                                            );
 
-                                                          await context.router
-                                                              .push(
-                                                            ReferBeneficiaryRoute(
-                                                              projectBeneficiaryClientRefId:
-                                                                  projectBeneficiaryClientReferenceId ??
-                                                                      '',
-                                                              individual:
-                                                                  selectedIndividual!,
-                                                              isReadministrationUnSuccessful:
+                                                        if (state.futureDeliveries !=
+                                                                null &&
+                                                            state
+                                                                .futureDeliveries!
+                                                                .isNotEmpty &&
+                                                            projectState
+                                                                    .projectType
+                                                                    ?.cycles
+                                                                    ?.isNotEmpty ==
+                                                                true) {
+                                                          context.router.push(
+                                                            SplashAcknowledgementRoute(
+                                                              doseAdministrationVerification:
                                                                   true,
-                                                              quantityWasted:
-                                                                  (((form.control(_quantityWastedKey)
-                                                                              as FormArray)
-                                                                          .value)?[0])
-                                                                      .toString(),
-                                                              productVariantId:
-                                                                  ((form.control(_resourceDeliveredKey) as FormArray)
-                                                                              .value
-                                                                          as List<
-                                                                              ProductVariantModel?>)
-                                                                      .first
-                                                                      ?.id,
                                                             ),
                                                           );
                                                         } else {
-                                                          context
-                                                              .read<
-                                                                  DeliverInterventionBloc>()
-                                                              .add(
-                                                                DeliverInterventionSubmitEvent(
-                                                                  [
-                                                                    _getTaskModel(
-                                                                      context,
-                                                                      form:
-                                                                          form,
-                                                                      oldTask:
-                                                                          null,
-                                                                      projectBeneficiaryClientReferenceId: projectBeneficiary
-                                                                          .first
-                                                                          .clientReferenceId,
-                                                                      dose: deliveryInterventionstate
-                                                                          .dose,
-                                                                      cycle: deliveryInterventionstate
-                                                                          .cycle,
-                                                                      deliveryStrategy:
-                                                                          getDeliveryStrategy,
-                                                                      address: householdMemberWrapper
-                                                                          .members
-                                                                          .first
-                                                                          .address
-                                                                          ?.first,
-                                                                      latitude:
-                                                                          lat,
-                                                                      longitude:
-                                                                          long,
-                                                                    ),
-                                                                  ],
-                                                                  false,
-                                                                  context
-                                                                      .boundary,
-                                                                ),
-                                                              );
-
-                                                          if (state.futureDeliveries !=
-                                                                  null &&
-                                                              state
-                                                                  .futureDeliveries!
-                                                                  .isNotEmpty &&
-                                                              projectState
-                                                                      .projectType
-                                                                      ?.cycles
-                                                                      ?.isNotEmpty ==
-                                                                  true) {
-                                                            context.router.push(
-                                                              SplashAcknowledgementRoute(
-                                                                enableBackToSearch:
-                                                                    false,
-                                                              ),
-                                                            );
-                                                          } else {
-                                                            context.router.push(
-                                                              SplashAcknowledgementRoute(
-                                                                enableBackToSearch:
-                                                                    true,
-                                                              ),
-                                                            );
-                                                          }
+                                                          context.router.push(
+                                                            SplashAcknowledgementRoute(
+                                                              enableBackToSearch:
+                                                                  true,
+                                                            ),
+                                                          );
                                                         }
                                                       }
                                                     }
@@ -521,6 +433,17 @@ class _DeliverInterventionPageState
                                                         top: kPadding,
                                                       ),
                                                     ),
+                                                    DigitTextFormField(
+                                                      readOnly: true,
+                                                      formControlName:
+                                                          _doseAdministeredByKey,
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                      label: localizations
+                                                          .translate(i18
+                                                              .deliverIntervention
+                                                              .doseAdministeredBy),
+                                                    ),
                                                   ],
                                                 ),
                                               ),
@@ -546,14 +469,13 @@ class _DeliverInterventionPageState
                                                               cardIndex:
                                                                   _controllers
                                                                       .indexOf(
-                                                                          e),
+                                                                e,
+                                                              ),
                                                               totalItems:
                                                                   _controllers
                                                                       .length,
                                                               isAdministered:
                                                                   doseAdministered,
-                                                              checkDoseAdministration:
-                                                                  checkDoseAdministration,
                                                               onDelete:
                                                                   (index) {
                                                                 (form.control(
@@ -568,12 +490,6 @@ class _DeliverInterventionPageState
                                                                     .removeAt(
                                                                   index,
                                                                 );
-                                                                (form.control(
-                                                                  _quantityWastedKey,
-                                                                ) as FormArray)
-                                                                    .removeAt(
-                                                                  index,
-                                                                );
                                                                 _controllers
                                                                     .removeAt(
                                                                   index,
@@ -584,84 +500,24 @@ class _DeliverInterventionPageState
                                                               },
                                                             ))
                                                         .toList(),
-                                                    DigitTextFormField(
-                                                      formControlName:
-                                                          _beneficiaryIdKey,
-                                                      label: localizations
-                                                          .translate(
-                                                        i18.referBeneficiary
-                                                            .beneficiaryIdLabel,
-                                                      ),
-                                                      isRequired: true,
-                                                      validationMessages: {
-                                                        'required': (_) =>
-                                                            localizations
-                                                                .translate(
-                                                              i18.common
-                                                                  .corecommonRequired,
-                                                            ),
-                                                      },
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              DigitCard(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Text(
-                                                      localizations.translate(
-                                                        i18.deliverIntervention
-                                                            .deliveryCommentLabel,
-                                                      ),
-                                                      style: theme.textTheme
-                                                          .headlineLarge,
-                                                    ),
-                                                    BlocBuilder<
-                                                        AppInitializationBloc,
-                                                        AppInitializationState>(
-                                                      builder:
-                                                          (context, state) {
-                                                        if (state
-                                                            is! AppInitialized) {
-                                                          return const Offstage();
-                                                        }
-
-                                                        final deliveryCommentOptions = state
-                                                                .appConfiguration
-                                                                .deliveryCommentOptionsSmc ??
-                                                            <DeliveryCommentOptions>[];
-
-                                                        return DigitReactiveDropdown<
-                                                            String>(
-                                                          label: localizations
-                                                              .translate(
-                                                            i18.deliverIntervention
-                                                                .deliveryCommentLabel,
-                                                          ),
-                                                          readOnly:
-                                                              !doseAdministered,
-                                                          valueMapper: (value) =>
-                                                              localizations
-                                                                  .translate(
-                                                                      value),
-                                                          initialValue:
-                                                              deliveryCommentOptions
-                                                                  .firstOrNull
-                                                                  ?.name,
-                                                          menuItems:
-                                                              deliveryCommentOptions
-                                                                  .map((e) {
-                                                            return e.code;
-                                                          }).toList(),
-                                                          formControlName:
-                                                              _deliveryCommentKey,
-                                                        );
-                                                      },
-                                                    ),
+                                                    // DigitTextFormField(
+                                                    //   formControlName:
+                                                    //       _beneficiaryIdKey,
+                                                    //   label: localizations
+                                                    //       .translate(
+                                                    //     i18.referBeneficiary
+                                                    //         .beneficiaryIdLabel,
+                                                    //   ),
+                                                    //   isRequired: true,
+                                                    //   validationMessages: {
+                                                    //     'required': (_) =>
+                                                    //         localizations
+                                                    //             .translate(
+                                                    //           i18.common
+                                                    //               .corecommonRequired,
+                                                    //         ),
+                                                    //   },
+                                                    // ),
                                                   ],
                                                 ),
                                               ),
@@ -689,8 +545,6 @@ class _DeliverInterventionPageState
     (form.control(_resourceDeliveredKey) as FormArray)
         .add(FormControl<ProductVariantModel>());
     (form.control(_quantityDistributedKey) as FormArray)
-        .add(FormControl<String>(validators: [Validators.required]));
-    (form.control(_quantityWastedKey) as FormArray)
         .add(FormControl<String>(validators: [Validators.required]));
   }
 
@@ -730,7 +584,7 @@ class _DeliverInterventionPageState
         ((form.control(_resourceDeliveredKey) as FormArray).value
             as List<ProductVariantModel?>);
 
-    final beneficiaryId = form.control(_beneficiaryIdKey).value as String?;
+    // final beneficiaryId = form.control(_beneficiaryIdKey).value as String?;
 
     // Update the task with information from the form and other context
     task = task.copyWith(
@@ -741,13 +595,12 @@ class _DeliverInterventionPageState
                 clientReferenceId: IdGen.i.identifier,
                 productVariantId: e?.id,
                 isDelivered: true,
-                deliveryComment: form.control(_deliveryCommentKey).value,
                 taskId: task?.id,
                 tenantId: envConfig.variables.tenantId,
                 rowVersion: oldTask?.rowVersion ?? 1,
-                quantity: doseAdministered
-                    ? _administeredQuantity.toString()
-                    : _defaultQuantity.toString(),
+                quantity: (((form.control(_quantityDistributedKey) as FormArray)
+                        .value)?[productvariantList.indexOf(e)])
+                    .toString(),
                 clientAuditDetails: ClientAuditDetails(
                   createdBy: context.loggedInUserUuid,
                   createdTime: context.millisecondsSinceEpoch(),
@@ -756,15 +609,6 @@ class _DeliverInterventionPageState
                   createdBy: context.loggedInUserUuid,
                   createdTime: context.millisecondsSinceEpoch(),
                 ),
-                additionalFields:
-                    TaskResourceAdditionalFields(version: 1, fields: [
-                  AdditionalField(
-                    _quantityWastedKey,
-                    (((form.control(_quantityWastedKey) as FormArray)
-                            .value)?[productvariantList.indexOf(e)])
-                        .toString(),
-                  ),
-                ]),
               ))
           .toList(),
       address: address?.copyWith(
@@ -801,11 +645,11 @@ class _DeliverInterventionPageState
             AdditionalFieldsType.deliveryStrategy.toValue(),
             deliveryStrategy,
           ),
-          if (beneficiaryId != null && beneficiaryId.trim().isNotEmpty)
-            AdditionalField(
-              AdditionalFieldsType.beneficiaryId.toValue(),
-              beneficiaryId,
-            ),
+          // if (beneficiaryId != null && beneficiaryId.trim().isNotEmpty)
+          //   AdditionalField(
+          //     AdditionalFieldsType.beneficiaryId.toValue(),
+          //     beneficiaryId,
+          //   ),
           if (latitude != null)
             AdditionalField(
               AdditionalFieldsType.latitude.toValue(),
@@ -844,12 +688,9 @@ class _DeliverInterventionPageState
                 .toString(),
         validators: [],
       ),
-      _beneficiaryIdKey: FormControl<String>(
-        validators: [Validators.required],
-      ),
-      _deliveryCommentKey: FormControl<String>(
-        validators: [],
-      ),
+      // _beneficiaryIdKey: FormControl<String>(
+      //   validators: [Validators.required],
+      // ),
       _dateOfAdministrationKey:
           FormControl<DateTime>(value: DateTime.now(), validators: []),
       _resourceDeliveredKey: FormArray<ProductVariantModel>(
@@ -868,16 +709,22 @@ class _DeliverInterventionPageState
               )),
         ],
       ),
-      _quantityDistributedKey: FormArray<String>([
+      _quantityDistributedKey: FormArray<int>([
         ..._controllers.map(
-          (e) => FormControl<String>(validators: [Validators.required]),
+          (e) => FormControl<int>(
+            validators: [
+              Validators.required,
+              Validators.min(0),
+              Validators.max(1),
+            ],
+            value: 0,
+          ),
         ),
       ]),
-      _quantityWastedKey: FormArray<String>([
-        ..._controllers.map(
-          (e) => FormControl<String>(),
-        ),
-      ]),
+      _doseAdministeredByKey: FormControl<String>(
+        validators: [],
+        value: context.loggedInUser.userName,
+      ),
     });
   }
 }

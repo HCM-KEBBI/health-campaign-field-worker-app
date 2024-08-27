@@ -441,6 +441,17 @@ class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    DoseAdministeredVerificationRoute.name: (routeData) {
+      final args = routeData.argsAs<DoseAdministeredVerificationRouteArgs>(
+          orElse: () => const DoseAdministeredVerificationRouteArgs());
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: DoseAdministeredVerificationPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
     DoseAdministeredRoute.name: (routeData) {
       final args = routeData.argsAs<DoseAdministeredRouteArgs>(
           orElse: () => const DoseAdministeredRouteArgs());
@@ -461,6 +472,7 @@ class _$AppRouter extends RootStackRouter {
           key: args.key,
           appLocalizations: args.appLocalizations,
           enableBackToSearch: args.enableBackToSearch,
+          doseAdministrationVerification: args.doseAdministrationVerification,
         ),
       );
     },
@@ -841,6 +853,11 @@ class _$AppRouter extends RootStackRouter {
                 RouteConfig(
                   IneligibilityReasonsRoute.name,
                   path: 'ineligibility-reasons',
+                  parent: BeneficiaryWrapperRoute.name,
+                ),
+                RouteConfig(
+                  DoseAdministeredVerificationRoute.name,
+                  path: 'dose-administered-verification',
                   parent: BeneficiaryWrapperRoute.name,
                 ),
                 RouteConfig(
@@ -2480,6 +2497,41 @@ class IneligibilityReasonsRouteArgs {
 }
 
 /// generated route for
+/// [DoseAdministeredVerificationPage]
+class DoseAdministeredVerificationRoute
+    extends PageRouteInfo<DoseAdministeredVerificationRouteArgs> {
+  DoseAdministeredVerificationRoute({
+    Key? key,
+    AppLocalizations? appLocalizations,
+  }) : super(
+          DoseAdministeredVerificationRoute.name,
+          path: 'dose-administered-verification',
+          args: DoseAdministeredVerificationRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+          ),
+        );
+
+  static const String name = 'DoseAdministeredVerificationRoute';
+}
+
+class DoseAdministeredVerificationRouteArgs {
+  const DoseAdministeredVerificationRouteArgs({
+    this.key,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final AppLocalizations? appLocalizations;
+
+  @override
+  String toString() {
+    return 'DoseAdministeredVerificationRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
 /// [DoseAdministeredPage]
 class DoseAdministeredRoute extends PageRouteInfo<DoseAdministeredRouteArgs> {
   DoseAdministeredRoute({
@@ -2521,6 +2573,7 @@ class SplashAcknowledgementRoute
     Key? key,
     AppLocalizations? appLocalizations,
     bool? enableBackToSearch,
+    bool? doseAdministrationVerification,
   }) : super(
           SplashAcknowledgementRoute.name,
           path: 'splash-acknowledgement',
@@ -2528,6 +2581,7 @@ class SplashAcknowledgementRoute
             key: key,
             appLocalizations: appLocalizations,
             enableBackToSearch: enableBackToSearch,
+            doseAdministrationVerification: doseAdministrationVerification,
           ),
         );
 
@@ -2539,6 +2593,7 @@ class SplashAcknowledgementRouteArgs {
     this.key,
     this.appLocalizations,
     this.enableBackToSearch,
+    this.doseAdministrationVerification,
   });
 
   final Key? key;
@@ -2547,9 +2602,11 @@ class SplashAcknowledgementRouteArgs {
 
   final bool? enableBackToSearch;
 
+  final bool? doseAdministrationVerification;
+
   @override
   String toString() {
-    return 'SplashAcknowledgementRouteArgs{key: $key, appLocalizations: $appLocalizations, enableBackToSearch: $enableBackToSearch}';
+    return 'SplashAcknowledgementRouteArgs{key: $key, appLocalizations: $appLocalizations, enableBackToSearch: $enableBackToSearch, doseAdministrationVerification: $doseAdministrationVerification}';
   }
 }
 

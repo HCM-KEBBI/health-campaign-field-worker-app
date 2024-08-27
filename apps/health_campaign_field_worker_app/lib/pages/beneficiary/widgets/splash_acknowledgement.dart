@@ -9,10 +9,12 @@ import '../../../utils/i18_key_constants.dart' as i18;
 
 class SplashAcknowledgementPage extends LocalizedStatefulWidget {
   final bool? enableBackToSearch;
+  final bool? doseAdministrationVerification;
   const SplashAcknowledgementPage({
     super.key,
     super.appLocalizations,
     this.enableBackToSearch,
+    this.doseAdministrationVerification,
   });
 
   @override
@@ -36,6 +38,17 @@ class _SplashAcknowledgementPageState
         }
       });
     }
+    if (widget.doseAdministrationVerification == true) {
+      Future.delayed(const Duration(seconds: 1), () {
+        if (mounted) {
+          try {
+            context.router.push(DoseAdministeredVerificationRoute());
+          } catch (e) {
+            rethrow;
+          }
+        }
+      });
+    }
   }
 
   @override
@@ -45,7 +58,8 @@ class _SplashAcknowledgementPageState
         action: () {
           context.router.pop();
         },
-        enableBackToSearch: widget.enableBackToSearch ?? true,
+        enableBackToSearch: (widget.enableBackToSearch ?? true) &&
+            !(widget.doseAdministrationVerification == true),
         actionLabel:
             localizations.translate(i18.acknowledgementSuccess.actionLabelText),
         description: localizations.translate(

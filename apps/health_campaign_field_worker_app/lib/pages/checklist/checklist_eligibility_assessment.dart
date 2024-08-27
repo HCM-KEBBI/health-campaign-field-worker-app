@@ -432,7 +432,7 @@ class _EligibilityChecklistViewPageState
                                     ),
                                   );
                                 } else {
-                                  router.push(DeliverInterventionRoute());
+                                  router.push(BeneficiaryDetailsRoute());
                                 }
                               }
                             }
