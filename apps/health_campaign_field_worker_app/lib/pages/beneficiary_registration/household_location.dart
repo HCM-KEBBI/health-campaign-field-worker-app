@@ -93,6 +93,7 @@ class _HouseholdLocationPageState
                             ) {
                               var addressModel = AddressModel(
                                 type: AddressType.correspondence,
+                                addressLine1: context.boundary.name,
                                 latitude: form.control(_latKey).value ??
                                     locationState.latitude,
                                 longitude: form.control(_lngKey).value ??
