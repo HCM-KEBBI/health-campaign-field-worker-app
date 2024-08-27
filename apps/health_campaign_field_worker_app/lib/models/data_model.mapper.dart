@@ -262,9 +262,7 @@ mixin AdditionalFieldsMappable {
 
 abstract class AdditionalFieldsCopyWith<$R, $In extends AdditionalFields, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
-  ListCopyWith<$R, AdditionalField,
-      AdditionalFieldCopyWith<$R, AdditionalField, AdditionalField>> get fields;
-  $R call({String? schema, int? version, List<AdditionalField>? fields});
+  $R call({String? schema, int? version});
   AdditionalFieldsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
       Then<$Out2, $R2> t);
 }
@@ -582,7 +580,7 @@ mixin EntitySearchModelMappable {
 
 abstract class EntitySearchModelCopyWith<$R, $In extends EntitySearchModel,
     $Out> implements ClassCopyWith<$R, $In, $Out> {
-  $R call({String? boundaryCode});
+  $R call();
   EntitySearchModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
       Then<$Out2, $R2> t);
 }

@@ -28,11 +28,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final MdmsRepository mdmsRepository;
   final LocalRepository<BoundaryModel, BoundarySearchModel>
       boundaryLocalRepository;
+  final RemoteRepository<IndividualModel, IndividualSearchModel>
+      individualRemoteRepository;
 
   AuthBloc({
     required this.authRepository,
     required this.boundaryLocalRepository,
     required this.mdmsRepository,
+    required this.individualRemoteRepository,
     LocalSecureStore? localSecureStore,
   })  : localSecureStore = LocalSecureStore.instance,
         super(const AuthUnauthenticatedState()) {
@@ -54,6 +57,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final refreshToken = await localSecureStore.refreshToken;
       final userObject = await localSecureStore.userRequestModel;
       final actionsList = await localSecureStore.savedActions;
+      final userIndividualId = await localSecureStore.userIndividualId;
+
       if (accessToken == null ||
           refreshToken == null ||
           userObject == null ||
@@ -64,10 +69,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           accessToken: accessToken,
           refreshToken: refreshToken,
           userModel: userObject,
+          individualId: userIndividualId,
           actionsWrapper: actionsList,
         ));
       }
     } catch (_) {
+      localSecureStore.deleteAll();
       emit(const AuthUnauthenticatedState());
       rethrow;
     }
@@ -127,29 +134,27 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   //_onLogout event logs out the user and deletes the saved user details from local storage
   FutureOr<void> _onLogout(AuthLogoutEvent event, AuthEmitter emit) async {
-    await localSecureStore.deleteAll();
-    emit(const AuthUnauthenticatedState());
-    // try {
-    //   final isConnected = await getIsConnected();
-    //   if (isConnected) {
-    //     final accessToken = await localSecureStore.accessToken;
-    //     final user = await localSecureStore.userRequestModel;
-    //     final tenantId = user?.tenantId;
-    //     await authRepository.logOutUser(
-    //       logoutPath: Constants.logoutUserPath,
-    //       queryParameters: {
-    //         'tenantId': tenantId.toString(),
-    //       },
-    //       body: {'access_token': accessToken},
-    //     );
-    //     await localSecureStore.deleteAll();
+    try {
+      final isConnected = await getIsConnected();
+      if (isConnected) {
+        final accessToken = await localSecureStore.accessToken;
+        final user = await localSecureStore.userRequestModel;
+        final tenantId = user?.tenantId;
+        await authRepository.logOutUser(
+          logoutPath: Constants.logoutUserPath,
+          queryParameters: {
+            'tenantId': tenantId.toString(),
+          },
+          body: {'access_token': accessToken},
+        );
+        await localSecureStore.deleteAll();
 
-    //     emit(const AuthUnauthenticatedState());
-    //   }
-    // } catch (error) {
-    //   await localSecureStore.deleteAll();
-    //   emit(const AuthUnauthenticatedState());
-    // }
+        emit(const AuthUnauthenticatedState());
+      }
+    } catch (error) {
+      await localSecureStore.deleteAll();
+      emit(const AuthUnauthenticatedState());
+    }
   }
 
   FutureOr<void> _onAuthLogoutWithoutToken(
@@ -190,6 +195,7 @@ class AuthState with _$AuthState {
     required String refreshToken,
     required UserRequestModel userModel,
     required RoleActionsWrapperModel actionsWrapper,
+    String? individualId,
   }) = AuthAuthenticatedState;
 
   const factory AuthState.error([String? error]) = AuthErrorState;

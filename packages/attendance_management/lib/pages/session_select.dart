@@ -83,7 +83,7 @@ class _AttendanceDateSessionSelectionPageState
                           builder: (context, form, child) {
                             return ScrollableContent(
                               header: const BackNavigationHelpHeaderWidget(
-                                showHelp: true,
+                                showHelp: false,
                                 showLogoutCTA: false,
                               ),
                               enableFixedButton: true,
