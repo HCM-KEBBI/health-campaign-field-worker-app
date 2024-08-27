@@ -70,7 +70,8 @@ class NetworkManager {
         localRepositories: localRepositories.toSet().toList(),
         remoteRepositories: remoteRepositories.toSet().toList(),
       );
-    } catch (e) {
+    } catch (e, stacktrace) {
+      print(stacktrace);
       syncError ??= SyncUpError(e);
     }
 
