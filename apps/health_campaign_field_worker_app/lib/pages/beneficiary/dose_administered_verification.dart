@@ -179,18 +179,21 @@ class _DoseAdministeredVerificationPageState
                                 children: [
                                   _buildTextRow(
                                     "1. ${localizations.translate(
-                                          i18.deliverIntervention
-                                              .doseGivenCareGiver,
-                                        ).replaceFirst("{}", quantity.toString())}",
+                                      i18.deliverIntervention
+                                          .doseGivenCareGiver,
+                                    )}",
+                                    {'{}': quantity.toString()},
                                     theme,
                                   ),
                                   _buildTextRow(
                                     ("2. ${localizations.translate(
                                       i18.deliverIntervention
                                           .infoWrittenInChildCard,
-                                    )}")
-                                        .replaceFirst('()', beneficiaryName)
-                                        .replaceFirst("{}", beneficiaryId),
+                                    )}"),
+                                    {
+                                      '()': beneficiaryName,
+                                      '{}': beneficiaryId,
+                                    },
                                     theme,
                                   ),
                                   _buildTextRow(
@@ -198,6 +201,7 @@ class _DoseAdministeredVerificationPageState
                                       i18.deliverIntervention
                                           .healthTalkGivenOnSPAQ,
                                     )}",
+                                    {},
                                     theme,
                                   ),
                                 ],
@@ -217,30 +221,92 @@ class _DoseAdministeredVerificationPageState
     );
   }
 
-  Widget _buildTextRow(String text, ThemeData theme) {
+  Widget _buildTextRow(
+    String text,
+    Map<String, String> replacements,
+    ThemeData theme,
+  ) {
+    List<TextSpan> textSpans = _createTextSpans(text, replacements, theme);
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(
+        kPadding,
         kPadding * 2,
-        kPadding * 2,
-        kPadding * 2,
+        kPadding,
         kPadding * 2,
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                fontStyle: theme.textTheme.bodyLarge!.fontStyle,
-                fontWeight: theme.textTheme.bodyLarge!.fontWeight,
-                letterSpacing: theme.textTheme.bodyLarge!.letterSpacing,
-                fontSize: 18,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: RichText(
+                  text: TextSpan(
+                    style: TextStyle(
+                      fontStyle: theme.textTheme.bodyLarge!.fontStyle,
+                      fontWeight: theme.textTheme.bodyLarge!.fontWeight,
+                      letterSpacing: theme.textTheme.bodyLarge!.letterSpacing,
+                      fontSize: 18,
+                      color: theme.textTheme.bodyLarge!.color,
+                    ),
+                    children: textSpans,
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),
     );
+  }
+
+  List<TextSpan> _createTextSpans(
+    String text,
+    Map<String, String> replacements,
+    ThemeData theme,
+  ) {
+    final spans = <TextSpan>[];
+    int start = 0;
+
+    while (start < text.length) {
+      int minIndex = text.length;
+      String? foundPlaceholder;
+
+      // Find the next placeholder in the text
+      for (final placeholder in replacements.keys) {
+        final index = text.indexOf(placeholder, start);
+        if (index != -1 && index < minIndex) {
+          minIndex = index;
+          foundPlaceholder = placeholder;
+        }
+      }
+
+      if (foundPlaceholder != null) {
+        final placeholderIndex = text.indexOf(foundPlaceholder, start);
+
+        // Add text before the placeholder
+        if (placeholderIndex > start) {
+          spans.add(TextSpan(text: text.substring(start, placeholderIndex)));
+        }
+
+        // Add the replacement text with styling
+        spans.add(TextSpan(
+          text: replacements[foundPlaceholder],
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ));
+
+        // Update the start index
+        start = placeholderIndex + foundPlaceholder.length;
+      } else {
+        // No more placeholders, add the rest of the text
+        spans.add(TextSpan(text: text.substring(start)));
+        break;
+      }
+    }
+
+    return spans;
   }
 
   FormGroup buildForm(BuildContext context) {
