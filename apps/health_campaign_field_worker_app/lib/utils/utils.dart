@@ -23,6 +23,7 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:gs1_barcode_parser/gs1_barcode_parser.dart';
+import 'package:isar/isar.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:uuid/uuid.dart';
 
@@ -30,6 +31,7 @@ import '../blocs/digit_scanner/digit_scanner.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/search_households/project_beneficiaries_downsync.dart';
 import '../blocs/search_households/search_households.dart';
+import '../data/local_store/no_sql/schema/localization.dart';
 import '../data/local_store/secure_store/secure_store.dart';
 import '../models/data_model.dart';
 import '../models/project_type/project_type_model.dart';
@@ -104,7 +106,7 @@ class CustomValidator {
 
     const pattern = r'[0-9]';
 
-    if (control.value.toString().length != 9) {
+    if (control.value.toString().length != 10) {
       return {'mobileNumber': true};
     }
 
@@ -666,11 +668,30 @@ dynamic getValueByKey(List<Map<String, dynamic>> data, String key) {
   return null; // Key not found
 }
 
+//Function to read the localizations from ISAR,
+getLocalizationString(Isar isar, String selectedLocale) async {
+  List<dynamic> localizationValues = [];
+
+  final List<LocalizationWrapper> localizationList =
+      await isar.localizationWrappers
+          .filter()
+          .localeEqualTo(
+            selectedLocale.toString(),
+          )
+          .findAll();
+  if (localizationList.isNotEmpty) {
+    localizationValues.addAll(localizationList.first.localization!);
+  }
+
+  return localizationValues;
+}
+
 class UniqueIdGeneration {
-  Future<String> generateUniqueId(
-    String localityCode,
-    String loggedInUserId,
-  ) async {
+  Future<Set<String>> generateUniqueId({
+    required String localityCode,
+    required String loggedInUserId,
+    required bool returnBothIds,
+  }) async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
 
@@ -683,10 +704,10 @@ class UniqueIdGeneration {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
 
     // Combine the Android ID with the timestamp
-    String input = '$loggedInUserId$androidId$localityCode$timestamp';
+    String combinedId = '$loggedInUserId$androidId$localityCode$timestamp';
 
     // Generate SHA-256 hash
-    List<int> bytes = utf8.encode(input);
+    List<int> bytes = utf8.encode(combinedId);
     Digest sha256Hash = sha256.convert(bytes);
 
     // Convert the hash to a 12-character string and make it uppercase
@@ -707,7 +728,9 @@ class UniqueIdGeneration {
       print('uniqueId : $formattedUniqueId');
     }
 
-    return formattedUniqueId;
+    return returnBothIds
+        ? {formattedUniqueId, combinedId}
+        : {formattedUniqueId};
   }
 }
 

@@ -960,6 +960,70 @@ class PgrServiceOpLogManager extends OpLogManager<PgrServiceModel> {
   }
 }
 
+class AttendanceOpLogManager extends OpLogManager<HCMAttendanceRegisterModel> {
+  AttendanceOpLogManager(super.isar);
+
+  @override
+  HCMAttendanceRegisterModel applyServerGeneratedIdToEntity(
+    HCMAttendanceRegisterModel entity,
+    String serverGeneratedId,
+    int rowVersion,
+  ) =>
+      throw UnimplementedError();
+
+  @override
+  String getClientReferenceId(HCMAttendanceRegisterModel entity) =>
+      throw UnimplementedError();
+  //ClientreferenceId is not needed for register
+
+  @override
+  String? getServerGeneratedId(HCMAttendanceRegisterModel entity) =>
+      throw UnimplementedError();
+  //Not being used for down sync using client referenceIds
+
+  @override
+  int? getRowVersion(HCMAttendanceRegisterModel entity) =>
+      throw UnimplementedError();
+  //Not being used for down sync using client referenceIds
+
+  @override
+  bool? getNonRecoverableError(HCMAttendanceRegisterModel entity) =>
+      throw UnimplementedError();
+//Not being used for down sync using client referenceIds
+}
+
+class AttendanceLogOpLogManager extends OpLogManager<HCMAttendanceLogModel> {
+  AttendanceLogOpLogManager(super.isar);
+
+  @override
+  HCMAttendanceLogModel applyServerGeneratedIdToEntity(
+    HCMAttendanceLogModel entity,
+    String serverGeneratedId,
+    int rowVersion,
+  ) =>
+      entity.copyWith(
+        attendance: entity.attendance?.copyWith(
+          id: serverGeneratedId,
+        ),
+        rowVersion: rowVersion,
+      );
+
+  @override
+  String getClientReferenceId(HCMAttendanceLogModel entity) =>
+      entity.attendance!.clientReferenceId.toString();
+
+  @override
+  String? getServerGeneratedId(HCMAttendanceLogModel entity) =>
+      entity.attendance?.id;
+
+  @override
+  int? getRowVersion(HCMAttendanceLogModel entity) => entity.rowVersion;
+
+  @override
+  bool? getNonRecoverableError(HCMAttendanceLogModel entity) =>
+      entity.nonRecoverableError;
+}
+
 class UpdateServerGeneratedIdModel {
   final String clientReferenceId;
   final String serverGeneratedId;

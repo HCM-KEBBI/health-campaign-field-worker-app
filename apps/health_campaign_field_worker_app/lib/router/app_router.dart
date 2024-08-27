@@ -29,6 +29,7 @@ import '../pages/beneficiary_registration/individual_details.dart';
 import '../pages/boundary_selection.dart';
 import '../pages/checklist/checklist.dart';
 import '../pages/checklist/checklist_boundary_view.dart';
+import '../pages/checklist/checklist_eligibility_assessment.dart';
 import '../pages/checklist/checklist_preview.dart';
 import '../pages/checklist/checklist_view.dart';
 import '../pages/checklist/checklist_wrapper.dart';
@@ -132,6 +133,10 @@ part 'app_router.gr.dart';
             AutoRoute(
               page: DeliverInterventionPage,
               path: 'deliver-intervention',
+            ),
+            AutoRoute(
+              page: EligibilityChecklistViewPage,
+              path: 'eligibility-checklist',
             ),
             AutoRoute<List<TaskModel>>(
               page: SideEffectsPage,

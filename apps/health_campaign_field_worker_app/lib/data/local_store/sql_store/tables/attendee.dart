@@ -1,12 +1,11 @@
-// Generated using mason. Do not modify by hand
-
 import 'package:drift/drift.dart';
 
-class Identifier extends Table {
+class Attendee extends Table {
   TextColumn get id => text().nullable()();
-  TextColumn get identifierType => text().nullable()();
-  TextColumn get identifierId => text().nullable()();
-  TextColumn get auditCreatedBy => text().nullable()();
+  TextColumn get tenantId => text()();
+  TextColumn get registerId => text()();
+  TextColumn get individualId => text()();
+  IntColumn get status => integer().nullable()();
   BoolColumn get nonRecoverableError =>
       boolean().nullable().withDefault(const Constant(false))();
   IntColumn get auditCreatedTime => integer().nullable()();
@@ -14,21 +13,18 @@ class Identifier extends Table {
   TextColumn get clientModifiedBy => text().nullable()();
   TextColumn get clientCreatedBy => text().nullable()();
   IntColumn get clientModifiedTime => integer().nullable()();
+  TextColumn get auditCreatedBy => text().nullable()();
   TextColumn get auditModifiedBy => text().nullable()();
   IntColumn get auditModifiedTime => integer().nullable()();
-  TextColumn get clientReferenceId => text()();
-  TextColumn get tenantId => text().nullable()();
+  IntColumn get enrollmentDate => integer().nullable()();
+  IntColumn get denrollmentDate => integer().nullable()();
   BoolColumn get isDeleted =>
       boolean().nullable().withDefault(const Constant(false))();
   IntColumn get rowVersion => integer().nullable()();
-
   TextColumn get additionalFields => text().nullable()();
-
   @override
   Set<Column> get primaryKey => {
-        auditCreatedBy,
-        clientReferenceId,
-        identifierType,
-        identifierId,
+        id,
+        registerId,
       };
 }
