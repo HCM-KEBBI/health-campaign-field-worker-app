@@ -67,9 +67,13 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                   fetched: (facilities, _, __) => facilities,
                 ) ??
                 [];
-            facility = facilityState.whenOrNull(
-              fetched: (_, __, facility) => facility,
-            );
+            facility = facilities.length >= 2
+                ? facilityState.whenOrNull(
+                    fetched: (_, __, facility) => facility,
+                  )
+                : facilities.isNotEmpty
+                    ? facilities.first
+                    : null;
 
             if (facility == null && context.isSupervisor) {
               facility = facilities.firstWhereOrNull(
@@ -93,7 +97,11 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                         child: DigitCard(
                           margin: const EdgeInsets.fromLTRB(0, kPadding, 0, 0),
                           padding: const EdgeInsets.fromLTRB(
-                              kPadding, 0, kPadding, 0,),
+                            kPadding,
+                            0,
+                            kPadding,
+                            0,
+                          ),
                           child: ReactiveFormConsumer(
                             builder: (context, form, child) {
                               return DigitElevatedButton(

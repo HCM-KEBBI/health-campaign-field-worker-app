@@ -1,25 +1,30 @@
 library app_utils;
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:crypto/crypto.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:digit_components/theme/digit_theme.dart';
 import 'package:digit_components/utils/date_utils.dart';
-import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_dialog.dart';
 import 'package:digit_components/widgets/digit_sync_dialog.dart';
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:isar/isar.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:uuid/uuid.dart';
 
 import '../blocs/search_households/project_beneficiaries_downsync.dart';
 import '../blocs/search_households/search_households.dart';
+import '../data/local_store/no_sql/schema/localization.dart';
 import '../data/local_store/secure_store/secure_store.dart';
 import '../models/data_model.dart';
 import '../models/project_type/project_type_model.dart';
@@ -652,4 +657,70 @@ dynamic getValueByKey(List<Map<String, dynamic>> data, String key) {
   }
 
   return null; // Key not found
+}
+
+//Function to read the localizations from ISAR,
+getLocalizationString(Isar isar, String selectedLocale) async {
+  List<dynamic> localizationValues = [];
+
+  final List<LocalizationWrapper> localizationList =
+      await isar.localizationWrappers
+          .filter()
+          .localeEqualTo(
+            selectedLocale.toString(),
+          )
+          .findAll();
+  if (localizationList.isNotEmpty) {
+    localizationValues.addAll(localizationList.first.localization!);
+  }
+
+  return localizationValues;
+}
+
+class UniqueIdGeneration {
+  Future<Set<String>> generateUniqueId({
+    required String localityCode,
+    required String loggedInUserId,
+    required bool returnBothIds,
+  }) async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+
+    // Get the Android ID
+    String androidId = androidInfo.serialNumber == 'unknown'
+        ? androidInfo.id.replaceAll('.', '')
+        : androidInfo.serialNumber;
+
+    // Get current timestamp
+    int timestamp = DateTime.now().millisecondsSinceEpoch;
+
+    // Combine the Android ID with the timestamp
+    String combinedId = '$loggedInUserId$androidId$localityCode$timestamp';
+
+    // Generate SHA-256 hash
+    List<int> bytes = utf8.encode(combinedId);
+    Digest sha256Hash = sha256.convert(bytes);
+
+    // Convert the hash to a 12-character string and make it uppercase
+    String hashString = sha256Hash.toString();
+    String uniqueId = hashString.substring(0, 12).toUpperCase();
+
+    // Add a hyphen every 4 characters, except the last
+    String formattedUniqueId = uniqueId.replaceAllMapped(
+      RegExp(r'.{1,4}'),
+      (match) => '${match.group(0)}-',
+    );
+
+    // Remove the last hyphen
+    formattedUniqueId =
+        formattedUniqueId.substring(0, formattedUniqueId.length - 1);
+
+    if (kDebugMode) {
+      print('uniqueId : $formattedUniqueId');
+    }
+
+    return returnBothIds
+        ? {formattedUniqueId, combinedId}
+        : {formattedUniqueId};
+  }
 }
