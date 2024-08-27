@@ -384,6 +384,11 @@ class _ComplaintsDetailsPageState
                                       label: localizations.translate(
                                         i18.complaints.complainantName,
                                       ),
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                          RegExp("[0-9a-zA-Z ]"),
+                                        ),
+                                      ],
                                       readOnly: isRaisedForSelf,
                                       maxLength: 64,
                                       isRequired: true,
