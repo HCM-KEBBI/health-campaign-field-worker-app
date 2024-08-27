@@ -302,6 +302,20 @@ class _ComplaintsDetailsPageState
                                               .value ??
                                           "",
                                       onChanged: (changedValue) {
+                                        if (form
+                                            .control(_complaintRaisedFor)
+                                            .disabled) return;
+
+                                        if (changedValue ==
+                                            i18.complaints
+                                                .raisedForAnotherUser) {
+                                          form.control(_complainantName).value =
+                                              "";
+                                          form
+                                              .control(
+                                                  _complainantContactNumber)
+                                              .value = "";
+                                        }
                                         setState(() {
                                           form
                                               .control(_complaintRaisedFor)
@@ -352,6 +366,14 @@ class _ComplaintsDetailsPageState
                                 state.mapOrNull(
                                   authenticated: (value) {
                                     var user = value.userModel;
+
+                                    if (isRaisedForSelf) {
+                                      form.control(_complainantName).value =
+                                          user.name;
+                                      form
+                                          .control(_complainantContactNumber)
+                                          .value = user.mobileNumber;
+                                    }
                                   },
                                 );
 
@@ -362,6 +384,7 @@ class _ComplaintsDetailsPageState
                                       label: localizations.translate(
                                         i18.complaints.complainantName,
                                       ),
+                                      readOnly: isRaisedForSelf,
                                       maxLength: 64,
                                       isRequired: true,
                                       validationMessages: {
@@ -377,7 +400,8 @@ class _ComplaintsDetailsPageState
                                       label: localizations.translate(
                                         i18.complaints.complainantContactNumber,
                                       ),
-                                      maxLength: 9,
+                                      readOnly: isRaisedForSelf,
+                                      maxLength: 10,
                                       isRequired: true,
                                       keyboardType: TextInputType.number,
                                       inputFormatters: [
@@ -416,7 +440,7 @@ class _ComplaintsDetailsPageState
                               label: localizations.translate(
                                 i18.complaints.supervisorContactNumber,
                               ),
-                              maxLength: 9,
+                              maxLength: 10,
                               keyboardType: TextInputType.number,
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(
@@ -497,7 +521,7 @@ class _ComplaintsDetailsPageState
         validators: [
           Validators.required,
           CustomValidator.validMobileNumber,
-          Validators.minLength(9),
+          Validators.minLength(10),
         ],
       ),
       _supervisorName: FormControl<String>(
