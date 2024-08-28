@@ -251,12 +251,20 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                             as List<
                                                                 ProductVariantModel?>);
 
-                                                    if (oldTask != null) {
+                                                    var quantityDistributedFormArray =
+                                                        form.control(
+                                                      _quantityDistributedKey,
+                                                    ) as FormArray?;
+
+                                                    if (oldTask != null &&
+                                                        quantityDistributedFormArray !=
+                                                            null) {
                                                       var updatedTask =
                                                           updateTask(
                                                         oldTask,
                                                         productvariantList,
                                                         form,
+                                                        quantityDistributedFormArray,
                                                       );
 
                                                       final shouldSubmit =
@@ -547,30 +555,51 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
     TaskModel oldTask,
     List<ProductVariantModel?> productvariantList,
     FormGroup form,
+    FormArray quantityDistributedFormArray,
   ) {
     final taskResources = oldTask.resources ?? [];
     if (taskResources.isNotEmpty) {
       for (var resource in taskResources) {
-        if ((resource.additionalFields?.fields ?? []).isNotEmpty) {
-          var productVariantId = resource.productVariantId;
-          var productVariant = productvariantList
-              .where((element) => element?.id == productVariantId)
-              .firstOrNull;
+        var productVariantId = resource.productVariantId;
+        var productVariant = productvariantList
+            .where((element) => element?.id == productVariantId)
+            .firstOrNull;
+        var quantity = 0;
 
-          if (productVariant == null) {
-            continue;
-          }
-          resource.additionalFields?.fields.add(
-            const AdditionalField(Constants.reAdministeredKey, true),
-          );
-          resource.additionalFields?.fields.add(
-            AdditionalField(
-              _reDoseQuantityKey,
-              (((form.control(_quantityDistributedKey) as FormArray)
-                      .value)?[productvariantList.indexOf(productVariant)])
-                  .toString(),
+        if (productVariant == null) {
+          continue;
+        }
+        var quantityIndex = productvariantList.indexOf(productVariant);
+
+        if (resource.additionalFields == null) {
+          quantity = quantityDistributedFormArray.value![quantityIndex];
+          resource = resource.copyWith(
+            additionalFields: TaskResourceAdditionalFields(
+              version: 1,
+              fields: [
+                const AdditionalField(Constants.reAdministeredKey, true),
+                AdditionalField(_reDoseQuantityKey, quantity),
+              ],
             ),
           );
+        } else {
+          List<AdditionalField> newAdditionalFields = [
+            const AdditionalField(Constants.reAdministeredKey, true),
+            AdditionalField(_reDoseQuantityKey, quantity),
+          ];
+          resource = resource.additionalFields!.fields.isEmpty
+              ? resource.copyWith(
+                  additionalFields: resource.additionalFields!
+                      .copyWith(fields: newAdditionalFields),
+                )
+              : resource.copyWith(
+                  additionalFields: resource.additionalFields!.copyWith(
+                    fields: [
+                      ...resource.additionalFields!.fields,
+                      ...newAdditionalFields,
+                    ],
+                  ),
+                );
         }
       }
     }
@@ -586,7 +615,7 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
           : TaskAdditionalFields(
               version: 1,
               fields: [
-                const AdditionalField(Constants.reAdministeredKey, true)
+                const AdditionalField(Constants.reAdministeredKey, true),
               ],
             ),
     );
