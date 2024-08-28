@@ -14,6 +14,7 @@ import '../../blocs/delivery_intervention/deliver_intervention.dart';
 import '../../blocs/household_overview/household_overview.dart';
 import '../../blocs/product_variant/product_variant.dart';
 import '../../blocs/project/project.dart';
+import '../../blocs/search_households/search_households.dart';
 import '../../data/local_store/no_sql/schema/app_configuration.dart';
 import '../../models/data_model.dart';
 import '../../models/project_type/project_type_model.dart';
@@ -242,9 +243,15 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                       ),
                                                     );
                                                   } else {
-                                                    final oldTask =
-                                                        deliveryInterventionstate
-                                                            .oldTask;
+                                                    // get the latest successful task
+                                                    var successfulTask = widget
+                                                        .tasks
+                                                        .where((element) =>
+                                                            element.status ==
+                                                            Status
+                                                                .administeredSuccess
+                                                                .toValue())
+                                                        .lastOrNull;
                                                     // Extract productvariantList from the form
                                                     final productvariantList =
                                                         ((form.control(_resourceDeliveredKey)
@@ -258,12 +265,13 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                       _quantityDistributedKey,
                                                     ) as FormArray?;
 
-                                                    if (oldTask != null &&
+                                                    if (successfulTask !=
+                                                            null &&
                                                         quantityDistributedFormArray !=
                                                             null) {
                                                       var updatedTask =
                                                           updateTask(
-                                                        oldTask,
+                                                        successfulTask,
                                                         productvariantList,
                                                         form,
                                                         quantityDistributedFormArray,
@@ -560,6 +568,7 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
     FormArray quantityDistributedFormArray,
   ) {
     final taskResources = oldTask.resources ?? [];
+    List<TaskResourceModel> updatedTaskResources = [];
     if (taskResources.isNotEmpty) {
       for (var resource in taskResources) {
         var productVariantId = resource.productVariantId;
@@ -569,27 +578,29 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
         var quantity = 0;
 
         if (productVariant == null) {
+          updatedTaskResources.add(resource);
           continue;
         }
         var quantityIndex = productvariantList.indexOf(productVariant);
+        var updatedResource;
 
         if (resource.additionalFields == null) {
           quantity = quantityDistributedFormArray.value![quantityIndex];
-          resource = resource.copyWith(
+          updatedResource = resource.copyWith(
             additionalFields: TaskResourceAdditionalFields(
               version: 1,
               fields: [
                 const AdditionalField(Constants.reAdministeredKey, true),
-                AdditionalField(_reDoseQuantityKey, quantity),
+                AdditionalField(_reDoseQuantityKey, quantity.toString()),
               ],
             ),
           );
         } else {
           List<AdditionalField> newAdditionalFields = [
             const AdditionalField(Constants.reAdministeredKey, true),
-            AdditionalField(_reDoseQuantityKey, quantity),
+            AdditionalField(_reDoseQuantityKey, quantity.toString()),
           ];
-          resource = resource.additionalFields!.fields.isEmpty
+          updatedResource = resource.additionalFields!.fields.isEmpty
               ? resource.copyWith(
                   additionalFields: resource.additionalFields!
                       .copyWith(fields: newAdditionalFields),
@@ -603,8 +614,12 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                   ),
                 );
         }
+        updatedTaskResources.add(updatedResource);
       }
     }
+    oldTask = oldTask.copyWith(
+      resources: updatedTaskResources,
+    );
     var updatedTask = oldTask.copyWith(
       additionalFields: oldTask.additionalFields != null
           ? TaskAdditionalFields(
