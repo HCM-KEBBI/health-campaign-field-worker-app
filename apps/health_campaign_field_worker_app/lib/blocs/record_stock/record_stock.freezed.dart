@@ -18,8 +18,12 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$RecordStockEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(DateTime dateOfRecord,
-            FacilityModel? facilityModel, String primaryType, String primaryId)
+    required TResult Function(
+            DateTime dateOfRecord,
+            FacilityModel? facilityModel,
+            String primaryType,
+            String primaryId,
+            String loggedInUserId)
         saveWarehouseDetails,
     required TResult Function(StockModel stockModel) saveStockDetails,
     required TResult Function() createStockEntry,
@@ -28,7 +32,7 @@ mixin _$RecordStockEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(DateTime dateOfRecord, FacilityModel? facilityModel,
-            String primaryType, String primaryId)?
+            String primaryType, String primaryId, String loggedInUserId)?
         saveWarehouseDetails,
     TResult? Function(StockModel stockModel)? saveStockDetails,
     TResult? Function()? createStockEntry,
@@ -37,7 +41,7 @@ mixin _$RecordStockEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(DateTime dateOfRecord, FacilityModel? facilityModel,
-            String primaryType, String primaryId)?
+            String primaryType, String primaryId, String loggedInUserId)?
         saveWarehouseDetails,
     TResult Function(StockModel stockModel)? saveStockDetails,
     TResult Function()? createStockEntry,
@@ -102,7 +106,8 @@ abstract class _$$RecordStockSaveWarehouseDetailsEventImplCopyWith<$Res> {
       {DateTime dateOfRecord,
       FacilityModel? facilityModel,
       String primaryType,
-      String primaryId});
+      String primaryId,
+      String loggedInUserId});
 }
 
 /// @nodoc
@@ -122,6 +127,7 @@ class __$$RecordStockSaveWarehouseDetailsEventImplCopyWithImpl<$Res>
     Object? facilityModel = freezed,
     Object? primaryType = null,
     Object? primaryId = null,
+    Object? loggedInUserId = null,
   }) {
     return _then(_$RecordStockSaveWarehouseDetailsEventImpl(
       dateOfRecord: null == dateOfRecord
@@ -140,6 +146,10 @@ class __$$RecordStockSaveWarehouseDetailsEventImplCopyWithImpl<$Res>
           ? _value.primaryId
           : primaryId // ignore: cast_nullable_to_non_nullable
               as String,
+      loggedInUserId: null == loggedInUserId
+          ? _value.loggedInUserId
+          : loggedInUserId // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -152,7 +162,8 @@ class _$RecordStockSaveWarehouseDetailsEventImpl
       {required this.dateOfRecord,
       this.facilityModel,
       required this.primaryType,
-      required this.primaryId});
+      required this.primaryId,
+      required this.loggedInUserId});
 
   @override
   final DateTime dateOfRecord;
@@ -162,10 +173,12 @@ class _$RecordStockSaveWarehouseDetailsEventImpl
   final String primaryType;
   @override
   final String primaryId;
+  @override
+  final String loggedInUserId;
 
   @override
   String toString() {
-    return 'RecordStockEvent.saveWarehouseDetails(dateOfRecord: $dateOfRecord, facilityModel: $facilityModel, primaryType: $primaryType, primaryId: $primaryId)';
+    return 'RecordStockEvent.saveWarehouseDetails(dateOfRecord: $dateOfRecord, facilityModel: $facilityModel, primaryType: $primaryType, primaryId: $primaryId, loggedInUserId: $loggedInUserId)';
   }
 
   @override
@@ -180,12 +193,14 @@ class _$RecordStockSaveWarehouseDetailsEventImpl
             (identical(other.primaryType, primaryType) ||
                 other.primaryType == primaryType) &&
             (identical(other.primaryId, primaryId) ||
-                other.primaryId == primaryId));
+                other.primaryId == primaryId) &&
+            (identical(other.loggedInUserId, loggedInUserId) ||
+                other.loggedInUserId == loggedInUserId));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, dateOfRecord, facilityModel, primaryType, primaryId);
+  int get hashCode => Object.hash(runtimeType, dateOfRecord, facilityModel,
+      primaryType, primaryId, loggedInUserId);
 
   @JsonKey(ignore: true)
   @override
@@ -198,34 +213,38 @@ class _$RecordStockSaveWarehouseDetailsEventImpl
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(DateTime dateOfRecord,
-            FacilityModel? facilityModel, String primaryType, String primaryId)
+    required TResult Function(
+            DateTime dateOfRecord,
+            FacilityModel? facilityModel,
+            String primaryType,
+            String primaryId,
+            String loggedInUserId)
         saveWarehouseDetails,
     required TResult Function(StockModel stockModel) saveStockDetails,
     required TResult Function() createStockEntry,
   }) {
     return saveWarehouseDetails(
-        dateOfRecord, facilityModel, primaryType, primaryId);
+        dateOfRecord, facilityModel, primaryType, primaryId, loggedInUserId);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(DateTime dateOfRecord, FacilityModel? facilityModel,
-            String primaryType, String primaryId)?
+            String primaryType, String primaryId, String loggedInUserId)?
         saveWarehouseDetails,
     TResult? Function(StockModel stockModel)? saveStockDetails,
     TResult? Function()? createStockEntry,
   }) {
     return saveWarehouseDetails?.call(
-        dateOfRecord, facilityModel, primaryType, primaryId);
+        dateOfRecord, facilityModel, primaryType, primaryId, loggedInUserId);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(DateTime dateOfRecord, FacilityModel? facilityModel,
-            String primaryType, String primaryId)?
+            String primaryType, String primaryId, String loggedInUserId)?
         saveWarehouseDetails,
     TResult Function(StockModel stockModel)? saveStockDetails,
     TResult Function()? createStockEntry,
@@ -233,7 +252,7 @@ class _$RecordStockSaveWarehouseDetailsEventImpl
   }) {
     if (saveWarehouseDetails != null) {
       return saveWarehouseDetails(
-          dateOfRecord, facilityModel, primaryType, primaryId);
+          dateOfRecord, facilityModel, primaryType, primaryId, loggedInUserId);
     }
     return orElse();
   }
@@ -284,13 +303,15 @@ abstract class RecordStockSaveWarehouseDetailsEvent
           {required final DateTime dateOfRecord,
           final FacilityModel? facilityModel,
           required final String primaryType,
-          required final String primaryId}) =
+          required final String primaryId,
+          required final String loggedInUserId}) =
       _$RecordStockSaveWarehouseDetailsEventImpl;
 
   DateTime get dateOfRecord;
   FacilityModel? get facilityModel;
   String get primaryType;
   String get primaryId;
+  String get loggedInUserId;
   @JsonKey(ignore: true)
   _$$RecordStockSaveWarehouseDetailsEventImplCopyWith<
           _$RecordStockSaveWarehouseDetailsEventImpl>
@@ -368,8 +389,12 @@ class _$RecordStockSaveStockDetailsEventImpl
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(DateTime dateOfRecord,
-            FacilityModel? facilityModel, String primaryType, String primaryId)
+    required TResult Function(
+            DateTime dateOfRecord,
+            FacilityModel? facilityModel,
+            String primaryType,
+            String primaryId,
+            String loggedInUserId)
         saveWarehouseDetails,
     required TResult Function(StockModel stockModel) saveStockDetails,
     required TResult Function() createStockEntry,
@@ -381,7 +406,7 @@ class _$RecordStockSaveStockDetailsEventImpl
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(DateTime dateOfRecord, FacilityModel? facilityModel,
-            String primaryType, String primaryId)?
+            String primaryType, String primaryId, String loggedInUserId)?
         saveWarehouseDetails,
     TResult? Function(StockModel stockModel)? saveStockDetails,
     TResult? Function()? createStockEntry,
@@ -393,7 +418,7 @@ class _$RecordStockSaveStockDetailsEventImpl
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(DateTime dateOfRecord, FacilityModel? facilityModel,
-            String primaryType, String primaryId)?
+            String primaryType, String primaryId, String loggedInUserId)?
         saveWarehouseDetails,
     TResult Function(StockModel stockModel)? saveStockDetails,
     TResult Function()? createStockEntry,
@@ -500,8 +525,12 @@ class _$RecordStockCreateStockEntryEventImpl
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(DateTime dateOfRecord,
-            FacilityModel? facilityModel, String primaryType, String primaryId)
+    required TResult Function(
+            DateTime dateOfRecord,
+            FacilityModel? facilityModel,
+            String primaryType,
+            String primaryId,
+            String loggedInUserId)
         saveWarehouseDetails,
     required TResult Function(StockModel stockModel) saveStockDetails,
     required TResult Function() createStockEntry,
@@ -513,7 +542,7 @@ class _$RecordStockCreateStockEntryEventImpl
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(DateTime dateOfRecord, FacilityModel? facilityModel,
-            String primaryType, String primaryId)?
+            String primaryType, String primaryId, String loggedInUserId)?
         saveWarehouseDetails,
     TResult? Function(StockModel stockModel)? saveStockDetails,
     TResult? Function()? createStockEntry,
@@ -525,7 +554,7 @@ class _$RecordStockCreateStockEntryEventImpl
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(DateTime dateOfRecord, FacilityModel? facilityModel,
-            String primaryType, String primaryId)?
+            String primaryType, String primaryId, String loggedInUserId)?
         saveWarehouseDetails,
     TResult Function(StockModel stockModel)? saveStockDetails,
     TResult Function()? createStockEntry,

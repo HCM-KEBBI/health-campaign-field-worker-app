@@ -111,6 +111,19 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
             }
 
             final stockState = recordStockBloc.state;
+            String dateLabel = i18.warehouseDetails.dateOfReceipt;
+
+            switch (stockState.entryType) {
+              case StockRecordEntryType.dispatch:
+                dateLabel = i18.warehouseDetails.dateOfIssue;
+                break;
+              case StockRecordEntryType.returned:
+                dateLabel = i18.warehouseDetails.dateOfReturn;
+                break;
+              default:
+                dateLabel = i18.warehouseDetails.dateOfReceipt;
+                break;
+            }
 
             return Scaffold(
               body: GestureDetector(
@@ -188,6 +201,8 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                                         } else {
                                           context.read<RecordStockBloc>().add(
                                                 RecordStockSaveWarehouseDetailsEvent(
+                                                  loggedInUserId:
+                                                      context.loggedInUserUuid,
                                                   dateOfRecord: dateOfRecord,
                                                   facilityModel: facility,
                                                   primaryId: (context
@@ -236,7 +251,7 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                               children: [
                                 Text(
                                   localizations.translate(
-                                    i18.warehouseDetails.usDetails,
+                                    i18.warehouseDetails.warehouseDetailsLabel,
                                   ),
                                   style: theme.textTheme.displayMedium,
                                 ),
@@ -246,7 +261,7 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                                     lastDate: DateTime.now(),
                                     formControlName: _dateOfEntryKey,
                                     label: localizations.translate(
-                                      i18.warehouseDetails.dateOfReceipt,
+                                      dateLabel,
                                     ),
                                     isRequired: false,
                                     confirmText: localizations.translate(
@@ -260,16 +275,16 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                                     readOnly: true,
                                     formControlName: _administrativeUnitKey,
                                     label: localizations.translate(
-                                      i18.warehouseDetails.organizationUnit,
+                                      i18.warehouseDetails.administrativeUnit,
                                     ),
                                   ),
                                 ]),
                                 InkWell(
                                   onTap: () async {
                                     final parent =
-                                    context.router.parent() as StackRouter;
+                                        context.router.parent() as StackRouter;
                                     final facility =
-                                    await parent.push<FacilityModel>(
+                                        await parent.push<FacilityModel>(
                                       FacilitySelectionRoute(
                                         facilities: facilities,
                                       ),
@@ -298,8 +313,7 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                                       ),
                                       isRequired: true,
                                       label: localizations.translate(
-                                        i18.warehouseDetails
-                                            .usNameCommunitySupervisor,
+                                        i18.warehouseDetails.warehouseNameId,
                                       ),
                                       suffix: const Padding(
                                         padding: EdgeInsets.all(8.0),
@@ -308,8 +322,8 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                                       formControlName: _warehouseKey,
                                       readOnly: false,
                                       onTap: () async {
-                                        final parent =
-                                            context.router.parent() as StackRouter;
+                                        final parent = context.router.parent()
+                                            as StackRouter;
                                         final facility =
                                             await parent.push<FacilityModel>(
                                           FacilitySelectionRoute(

@@ -34,19 +34,53 @@ class RecordStockBloc extends Bloc<RecordStockEvent, RecordStockState> {
       },
       create: (value) async {
         final facilityId = event.facilityModel?.id;
-        final existingStocks = facilityId != null
-            ? await stockRepository.search(
-                StockSearchModel(
-                  facilityId: facilityId,
-                ),
-              )
-            : null;
+
+        // Fetching the stock reconciliation details
+        final receivedStocks = (await stockRepository.search(
+          StockSearchModel(
+            receiverId: facilityId,
+            transactionType: [TransactionType.received],
+          ),
+        ))
+            .where(
+              (element) =>
+                  element.auditDetails != null &&
+                  element.auditDetails?.createdBy == event.loggedInUserId,
+            )
+            .toList();
+        final sentStocks = (await stockRepository.search(
+          StockSearchModel(
+            senderId: facilityId,
+            transactionType: [TransactionType.dispatched],
+          ),
+        ))
+            .where(
+              (element) =>
+                  element.auditDetails != null &&
+                  element.auditDetails?.createdBy == event.loggedInUserId,
+            )
+            .toList();
+
+        final dateFilteredStocks = ([
+          ...receivedStocks,
+          ...sentStocks,
+        ])
+            .where(
+              (e) =>
+                  e.dateOfEntryTime!.year < event.dateOfRecord.year ||
+                  e.dateOfEntryTime!.year == event.dateOfRecord.year &&
+                      e.dateOfEntryTime!.month < event.dateOfRecord.month ||
+                  e.dateOfEntryTime!.year == event.dateOfRecord.year &&
+                      e.dateOfEntryTime!.month == event.dateOfRecord.month &&
+                      e.dateOfEntryTime!.day <= event.dateOfRecord.day,
+            )
+            .toList();
 
         emit(
           value.copyWith(
             dateOfRecord: event.dateOfRecord,
             facilityModel: event.facilityModel,
-            existingStocks: existingStocks ?? [],
+            existingStocks: dateFilteredStocks,
             primaryType: event.primaryType,
             primaryId: event.primaryId,
           ),
@@ -135,6 +169,7 @@ class RecordStockEvent with _$RecordStockEvent {
     FacilityModel? facilityModel,
     required String primaryType,
     required String primaryId,
+    required String loggedInUserId,
   }) = RecordStockSaveWarehouseDetailsEvent;
 
   const factory RecordStockEvent.saveStockDetails({

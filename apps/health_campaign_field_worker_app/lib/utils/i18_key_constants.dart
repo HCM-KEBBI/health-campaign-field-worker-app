@@ -740,6 +740,10 @@ class WarehouseDetails {
 
   String get dateOfReceipt => 'WAREHOUSE_DETAILS_DATE_OF_RECEIPT';
 
+  String get dateOfIssue => 'WAREHOUSE_DETAILS_DATE_OF_ISSUE';
+
+  String get dateOfReturn => 'WAREHOUSE_DETAILS_DATE_OF_RETURN';
+
   String get administrativeUnit => 'WAREHOUSE_DETAILS_ADMINISTRATIVE_UNIT';
 
   String get organizationUnit => 'WAREHOSUE_DETAILS_ORGANIZATION_UNIT';
@@ -788,6 +792,12 @@ class StockDetails {
 
   String get quantityReturnedLabel => 'STOCK_DETAILS_QUANTITY_RETURNED_SPAQ';
 
+  String get quantityPartialReturnedLabel =>
+      'STOCK_DETAILS_PARTIAL_QUANTITY_RETURNED_SPAQ';
+
+  String get quantityWastedReturnedLabel =>
+      'STOCK_DETAILS_WASTED_QUANTITY_RETURNED_SPAQ';
+
   String get quantityLostLabel => 'STOCK_DETAILS_QUANTITY_LOST';
 
   String get quantityDamagedLabel => 'STOCK_DETAILS_QUANTITY_DAMAGED';
@@ -821,6 +831,8 @@ class StockDetails {
   String get returnedSpaqDetails => 'RETURNED_SPAQ_DETAILS';
   String get damagedSpaqDetails => 'DAMAGED_SPAQ_DETAILS';
   String get quantityDamagedCountLabel => 'STOCK_DAMAGED_QUANTITY_LABEL';
+
+  String get batchNumberLabel => 'STOCK_DETAILS_BATCH_NUMBER';
 
   String get countDialogTitle => 'STOCK_DETAILS_COUNT_DIALOG_TITLE';
 
