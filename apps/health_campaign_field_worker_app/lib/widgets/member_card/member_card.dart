@@ -328,7 +328,9 @@ class MemberCard extends StatelessWidget {
                                                     [])
                                                 .isEmpty) {
                                           context.router.push(
-                                            RecordRedoseRoute(),
+                                            RecordRedoseRoute(
+                                              tasks: [successfulTask],
+                                            ),
                                           );
                                         } else {
                                           context.router.push(

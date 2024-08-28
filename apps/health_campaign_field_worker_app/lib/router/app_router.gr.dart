@@ -464,14 +464,14 @@ class _$AppRouter extends RootStackRouter {
       );
     },
     RecordRedoseRoute.name: (routeData) {
-      final args = routeData.argsAs<RecordRedoseRouteArgs>(
-          orElse: () => const RecordRedoseRouteArgs());
+      final args = routeData.argsAs<RecordRedoseRouteArgs>();
       return MaterialPageX<dynamic>(
         routeData: routeData,
         child: RecordRedosePage(
           key: args.key,
           appLocalizations: args.appLocalizations,
           isEditing: args.isEditing,
+          tasks: args.tasks,
         ),
       );
     },
@@ -2589,6 +2589,7 @@ class RecordRedoseRoute extends PageRouteInfo<RecordRedoseRouteArgs> {
     Key? key,
     AppLocalizations? appLocalizations,
     bool isEditing = false,
+    required List<TaskModel> tasks,
   }) : super(
           RecordRedoseRoute.name,
           path: 'record-redose',
@@ -2596,6 +2597,7 @@ class RecordRedoseRoute extends PageRouteInfo<RecordRedoseRouteArgs> {
             key: key,
             appLocalizations: appLocalizations,
             isEditing: isEditing,
+            tasks: tasks,
           ),
         );
 
@@ -2607,6 +2609,7 @@ class RecordRedoseRouteArgs {
     this.key,
     this.appLocalizations,
     this.isEditing = false,
+    required this.tasks,
   });
 
   final Key? key;
@@ -2615,9 +2618,11 @@ class RecordRedoseRouteArgs {
 
   final bool isEditing;
 
+  final List<TaskModel> tasks;
+
   @override
   String toString() {
-    return 'RecordRedoseRouteArgs{key: $key, appLocalizations: $appLocalizations, isEditing: $isEditing}';
+    return 'RecordRedoseRouteArgs{key: $key, appLocalizations: $appLocalizations, isEditing: $isEditing, tasks: $tasks}';
   }
 }
 

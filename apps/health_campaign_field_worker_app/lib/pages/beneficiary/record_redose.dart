@@ -28,11 +28,13 @@ import '../../widgets/localized.dart';
 
 class RecordRedosePage extends LocalizedStatefulWidget {
   final bool isEditing;
+  final List<TaskModel> tasks;
 
   const RecordRedosePage({
     super.key,
     super.appLocalizations,
     this.isEditing = false,
+    required this.tasks,
   });
 
   @override
