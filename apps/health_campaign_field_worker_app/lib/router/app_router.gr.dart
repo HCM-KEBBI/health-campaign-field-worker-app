@@ -436,6 +436,7 @@ class _$AppRouter extends RootStackRouter {
           isReadministrationUnSuccessful: args.isReadministrationUnSuccessful,
           quantityWasted: args.quantityWasted,
           productVariantId: args.productVariantId,
+          referralReason: args.referralReason,
         ),
       );
     },
@@ -2444,6 +2445,7 @@ class ReferBeneficiaryRoute extends PageRouteInfo<ReferBeneficiaryRouteArgs> {
     bool isReadministrationUnSuccessful = false,
     String quantityWasted = "00",
     String? productVariantId,
+    String? referralReason,
   }) : super(
           ReferBeneficiaryRoute.name,
           path: 'refer-beneficiary',
@@ -2456,6 +2458,7 @@ class ReferBeneficiaryRoute extends PageRouteInfo<ReferBeneficiaryRouteArgs> {
             isReadministrationUnSuccessful: isReadministrationUnSuccessful,
             quantityWasted: quantityWasted,
             productVariantId: productVariantId,
+            referralReason: referralReason,
           ),
         );
 
@@ -2472,6 +2475,7 @@ class ReferBeneficiaryRouteArgs {
     this.isReadministrationUnSuccessful = false,
     this.quantityWasted = "00",
     this.productVariantId,
+    this.referralReason,
   });
 
   final Key? key;
@@ -2490,9 +2494,11 @@ class ReferBeneficiaryRouteArgs {
 
   final String? productVariantId;
 
+  final String? referralReason;
+
   @override
   String toString() {
-    return 'ReferBeneficiaryRouteArgs{key: $key, appLocalizations: $appLocalizations, isEditing: $isEditing, projectBeneficiaryClientRefId: $projectBeneficiaryClientRefId, individual: $individual, isReadministrationUnSuccessful: $isReadministrationUnSuccessful, quantityWasted: $quantityWasted, productVariantId: $productVariantId}';
+    return 'ReferBeneficiaryRouteArgs{key: $key, appLocalizations: $appLocalizations, isEditing: $isEditing, projectBeneficiaryClientRefId: $projectBeneficiaryClientRefId, individual: $individual, isReadministrationUnSuccessful: $isReadministrationUnSuccessful, quantityWasted: $quantityWasted, productVariantId: $productVariantId, referralReason: $referralReason}';
   }
 }
 
