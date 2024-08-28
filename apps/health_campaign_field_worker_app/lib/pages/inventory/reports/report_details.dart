@@ -211,8 +211,8 @@ class _InventoryReportDetailsPageState
                                               return InkWell(
                                                 onTap: () async {
                                                   final stockReconciliationBloc =
-                                                  context.read<
-                                                      StockReconciliationBloc>();
+                                                      context.read<
+                                                          StockReconciliationBloc>();
 
                                                   final facility = await context
                                                       .router
@@ -242,34 +242,41 @@ class _InventoryReportDetailsPageState
                                                         FacilityValueAccessor(
                                                       facilities,
                                                     ),
-                                                    label: localizations.translate(
+                                                    label:
+                                                        localizations.translate(
                                                       i18.stockReconciliationDetails
-                                                          .facilityName,
+                                                          .facilityLabel,
                                                     ),
                                                     suffix: const Padding(
-                                                      padding: EdgeInsets.all(8.0),
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
                                                       child: Icon(Icons.search),
                                                     ),
-                                                    formControlName: _facilityKey,
+                                                    formControlName:
+                                                        _facilityKey,
                                                     isRequired: true,
                                                     onTap: () async {
                                                       final stockReconciliationBloc =
                                                           context.read<
                                                               StockReconciliationBloc>();
 
-                                                      final facility = await context
-                                                          .router
-                                                          .push<FacilityModel>(
+                                                      final facility =
+                                                          await context.router
+                                                              .push<
+                                                                  FacilityModel>(
                                                         FacilitySelectionRoute(
-                                                          facilities: facilities,
+                                                          facilities:
+                                                              facilities,
                                                         ),
                                                       );
 
-                                                      if (facility == null) return;
+                                                      if (facility == null)
+                                                        return;
                                                       form
                                                           .control(_facilityKey)
                                                           .value = facility;
-                                                      stockReconciliationBloc.add(
+                                                      stockReconciliationBloc
+                                                          .add(
                                                         StockReconciliationSelectFacilityEvent(
                                                           facility,
                                                           loggedInUserId: context
@@ -297,7 +304,7 @@ class _InventoryReportDetailsPageState
                                                   label:
                                                       localizations.translate(
                                                     i18.stockReconciliationDetails
-                                                        .spaqLabel,
+                                                        .productLabel,
                                                   ),
                                                   isRequired: true,
                                                   onChanged: (value) {
@@ -400,12 +407,31 @@ class _InventoryReportDetailsPageState
                                                         DigitGridCell(
                                                           key:
                                                               transactingPartyKey,
-                                                          value: facilityMap[model
-                                                                      .transactingPartyId]
-                                                                  ?.name ??
-                                                              model
-                                                                  .transactingPartyType ??
-                                                              '',
+                                                          value: widget
+                                                                          .reportType ==
+                                                                      InventoryReportType
+                                                                          .receipt ||
+                                                                  widget.reportType ==
+                                                                      InventoryReportType
+                                                                          .returned ||
+                                                                  widget.reportType ==
+                                                                      InventoryReportType
+                                                                          .loss ||
+                                                                  widget.reportType ==
+                                                                      InventoryReportType
+                                                                          .damage
+                                                              ? facilityMap[model
+                                                                          .senderId]
+                                                                      ?.name ??
+                                                                  model
+                                                                      .senderType ??
+                                                                  ''
+                                                              : facilityMap[model
+                                                                          .receiverId]
+                                                                      ?.name ??
+                                                                  model
+                                                                      .receiverType ??
+                                                                  '',
                                                         ),
                                                       ],
                                                     ),

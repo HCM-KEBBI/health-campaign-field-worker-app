@@ -554,6 +554,8 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                         .loss:
                                                   case StockRecordEntryType
                                                         .damaged:
+                                                  case StockRecordEntryType
+                                                        .returned:
                                                     if (deliveryTeamSelected) {
                                                       senderId =
                                                           deliveryTeamName;
@@ -569,8 +571,6 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                     break;
                                                   case StockRecordEntryType
                                                         .dispatch:
-                                                  case StockRecordEntryType
-                                                        .returned:
                                                     if (deliveryTeamSelected) {
                                                       receiverId =
                                                           deliveryTeamName;
@@ -666,9 +666,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                                     .isNotEmpty)
                                                               AdditionalField(
                                                                 'comments',
-                                                                comments
-                                                                    .substring(
-                                                                        9999),
+                                                                comments,
                                                               ),
                                                             if (batchNumber !=
                                                                     null &&
@@ -677,9 +675,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                                     .isNotEmpty)
                                                               AdditionalField(
                                                                 _batchNumberKey,
-                                                                batchNumber
-                                                                    .substring(
-                                                                        9999),
+                                                                batchNumber,
                                                               ),
                                                             if (vehicleNumber !=
                                                                     null &&
@@ -688,9 +684,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                                     .isNotEmpty)
                                                               AdditionalField(
                                                                 _vehicleNumberKey,
-                                                                vehicleNumber
-                                                                    .substring(
-                                                                        9999),
+                                                                vehicleNumber,
                                                               ),
                                                             if (transportType !=
                                                                     null &&
@@ -901,9 +895,29 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                     autoValidate: true,
                                                   );
                                                   deliveryTeamSelected = true;
+                                                  form
+                                                      .control(
+                                                    _deliveryTeamKey,
+                                                  )
+                                                      .setValidators(
+                                                    [
+                                                      Validators.required,
+                                                    ],
+                                                    updateParent: true,
+                                                    autoValidate: true,
+                                                  );
                                                 });
                                               } else {
                                                 setState(() {
+                                                  form
+                                                      .control(
+                                                    _deliveryTeamKey,
+                                                  )
+                                                      .setValidators(
+                                                    [],
+                                                    updateParent: true,
+                                                    autoValidate: true,
+                                                  );
                                                   deliveryTeamSelected = false;
                                                   form
                                                       .control(
@@ -1183,58 +1197,63 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                           );
                                         },
                                       ),
-                                      Visibility(
-                                        visible: deliveryTeamSelected,
-                                        child: DigitTextFormField(
-                                          label: localizations.translate(
-                                            i18.manageStock.cddTeamCodeLabel,
-                                          ),
-                                          onChanged: (val) {
-                                            String? value =
-                                                val.value as String?;
-                                            if (value != null &&
-                                                value.trim().isNotEmpty) {
-                                              context
-                                                  .read<DigitScannerBloc>()
-                                                  .add(
-                                                    DigitScannerEvent
-                                                        .handleScanner(
-                                                      barCode: [],
-                                                      qrCode: [value],
-                                                      manualCode: value,
+                                      DigitTextFormField(
+                                        label: localizations.translate(
+                                          i18.manageStock.cddTeamCodeLabel,
+                                        ),
+                                        readOnly: !deliveryTeamSelected,
+                                        onChanged: (val) {
+                                          String? value = val.value as String?;
+                                          if (value != null &&
+                                              value.trim().isNotEmpty) {
+                                            context
+                                                .read<DigitScannerBloc>()
+                                                .add(
+                                                  DigitScannerEvent
+                                                      .handleScanner(
+                                                    barCode: [],
+                                                    qrCode: [value],
+                                                    manualCode: value,
+                                                  ),
+                                                );
+                                          } else {
+                                            clearQRCodes();
+                                          }
+                                        },
+                                        suffix: IconButton(
+                                          onPressed: !deliveryTeamSelected
+                                              ? null
+                                              : () {
+                                                  //[TODO: Add route to auto_route]
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const DigitScannerPage(
+                                                        quantity: 1,
+                                                        isGS1code: false,
+                                                        singleValue: true,
+                                                      ),
+                                                      settings:
+                                                          const RouteSettings(
+                                                        name: '/qr-scanner',
+                                                      ),
                                                     ),
                                                   );
-                                            } else {
-                                              clearQRCodes();
-                                            }
-                                          },
-                                          suffix: IconButton(
-                                            onPressed: () {
-                                              //[TODO: Add route to auto_route]
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const DigitScannerPage(
-                                                    quantity: 1,
-                                                    isGS1code: false,
-                                                    singleValue: true,
-                                                  ),
-                                                  settings: const RouteSettings(
-                                                    name: '/qr-scanner',
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                            icon: Icon(
-                                              Icons.qr_code_2,
-                                              color:
-                                                  theme.colorScheme.secondary,
-                                            ),
+                                                },
+                                          icon: Icon(
+                                            Icons.qr_code_2,
+                                            color: theme.colorScheme.secondary,
                                           ),
-                                          isRequired: deliveryTeamSelected,
-                                          maxLines: 3,
-                                          formControlName: _deliveryTeamKey,
                                         ),
+                                        isRequired: deliveryTeamSelected,
+                                        maxLines: 3,
+                                        formControlName: _deliveryTeamKey,
+                                        validationMessages: {
+                                          "required": (object) =>
+                                              localizations.translate(
+                                                i18.common.corecommonRequired,
+                                              ),
+                                        },
                                       ),
                                       DigitTextFormField(
                                         formControlName:
@@ -1367,94 +1386,98 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                 .quantityWastedReturnedLabel,
                                           ),
                                         ),
-
-                                      if (isWarehouseMgr &&
-                                          !deliveryTeamSelected)
-                                        DigitTextFormField(
-                                          label: localizations.translate(
-                                            i18.stockDetails.waybillNumberLabel,
-                                          ),
-                                          isRequired: true,
-                                          formControlName: _waybillNumberKey,
-                                          validationMessages: {
-                                            'required': (object) =>
-                                                localizations.translate(
-                                                  i18.common.corecommonRequired,
-                                                ),
-                                          },
-                                        ),
-                                      if (isWarehouseMgr &&
-                                          !deliveryTeamSelected)
-                                        DigitTextFormField(
-                                          label: localizations.translate(
-                                            i18.stockDetails
-                                                .quantityOfProductIndicatedOnWaybillLabel,
-                                          ),
-                                          keyboardType: const TextInputType
-                                              .numberWithOptions(
-                                            decimal: true,
-                                          ),
-                                          isRequired: true,
-                                          formControlName: _waybillQuantityKey,
-                                          validationMessages: {
-                                            "number": (object) =>
-                                                localizations.translate(
-                                                  '${i18.stockDetails.quantityOfProductIndicatedOnWaybillLabel}_ERROR',
-                                                ),
-                                            "max": (object) =>
-                                                localizations.translate(
-                                                  '${quantityCountLabel}_MAX_ERROR',
-                                                ),
-                                            "min": (object) =>
-                                                localizations.translate(
-                                                  '${quantityCountLabel}_MIN_ERROR',
-                                                ),
-                                          },
-                                          onChanged: (control) {
-                                            if (isWarehouseMgr &&
-                                                !deliveryTeamSelected) {
-                                              final quantity = form
-                                                  .control(
-                                                    _transactionQuantityKey,
-                                                  )
-                                                  .value as int?;
-                                              final waybillQuantity = form
-                                                  .control(_waybillQuantityKey)
-                                                  .value as int?;
-                                              if (quantity != waybillQuantity) {
-                                                setState(() {
-                                                  form
+                                      isWarehouseMgr && !deliveryTeamSelected
+                                          ? DigitTextFormField(
+                                              label: localizations.translate(
+                                                i18.stockDetails
+                                                    .waybillNumberLabel,
+                                              ),
+                                              isRequired: true,
+                                              formControlName:
+                                                  _waybillNumberKey,
+                                              validationMessages: {
+                                                'required': (object) =>
+                                                    localizations.translate(
+                                                      i18.common
+                                                          .corecommonRequired,
+                                                    ),
+                                              },
+                                            )
+                                          : const Offstage(),
+                                      isWarehouseMgr && !deliveryTeamSelected
+                                          ? DigitTextFormField(
+                                              label: localizations.translate(
+                                                i18.stockDetails
+                                                    .quantityOfProductIndicatedOnWaybillLabel,
+                                              ),
+                                              keyboardType: const TextInputType
+                                                  .numberWithOptions(
+                                                decimal: true,
+                                              ),
+                                              isRequired: true,
+                                              formControlName:
+                                                  _waybillQuantityKey,
+                                              validationMessages: {
+                                                "number": (object) =>
+                                                    localizations.translate(
+                                                      '${i18.stockDetails.quantityOfProductIndicatedOnWaybillLabel}_ERROR',
+                                                    ),
+                                                "max": (object) =>
+                                                    localizations.translate(
+                                                      '${quantityCountLabel}_MAX_ERROR',
+                                                    ),
+                                                "min": (object) =>
+                                                    localizations.translate(
+                                                      '${quantityCountLabel}_MIN_ERROR',
+                                                    ),
+                                              },
+                                              onChanged: (control) {
+                                                if (isWarehouseMgr &&
+                                                    !deliveryTeamSelected) {
+                                                  final quantity = form
                                                       .control(
-                                                    _commentsKey,
-                                                  )
-                                                      .setValidators(
-                                                    [Validators.required],
-                                                    updateParent: true,
-                                                    autoValidate: true,
-                                                  );
-                                                  form
+                                                        _transactionQuantityKey,
+                                                      )
+                                                      .value as int?;
+                                                  final waybillQuantity = form
                                                       .control(
+                                                          _waybillQuantityKey)
+                                                      .value as int?;
+                                                  if (quantity !=
+                                                      waybillQuantity) {
+                                                    setState(() {
+                                                      form
+                                                          .control(
                                                         _commentsKey,
                                                       )
-                                                      .touched;
-                                                });
-                                              } else {
-                                                setState(() {
-                                                  form
-                                                      .control(
-                                                    _commentsKey,
-                                                  )
-                                                      .setValidators(
-                                                    [],
-                                                    updateParent: true,
-                                                    autoValidate: true,
-                                                  );
-                                                });
-                                              }
-                                            }
-                                          },
-                                        ),
-
+                                                          .setValidators(
+                                                        [Validators.required],
+                                                        updateParent: true,
+                                                        autoValidate: true,
+                                                      );
+                                                      form
+                                                          .control(
+                                                            _commentsKey,
+                                                          )
+                                                          .touched;
+                                                    });
+                                                  } else {
+                                                    setState(() {
+                                                      form
+                                                          .control(
+                                                        _commentsKey,
+                                                      )
+                                                          .setValidators(
+                                                        [],
+                                                        updateParent: true,
+                                                        autoValidate: true,
+                                                      );
+                                                    });
+                                                  }
+                                                }
+                                              },
+                                            )
+                                          : const Offstage(),
                                       DigitTextFormField(
                                         label: localizations.translate(
                                           i18.stockDetails.batchNumberLabel,
@@ -1468,76 +1491,84 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                               ),
                                         },
                                       ),
+                                      isWarehouseMgr && !deliveryTeamSelected
+                                          ? BlocBuilder<AppInitializationBloc,
+                                              AppInitializationState>(
+                                              builder: (context, state) =>
+                                                  state.maybeWhen(
+                                                orElse: () => const Offstage(),
+                                                initialized:
+                                                    (appConfiguration, _) {
+                                                  final transportTypeOptions =
+                                                      appConfiguration
+                                                              .transportTypes ??
+                                                          <TransportTypes>[];
 
-                                      if (isWarehouseMgr &&
-                                          !deliveryTeamSelected)
-                                        BlocBuilder<AppInitializationBloc,
-                                            AppInitializationState>(
-                                          builder: (context, state) =>
-                                              state.maybeWhen(
-                                            orElse: () => const Offstage(),
-                                            initialized: (appConfiguration, _) {
-                                              final transportTypeOptions =
-                                                  appConfiguration
-                                                          .transportTypes ??
-                                                      <TransportTypes>[];
-
-                                              return DigitReactiveDropdown<
-                                                  String>(
-                                                isRequired: true,
-                                                label: localizations.translate(
-                                                  i18.stockDetails
-                                                      .transportTypeLabel,
-                                                ),
-                                                valueMapper: (e) =>
-                                                    localizations.translate(e),
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    form.control(
-                                                      _typeOfTransportKey,
-                                                    );
-                                                  });
+                                                  return DigitReactiveDropdown<
+                                                      String>(
+                                                    isRequired: true,
+                                                    label:
+                                                        localizations.translate(
+                                                      i18.stockDetails
+                                                          .transportTypeLabel,
+                                                    ),
+                                                    valueMapper: (e) =>
+                                                        localizations
+                                                            .translate(e),
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        form.control(
+                                                          _typeOfTransportKey,
+                                                        );
+                                                      });
+                                                    },
+                                                    initialValue:
+                                                        localizations.translate(
+                                                      transportTypeOptions
+                                                              .firstOrNull
+                                                              ?.code ??
+                                                          '',
+                                                    ),
+                                                    menuItems:
+                                                        transportTypeOptions
+                                                            .map(
+                                                      (e) {
+                                                        return e.code;
+                                                      },
+                                                    ).toList(),
+                                                    formControlName:
+                                                        _typeOfTransportKey,
+                                                    validationMessages: {
+                                                      'required': (object) =>
+                                                          localizations
+                                                              .translate(
+                                                            i18.common
+                                                                .corecommonRequired,
+                                                          ),
+                                                    },
+                                                  );
                                                 },
-                                                initialValue:
+                                              ),
+                                            )
+                                          : const Offstage(),
+                                      isWarehouseMgr && !deliveryTeamSelected
+                                          ? DigitTextFormField(
+                                              label: localizations.translate(
+                                                i18.stockDetails
+                                                    .vehicleNumberLabel,
+                                              ),
+                                              isRequired: true,
+                                              formControlName:
+                                                  _vehicleNumberKey,
+                                              validationMessages: {
+                                                'required': (object) =>
                                                     localizations.translate(
-                                                  transportTypeOptions
-                                                          .firstOrNull?.code ??
-                                                      '',
-                                                ),
-                                                menuItems:
-                                                    transportTypeOptions.map(
-                                                  (e) {
-                                                    return e.code;
-                                                  },
-                                                ).toList(),
-                                                formControlName:
-                                                    _typeOfTransportKey,
-                                                validationMessages: {
-                                                  'required': (object) =>
-                                                      localizations.translate(
-                                                        i18.common
-                                                            .corecommonRequired,
-                                                      ),
-                                                },
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      if (isWarehouseMgr &&
-                                          !deliveryTeamSelected)
-                                        DigitTextFormField(
-                                          label: localizations.translate(
-                                            i18.stockDetails.vehicleNumberLabel,
-                                          ),
-                                          isRequired: true,
-                                          formControlName: _vehicleNumberKey,
-                                          validationMessages: {
-                                            'required': (object) =>
-                                                localizations.translate(
-                                                  i18.common.corecommonRequired,
-                                                ),
-                                          },
-                                        ),
+                                                      i18.common
+                                                          .corecommonRequired,
+                                                    ),
+                                              },
+                                            )
+                                          : const Offstage(),
                                       DigitTextFormField(
                                         label: localizations.translate(
                                           i18.stockDetails.commentsLabel,
@@ -1545,105 +1576,13 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                         minLines: 3,
                                         maxLines: 3,
                                         formControlName: _commentsKey,
+                                        validationMessages: {
+                                          'required': (object) =>
+                                              localizations.translate(
+                                                i18.common.corecommonRequired,
+                                              ),
+                                        },
                                       ),
-                                      // scannerState.barCodes.isEmpty
-                                      //     ? DigitOutlineIconButton(
-                                      //         buttonStyle:
-                                      //             OutlinedButton.styleFrom(
-                                      //           shape:
-                                      //               const RoundedRectangleBorder(
-                                      //             borderRadius:
-                                      //                 BorderRadius.zero,
-                                      //           ),
-                                      //         ),
-                                      //         onPressed: () {
-                                      //           Navigator.of(context).push(
-                                      //             MaterialPageRoute(
-                                      //               builder: (context) =>
-                                      //                   const DigitScannerPage(
-                                      //                 quantity: 5,
-                                      //                 isGS1code: true,
-                                      //                 singleValue: false,
-                                      //               ),
-                                      //               settings:
-                                      //                   const RouteSettings(
-                                      //                 name: '/qr-scanner',
-                                      //               ),
-                                      //             ),
-                                      //           );
-                                      //         },
-                                      //         icon: Icons.qr_code,
-                                      //         label: localizations.translate(
-                                      //           i18.scanner.scanBales,
-                                      //         ),
-                                      //       )
-                                      //     : Column(
-                                      //         children: [
-                                      //           Row(
-                                      //             mainAxisAlignment:
-                                      //                 MainAxisAlignment
-                                      //                     .spaceBetween,
-                                      //             children: [
-                                      //               Align(
-                                      //                 alignment:
-                                      //                     Alignment.centerLeft,
-                                      //                 child: Text(
-                                      //                   localizations.translate(
-                                      //                     i18.stockDetails
-                                      //                         .scannedResources,
-                                      //                   ),
-                                      //                   style: DigitTheme
-                                      //                       .instance
-                                      //                       .mobileTheme
-                                      //                       .textTheme
-                                      //                       .labelSmall,
-                                      //                 ),
-                                      //               ),
-                                      //               Padding(
-                                      //                 padding:
-                                      //                     const EdgeInsets.only(
-                                      //                   bottom: kPadding * 2,
-                                      //                 ),
-                                      //                 child: IconButton(
-                                      //                   alignment: Alignment
-                                      //                       .centerRight,
-                                      //                   color: theme.colorScheme
-                                      //                       .secondary,
-                                      //                   icon: const Icon(
-                                      //                       Icons.edit),
-                                      //                   onPressed: () {
-                                      //                     Navigator.of(context)
-                                      //                         .push(
-                                      //                       MaterialPageRoute(
-                                      //                         builder: (context) =>
-                                      //                             const DigitScannerPage(
-                                      //                           quantity: 5,
-                                      //                           isGS1code: true,
-                                      //                           singleValue:
-                                      //                               false,
-                                      //                         ),
-                                      //                         settings:
-                                      //                             const RouteSettings(
-                                      //                                 name:
-                                      //                                     '/qr-scanner'),
-                                      //                       ),
-                                      //                     );
-                                      //                   },
-                                      //                 ),
-                                      //               ),
-                                      //             ],
-                                      //           ),
-                                      //           ...scannedResources.map(
-                                      //             (e) => Align(
-                                      //               alignment:
-                                      //                   Alignment.centerLeft,
-                                      //               child: Text(e.elements
-                                      //                   .values.first.data
-                                      //                   .toString()),
-                                      //             ),
-                                      //           ),
-                                      //         ],
-                                      //       ),
                                     ],
                                   ),
                                 ),

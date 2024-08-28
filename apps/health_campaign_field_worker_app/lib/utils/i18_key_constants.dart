@@ -881,7 +881,7 @@ class StockReconciliationDetails {
 
   String get infoCardTitle => 'STOCK_RECONCILIATION_INFO_CARD_TITLE';
 
-  String get infoCardContent => 'STOCK_RECONCILIATION_INFO_CARD_CONTENT_SPAQ';
+  String get infoCardContent => 'STOCK_RECONCILIATION_INFO_CARD_CONTENT';
   String get infoCardDescription =>
       'STOCK_RECONCILIATION_INFO_CARD_DESCRIPTION_SPAQ';
 
@@ -1085,7 +1085,7 @@ class InventoryReportSelection {
   }
 
   String get inventoryReportReceiptLabel {
-    return 'INVENTORY_REPORT_SELECTION_RECEIPT_LABEL_SPAQ';
+    return 'INVENTORY_REPORT_SELECTION_RECEIPT_LABEL';
   }
 
   String get inventoryReportReceiptDescription {
@@ -1101,7 +1101,7 @@ class InventoryReportSelection {
   }
 
   String get inventoryReportReturnedLabel {
-    return 'INVENTORY_REPORT_SELECTION_RETURNED_LABEL_SPAQ';
+    return 'INVENTORY_REPORT_SELECTION_RETURNED_LABEL';
   }
 
   String get inventoryReportReturnedDescription {

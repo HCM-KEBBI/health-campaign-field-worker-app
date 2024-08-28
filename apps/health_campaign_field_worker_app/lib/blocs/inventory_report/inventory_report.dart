@@ -45,40 +45,58 @@ class InventoryReportBloc
 
     List<TransactionReason>? transactionReason;
     List<TransactionType>? transactionType;
+    String? senderId;
+    String? receiverId;
 
     if (reportType == InventoryReportType.receipt) {
       transactionType = [TransactionType.received];
       transactionReason = [TransactionReason.received];
+      receiverId = facilityId;
+      senderId = null;
     } else if (reportType == InventoryReportType.dispatch) {
       transactionType = [TransactionType.dispatched];
       transactionReason = [];
+      receiverId = null;
+      senderId = facilityId;
     } else if (reportType == InventoryReportType.returned) {
       transactionType = [TransactionType.received];
       transactionReason = [TransactionReason.returned];
+      receiverId = facilityId;
+      senderId = null;
     } else if (reportType == InventoryReportType.damage) {
       transactionType = [TransactionType.dispatched];
       transactionReason = [
         TransactionReason.damagedInStorage,
         TransactionReason.damagedInTransit,
       ];
+      receiverId = facilityId;
+      senderId = null;
     } else if (reportType == InventoryReportType.loss) {
       transactionType = [TransactionType.dispatched];
       transactionReason = [
         TransactionReason.lostInStorage,
         TransactionReason.lostInTransit,
       ];
+      receiverId = facilityId;
+      senderId = null;
     }
-
-    final data = (await stockRepository.search(
-      StockSearchModel(
-        transactionType: transactionType,
-        transactionReason: transactionReason,
-        tenantId: envConfig.variables.tenantId,
-        facilityId: facilityId,
-        productVariantId: productVariantId,
-      ),
-    ))
-        .where((element) => element.auditDetails != null);
+    final data = (receiverId != null
+        ? await stockRepository.search(
+            StockSearchModel(
+              transactionType: transactionType,
+              receiverId: receiverId,
+              productVariantId: productVariantId,
+              transactionReason: transactionReason,
+            ),
+          )
+        : await stockRepository.search(
+            StockSearchModel(
+              transactionType: transactionType,
+              senderId: senderId,
+              productVariantId: productVariantId,
+              transactionReason: transactionReason,
+            ),
+          ));
 
     final groupedData = data.groupListsBy(
       (element) => DateFormat('dd MMM yyyy').format(
