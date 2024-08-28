@@ -47,6 +47,8 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
   static const _dateOfAdministrationKey = 'dateOfAdministration';
   static const _doseAdministeredByKey = 'doseAdministeredBy';
   static const _deliveryCommentKey = 'deliveryComment';
+  //static key for recording redose
+  static const _reDoseQuantityKey = 'reDoseQuantity';
 
   // Variable to track dose administration status
   bool doseAdministered = false;
@@ -82,8 +84,9 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
       builder: (context, locationState) {
         return ProductVariantBlocWrapper(
           child: BlocBuilder<HouseholdOverviewBloc, HouseholdOverviewState>(
-            builder: (context, state) {
-              final householdMemberWrapper = state.householdMemberWrapper;
+            builder: (context, householdOverviewState) {
+              final householdMemberWrapper =
+                  householdOverviewState.householdMemberWrapper;
 
               final projectBeneficiary =
                   context.beneficiaryType != BeneficiaryType.individual
@@ -92,14 +95,15 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                           .where(
                             (element) =>
                                 element.beneficiaryClientReferenceId ==
-                                state.selectedIndividual?.clientReferenceId,
+                                householdOverviewState
+                                    .selectedIndividual?.clientReferenceId,
                           )
                           .toList();
 
               final projectState = context.read<ProjectBloc>().state;
 
               return Scaffold(
-                body: state.loading
+                body: householdOverviewState.loading
                     ? const Center(child: CircularProgressIndicator())
                     : BlocBuilder<DeliverInterventionBloc,
                         DeliverInterventionState>(
@@ -115,7 +119,7 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                   1]
                                               .deliveries?[
                                           deliveryInterventionstate.dose - 1],
-                                      state.selectedIndividual,
+                                      householdOverviewState.selectedIndividual,
                                     )?.productVariants)
                                   : projectState.projectType?.resources;
 
@@ -236,128 +240,122 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                       ),
                                                     );
                                                   } else {
-                                                    final lat =
-                                                        locationState.latitude;
-                                                    final long =
-                                                        locationState.longitude;
+                                                    final oldTask =
+                                                        deliveryInterventionstate
+                                                            .oldTask;
+                                                    // Extract productvariantList from the form
+                                                    final productvariantList =
+                                                        ((form.control(_resourceDeliveredKey)
+                                                                    as FormArray)
+                                                                .value
+                                                            as List<
+                                                                ProductVariantModel?>);
 
-                                                    final shouldSubmit =
-                                                        await DigitDialog.show<
-                                                            bool>(
-                                                      context,
-                                                      options:
-                                                          DigitDialogOptions(
-                                                        titleText: localizations
-                                                            .translate(
-                                                          i18.deliverIntervention
-                                                              .dialogTitle,
-                                                        ),
-                                                        contentText:
-                                                            localizations
-                                                                .translate(
-                                                          i18.deliverIntervention
-                                                              .dialogContent,
-                                                        ),
-                                                        primaryAction:
-                                                            DigitDialogActions(
-                                                          label: localizations
-                                                              .translate(
-                                                            i18.common
-                                                                .coreCommonSubmit,
+                                                    if (oldTask != null) {
+                                                      var updatedTask =
+                                                          updateTask(
+                                                        oldTask,
+                                                        productvariantList,
+                                                        form,
+                                                      );
+
+                                                      final shouldSubmit =
+                                                          await DigitDialog
+                                                              .show<bool>(
+                                                        context,
+                                                        options:
+                                                            DigitDialogOptions(
+                                                          titleText:
+                                                              localizations
+                                                                  .translate(
+                                                            i18.deliverIntervention
+                                                                .dialogTitle,
                                                           ),
-                                                          action: (ctx) {
-                                                            Navigator.of(
+                                                          contentText:
+                                                              localizations
+                                                                  .translate(
+                                                            i18.deliverIntervention
+                                                                .dialogContent,
+                                                          ),
+                                                          primaryAction:
+                                                              DigitDialogActions(
+                                                            label: localizations
+                                                                .translate(
+                                                              i18.common
+                                                                  .coreCommonSubmit,
+                                                            ),
+                                                            action: (ctx) {
+                                                              Navigator.of(
+                                                                context,
+                                                                rootNavigator:
+                                                                    true,
+                                                              ).pop(true);
+                                                            },
+                                                          ),
+                                                          secondaryAction:
+                                                              DigitDialogActions(
+                                                            label: localizations
+                                                                .translate(
+                                                              i18.common
+                                                                  .coreCommonCancel,
+                                                            ),
+                                                            action: (context) =>
+                                                                Navigator.of(
                                                               context,
                                                               rootNavigator:
                                                                   true,
-                                                            ).pop(true);
-                                                          },
-                                                        ),
-                                                        secondaryAction:
-                                                            DigitDialogActions(
-                                                          label: localizations
-                                                              .translate(
-                                                            i18.common
-                                                                .coreCommonCancel,
+                                                            ).pop(false),
                                                           ),
-                                                          action: (context) =>
-                                                              Navigator.of(
-                                                            context,
-                                                            rootNavigator: true,
-                                                          ).pop(false),
                                                         ),
-                                                      ),
-                                                    );
+                                                      );
 
-                                                    if (shouldSubmit ?? false) {
-                                                      if (context.mounted) {
-                                                        context.router
-                                                            .popUntilRouteWithName(
-                                                          BeneficiaryWrapperRoute
-                                                              .name,
-                                                        );
+                                                      if (shouldSubmit ??
+                                                          false) {
+                                                        if (context.mounted) {
+                                                          context.router
+                                                              .popUntilRouteWithName(
+                                                            BeneficiaryWrapperRoute
+                                                                .name,
+                                                          );
 
-                                                        context
-                                                            .read<
-                                                                DeliverInterventionBloc>()
-                                                            .add(
-                                                              DeliverInterventionSubmitEvent(
-                                                                [
-                                                                  _getTaskModel(
-                                                                    context,
-                                                                    form: form,
-                                                                    oldTask:
-                                                                        null,
-                                                                    projectBeneficiaryClientReferenceId:
-                                                                        projectBeneficiary
-                                                                            .first
-                                                                            .clientReferenceId,
-                                                                    dose: deliveryInterventionstate
-                                                                        .dose,
-                                                                    cycle: deliveryInterventionstate
-                                                                        .cycle,
-                                                                    deliveryStrategy:
-                                                                        getDeliveryStrategy,
-                                                                    address: householdMemberWrapper
-                                                                        .members
-                                                                        .first
-                                                                        .address
-                                                                        ?.first,
-                                                                    latitude:
-                                                                        lat,
-                                                                    longitude:
-                                                                        long,
-                                                                  ),
-                                                                ],
-                                                                false,
-                                                                context
-                                                                    .boundary,
+                                                          context
+                                                              .read<
+                                                                  DeliverInterventionBloc>()
+                                                              .add(
+                                                                DeliverInterventionSubmitEvent(
+                                                                  [
+                                                                    updatedTask,
+                                                                  ],
+                                                                  true,
+                                                                  context
+                                                                      .boundary,
+                                                                ),
+                                                              );
+
+                                                          if (state.futureDeliveries !=
+                                                                  null &&
+                                                              state
+                                                                  .futureDeliveries!
+                                                                  .isNotEmpty &&
+                                                              projectState
+                                                                      .projectType
+                                                                      ?.cycles
+                                                                      ?.isNotEmpty ==
+                                                                  true) {
+                                                            context.router.push(
+                                                              SplashAcknowledgementRoute(
+                                                                doseAdministrationVerification:
+                                                                    true,
                                                               ),
                                                             );
-
-                                                        if (state.futureDeliveries !=
-                                                                null &&
-                                                            state
-                                                                .futureDeliveries!
-                                                                .isNotEmpty &&
-                                                            projectState
-                                                                    .projectType
-                                                                    ?.cycles
-                                                                    ?.isNotEmpty ==
-                                                                true) {
-                                                          context.router.push(
-                                                            SplashAcknowledgementRoute(
-                                                              doseAdministrationVerification:
-                                                                  true,
-                                                            ),
-                                                          );
-                                                        } else {
-                                                          context.router.push(
-                                                            SplashAcknowledgementRoute(
-                                                              enableBackToSearch:
-                                                                  true,
-                                                            ),
-                                                          );
+                                                          } else {
+                                                            context.router.push(
+                                                              SplashAcknowledgementRoute(
+                                                                enableBackToSearch:
+                                                                    true,
+                                                              ),
+                                                            );
+                                                          }
                                                         }
                                                       }
                                                     }
@@ -545,116 +543,55 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
         .add(FormControl<String>(validators: [Validators.required]));
   }
 
-  // ignore: long-parameter-list
-  TaskModel _getTaskModel(
-    BuildContext context, {
-    required FormGroup form,
-    TaskModel? oldTask,
-    int? cycle,
-    int? dose,
-    String? deliveryStrategy,
-    String? projectBeneficiaryClientReferenceId,
-    AddressModel? address,
-    double? latitude,
-    double? longitude,
-  }) {
-    // Initialize task with oldTask if available, or create a new one
-    var task = oldTask;
-    var clientReferenceId = task?.clientReferenceId ?? IdGen.i.identifier;
-    task ??= TaskModel(
-      projectBeneficiaryClientReferenceId: projectBeneficiaryClientReferenceId,
-      clientReferenceId: clientReferenceId,
-      tenantId: envConfig.variables.tenantId,
-      rowVersion: 1,
-      auditDetails: AuditDetails(
-        createdBy: context.loggedInUserUuid,
-        createdTime: context.millisecondsSinceEpoch(),
-      ),
-      clientAuditDetails: ClientAuditDetails(
-        createdBy: context.loggedInUserUuid,
-        createdTime: context.millisecondsSinceEpoch(),
-      ),
+  TaskModel updateTask(
+    TaskModel oldTask,
+    List<ProductVariantModel?> productvariantList,
+    FormGroup form,
+  ) {
+    final taskResources = oldTask.resources ?? [];
+    if (taskResources.isNotEmpty) {
+      for (var resource in taskResources) {
+        if ((resource.additionalFields?.fields ?? []).isNotEmpty) {
+          var productVariantId = resource.productVariantId;
+          var productVariant = productvariantList
+              .where((element) => element?.id == productVariantId)
+              .firstOrNull;
+
+          if (productVariant == null) {
+            continue;
+          }
+          resource.additionalFields?.fields.add(
+            const AdditionalField(Constants.reAdministeredKey, true),
+          );
+          resource.additionalFields?.fields.add(
+            AdditionalField(
+              _reDoseQuantityKey,
+              (((form.control(_quantityDistributedKey) as FormArray)
+                      .value)?[productvariantList.indexOf(productVariant)])
+                  .toString(),
+            ),
+          );
+        }
+      }
+    }
+    var updatedTask = oldTask.copyWith(
+      additionalFields: oldTask.additionalFields != null
+          ? TaskAdditionalFields(
+              version: oldTask.additionalFields!.version,
+              fields: [
+                ...oldTask.additionalFields!.fields,
+                const AdditionalField(Constants.reAdministeredKey, true),
+              ],
+            )
+          : TaskAdditionalFields(
+              version: 1,
+              fields: [
+                const AdditionalField(Constants.reAdministeredKey, true)
+              ],
+            ),
     );
 
-    // Extract productvariantList from the form
-    final productvariantList =
-        ((form.control(_resourceDeliveredKey) as FormArray).value
-            as List<ProductVariantModel?>);
-
-    // Update the task with information from the form and other context
-    task = task.copyWith(
-      projectId: context.projectId,
-      resources: productvariantList
-          .map((e) => TaskResourceModel(
-                taskclientReferenceId: clientReferenceId,
-                clientReferenceId: IdGen.i.identifier,
-                productVariantId: e?.id,
-                isDelivered: true,
-                taskId: task?.id,
-                tenantId: envConfig.variables.tenantId,
-                rowVersion: oldTask?.rowVersion ?? 1,
-                quantity: (((form.control(_quantityDistributedKey) as FormArray)
-                        .value)?[productvariantList.indexOf(e)])
-                    .toString(),
-                clientAuditDetails: ClientAuditDetails(
-                  createdBy: context.loggedInUserUuid,
-                  createdTime: context.millisecondsSinceEpoch(),
-                ),
-                auditDetails: AuditDetails(
-                  createdBy: context.loggedInUserUuid,
-                  createdTime: context.millisecondsSinceEpoch(),
-                ),
-              ))
-          .toList(),
-      address: address?.copyWith(
-        latitude: latitude ?? address.latitude,
-        longitude: longitude ?? address.longitude,
-        relatedClientReferenceId: clientReferenceId,
-        id: null,
-      ),
-      status: Status.administeredSuccess.toValue(),
-      additionalFields: TaskAdditionalFields(
-        version: task.additionalFields?.version ?? 1,
-        fields: [
-          AdditionalField(
-            AdditionalFieldsType.dateOfDelivery.toValue(),
-            DateTime.now().millisecondsSinceEpoch.toString(),
-          ),
-          AdditionalField(
-            AdditionalFieldsType.dateOfAdministration.toValue(),
-            DateTime.now().millisecondsSinceEpoch.toString(),
-          ),
-          AdditionalField(
-            AdditionalFieldsType.dateOfVerification.toValue(),
-            DateTime.now().millisecondsSinceEpoch.toString(),
-          ),
-          AdditionalField(
-            AdditionalFieldsType.cycleIndex.toValue(),
-            "0${cycle ?? 1}",
-          ),
-          AdditionalField(
-            AdditionalFieldsType.doseIndex.toValue(),
-            "0${dose ?? 1}",
-          ),
-          AdditionalField(
-            AdditionalFieldsType.deliveryStrategy.toValue(),
-            deliveryStrategy,
-          ),
-          if (latitude != null)
-            AdditionalField(
-              AdditionalFieldsType.latitude.toValue(),
-              latitude,
-            ),
-          if (longitude != null)
-            AdditionalField(
-              AdditionalFieldsType.longitude.toValue(),
-              longitude,
-            ),
-        ],
-      ),
-    );
-
-    return task;
+    return updatedTask;
   }
 
 // This method builds a form used for delivering interventions.

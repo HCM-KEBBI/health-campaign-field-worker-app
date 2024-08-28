@@ -1,6 +1,7 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stream_transform/stream_transform.dart';
 
 import '../../blocs/delivery_intervention/deliver_intervention.dart';
 import '../../blocs/household_overview/household_overview.dart';
@@ -285,44 +286,56 @@ class MemberCard extends StatelessWidget {
                                     onPressed: () async {
                                       final bloc =
                                           context.read<HouseholdOverviewBloc>();
-                                      Future.delayed(
-                                        const Duration(milliseconds: 200),
-                                        () {
-                                          bloc.add(
-                                            HouseholdOverviewReloadEvent(
-                                              projectId: context.projectId,
-                                              projectBeneficiaryType:
-                                                  beneficiaryType,
-                                            ),
+                                      bloc.add(
+                                        HouseholdOverviewReloadEvent(
+                                          projectId: context.projectId,
+                                          projectBeneficiaryType:
+                                              beneficiaryType,
+                                        ),
+                                      );
+                                      bloc.add(
+                                        HouseholdOverviewEvent
+                                            .selectedIndividual(
+                                          individualModel: individual,
+                                        ),
+                                      );
+
+                                      // todo: verify this
+
+                                      if ((tasks ?? []).isEmpty) {
+                                        context.router.push(
+                                          EligibilityChecklistViewRoute(
+                                            projectBeneficiaryClientReferenceId:
+                                                projectBeneficiaryClientReferenceId,
+                                            individual: individual,
+                                          ),
+                                        );
+                                      } else {
+                                        var successfulTask = tasks
+                                            ?.where((element) =>
+                                                element.status ==
+                                                Status.administeredSuccess
+                                                    .toValue())
+                                            .lastOrNull;
+                                        if (successfulTask != null &&
+                                            (successfulTask.additionalFields
+                                                        ?.fields
+                                                        .where((element) =>
+                                                            element.key ==
+                                                            Constants
+                                                                .reAdministeredKey)
+                                                        .toList() ??
+                                                    [])
+                                                .isEmpty) {
+                                          context.router.push(
+                                            RecordRedoseRoute(),
                                           );
-                                          bloc.add(
-                                            HouseholdOverviewEvent
-                                                .selectedIndividual(
-                                              individualModel: individual,
-                                            ),
+                                        } else {
+                                          context.router.push(
+                                            BeneficiaryDetailsRoute(),
                                           );
-                                        },
-                                      ).then((value) => {
-                                            if ((tasks ?? []).isEmpty)
-                                              {
-                                                context.router.push(
-                                                  EligibilityChecklistViewRoute(
-                                                    projectBeneficiaryClientReferenceId:
-                                                        projectBeneficiaryClientReferenceId,
-                                                    individual: individual,
-                                                  ),
-                                                ),
-                                              }
-                                            else
-                                              {
-                                                if ((sideEffects ?? []).isEmpty)
-                                                  {
-                                                    context.router.push(
-                                                      RecordRedoseRoute(),
-                                                    ),
-                                                  },
-                                              },
-                                          });
+                                        }
+                                      }
                                     },
                                   )
                                 : const Offstage(),
