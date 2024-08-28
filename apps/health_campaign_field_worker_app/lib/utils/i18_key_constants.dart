@@ -1184,6 +1184,10 @@ class InventoryReportDetails {
     return 'INVENTORY_REPORT_DETAILS_RETURNED_QUANTITY_LABEL';
   }
 
+  String get partialReturnedQuantotyLabel {
+    return 'INVENTORY_REPORT_DETAILS_PARTIAL_RETURNED_QUANTITY_LABEL';
+  }
+
   String get damagedQuantityLabel {
     return 'INVENTORY_REPORT_DETAILS_DAMAGED_QUANTITY_LABEL';
   }

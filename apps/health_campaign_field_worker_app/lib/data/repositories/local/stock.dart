@@ -98,6 +98,11 @@ class StockLocalRepository extends StockLocalBaseRepository {
                 lastModifiedBy: data.clientModifiedBy,
                 lastModifiedTime: data.clientModifiedTime,
               ),
+        additionalFields: data.additionalFields == null
+            ? null
+            : StockAdditionalFieldsMapper.fromJson(
+                data.additionalFields!,
+              ),
       );
     }).toList();
   }

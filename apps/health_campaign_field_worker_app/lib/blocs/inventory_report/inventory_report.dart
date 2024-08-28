@@ -101,7 +101,8 @@ class InventoryReportBloc
     final groupedData = data.groupListsBy(
       (element) => DateFormat('dd MMM yyyy').format(
         DateTime.fromMillisecondsSinceEpoch(
-          element.auditDetails!.createdTime,
+          element.dateOfEntryTime?.millisecondsSinceEpoch ??
+              element.auditDetails!.createdTime,
         ),
       ),
     );

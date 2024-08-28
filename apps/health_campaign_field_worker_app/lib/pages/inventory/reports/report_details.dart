@@ -362,6 +362,10 @@ class _InventoryReportDetailsPageState
                                           const quantityKey = 'quantity';
                                           const transactingPartyKey =
                                               'transactingParty';
+                                          const partialBlisterKey =
+                                              'partialBlistersReturned';
+                                          const wastedBlisterKey =
+                                              'wastedBlistersReturned';
 
                                           return _ReportDetailsContent(
                                             title: title,
@@ -381,6 +385,16 @@ class _InventoryReportDetailsPageState
                                                   key: quantityKey,
                                                   width: 150,
                                                 ),
+                                                if (widget.reportType ==
+                                                    InventoryReportType
+                                                        .returned)
+                                                  DigitGridColumn(
+                                                    label: i18
+                                                        .inventoryReportDetails
+                                                        .partialReturnedQuantotyLabel,
+                                                    key: partialBlisterKey,
+                                                    width: 150,
+                                                  ),
                                                 DigitGridColumn(
                                                   label: transactingPartyLabel,
                                                   key: transactingPartyKey,
@@ -404,6 +418,18 @@ class _InventoryReportDetailsPageState
                                                               model.quantity ??
                                                                   '',
                                                         ),
+                                                        if (widget.reportType ==
+                                                            InventoryReportType
+                                                                .returned)
+                                                          DigitGridCell(
+                                                            key:
+                                                                partialBlisterKey,
+                                                            value:
+                                                                _getPartialCountFromAdditionalDetails(
+                                                              model,
+                                                              partialBlisterKey,
+                                                            ),
+                                                          ),
                                                         DigitGridCell(
                                                           key:
                                                               transactingPartyKey,
@@ -673,6 +699,24 @@ class _InventoryReportDetailsPageState
 
   String _getCountFromAdditionalDetails(
     StockReconciliationModel model,
+    String key,
+  ) {
+    final additionalDetails = model.additionalFields;
+    if (additionalDetails == null) {
+      return '0';
+    }
+    final count = additionalDetails.fields.firstWhereOrNull(
+      (e) => e.key == key,
+    );
+    if (count == null) {
+      return '0';
+    }
+
+    return (double.tryParse(count.value.toString()) ?? 0.0).toStringAsFixed(0);
+  }
+
+  String _getPartialCountFromAdditionalDetails(
+    StockModel model,
     String key,
   ) {
     final additionalDetails = model.additionalFields;
