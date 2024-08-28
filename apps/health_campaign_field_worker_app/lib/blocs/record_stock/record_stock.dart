@@ -33,18 +33,22 @@ class RecordStockBloc extends Bloc<RecordStockEvent, RecordStockState> {
         throw const InvalidRecordStockStateException();
       },
       create: (value) async {
-        final facilityId = event.facilityModel.id;
-        final existingStocks = await stockRepository.search(
-          StockSearchModel(
-            facilityId: facilityId,
-          ),
-        );
+        final facilityId = event.facilityModel?.id;
+        final existingStocks = facilityId != null
+            ? await stockRepository.search(
+                StockSearchModel(
+                  facilityId: facilityId,
+                ),
+              )
+            : null;
 
         emit(
           value.copyWith(
             dateOfRecord: event.dateOfRecord,
             facilityModel: event.facilityModel,
-            existingStocks: existingStocks,
+            existingStocks: existingStocks ?? [],
+            primaryType: event.primaryType,
+            primaryId: event.primaryId,
           ),
         );
       },
@@ -60,7 +64,9 @@ class RecordStockBloc extends Bloc<RecordStockEvent, RecordStockState> {
         throw const InvalidRecordStockStateException();
       },
       create: (value) {
-        emit(value.copyWith(stockModel: event.stockModel));
+        emit(value.copyWith(
+          stockModel: event.stockModel,
+        ));
       },
     );
   }
@@ -126,7 +132,9 @@ class RecordStockBloc extends Bloc<RecordStockEvent, RecordStockState> {
 class RecordStockEvent with _$RecordStockEvent {
   const factory RecordStockEvent.saveWarehouseDetails({
     required DateTime dateOfRecord,
-    required FacilityModel facilityModel,
+    FacilityModel? facilityModel,
+    required String primaryType,
+    required String primaryId,
   }) = RecordStockSaveWarehouseDetailsEvent;
 
   const factory RecordStockEvent.saveStockDetails({
@@ -148,6 +156,8 @@ class RecordStockState with _$RecordStockState {
     DateTime? dateOfRecord,
     FacilityModel? facilityModel,
     StockModel? stockModel,
+    String? primaryType,
+    String? primaryId,
     @Default([]) List<StockModel> existingStocks,
   }) = RecordStockCreateState;
 
@@ -157,6 +167,8 @@ class RecordStockState with _$RecordStockState {
     DateTime? dateOfRecord,
     FacilityModel? facilityModel,
     StockModel? stockModel,
+    String? primaryType,
+    String? primaryId,
     @Default([]) List<StockModel> existingStocks,
   }) = RecordStockPersistedState;
 }

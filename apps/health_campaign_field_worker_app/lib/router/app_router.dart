@@ -61,10 +61,10 @@ import '../pages/inventory/record_stock/warehouse_details.dart';
 import '../pages/inventory/reports/report_details.dart';
 import '../pages/inventory/reports/report_selection.dart';
 import '../pages/inventory/stock_reconciliation/stock_reconciliation.dart';
-import '../pages/language_selection.dart';
 import '../pages/login.dart';
 import '../pages/profile.dart';
 import '../pages/project_selection.dart';
+import '../pages/qr_details_page.dart';
 import '../pages/reason_for_deletion.dart';
 import '../pages/reports/beneficiary/beneficaries_report.dart';
 import '../pages/search_beneficiary.dart';
@@ -266,6 +266,8 @@ part 'app_router.gr.dart';
           page: BoundarySelectionPage,
           path: 'select-boundary',
         ),
+
+        AutoRoute(page: UserQRDetailsPage, path: 'user-qr-code'),
 
         /// Complaints Inbox
         AutoRoute(
