@@ -738,6 +738,8 @@ class WarehouseDetails {
 
   String get warehouseDetailsLabel => 'WAREHOUSE_DETAILS_LABEL';
 
+  String get transactionDetailsLabel => 'TRANSACTION_DETAILS_LABEL';
+
   String get usDetails => 'US_DETAILS';
 
   String get dateOfReceipt => 'WAREHOUSE_DETAILS_DATE_OF_RECEIPT';
@@ -936,10 +938,19 @@ class ManageStock {
   String get recordStockReceiptDescription =>
       'MANAGE_STOCK_RECEIPT_DESCRIPTION';
 
+  String get recordStockReceiptDistributorDescription =>
+      'MANAGE_STOCK_RECEIPT_DISTRIBUTOR_DESCRIPTION';
+
   String get recordStockIssuedLabel => 'MANAGE_STOCK_RECORDSTOCK_ISSUED_LABEL';
 
   String get recordStockIssuedDescription =>
       'MANAGE_STOCK_RECORDSTOCK_ISSUED_DESCRIPTION';
+
+  String get recordStockReturnedToLabel =>
+      'MANAGE_STOCK_RECORDSTOCK_RETURNED_TO_LABEL';
+
+  String get recordStockReturnedToDescription =>
+      'MANAGE_STOCK_RECORDSTOCK_RETURNED_TO_DESCRIPTION';
 
   String get recordStockReturnedLabel =>
       'MANAGE_STOCK_RECORDSTOCK_RETURNED_LABEL';
@@ -967,6 +978,7 @@ class ManageStock {
   String get recordSpaqDamaged => 'RECORD_SPAQ_DAMAGED';
   String get recordListOfSpaqDamaged => 'RECORD_LIST_OF_SPAQ_DAMAGED';
   String get cddTeamCodeLabel => 'STOCK_CDD_TEAM_CODE_LABEL';
+  String get cddSupervisorCodeLabel => 'STOCK_SUPERVISOR_CODE_LABEL';
   String get facilityRequired => 'STOCK_DETAILS_FACILITY_IS_REQUIRED';
   String get teamCodeRequired => 'STOCK_DETAILS_TEAM_CODE_IS_REQUIRED';
 }
@@ -1105,6 +1117,14 @@ class InventoryReportSelection {
     return 'INVENTORY_REPORT_SELECTION_ISSUED_DESCRIPTION';
   }
 
+  String get inventoryReportReturnedToLabel {
+    return 'INVENTORY_REPORT_SELECTION_RETURNED_TO_LABEL';
+  }
+
+  String get inventoryReportReturnedToDescription {
+    return 'INVENTORY_REPORT_SELECTION_RETURNED_TO_DESCRIPTION';
+  }
+
   String get inventoryReportReturnedLabel {
     return 'INVENTORY_REPORT_SELECTION_RETURNED_LABEL';
   }
@@ -1189,8 +1209,12 @@ class InventoryReportDetails {
     return 'INVENTORY_REPORT_DETAILS_RETURNED_QUANTITY_LABEL';
   }
 
-  String get partialReturnedQuantotyLabel {
+  String get partialReturnedQuantityLabel {
     return 'INVENTORY_REPORT_DETAILS_PARTIAL_RETURNED_QUANTITY_LABEL';
+  }
+
+  String get wastedReturnedQuantityLabel {
+    return 'INVENTORY_REPORT_DETAILS_WASTED_RETURNED_QUANTITY_LABEL';
   }
 
   String get damagedQuantityLabel {
@@ -1211,6 +1235,10 @@ class InventoryReportDetails {
 
   String get returnedTransactingPartyLabel {
     return 'INVENTORY_REPORT_DETAILS_RETURNED_TRANSACTING_PARTY_LABEL';
+  }
+
+  String get returnedToTransactingPartyLabel {
+    return 'INVENTORY_REPORT_DETAILS_RETURNED_TO_TRANSACTING_PARTY_LABEL';
   }
 
   String get damagedTransactingPartyLabel {

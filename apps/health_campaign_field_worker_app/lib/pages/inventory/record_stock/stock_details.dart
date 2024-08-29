@@ -48,6 +48,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
   static int minQuantity = 0;
 
   List<ValidatorFunction> partialBlistersQuantityValidator = [];
+  List<ValidatorFunction> batchNumberValidators = [Validators.required];
   List<ValidatorFunction> wastedBlistersQuantityValidator = [];
   List<ValidatorFunction> transactionQuantityValidator = [
     Validators.number,
@@ -57,9 +58,10 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
   ];
   List<GS1Barcode> scannedResources = [];
   static const _deliveryTeamKey = 'deliveryTeam';
+  static const _supervisorKey = 'supervisor';
   bool deliveryTeamSelected = false;
 
-  FormGroup _form(List<FacilityModel> facilities) {
+  FormGroup _form(List<FacilityModel> facilities, bool isDistributor) {
     return fb.group({
       _productVariantKey: FormControl<ProductVariantModel>(
         validators: [Validators.required],
@@ -80,32 +82,47 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
           FormControl<int>(validators: wastedBlistersQuantityValidator),
       _commentsKey: FormControl<String>(),
       _deliveryTeamKey: FormControl<String>(
-        validators: deliveryTeamSelected ? [Validators.required] : [],
+        validators: (deliveryTeamSelected && !isDistributor)
+            ? [Validators.required]
+            : [],
+      ),
+      _supervisorKey: FormControl<String>(
+        validators: isDistributor ? [Validators.required] : [],
       ),
       _transactionReasonKey: FormControl<TransactionReason>(),
-      _waybillNumberKey: FormControl<String>(validators: [
-        Validators.required,
-      ]),
+      _waybillNumberKey: FormControl<String>(
+        validators: isDistributor
+            ? []
+            : [
+                Validators.required,
+              ],
+      ),
       _waybillQuantityKey: FormControl<int>(
-        validators: [
-          Validators.number,
-          Validators.required,
-          Validators.min(minQuantity),
-          Validators.max(maxQuantity),
-        ],
+        validators: isDistributor
+            ? []
+            : [
+                Validators.number,
+                Validators.required,
+                Validators.min(minQuantity),
+                Validators.max(maxQuantity),
+              ],
       ),
       _vehicleNumberKey: FormControl<String>(
-        validators: [
-          Validators.required,
-        ],
+        validators: isDistributor
+            ? []
+            : [
+                Validators.required,
+              ],
       ),
       _typeOfTransportKey: FormControl<String>(
-        validators: [
-          Validators.required,
-        ],
+        validators: isDistributor
+            ? []
+            : [
+                Validators.required,
+              ],
       ),
       _batchNumberKey: FormControl<String>(
-        validators: [Validators.required],
+        validators: batchNumberValidators,
       ),
     });
   }
@@ -113,6 +130,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDistributor = context.isDistributor;
 
     return PopScope(
       onPopInvoked: (didPop) {
@@ -161,9 +179,15 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                     transactionType = TransactionType.received;
                     break;
                   case StockRecordEntryType.dispatch:
-                    pageTitle = module.issuedPageTitle;
-                    transactionPartyLabel = module.selectTransactingPartyIssued;
-                    quantityCountLabel = module.quantitySentLabel;
+                    pageTitle = isDistributor
+                        ? module.returnedPageTitle
+                        : module.issuedPageTitle;
+                    transactionPartyLabel = isDistributor
+                        ? module.selectTransactingPartyReturned
+                        : module.selectTransactingPartyIssued;
+                    quantityCountLabel = isDistributor
+                        ? module.quantityReturnedLabel
+                        : module.quantitySentLabel;
                     transactionType = TransactionType.dispatched;
                     if (context.isDistributor) {
                       wastedBlistersQuantityValidator = [
@@ -179,6 +203,8 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                         Validators.min(minQuantity),
                         Validators.max(maxQuantity),
                       ];
+
+                      batchNumberValidators = [];
                     }
 
                     break;
@@ -256,21 +282,37 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                     );
 
                     return ReactiveFormBuilder(
-                      form: () => _form(facilities),
+                      form: () => _form(facilities, isDistributor),
                       builder: (context, form, child) {
                         return BlocBuilder<DigitScannerBloc, DigitScannerState>(
                           builder: (context, scannerState) {
-                            if (form
-                                    .control(_deliveryTeamKey)
-                                    .value
-                                    .toString()
-                                    .isEmpty ||
-                                form.control(_deliveryTeamKey).value == null ||
-                                scannerState.qrCodes.isNotEmpty) {
-                              form.control(_deliveryTeamKey).value =
-                                  scannerState.qrCodes.isNotEmpty
-                                      ? scannerState.qrCodes.last
-                                      : '';
+                            if (isDistributor) {
+                              if (form
+                                      .control(_supervisorKey)
+                                      .value
+                                      .toString()
+                                      .isEmpty ||
+                                  form.control(_supervisorKey).value == null ||
+                                  scannerState.qrCodes.isNotEmpty) {
+                                form.control(_supervisorKey).value =
+                                    scannerState.qrCodes.isNotEmpty
+                                        ? scannerState.qrCodes.last
+                                        : '';
+                              }
+                            } else {
+                              if (form
+                                      .control(_deliveryTeamKey)
+                                      .value
+                                      .toString()
+                                      .isEmpty ||
+                                  form.control(_deliveryTeamKey).value ==
+                                      null ||
+                                  scannerState.qrCodes.isNotEmpty) {
+                                form.control(_deliveryTeamKey).value =
+                                    scannerState.qrCodes.isNotEmpty
+                                        ? scannerState.qrCodes.last
+                                        : '';
+                              }
                             }
 
                             if (scannerState.barCodes.isNotEmpty) {
@@ -458,8 +500,9 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                     'WAREHOUSE';
 
                                                 if (entryType ==
-                                                    StockRecordEntryType
-                                                        .dispatch) {
+                                                        StockRecordEntryType
+                                                            .dispatch &&
+                                                    !isDistributor) {
                                                   int issueQuantity =
                                                       quantity ?? 0;
 
@@ -562,6 +605,10 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                     .control(_deliveryTeamKey)
                                                     .value as String?;
 
+                                                final supervisorCode = form
+                                                    .control(_supervisorKey)
+                                                    .value as String?;
+
                                                 String? senderId;
                                                 String? senderType;
                                                 String? receiverId;
@@ -653,6 +700,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                             batchNumber,
                                                             vehicleNumber,
                                                             transportType,
+                                                            supervisorCode
                                                           ].any((element) =>
                                                               element !=
                                                               null) ||
@@ -714,6 +762,15 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                               AdditionalField(
                                                                 _typeOfTransportKey,
                                                                 transportType,
+                                                              ),
+                                                            if (supervisorCode !=
+                                                                    null &&
+                                                                supervisorCode
+                                                                    .trim()
+                                                                    .isNotEmpty)
+                                                              AdditionalField(
+                                                                _supervisorKey,
+                                                                supervisorCode,
                                                               ),
                                                             if (hasLocationData) ...[
                                                               AdditionalField(
@@ -861,7 +918,9 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                               final facility = await parent
                                                   .push<FacilityModel>(
                                                 FacilitySelectionRoute(
-                                                  facilities: teamFacilities,
+                                                  facilities: isDistributor
+                                                      ? facilities
+                                                      : teamFacilities,
                                                 ),
                                               );
 
@@ -962,9 +1021,11 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                         Validators.number,
                                                         Validators.required,
                                                         Validators.min(
-                                                            minQuantity),
+                                                          minQuantity,
+                                                        ),
                                                         Validators.max(
-                                                            maxQuantity),
+                                                          maxQuantity,
+                                                        ),
                                                       ],
                                                       updateParent: true,
                                                       autoValidate: true,
@@ -1044,7 +1105,13 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   teamFacilities,
                                                 ),
                                                 label: localizations.translate(
-                                                  '${pageTitle}_${i18.stockReconciliationDetails.stockLabel}',
+                                                  (isDistributor &&
+                                                          stockState
+                                                                  .entryType ==
+                                                              StockRecordEntryType
+                                                                  .dispatch)
+                                                      ? transactionPartyLabel
+                                                      : '${pageTitle}_${i18.stockReconciliationDetails.stockLabel}',
                                                 ),
                                                 isRequired: true,
                                                 suffix: const Padding(
@@ -1064,8 +1131,9 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   final facility = await parent
                                                       .push<FacilityModel>(
                                                     FacilitySelectionRoute(
-                                                      facilities:
-                                                          teamFacilities,
+                                                      facilities: isDistributor
+                                                          ? facilities
+                                                          : teamFacilities,
                                                     ),
                                                   );
 
@@ -1232,64 +1300,166 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                           );
                                         },
                                       ),
-                                      DigitTextFormField(
-                                        label: localizations.translate(
-                                          i18.manageStock.cddTeamCodeLabel,
-                                        ),
-                                        readOnly: !deliveryTeamSelected,
-                                        onChanged: (val) {
-                                          String? value = val.value as String?;
-                                          if (value != null &&
-                                              value.trim().isNotEmpty) {
-                                            context
-                                                .read<DigitScannerBloc>()
-                                                .add(
-                                                  DigitScannerEvent
-                                                      .handleScanner(
-                                                    barCode: [],
-                                                    qrCode: [value],
-                                                    manualCode: value,
-                                                  ),
-                                                );
-                                          } else {
-                                            clearQRCodes();
-                                          }
-                                        },
-                                        suffix: IconButton(
-                                          onPressed: !deliveryTeamSelected
-                                              ? null
-                                              : () {
-                                                  //[TODO: Add route to auto_route]
-                                                  Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const DigitScannerPage(
-                                                        quantity: 1,
-                                                        isGS1code: false,
-                                                        singleValue: true,
-                                                      ),
-                                                      settings:
-                                                          const RouteSettings(
-                                                        name: '/qr-scanner',
-                                                      ),
+                                      if (!isDistributor)
+                                        // InkWell(
+                                        //   onTap: () async {
+                                        //     Navigator.of(context).push(
+                                        //       MaterialPageRoute(
+                                        //         builder: (context) =>
+                                        //             const DigitScannerPage(
+                                        //           quantity: 1,
+                                        //           isGS1code: false,
+                                        //           singleValue: true,
+                                        //         ),
+                                        //         settings: const RouteSettings(
+                                        //           name: '/qr-scanner',
+                                        //         ),
+                                        //       ),
+                                        //     );
+                                        //   },
+                                        //   child: IgnorePointer(
+                                        //     child:
+                                        DigitTextFormField(
+                                          label: localizations.translate(
+                                            i18.manageStock.cddTeamCodeLabel,
+                                          ),
+                                          readOnly: !deliveryTeamSelected,
+                                          onChanged: (val) {
+                                            String? value =
+                                                val.value as String?;
+                                            if (value != null &&
+                                                value.trim().isNotEmpty) {
+                                              context
+                                                  .read<DigitScannerBloc>()
+                                                  .add(
+                                                    DigitScannerEvent
+                                                        .handleScanner(
+                                                      barCode: [],
+                                                      qrCode: [value],
+                                                      manualCode: value,
                                                     ),
                                                   );
-                                                },
-                                          icon: Icon(
-                                            Icons.qr_code_2,
-                                            color: theme.colorScheme.secondary,
+                                            } else {
+                                              clearQRCodes();
+                                            }
+                                          },
+                                          suffix: IconButton(
+                                            onPressed: !deliveryTeamSelected
+                                                ? null
+                                                : () {
+                                                    //[TODO: Add route to auto_route]
+                                                    Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            const DigitScannerPage(
+                                                          quantity: 1,
+                                                          isGS1code: false,
+                                                          singleValue: true,
+                                                        ),
+                                                        settings:
+                                                            const RouteSettings(
+                                                          name: '/qr-scanner',
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                            icon: Icon(
+                                              Icons.qr_code_2,
+                                              color:
+                                                  theme.colorScheme.secondary,
+                                            ),
                                           ),
+                                          isRequired: deliveryTeamSelected,
+                                          maxLines: 3,
+                                          formControlName: _deliveryTeamKey,
+                                          validationMessages: {
+                                            "required": (object) =>
+                                                localizations.translate(
+                                                  i18.common.corecommonRequired,
+                                                ),
+                                          },
                                         ),
-                                        isRequired: deliveryTeamSelected,
-                                        maxLines: 3,
-                                        formControlName: _deliveryTeamKey,
-                                        validationMessages: {
-                                          "required": (object) =>
-                                              localizations.translate(
-                                                i18.common.corecommonRequired,
-                                              ),
-                                        },
-                                      ),
+                                      //   ),
+                                      // ),
+                                      if (isDistributor)
+                                        // InkWell(
+                                        //   onTap: () async {
+                                        //     Navigator.of(context).push(
+                                        //       MaterialPageRoute(
+                                        //         builder: (context) =>
+                                        //             const DigitScannerPage(
+                                        //           quantity: 1,
+                                        //           isGS1code: false,
+                                        //           singleValue: true,
+                                        //         ),
+                                        //         settings: const RouteSettings(
+                                        //           name: '/qr-scanner',
+                                        //         ),
+                                        //       ),
+                                        //     );
+                                        //   },
+                                        //   child: IgnorePointer(
+                                        //     child:
+                                        DigitTextFormField(
+                                          label: localizations.translate(
+                                            i18.manageStock
+                                                .cddSupervisorCodeLabel,
+                                          ),
+                                          // readOnly: true,
+                                          onChanged: (val) {
+                                            String? value =
+                                                val.value as String?;
+                                            if (value != null &&
+                                                value.trim().isNotEmpty) {
+                                              context
+                                                  .read<DigitScannerBloc>()
+                                                  .add(
+                                                    DigitScannerEvent
+                                                        .handleScanner(
+                                                      barCode: [],
+                                                      qrCode: [value],
+                                                      manualCode: value,
+                                                    ),
+                                                  );
+                                            } else {
+                                              clearQRCodes();
+                                            }
+                                          },
+                                          suffix: IconButton(
+                                            onPressed: () {
+                                              //[TODO: Add route to auto_route]
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const DigitScannerPage(
+                                                    quantity: 1,
+                                                    isGS1code: false,
+                                                    singleValue: true,
+                                                  ),
+                                                  settings: const RouteSettings(
+                                                    name: '/qr-scanner',
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            icon: Icon(
+                                              Icons.qr_code_2,
+                                              color:
+                                                  theme.colorScheme.secondary,
+                                            ),
+                                          ),
+                                          isRequired: isDistributor,
+                                          maxLines: 3,
+                                          formControlName: _supervisorKey,
+                                          validationMessages: {
+                                            "required": (object) =>
+                                                localizations.translate(
+                                                  i18.common.corecommonRequired,
+                                                ),
+                                          },
+                                        ),
+                                      //   ),
+                                      // ),
                                       DigitTextFormField(
                                         formControlName:
                                             _transactionQuantityKey,
@@ -1545,19 +1715,23 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                               },
                                             )
                                           : const Offstage(),
-                                      DigitTextFormField(
-                                        label: localizations.translate(
-                                          i18.stockDetails.batchNumberLabel,
+                                      if (!([
+                                            StockRecordEntryType.dispatch,
+                                          ].contains(entryType) &&
+                                          context.isDistributor))
+                                        DigitTextFormField(
+                                          label: localizations.translate(
+                                            i18.stockDetails.batchNumberLabel,
+                                          ),
+                                          isRequired: true,
+                                          formControlName: _batchNumberKey,
+                                          validationMessages: {
+                                            'required': (object) =>
+                                                localizations.translate(
+                                                  i18.common.corecommonRequired,
+                                                ),
+                                          },
                                         ),
-                                        isRequired: true,
-                                        formControlName: _batchNumberKey,
-                                        validationMessages: {
-                                          'required': (object) =>
-                                              localizations.translate(
-                                                i18.common.corecommonRequired,
-                                              ),
-                                        },
-                                      ),
                                       isWarehouseMgr && !deliveryTeamSelected
                                           ? BlocBuilder<AppInitializationBloc,
                                               AppInitializationState>(
