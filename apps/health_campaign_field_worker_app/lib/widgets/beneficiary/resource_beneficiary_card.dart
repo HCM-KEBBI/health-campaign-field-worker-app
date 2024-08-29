@@ -16,7 +16,6 @@ class ResourceBeneficiaryCard extends LocalizedStatefulWidget {
   final FormGroup form;
   final int totalItems;
   final bool isAdministered;
-  final void Function(bool) checkDoseAdministration;
 
   const ResourceBeneficiaryCard({
     Key? key,
@@ -26,7 +25,6 @@ class ResourceBeneficiaryCard extends LocalizedStatefulWidget {
     required this.form,
     required this.totalItems,
     this.isAdministered = false,
-    required this.checkDoseAdministration,
   }) : super(key: key);
 
   @override
@@ -37,7 +35,7 @@ class ResourceBeneficiaryCard extends LocalizedStatefulWidget {
 class _ResourceBeneficiaryCardState
     extends LocalizedState<ResourceBeneficiaryCard> {
   bool doseAdministered = false;
-  static const _deliveryCommentKey = 'deliveryComment';
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -80,47 +78,16 @@ class _ResourceBeneficiaryCardState
               );
             },
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: DigitCheckbox(
-              label: localizations.translate(
-                i18.deliverIntervention.deliverInteventionAdministeredLabel,
-              ),
-              value: doseAdministered,
-              onChanged: (value) {
-                setState(() {
-                  doseAdministered = value!;
-                  widget.checkDoseAdministration(value);
-                  if (!value) {
-                    widget.form
-                        .control(
-                          _deliveryCommentKey,
-                        )
-                        .value = null;
-                  }
-                });
-              },
-            ),
-          ),
-          DigitTextFormField(
-            formControlName: 'quantityWasted.${widget.cardIndex}',
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            inputFormatters: [
-              LengthLimitingTextInputFormatter(3),
-              FilteringTextInputFormatter.allow(
-                RegExp(r'^(1000|[1-9][0-9]{0,2}|0)$'),
-              ),
-            ],
+          DigitIntegerFormPicker(
+            incrementer: true,
+            formControlName: 'quantityDistributed.${widget.cardIndex}',
+            form: widget.form,
             label: localizations.translate(
-              i18.deliverIntervention.quantityWastedLabel,
+              i18.deliverIntervention.quantityDistributedLabel,
             ),
-            validationMessages: {
-              "required": (control) {
-                return localizations.translate(
-                  i18.common.corecommonRequired,
-                );
-              },
-            },
+            minimum: 0,
+            maximum: 1,
+            buttonWidth: 50,
           ),
         ],
       ),

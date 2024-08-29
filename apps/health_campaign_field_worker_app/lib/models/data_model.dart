@@ -18,6 +18,8 @@ export 'entities/downsync.dart';
 export 'entities/facility.dart';
 export 'entities/gender.dart';
 export 'entities/h_f_referral.dart';
+export 'entities/hcm_attendance_log_model.dart';
+export 'entities/hcm_attendance_model.dart';
 export 'entities/household.dart';
 export 'entities/household_member.dart';
 export 'entities/identifier.dart';
@@ -52,6 +54,7 @@ export 'oplog/oplog_entry.dart';
 export 'pgr_complaints/pgr_address.dart';
 export 'pgr_complaints/pgr_complaints.dart';
 export 'pgr_complaints/pgr_complaints_response.dart';
+export 'package:attendance_management/models/attendance_log.dart';
 
 part 'data_model.mapper.dart';
 
@@ -70,6 +73,8 @@ abstract class DataModel {
   HouseholdModel,
   IndividualModel,
   NameModel,
+  HCMAttendanceLogModel,
+  HCMAttendanceRegisterModel,
 ])
 abstract class EntityModel extends DataModel with EntityModelMappable {
   final AuditDetails? auditDetails;
@@ -84,6 +89,8 @@ abstract class EntityModel extends DataModel with EntityModelMappable {
 @MappableClass(ignoreNull: true, includeSubClasses: [
   AddressSearchModel,
   HFReferralSearchModel,
+  HCMAttendanceLogSearchModel,
+  HCMAttendanceSearchModel,
 ])
 abstract class EntitySearchModel extends DataModel
     with EntitySearchModelMappable {
@@ -106,7 +113,7 @@ abstract class EntitySearchModel extends DataModel
 }
 
 @MappableClass(
-  includeSubClasses: [AddressAdditionalFields],
+  includeSubClasses: [AddressAdditionalFields, HCMAttendanceAdditionalModel],
 )
 abstract class AdditionalFields with AdditionalFieldsMappable {
   final String schema;
@@ -191,4 +198,6 @@ enum DataModelType {
   downsync,
   downsyncCriteria,
   hFReferral,
+  attendanceRegister,
+  attendance,
 }

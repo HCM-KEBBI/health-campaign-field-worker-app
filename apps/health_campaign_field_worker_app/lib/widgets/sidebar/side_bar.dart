@@ -1,23 +1,15 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:digit_components/digit_components.dart';
-import 'package:digit_components/models/digit_row_card/digit_row_card_model.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:health_campaign_field_worker_app/utils/utils.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../blocs/localization/app_localization.dart';
-import '../../blocs/app_initialization/app_initialization.dart';
 import '../../blocs/auth/auth.dart';
 import '../../blocs/boundary/boundary.dart';
-import '../../blocs/localization/localization.dart';
-import '../../blocs/user/user.dart';
-import '../../models/data_model.dart';
 import '../../router/app_router.dart';
-import '../../utils/background_service.dart';
-import '../../utils/constants.dart';
 import '../../utils/i18_key_constants.dart' as i18;
-import '../../utils/utils.dart';
 
 class SideBar extends StatelessWidget {
   const SideBar({super.key});
@@ -57,6 +49,31 @@ class SideBar extends StatelessWidget {
                         value.userModel.permanentCity.toString(),
                         style: theme.textTheme.displayMedium,
                       ),
+                    const SizedBox(
+                      height: 16.0,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context, rootNavigator: true).pop();
+                        context.router.push(UserQRDetailsRoute());
+                      },
+                      child: Container(
+                        height: 155,
+                        width: 155,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            width: 2,
+                            color: DigitTheme.instance.colorScheme.secondary,
+                          ),
+                        ),
+                        child: QrImageView(
+                          data: context.loggedInUserUuid,
+                          version: QrVersions.auto,
+                          size: 150.0,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 orElse: () => const Offstage(),

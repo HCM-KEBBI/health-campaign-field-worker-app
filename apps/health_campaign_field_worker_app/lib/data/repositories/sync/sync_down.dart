@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 
+import '../../../utils/environment_config.dart';
 import './remote_type.dart';
 import '../../../models/bandwidth/bandwidth_model.dart';
 import '../../../models/data_model.dart';
@@ -121,6 +122,59 @@ class PerformSyncDown {
               } else {
                 final bool markAsNonRecoverable = await local.opLogManager
                     .updateSyncDownRetry(entity.clientReferenceId);
+
+                if (markAsNonRecoverable) {
+                  await local.update(
+                    entity.copyWith(
+                      nonRecoverableError: true,
+                    ),
+                    createOpLog: false,
+                  );
+                }
+              }
+            }
+
+            break;
+          case DataModelType.attendance:
+            responseEntities = await remote.search(HCMAttendanceLogSearchModel(
+              clientReferenceId: entities
+                  .whereType<HCMAttendanceLogModel>()
+                  .map((e) => e.attendance?.clientReferenceId!)
+                  .whereNotNull()
+                  .toList(),
+              isDeleted: true,
+              tenantId: envConfig.variables.tenantId,
+            ));
+
+            for (var element in operationGroupedEntity.value) {
+              if (element.id == null) return;
+              final entity = element.entity as HCMAttendanceLogModel;
+              final responseEntity = responseEntities
+                  .whereType<HCMAttendanceLogModel>()
+                  .firstWhereOrNull(
+                    (e) =>
+                        e.attendance?.clientReferenceId ==
+                        entity.attendance?.clientReferenceId,
+                  );
+
+              final serverGeneratedId = responseEntity?.attendance?.id;
+              final rowVersion = responseEntity?.rowVersion;
+              if (serverGeneratedId != null) {
+                await local.opLogManager.updateServerGeneratedIds(
+                  model: UpdateServerGeneratedIdModel(
+                    clientReferenceId:
+                        entity.attendance!.clientReferenceId.toString(),
+                    serverGeneratedId: serverGeneratedId,
+                    nonRecoverableError: entity.nonRecoverableError,
+                    dataOperation: element.operation,
+                    rowVersion: rowVersion,
+                  ),
+                );
+              } else {
+                final bool markAsNonRecoverable =
+                    await local.opLogManager.updateSyncDownRetry(
+                  entity.attendance!.clientReferenceId.toString(),
+                );
 
                 if (markAsNonRecoverable) {
                   await local.update(
@@ -658,7 +712,6 @@ class PerformSyncDown {
                         complaintClientReferenceId: e.serviceRequestId ?? '',
                       ),
                       address: PgrAddressModel(),
-              
                     ))
                 .toList();
 

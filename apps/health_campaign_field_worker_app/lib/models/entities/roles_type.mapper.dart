@@ -31,6 +31,8 @@ class RolesTypeMapper extends EnumMapper<RolesType> {
         return RolesType.healthFacilitySupervisor;
       case "COMMUNITY_SUPERVISOR":
         return RolesType.communitySupervisor;
+      case "WAREHOUSE_MANAGER":
+        return RolesType.wareHouseManager;
       default:
         throw MapperException.unknownEnumValue(value);
     }
@@ -45,6 +47,8 @@ class RolesTypeMapper extends EnumMapper<RolesType> {
         return "HEALTH_FACILITY_SUPERVISOR";
       case RolesType.communitySupervisor:
         return "COMMUNITY_SUPERVISOR";
+      case RolesType.wareHouseManager:
+        return "WAREHOUSE_MANAGER";
     }
   }
 }

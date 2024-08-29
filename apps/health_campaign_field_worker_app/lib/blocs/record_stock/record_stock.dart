@@ -33,18 +33,56 @@ class RecordStockBloc extends Bloc<RecordStockEvent, RecordStockState> {
         throw const InvalidRecordStockStateException();
       },
       create: (value) async {
-        final facilityId = event.facilityModel.id;
-        final existingStocks = await stockRepository.search(
+        final facilityId = event.facilityModel?.id;
+
+        // Fetching the stock reconciliation details
+        final receivedStocks = (await stockRepository.search(
           StockSearchModel(
-            facilityId: facilityId,
+            receiverId: facilityId,
+            transactionType: [TransactionType.received],
           ),
-        );
+        ))
+            .where(
+              (element) =>
+                  element.auditDetails != null &&
+                  element.auditDetails?.createdBy == event.loggedInUserId,
+            )
+            .toList();
+        final sentStocks = (await stockRepository.search(
+          StockSearchModel(
+            senderId: facilityId,
+            transactionType: [TransactionType.dispatched],
+          ),
+        ))
+            .where(
+              (element) =>
+                  element.auditDetails != null &&
+                  element.auditDetails?.createdBy == event.loggedInUserId,
+            )
+            .toList();
+
+        final dateFilteredStocks = ([
+          ...receivedStocks,
+          ...sentStocks,
+        ])
+            .where(
+              (e) =>
+                  e.dateOfEntryTime!.year < event.dateOfRecord.year ||
+                  e.dateOfEntryTime!.year == event.dateOfRecord.year &&
+                      e.dateOfEntryTime!.month < event.dateOfRecord.month ||
+                  e.dateOfEntryTime!.year == event.dateOfRecord.year &&
+                      e.dateOfEntryTime!.month == event.dateOfRecord.month &&
+                      e.dateOfEntryTime!.day <= event.dateOfRecord.day,
+            )
+            .toList();
 
         emit(
           value.copyWith(
             dateOfRecord: event.dateOfRecord,
             facilityModel: event.facilityModel,
-            existingStocks: existingStocks,
+            existingStocks: dateFilteredStocks,
+            primaryType: event.primaryType,
+            primaryId: event.primaryId,
           ),
         );
       },
@@ -60,7 +98,9 @@ class RecordStockBloc extends Bloc<RecordStockEvent, RecordStockState> {
         throw const InvalidRecordStockStateException();
       },
       create: (value) {
-        emit(value.copyWith(stockModel: event.stockModel));
+        emit(value.copyWith(
+          stockModel: event.stockModel,
+        ));
       },
     );
   }
@@ -126,7 +166,10 @@ class RecordStockBloc extends Bloc<RecordStockEvent, RecordStockState> {
 class RecordStockEvent with _$RecordStockEvent {
   const factory RecordStockEvent.saveWarehouseDetails({
     required DateTime dateOfRecord,
-    required FacilityModel facilityModel,
+    FacilityModel? facilityModel,
+    required String primaryType,
+    required String primaryId,
+    required String loggedInUserId,
   }) = RecordStockSaveWarehouseDetailsEvent;
 
   const factory RecordStockEvent.saveStockDetails({
@@ -148,6 +191,8 @@ class RecordStockState with _$RecordStockState {
     DateTime? dateOfRecord,
     FacilityModel? facilityModel,
     StockModel? stockModel,
+    String? primaryType,
+    String? primaryId,
     @Default([]) List<StockModel> existingStocks,
   }) = RecordStockCreateState;
 
@@ -157,6 +202,8 @@ class RecordStockState with _$RecordStockState {
     DateTime? dateOfRecord,
     FacilityModel? facilityModel,
     StockModel? stockModel,
+    String? primaryType,
+    String? primaryId,
     @Default([]) List<StockModel> existingStocks,
   }) = RecordStockPersistedState;
 }

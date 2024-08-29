@@ -43,16 +43,16 @@ class AuthenticatedPageWrapper extends StatelessWidget {
       builder: (context, snapshot) {
         final showDrawer = snapshot.data ?? false;
 
-              return Portal(
-                child: Scaffold(
-                  backgroundColor: DigitTheme.instance.colorScheme.background,
-                  appBar: AppBar(
-            backgroundColor: DigitTheme.instance.colorScheme.primary,
-                    actions: showDrawer
-                        ? [
-                            BlocBuilder<BoundaryBloc, BoundaryState>(
-                              builder: (ctx, state) {
-                                final selectedBoundary = ctx.boundaryOrNull;
+        return Portal(
+          child: Scaffold(
+            backgroundColor: DigitTheme.instance.colorScheme.background,
+            appBar: AppBar(
+              backgroundColor: DigitTheme.instance.colorScheme.primary,
+              actions: showDrawer
+                  ? [
+                      BlocBuilder<BoundaryBloc, BoundaryState>(
+                        builder: (ctx, state) {
+                          final selectedBoundary = ctx.boundaryOrNull;
 
                           if (selectedBoundary == null) {
                             return const SizedBox.shrink();
@@ -167,6 +167,7 @@ class AuthenticatedPageWrapper extends StatelessWidget {
                                   case DataModelType.sideEffect:
                                   case DataModelType.referral:
                                   case DataModelType.hFReferral:
+                                  case DataModelType.attendance:
                                     return true;
                                   default:
                                     return false;
@@ -203,6 +204,7 @@ class AuthenticatedPageWrapper extends StatelessWidget {
                                   case DataModelType.sideEffect:
                                   case DataModelType.referral:
                                   case DataModelType.hFReferral:
+                                  case DataModelType.attendance:
                                     return true;
                                   default:
                                     return false;

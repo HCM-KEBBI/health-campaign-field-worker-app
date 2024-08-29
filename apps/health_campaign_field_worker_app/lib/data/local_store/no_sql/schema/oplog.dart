@@ -60,6 +60,10 @@ class OpLog {
         final entity = HFReferralModelMapper.fromJson(entityString);
         return entity;
 
+      case "attendance":
+        final entity = HCMAttendanceLogModelMapper.fromJson(entityString);
+        return entity;
+
       default:
         final entity = EntityModelMapper.fromJson(entityString);
         return entity;

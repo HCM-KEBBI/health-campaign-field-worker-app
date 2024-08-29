@@ -302,6 +302,20 @@ class _ComplaintsDetailsPageState
                                               .value ??
                                           "",
                                       onChanged: (changedValue) {
+                                        if (form
+                                            .control(_complaintRaisedFor)
+                                            .disabled) return;
+
+                                        if (changedValue ==
+                                            i18.complaints
+                                                .raisedForAnotherUser) {
+                                          form.control(_complainantName).value =
+                                              "";
+                                          form
+                                              .control(
+                                                  _complainantContactNumber)
+                                              .value = "";
+                                        }
                                         setState(() {
                                           form
                                               .control(_complaintRaisedFor)
@@ -352,6 +366,14 @@ class _ComplaintsDetailsPageState
                                 state.mapOrNull(
                                   authenticated: (value) {
                                     var user = value.userModel;
+
+                                    if (isRaisedForSelf) {
+                                      form.control(_complainantName).value =
+                                          user.name;
+                                      form
+                                          .control(_complainantContactNumber)
+                                          .value = user.mobileNumber;
+                                    }
                                   },
                                 );
 
@@ -362,7 +384,13 @@ class _ComplaintsDetailsPageState
                                       label: localizations.translate(
                                         i18.complaints.complainantName,
                                       ),
-                                      maxLength: 64,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                          RegExp("[0-9a-zA-Z ]"),
+                                        ),
+                                      ],
+                                      readOnly: isRaisedForSelf,
+                                      maxLength: 50,
                                       isRequired: true,
                                       validationMessages: {
                                         'required': (object) =>
@@ -377,7 +405,8 @@ class _ComplaintsDetailsPageState
                                       label: localizations.translate(
                                         i18.complaints.complainantContactNumber,
                                       ),
-                                      maxLength: 9,
+                                      readOnly: isRaisedForSelf,
+                                      maxLength: 10,
                                       isRequired: true,
                                       keyboardType: TextInputType.number,
                                       inputFormatters: [
@@ -409,14 +438,14 @@ class _ComplaintsDetailsPageState
                               label: localizations.translate(
                                 i18.complaints.supervisorName,
                               ),
-                              maxLength: 64,
+                              maxLength: 50,
                             ),
                             DigitTextFormField(
                               formControlName: _supervisorContactNumber,
                               label: localizations.translate(
                                 i18.complaints.supervisorContactNumber,
                               ),
-                              maxLength: 9,
+                              maxLength: 10,
                               keyboardType: TextInputType.number,
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(
@@ -497,7 +526,7 @@ class _ComplaintsDetailsPageState
         validators: [
           Validators.required,
           CustomValidator.validMobileNumber,
-          Validators.minLength(9),
+          Validators.minLength(10),
         ],
       ),
       _supervisorName: FormControl<String>(

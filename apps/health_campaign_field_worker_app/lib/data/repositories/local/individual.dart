@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
-
 import '../../../models/data_model.dart';
 import '../../../utils/utils.dart';
 import 'base/individual_base.dart';
@@ -50,7 +49,7 @@ class IndividualLocalRepository extends IndividualLocalBaseRepository {
                   query.clientReferenceId!,
                 ),
               if (query.id != null)
-                sql.individual.id.equals(
+                sql.individual.id.isIn(
                   query.id!,
                 ),
               if (query.tenantId != null)
@@ -138,6 +137,7 @@ class IndividualLocalRepository extends IndividualLocalBaseRepository {
         // If it's not, create a new task and add it to the map
         individualsMap[individual.clientReferenceId] = IndividualModel(
           id: individual.id,
+          individualId: individual.individualId,
           tenantId: individual.tenantId,
           clientReferenceId: individual.clientReferenceId,
           dateOfBirth: individual.dateOfBirth,

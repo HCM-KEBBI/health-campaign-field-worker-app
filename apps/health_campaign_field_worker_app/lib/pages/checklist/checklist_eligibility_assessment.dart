@@ -70,8 +70,6 @@ class _EligibilityChecklistViewPageState
     var ifIneligible = false;
     var projectBeneficiaryClientReferenceId =
         widget.projectBeneficiaryClientReferenceId;
-    var referralReason = "";
-    var ineligibilityReason = "";
 
     return WillPopScope(
       onWillPop: context.isHealthFacilitySupervisor &&
@@ -178,11 +176,14 @@ class _EligibilityChecklistViewPageState
                               responses[attributeCode] = value;
                             }
 
-                            ifReferral = isReferral(responses, referralReason);
+                            List<String?> referralReasons = [];
+                            List<String?> ineligibilityReasons = [];
+
+                            ifReferral = isReferral(responses, referralReasons);
                             ifDeliver = isDelivery(responses);
                             ifIneligible = isIneligible(
                               responses,
-                              ineligibilityReason,
+                              ineligibilityReasons,
                             );
                             var descriptionText = ifIneligible
                                 ? '"Ineligible"'
@@ -396,7 +397,8 @@ class _EligibilityChecklistViewPageState
                                                   ),
                                                   AdditionalField(
                                                     'ineligibleReasons',
-                                                    ineligibilityReason,
+                                                    ineligibilityReasons
+                                                        .join(","),
                                                   ),
                                                 ],
                                               ),
@@ -429,10 +431,11 @@ class _EligibilityChecklistViewPageState
                                           projectBeneficiaryClientReferenceId ??
                                               "",
                                       individual: widget.individual!,
+                                      referralReason: referralReasons.first,
                                     ),
                                   );
                                 } else {
-                                  router.push(DeliverInterventionRoute());
+                                  router.push(BeneficiaryDetailsRoute());
                                 }
                               }
                             }
@@ -873,32 +876,43 @@ class _EligibilityChecklistViewPageState
 
   bool isIneligible(
     Map<String?, String> responses,
-    String ineligibilityReason,
+    List<String?> ineligibilityReasons,
   ) {
     var isIneligible = false;
     var q3Key = "KBEA3";
     var q5Key = "KBEA4";
+    Map<String, String> keyVsReason = {
+      q3Key: "NOT_ADMINISTERED_IN_PREVIOUS_CYCLE",
+      q5Key: "CHILD_ON_MEDICATION_1",
+    };
 
     if (responses.isNotEmpty) {
       if (responses.containsKey(q3Key) && responses[q3Key]!.isNotEmpty) {
         isIneligible = responses[q3Key] == yes ? true : false;
-        ineligibilityReason = isIneligible
-            ? '$ineligibilityReason${",NOT_ADMINISTERED_IN_PREVIOUS_CYCLE"}'
-            : ineligibilityReason;
       }
       if (!isIneligible &&
           (responses.containsKey(q5Key) && responses[q5Key]!.isNotEmpty)) {
         isIneligible = responses[q5Key] == yes ? true : false;
-        ineligibilityReason = isIneligible
-            ? '$ineligibilityReason${",CHILD_ON_MEDICATION_1"}'
-            : ineligibilityReason;
+      }
+
+      if (isIneligible) {
+        for (var entry in responses.entries) {
+          if (entry.key == q3Key || entry.key == q5Key) {
+            entry.value == yes
+                ? ineligibilityReasons.add(keyVsReason[entry.key])
+                : null;
+          }
+        }
       }
     }
 
     return isIneligible;
   }
 
-  bool isReferral(Map<String?, String> responses, String? referralreason) {
+  bool isReferral(
+    Map<String?, String> responses,
+    List<String?> referralReasons,
+  ) {
     var isReferral = false;
     var q1Key = "KBEA1";
     var q2Key = "KBEA2";
@@ -908,17 +922,17 @@ class _EligibilityChecklistViewPageState
     if (responses.isNotEmpty) {
       if (responses.containsKey(q1Key) && responses[q1Key]!.isNotEmpty) {
         isReferral = responses[q1Key] == yes ? true : false;
-        referralreason = isReferral ? "SICK" : referralreason;
+        isReferral ? referralReasons.add("SICK") : null;
       }
       if (!isReferral &&
           (responses.containsKey(q2Key) && responses[q2Key]!.isNotEmpty)) {
         isReferral = responses[q2Key] == yes ? true : false;
-        referralreason = isReferral ? "FEVER" : referralreason;
+        isReferral ? referralReasons.add("FEVER") : null;
       }
       if (!isReferral &&
           (responses.containsKey(q4Key) && responses[q4Key]!.isNotEmpty)) {
         isReferral = responses[q4Key] == yes ? true : false;
-        referralreason = isReferral ? "DRUG_SE_PC" : referralreason;
+        isReferral ? referralReasons.add("DRUG_SE_PC") : null;
       }
     }
 

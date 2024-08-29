@@ -173,80 +173,124 @@ class _InventoryReportDetailsPageState
                                   DigitCard(
                                     child: Column(
                                       children: [
-                                        BlocConsumer<FacilityBloc,
-                                            FacilityState>(
-                                          listener: (context, state) =>
-                                              state.whenOrNull(
-                                            empty: () =>
-                                                NoFacilitiesAssignedDialog.show(
-                                              context,
-                                            ),
-                                          ),
-                                          builder: (context, state) {
-                                            final facilities = state.whenOrNull(
-                                                  fetched:
-                                                      (facilities, _, __) =>
-                                                          facilities,
-                                                ) ??
-                                                [];
-                                            final allFacilities =
+                                        if (context.isWarehouseMgr)
+                                          BlocConsumer<FacilityBloc,
+                                              FacilityState>(
+                                            listener: (context, state) =>
                                                 state.whenOrNull(
-                                                      fetched: (
-                                                        _,
-                                                        allFacilities,
-                                                        __,
-                                                      ) =>
+                                              empty: () =>
+                                                  NoFacilitiesAssignedDialog
+                                                      .show(
+                                                context,
+                                              ),
+                                            ),
+                                            builder: (context, state) {
+                                              final facilities =
+                                                  state.whenOrNull(
+                                                        fetched: (facilities, _,
+                                                                __) =>
+                                                            facilities,
+                                                      ) ??
+                                                      [];
+                                              final allFacilities =
+                                                  state.whenOrNull(
+                                                        fetched: (
+                                                          _,
                                                           allFacilities,
-                                                    ) ??
-                                                    [];
-                                            for (var element in allFacilities) {
-                                              facilityMap[element.id] = element;
-                                            }
+                                                          __,
+                                                        ) =>
+                                                            allFacilities,
+                                                      ) ??
+                                                      [];
+                                              for (var element
+                                                  in allFacilities) {
+                                                facilityMap[element.id] =
+                                                    element;
+                                              }
 
-                                            return DigitTextFormField(
-                                              valueAccessor:
-                                                  FacilityValueAccessor(
-                                                facilities,
-                                              ),
-                                              label: localizations.translate(
-                                                i18.stockReconciliationDetails
-                                                    .facilityName,
-                                              ),
-                                              suffix: const Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Icon(Icons.search),
-                                              ),
-                                              formControlName: _facilityKey,
-                                              readOnly: true,
-                                              isRequired: true,
-                                              onTap: () async {
-                                                final stockReconciliationBloc =
-                                                    context.read<
-                                                        StockReconciliationBloc>();
+                                              return InkWell(
+                                                onTap: () async {
+                                                  final stockReconciliationBloc =
+                                                      context.read<
+                                                          StockReconciliationBloc>();
 
-                                                final facility = await context
-                                                    .router
-                                                    .push<FacilityModel>(
-                                                  FacilitySelectionRoute(
-                                                    facilities: facilities,
+                                                  final facility = await context
+                                                      .router
+                                                      .push<FacilityModel>(
+                                                    FacilitySelectionRoute(
+                                                      facilities: facilities,
+                                                    ),
+                                                  );
+
+                                                  if (facility == null) return;
+                                                  form
+                                                      .control(_facilityKey)
+                                                      .value = facility;
+                                                  stockReconciliationBloc.add(
+                                                    StockReconciliationSelectFacilityEvent(
+                                                      facility,
+                                                      loggedInUserId: context
+                                                          .loggedInUserUuid,
+                                                    ),
+                                                  );
+
+                                                  handleSelection(form);
+                                                },
+                                                child: IgnorePointer(
+                                                  child: DigitTextFormField(
+                                                    valueAccessor:
+                                                        FacilityValueAccessor(
+                                                      facilities,
+                                                    ),
+                                                    label:
+                                                        localizations.translate(
+                                                      i18.stockReconciliationDetails
+                                                          .facilityLabel,
+                                                    ),
+                                                    suffix: const Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      child: Icon(Icons.search),
+                                                    ),
+                                                    formControlName:
+                                                        _facilityKey,
+                                                    isRequired: true,
+                                                    onTap: () async {
+                                                      final stockReconciliationBloc =
+                                                          context.read<
+                                                              StockReconciliationBloc>();
+
+                                                      final facility =
+                                                          await context.router
+                                                              .push<
+                                                                  FacilityModel>(
+                                                        FacilitySelectionRoute(
+                                                          facilities:
+                                                              facilities,
+                                                        ),
+                                                      );
+
+                                                      if (facility == null)
+                                                        return;
+                                                      form
+                                                          .control(_facilityKey)
+                                                          .value = facility;
+                                                      stockReconciliationBloc
+                                                          .add(
+                                                        StockReconciliationSelectFacilityEvent(
+                                                          facility,
+                                                          loggedInUserId: context
+                                                              .loggedInUserUuid,
+                                                        ),
+                                                      );
+
+                                                      handleSelection(form);
+                                                    },
                                                   ),
-                                                );
-
-                                                if (facility == null) return;
-                                                form
-                                                    .control(_facilityKey)
-                                                    .value = facility;
-                                                stockReconciliationBloc.add(
-                                                  StockReconciliationSelectFacilityEvent(
-                                                    facility,
-                                                  ),
-                                                );
-
-                                                handleSelection(form);
-                                              },
-                                            );
-                                          },
-                                        ),
+                                                ),
+                                              );
+                                            },
+                                          ),
                                         BlocBuilder<ProductVariantBloc,
                                             ProductVariantState>(
                                           builder: (context, state) {
@@ -260,7 +304,7 @@ class _InventoryReportDetailsPageState
                                                   label:
                                                       localizations.translate(
                                                     i18.stockReconciliationDetails
-                                                        .spaqLabel,
+                                                        .productLabel,
                                                   ),
                                                   isRequired: true,
                                                   onChanged: (value) {
@@ -318,6 +362,10 @@ class _InventoryReportDetailsPageState
                                           const quantityKey = 'quantity';
                                           const transactingPartyKey =
                                               'transactingParty';
+                                          const partialBlisterKey =
+                                              'partialBlistersReturned';
+                                          const wastedBlisterKey =
+                                              'wastedBlistersReturned';
 
                                           return _ReportDetailsContent(
                                             title: title,
@@ -337,6 +385,16 @@ class _InventoryReportDetailsPageState
                                                   key: quantityKey,
                                                   width: 150,
                                                 ),
+                                                if (widget.reportType ==
+                                                    InventoryReportType
+                                                        .returned)
+                                                  DigitGridColumn(
+                                                    label: i18
+                                                        .inventoryReportDetails
+                                                        .partialReturnedQuantotyLabel,
+                                                    key: partialBlisterKey,
+                                                    width: 150,
+                                                  ),
                                                 DigitGridColumn(
                                                   label: transactingPartyLabel,
                                                   key: transactingPartyKey,
@@ -360,15 +418,46 @@ class _InventoryReportDetailsPageState
                                                               model.quantity ??
                                                                   '',
                                                         ),
+                                                        if (widget.reportType ==
+                                                            InventoryReportType
+                                                                .returned)
+                                                          DigitGridCell(
+                                                            key:
+                                                                partialBlisterKey,
+                                                            value:
+                                                                _getPartialCountFromAdditionalDetails(
+                                                              model,
+                                                              partialBlisterKey,
+                                                            ),
+                                                          ),
                                                         DigitGridCell(
                                                           key:
                                                               transactingPartyKey,
-                                                          value: facilityMap[model
-                                                                      .transactingPartyId]
-                                                                  ?.name ??
-                                                              model
-                                                                  .transactingPartyType ??
-                                                              '',
+                                                          value: widget
+                                                                          .reportType ==
+                                                                      InventoryReportType
+                                                                          .receipt ||
+                                                                  widget.reportType ==
+                                                                      InventoryReportType
+                                                                          .returned ||
+                                                                  widget.reportType ==
+                                                                      InventoryReportType
+                                                                          .loss ||
+                                                                  widget.reportType ==
+                                                                      InventoryReportType
+                                                                          .damage
+                                                              ? facilityMap[model
+                                                                          .senderId]
+                                                                      ?.name ??
+                                                                  model
+                                                                      .senderType ??
+                                                                  ''
+                                                              : facilityMap[model
+                                                                          .receiverId]
+                                                                      ?.name ??
+                                                                  model
+                                                                      .receiverType ??
+                                                                  '',
                                                         ),
                                                       ],
                                                     ),
@@ -610,6 +699,24 @@ class _InventoryReportDetailsPageState
 
   String _getCountFromAdditionalDetails(
     StockReconciliationModel model,
+    String key,
+  ) {
+    final additionalDetails = model.additionalFields;
+    if (additionalDetails == null) {
+      return '0';
+    }
+    final count = additionalDetails.fields.firstWhereOrNull(
+      (e) => e.key == key,
+    );
+    if (count == null) {
+      return '0';
+    }
+
+    return (double.tryParse(count.value.toString()) ?? 0.0).toStringAsFixed(0);
+  }
+
+  String _getPartialCountFromAdditionalDetails(
+    StockModel model,
     String key,
   ) {
     final additionalDetails = model.additionalFields;

@@ -275,6 +275,17 @@ class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    UserQRDetailsRoute.name: (routeData) {
+      final args = routeData.argsAs<UserQRDetailsRouteArgs>(
+          orElse: () => const UserQRDetailsRouteArgs());
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: UserQRDetailsPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
     ComplaintsInboxWrapperRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
         routeData: routeData,
@@ -425,6 +436,7 @@ class _$AppRouter extends RootStackRouter {
           isReadministrationUnSuccessful: args.isReadministrationUnSuccessful,
           quantityWasted: args.quantityWasted,
           productVariantId: args.productVariantId,
+          referralReason: args.referralReason,
         ),
       );
     },
@@ -438,6 +450,17 @@ class _$AppRouter extends RootStackRouter {
           isEditing: args.isEditing,
           projectBeneficiaryClientRefId: args.projectBeneficiaryClientRefId,
           individual: args.individual,
+        ),
+      );
+    },
+    DoseAdministeredVerificationRoute.name: (routeData) {
+      final args = routeData.argsAs<DoseAdministeredVerificationRouteArgs>(
+          orElse: () => const DoseAdministeredVerificationRouteArgs());
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: DoseAdministeredVerificationPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
         ),
       );
     },
@@ -461,6 +484,7 @@ class _$AppRouter extends RootStackRouter {
           key: args.key,
           appLocalizations: args.appLocalizations,
           enableBackToSearch: args.enableBackToSearch,
+          doseAdministrationVerification: args.doseAdministrationVerification,
         ),
       );
     },
@@ -844,6 +868,11 @@ class _$AppRouter extends RootStackRouter {
                   parent: BeneficiaryWrapperRoute.name,
                 ),
                 RouteConfig(
+                  DoseAdministeredVerificationRoute.name,
+                  path: 'dose-administered-verification',
+                  parent: BeneficiaryWrapperRoute.name,
+                ),
+                RouteConfig(
                   DoseAdministeredRoute.name,
                   path: 'dose-administered',
                   parent: BeneficiaryWrapperRoute.name,
@@ -1018,6 +1047,11 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               BoundarySelectionRoute.name,
               path: 'select-boundary',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              UserQRDetailsRoute.name,
+              path: 'user-qr-code',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
@@ -1926,6 +1960,40 @@ class BoundarySelectionRouteArgs {
 }
 
 /// generated route for
+/// [UserQRDetailsPage]
+class UserQRDetailsRoute extends PageRouteInfo<UserQRDetailsRouteArgs> {
+  UserQRDetailsRoute({
+    Key? key,
+    AppLocalizations? appLocalizations,
+  }) : super(
+          UserQRDetailsRoute.name,
+          path: 'user-qr-code',
+          args: UserQRDetailsRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+          ),
+        );
+
+  static const String name = 'UserQRDetailsRoute';
+}
+
+class UserQRDetailsRouteArgs {
+  const UserQRDetailsRouteArgs({
+    this.key,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final AppLocalizations? appLocalizations;
+
+  @override
+  String toString() {
+    return 'UserQRDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
 /// [ComplaintsInboxWrapperPage]
 class ComplaintsInboxWrapperRoute extends PageRouteInfo<void> {
   const ComplaintsInboxWrapperRoute({List<PageRouteInfo>? children})
@@ -2377,6 +2445,7 @@ class ReferBeneficiaryRoute extends PageRouteInfo<ReferBeneficiaryRouteArgs> {
     bool isReadministrationUnSuccessful = false,
     String quantityWasted = "00",
     String? productVariantId,
+    String? referralReason,
   }) : super(
           ReferBeneficiaryRoute.name,
           path: 'refer-beneficiary',
@@ -2389,6 +2458,7 @@ class ReferBeneficiaryRoute extends PageRouteInfo<ReferBeneficiaryRouteArgs> {
             isReadministrationUnSuccessful: isReadministrationUnSuccessful,
             quantityWasted: quantityWasted,
             productVariantId: productVariantId,
+            referralReason: referralReason,
           ),
         );
 
@@ -2405,6 +2475,7 @@ class ReferBeneficiaryRouteArgs {
     this.isReadministrationUnSuccessful = false,
     this.quantityWasted = "00",
     this.productVariantId,
+    this.referralReason,
   });
 
   final Key? key;
@@ -2423,9 +2494,11 @@ class ReferBeneficiaryRouteArgs {
 
   final String? productVariantId;
 
+  final String? referralReason;
+
   @override
   String toString() {
-    return 'ReferBeneficiaryRouteArgs{key: $key, appLocalizations: $appLocalizations, isEditing: $isEditing, projectBeneficiaryClientRefId: $projectBeneficiaryClientRefId, individual: $individual, isReadministrationUnSuccessful: $isReadministrationUnSuccessful, quantityWasted: $quantityWasted, productVariantId: $productVariantId}';
+    return 'ReferBeneficiaryRouteArgs{key: $key, appLocalizations: $appLocalizations, isEditing: $isEditing, projectBeneficiaryClientRefId: $projectBeneficiaryClientRefId, individual: $individual, isReadministrationUnSuccessful: $isReadministrationUnSuccessful, quantityWasted: $quantityWasted, productVariantId: $productVariantId, referralReason: $referralReason}';
   }
 }
 
@@ -2480,6 +2553,41 @@ class IneligibilityReasonsRouteArgs {
 }
 
 /// generated route for
+/// [DoseAdministeredVerificationPage]
+class DoseAdministeredVerificationRoute
+    extends PageRouteInfo<DoseAdministeredVerificationRouteArgs> {
+  DoseAdministeredVerificationRoute({
+    Key? key,
+    AppLocalizations? appLocalizations,
+  }) : super(
+          DoseAdministeredVerificationRoute.name,
+          path: 'dose-administered-verification',
+          args: DoseAdministeredVerificationRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+          ),
+        );
+
+  static const String name = 'DoseAdministeredVerificationRoute';
+}
+
+class DoseAdministeredVerificationRouteArgs {
+  const DoseAdministeredVerificationRouteArgs({
+    this.key,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final AppLocalizations? appLocalizations;
+
+  @override
+  String toString() {
+    return 'DoseAdministeredVerificationRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
 /// [DoseAdministeredPage]
 class DoseAdministeredRoute extends PageRouteInfo<DoseAdministeredRouteArgs> {
   DoseAdministeredRoute({
@@ -2521,6 +2629,7 @@ class SplashAcknowledgementRoute
     Key? key,
     AppLocalizations? appLocalizations,
     bool? enableBackToSearch,
+    bool? doseAdministrationVerification,
   }) : super(
           SplashAcknowledgementRoute.name,
           path: 'splash-acknowledgement',
@@ -2528,6 +2637,7 @@ class SplashAcknowledgementRoute
             key: key,
             appLocalizations: appLocalizations,
             enableBackToSearch: enableBackToSearch,
+            doseAdministrationVerification: doseAdministrationVerification,
           ),
         );
 
@@ -2539,6 +2649,7 @@ class SplashAcknowledgementRouteArgs {
     this.key,
     this.appLocalizations,
     this.enableBackToSearch,
+    this.doseAdministrationVerification,
   });
 
   final Key? key;
@@ -2547,9 +2658,11 @@ class SplashAcknowledgementRouteArgs {
 
   final bool? enableBackToSearch;
 
+  final bool? doseAdministrationVerification;
+
   @override
   String toString() {
-    return 'SplashAcknowledgementRouteArgs{key: $key, appLocalizations: $appLocalizations, enableBackToSearch: $enableBackToSearch}';
+    return 'SplashAcknowledgementRouteArgs{key: $key, appLocalizations: $appLocalizations, enableBackToSearch: $enableBackToSearch, doseAdministrationVerification: $doseAdministrationVerification}';
   }
 }
 
