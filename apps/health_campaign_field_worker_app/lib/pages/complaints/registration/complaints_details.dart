@@ -390,7 +390,7 @@ class _ComplaintsDetailsPageState
                                         ),
                                       ],
                                       readOnly: isRaisedForSelf,
-                                      maxLength: 64,
+                                      maxLength: 50,
                                       isRequired: true,
                                       validationMessages: {
                                         'required': (object) =>
@@ -438,7 +438,7 @@ class _ComplaintsDetailsPageState
                               label: localizations.translate(
                                 i18.complaints.supervisorName,
                               ),
-                              maxLength: 64,
+                              maxLength: 50,
                             ),
                             DigitTextFormField(
                               formControlName: _supervisorContactNumber,

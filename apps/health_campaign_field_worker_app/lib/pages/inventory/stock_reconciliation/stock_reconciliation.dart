@@ -286,7 +286,7 @@ class _StockReconciliationPageState
                                     Text(
                                       localizations.translate(
                                         i18.stockReconciliationDetails
-                                            .spaqReconciliation,
+                                            .reconciliationPageTitle,
                                       ),
                                       style: Theme.of(context)
                                           .textTheme
@@ -311,8 +311,8 @@ class _StockReconciliationPageState
                                           return InkWell(
                                             onTap: () async {
                                               final stockReconciliationBloc =
-                                              context.read<
-                                                  StockReconciliationBloc>();
+                                                  context.read<
+                                                      StockReconciliationBloc>();
 
                                               final facility = await context
                                                   .router
@@ -330,9 +330,9 @@ class _StockReconciliationPageState
                                                 StockReconciliationSelectFacilityEvent(
                                                   facility,
                                                   loggedInUserId:
-                                                  context.loggedInUserUuid,
+                                                      context.loggedInUserUuid,
                                                   isDistributor: context
-                                                      .isDistributor &&
+                                                          .isDistributor &&
                                                       !context.isWarehouseMgr,
                                                 ),
                                               );
@@ -345,7 +345,7 @@ class _StockReconciliationPageState
                                                 ),
                                                 label: localizations.translate(
                                                   i18.stockReconciliationDetails
-                                                      .facilityName,
+                                                      .facilityLabel,
                                                 ),
                                                 suffix: const Padding(
                                                   padding: EdgeInsets.all(8.0),
@@ -369,16 +369,18 @@ class _StockReconciliationPageState
 
                                                   if (facility == null) return;
 
-                                                  form.control(_facilityKey).value =
-                                                      facility;
+                                                  form
+                                                      .control(_facilityKey)
+                                                      .value = facility;
                                                   stockReconciliationBloc.add(
                                                     StockReconciliationSelectFacilityEvent(
                                                       facility,
-                                                      loggedInUserId:
-                                                          context.loggedInUserUuid,
+                                                      loggedInUserId: context
+                                                          .loggedInUserUuid,
                                                       isDistributor: context
                                                               .isDistributor &&
-                                                          !context.isWarehouseMgr,
+                                                          !context
+                                                              .isWarehouseMgr,
                                                     ),
                                                   );
                                                 },
@@ -399,7 +401,7 @@ class _StockReconciliationPageState
                                                   _productVariantKey,
                                               label: localizations.translate(
                                                 i18.stockReconciliationDetails
-                                                    .spaqLabel,
+                                                    .productLabel,
                                               ),
                                               isRequired: true,
                                               onChanged: (value) {
@@ -471,7 +473,7 @@ class _StockReconciliationPageState
                                       element: {
                                         localizations.translate(
                                           i18.stockReconciliationDetails
-                                              .spaqReceived,
+                                              .stockReceived,
                                         ): stockState.stockReceived
                                             .toStringAsFixed(0),
                                       },
@@ -483,7 +485,7 @@ class _StockReconciliationPageState
                                       element: {
                                         localizations.translate(
                                           i18.stockReconciliationDetails
-                                              .spaqSent,
+                                              .stockIssued,
                                         ): stockState.stockIssued
                                             .toStringAsFixed(0),
                                       },
@@ -495,7 +497,7 @@ class _StockReconciliationPageState
                                       element: {
                                         localizations.translate(
                                           i18.stockReconciliationDetails
-                                              .spaqReturned,
+                                              .stockReturned,
                                         ): stockState.stockReturned
                                             .toStringAsFixed(0),
                                       },
@@ -507,7 +509,7 @@ class _StockReconciliationPageState
                                       element: {
                                         localizations.translate(
                                           i18.stockReconciliationDetails
-                                              .spaqTheoretical,
+                                              .stockOnHand,
                                         ): stockState.stockInHand
                                             .toStringAsFixed(0),
                                       },
@@ -538,7 +540,7 @@ class _StockReconciliationPageState
                                       isRequired: true,
                                       label: localizations.translate(
                                         i18.stockReconciliationDetails
-                                            .physicalSpaqCount,
+                                            .manualCountLabel,
                                       ),
                                       formControlName: _manualCountKey,
                                       keyboardType:
