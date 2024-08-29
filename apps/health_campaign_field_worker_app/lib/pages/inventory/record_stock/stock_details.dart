@@ -43,14 +43,16 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
   static const _vehicleNumberKey = 'vehicleNumber';
   static const _typeOfTransportKey = 'typeOfTransport';
   static const _batchNumberKey = 'batchNumber';
+  static int maxQuantity = 10000;
+  static int minQuantity = 0;
 
   List<ValidatorFunction> partialBlistersQuantityValidator = [];
   List<ValidatorFunction> wastedBlistersQuantityValidator = [];
   List<ValidatorFunction> transactionQuantityValidator = [
     Validators.number,
     Validators.required,
-    Validators.min(0),
-    Validators.max(10000),
+    Validators.min(minQuantity),
+    Validators.max(maxQuantity),
   ];
   List<GS1Barcode> scannedResources = [];
   static const _deliveryTeamKey = 'deliveryTeam';
@@ -87,8 +89,8 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
         validators: [
           Validators.number,
           Validators.required,
-          Validators.min(0),
-          Validators.max(10000),
+          Validators.min(minQuantity),
+          Validators.max(maxQuantity),
         ],
       ),
       _vehicleNumberKey: FormControl<String>(
@@ -166,15 +168,15 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                       wastedBlistersQuantityValidator = [
                         Validators.number,
                         Validators.required,
-                        Validators.min(0),
-                        Validators.max(10000),
+                        Validators.min(minQuantity),
+                        Validators.max(maxQuantity),
                       ];
 
                       partialBlistersQuantityValidator = [
                         Validators.number,
                         Validators.required,
-                        Validators.min(0),
-                        Validators.max(10000),
+                        Validators.min(minQuantity),
+                        Validators.max(maxQuantity),
                       ];
                     }
 
@@ -188,8 +190,8 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                     partialBlistersQuantityValidator = [
                       Validators.number,
                       Validators.required,
-                      Validators.min(0),
-                      Validators.max(10000),
+                      Validators.min(minQuantity),
+                      Validators.max(maxQuantity),
                     ];
                     break;
                   case StockRecordEntryType.loss:
@@ -938,8 +940,10 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                     [
                                                       Validators.number,
                                                       Validators.required,
-                                                      Validators.min(0),
-                                                      Validators.max(10000),
+                                                      Validators.min(
+                                                          minQuantity),
+                                                      Validators.max(
+                                                          maxQuantity),
                                                     ],
                                                     updateParent: true,
                                                     autoValidate: true,
@@ -1117,8 +1121,10 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                         [
                                                           Validators.number,
                                                           Validators.required,
-                                                          Validators.min(0),
-                                                          Validators.max(10000),
+                                                          Validators.min(
+                                                              minQuantity),
+                                                          Validators.max(
+                                                              maxQuantity),
                                                         ],
                                                         updateParent: true,
                                                         autoValidate: true,
@@ -1268,13 +1274,21 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                               localizations.translate(
                                                 '${quantityCountLabel}_VALIDATION',
                                               ),
-                                          "max": (object) =>
-                                              localizations.translate(
+                                          "max": (object) => localizations
+                                              .translate(
                                                 '${quantityCountLabel}_MAX_ERROR',
+                                              )
+                                              .replaceAll(
+                                                '{}',
+                                                maxQuantity.toString(),
                                               ),
-                                          "min": (object) =>
-                                              localizations.translate(
+                                          "min": (object) => localizations
+                                              .translate(
                                                 '${quantityCountLabel}_MIN_ERROR',
+                                              )
+                                              .replaceAll(
+                                                '{}',
+                                                minQuantity.toString(),
                                               ),
                                         },
                                         label: localizations.translate(
@@ -1343,13 +1357,21 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                 localizations.translate(
                                                   '${quantityCountLabel}_VALIDATION',
                                                 ),
-                                            "max": (object) =>
-                                                localizations.translate(
+                                            "max": (object) => localizations
+                                                .translate(
                                                   '${quantityCountLabel}_MAX_ERROR',
+                                                )
+                                                .replaceAll(
+                                                  '{}',
+                                                  maxQuantity.toString(),
                                                 ),
-                                            "min": (object) =>
-                                                localizations.translate(
+                                            "min": (object) => localizations
+                                                .translate(
                                                   '${quantityCountLabel}_MIN_ERROR',
+                                                )
+                                                .replaceAll(
+                                                  '{}',
+                                                  minQuantity.toString(),
                                                 ),
                                           },
                                           label: localizations.translate(
@@ -1372,13 +1394,21 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                 localizations.translate(
                                                   '${quantityCountLabel}_VALIDATION',
                                                 ),
-                                            "max": (object) =>
-                                                localizations.translate(
+                                            "max": (object) => localizations
+                                                .translate(
                                                   '${quantityCountLabel}_MAX_ERROR',
+                                                )
+                                                .replaceAll(
+                                                  '{}',
+                                                  maxQuantity.toString(),
                                                 ),
-                                            "min": (object) =>
-                                                localizations.translate(
+                                            "min": (object) => localizations
+                                                .translate(
                                                   '${quantityCountLabel}_MIN_ERROR',
+                                                )
+                                                .replaceAll(
+                                                  '{}',
+                                                  minQuantity.toString(),
                                                 ),
                                           },
                                           label: localizations.translate(
@@ -1422,13 +1452,21 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                     localizations.translate(
                                                       '${i18.stockDetails.quantityOfProductIndicatedOnWaybillLabel}_ERROR',
                                                     ),
-                                                "max": (object) =>
-                                                    localizations.translate(
+                                                "max": (object) => localizations
+                                                    .translate(
                                                       '${quantityCountLabel}_MAX_ERROR',
+                                                    )
+                                                    .replaceAll(
+                                                      '{}',
+                                                      maxQuantity.toString(),
                                                     ),
-                                                "min": (object) =>
-                                                    localizations.translate(
+                                                "min": (object) => localizations
+                                                    .translate(
                                                       '${quantityCountLabel}_MIN_ERROR',
+                                                    )
+                                                    .replaceAll(
+                                                      '{}',
+                                                      minQuantity.toString(),
                                                     ),
                                               },
                                               onChanged: (control) {

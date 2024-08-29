@@ -144,9 +144,12 @@ class _BoundarySelectionPageState
                                         // Call the resetChildDropdowns function when a parent dropdown is selected
                                         resetChildDropdowns(label, state);
                                       },
-                                      isRequired:
-                                          labelIndex == 0 ? true : false,
-                                      validationMessage: labelIndex == 0
+                                      isRequired: (labelIndex == 0 ||
+                                              context.isDistributor)
+                                          ? true
+                                          : false,
+                                      validationMessage: (labelIndex == 0 ||
+                                              context.isDistributor)
                                           ? localizations.translate(
                                               i18.common.corecommonRequired,
                                             )
@@ -462,7 +465,10 @@ class _BoundarySelectionPageState
                                                   isClicked
                                               ? null
                                               : () async {
-                                                  if (!form.valid) {
+                                                  if (!form.valid ||
+                                                      validateAllBoundarySelection(
+                                                        context.isDistributor,
+                                                      )) {
                                                     clickedStatus.value = false;
                                                     await DigitToast.show(
                                                       context,
@@ -552,6 +558,29 @@ class _BoundarySelectionPageState
         },
       ),
     );
+  }
+
+  bool validateAllBoundarySelection(bool mandateAllBoundarySelection) {
+    if (mandateAllBoundarySelection) {
+      // Iterate through the map entries
+      for (final entry in formControls.entries) {
+        // Access the form control
+        final formControl = entry.value;
+
+        // Check if the form control value is null
+        if (formControl.value == null) {
+          formControl.setErrors({'': true});
+          // Return true if any form control has a null value
+
+          return true;
+        }
+      }
+
+      // Return false if none of the form controls have a null value
+      return false;
+    } else {
+      return false;
+    }
   }
 
   void resetChildDropdowns(String parentLabel, BoundaryState state) {
