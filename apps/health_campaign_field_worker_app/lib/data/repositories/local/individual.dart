@@ -144,6 +144,7 @@ class IndividualLocalRepository extends IndividualLocalBaseRepository {
           mobileNumber: individual.mobileNumber,
           isDeleted: individual.isDeleted,
           rowVersion: individual.rowVersion,
+          gender: individual.gender,
           identifiers: identifier == null
               ? null
               : [
