@@ -56,6 +56,8 @@ class Common {
 
   String get coreCommonReasonRequired => 'CORE_COMMON_REASON_REQUIRED';
 
+  String get coreCommonOthersRequired => 'CORE_COMMON_OTHERS_REQUIRED';
+
   String get corecommonclose => 'CORE_COMMON_CLOSE';
 
   String get coreCommonOk => 'CORE_COMMON_OK';
@@ -844,6 +846,9 @@ class StockDetails {
   String get countDialogCancel =>
       'STOCK_DETAILS_COUNT_DIALOG_CANCEL_ACTION_LABEL';
   String get scannedResources => 'SCANNED_RESOURCES';
+
+  String get senderReceiverValidation =>
+      'STOCK_DETAILS_SENDER_RECEIVER_ID_VALIDATION';
 }
 
 class StockReconciliationDetails {

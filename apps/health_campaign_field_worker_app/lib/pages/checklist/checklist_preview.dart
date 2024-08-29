@@ -189,12 +189,19 @@ class _ChecklistPreviewPageState extends LocalizedState<ChecklistPreviewPage> {
                                                         child: Text(
                                                           e.value != null &&
                                                                   e.dataType ==
+                                                                      'MultiValueList'
+                                                              ? getMultiValueString(e
+                                                                  .value
+                                                                  .toString()
+                                                                  .split('^'))
+                                                              : e.dataType ==
                                                                       'SingleValueList'
-                                                              ? localizations
-                                                                  .translate(
-                                                                  'CORE_COMMON_${e.value.toString().toUpperCase()}',
-                                                                )
-                                                              : e.value ?? "",
+                                                                  ? localizations
+                                                                      .translate(
+                                                                      'CORE_COMMON_${e.value.toString().toUpperCase()}',
+                                                                    )
+                                                                  : e.value ??
+                                                                      "",
                                                         ),
                                                       ),
                                                     ),
@@ -258,5 +265,16 @@ class _ChecklistPreviewPageState extends LocalizedState<ChecklistPreviewPage> {
         ],
       ),
     );
+  }
+
+  String getMultiValueString(List<String> list) {
+    String multiValueText = '';
+
+    for (var i = 0; i < list.length; i++) {
+      multiValueText =
+          '$multiValueText${localizations.translate('CORE_COMMON_${list[i].toUpperCase()}')};';
+    }
+
+    return multiValueText;
   }
 }
