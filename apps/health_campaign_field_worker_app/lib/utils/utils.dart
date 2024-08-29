@@ -410,6 +410,27 @@ bool checkStatus(
   }
 }
 
+bool redosePending(List<TaskModel>? tasks) {
+  if ((tasks ?? []).isEmpty) {
+    return true;
+  }
+  var successfulTask = tasks!
+      .where(
+        (element) => element.status == Status.administeredSuccess.toValue(),
+      )
+      .lastOrNull;
+  var redosePending = successfulTask != null &&
+      (successfulTask.additionalFields?.fields
+                  .where(
+                    (element) => element.key == Constants.reAdministeredKey,
+                  )
+                  .toList() ??
+              [])
+          .isEmpty;
+
+  return redosePending;
+}
+
 bool recordedSideEffect(
   Cycle? selectedCycle,
   TaskModel? task,

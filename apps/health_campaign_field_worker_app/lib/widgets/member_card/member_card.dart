@@ -62,6 +62,7 @@ class MemberCard extends StatelessWidget {
     final theme = Theme.of(context);
     final beneficiaryType = context.beneficiaryType;
     final doseStatus = checkStatus(tasks, context.selectedCycle);
+    final redosePendingStatus = redosePending(tasks);
 
     return Container(
       decoration: BoxDecoration(
@@ -254,7 +255,7 @@ class MemberCard extends StatelessWidget {
                         (isNotEligible || isBeneficiaryIneligible) &&
                                 !doseStatus
                             ? const Offstage()
-                            : !isNotEligible
+                            : !isNotEligible && redosePendingStatus
                                 ? DigitElevatedButton(
                                     child: Center(
                                       child: Text(
@@ -311,25 +312,18 @@ class MemberCard extends StatelessWidget {
                                           ),
                                         );
                                       } else {
-                                        var successfulTask = tasks
-                                            ?.where((element) =>
-                                                element.status ==
-                                                Status.administeredSuccess
-                                                    .toValue())
+                                        var successfulTask = tasks!
+                                            .where(
+                                              (element) =>
+                                                  element.status ==
+                                                  Status.administeredSuccess
+                                                      .toValue(),
+                                            )
                                             .lastOrNull;
-                                        if (successfulTask != null &&
-                                            (successfulTask.additionalFields
-                                                        ?.fields
-                                                        .where((element) =>
-                                                            element.key ==
-                                                            Constants
-                                                                .reAdministeredKey)
-                                                        .toList() ??
-                                                    [])
-                                                .isEmpty) {
+                                        if (redosePendingStatus) {
                                           context.router.push(
                                             RecordRedoseRoute(
-                                              tasks: [successfulTask],
+                                              tasks: [successfulTask!],
                                             ),
                                           );
                                         } else {
