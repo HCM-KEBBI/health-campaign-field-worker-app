@@ -44,7 +44,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
   static const _vehicleNumberKey = 'vehicleNumber';
   static const _typeOfTransportKey = 'typeOfTransport';
   static const _batchNumberKey = 'batchNumber';
-  static int maxQuantity = 10000;
+  static int maxQuantity = 100000000;
   static int minQuantity = 0;
 
   List<ValidatorFunction> partialBlistersQuantityValidator = [];
@@ -601,9 +601,17 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                     }
                                                   }
                                                 }
-                                                final deliveryTeamName = form
+                                                String? deliveryTeamName = form
                                                     .control(_deliveryTeamKey)
                                                     .value as String?;
+
+                                                if (deliveryTeamName != null) {
+                                                  deliveryTeamName =
+                                                      deliveryTeamName
+                                                          .split(Constants
+                                                              .pipeSeparator)
+                                                          .last;
+                                                }
 
                                                 final supervisorCode = form
                                                     .control(_supervisorKey)
@@ -1301,165 +1309,169 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                         },
                                       ),
                                       if (!isDistributor)
-                                        // InkWell(
-                                        //   onTap: () async {
-                                        //     Navigator.of(context).push(
-                                        //       MaterialPageRoute(
-                                        //         builder: (context) =>
-                                        //             const DigitScannerPage(
-                                        //           quantity: 1,
-                                        //           isGS1code: false,
-                                        //           singleValue: true,
-                                        //         ),
-                                        //         settings: const RouteSettings(
-                                        //           name: '/qr-scanner',
-                                        //         ),
-                                        //       ),
-                                        //     );
-                                        //   },
-                                        //   child: IgnorePointer(
-                                        //     child:
-                                        DigitTextFormField(
-                                          label: localizations.translate(
-                                            i18.manageStock.cddTeamCodeLabel,
-                                          ),
-                                          readOnly: !deliveryTeamSelected,
-                                          onChanged: (val) {
-                                            String? value =
-                                                val.value as String?;
-                                            if (value != null &&
-                                                value.trim().isNotEmpty) {
-                                              context
-                                                  .read<DigitScannerBloc>()
-                                                  .add(
-                                                    DigitScannerEvent
-                                                        .handleScanner(
-                                                      barCode: [],
-                                                      qrCode: [value],
-                                                      manualCode: value,
-                                                    ),
-                                                  );
-                                            } else {
-                                              clearQRCodes();
-                                            }
+                                        InkWell(
+                                          onTap: () async {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const DigitScannerPage(
+                                                  quantity: 1,
+                                                  isGS1code: false,
+                                                  singleValue: true,
+                                                ),
+                                                settings: const RouteSettings(
+                                                  name: '/qr-scanner',
+                                                ),
+                                              ),
+                                            );
                                           },
-                                          suffix: IconButton(
-                                            onPressed: !deliveryTeamSelected
-                                                ? null
-                                                : () {
-                                                    //[TODO: Add route to auto_route]
-                                                    Navigator.of(context).push(
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            const DigitScannerPage(
-                                                          quantity: 1,
-                                                          isGS1code: false,
-                                                          singleValue: true,
+                                          child: IgnorePointer(
+                                            child: DigitTextFormField(
+                                              label: localizations.translate(
+                                                i18.manageStock
+                                                    .cddTeamCodeLabel,
+                                              ),
+                                              readOnly: !deliveryTeamSelected,
+                                              onChanged: (val) {
+                                                String? value =
+                                                    val.value as String?;
+                                                if (value != null &&
+                                                    value.trim().isNotEmpty) {
+                                                  context
+                                                      .read<DigitScannerBloc>()
+                                                      .add(
+                                                        DigitScannerEvent
+                                                            .handleScanner(
+                                                          barCode: [],
+                                                          qrCode: [value],
+                                                          manualCode: value,
                                                         ),
-                                                        settings:
-                                                            const RouteSettings(
-                                                          name: '/qr-scanner',
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
-                                            icon: Icon(
-                                              Icons.qr_code_2,
-                                              color:
-                                                  theme.colorScheme.secondary,
+                                                      );
+                                                } else {
+                                                  clearQRCodes();
+                                                }
+                                              },
+                                              suffix: IconButton(
+                                                onPressed: !deliveryTeamSelected
+                                                    ? null
+                                                    : () {
+                                                        //[TODO: Add route to auto_route]
+                                                        Navigator.of(context)
+                                                            .push(
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                const DigitScannerPage(
+                                                              quantity: 1,
+                                                              isGS1code: false,
+                                                              singleValue: true,
+                                                            ),
+                                                            settings:
+                                                                const RouteSettings(
+                                                              name:
+                                                                  '/qr-scanner',
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                icon: Icon(
+                                                  Icons.qr_code_2,
+                                                  color: theme
+                                                      .colorScheme.secondary,
+                                                ),
+                                              ),
+                                              isRequired: deliveryTeamSelected,
+                                              maxLines: 3,
+                                              formControlName: _deliveryTeamKey,
+                                              validationMessages: {
+                                                "required": (object) =>
+                                                    localizations.translate(
+                                                      i18.common
+                                                          .corecommonRequired,
+                                                    ),
+                                              },
                                             ),
                                           ),
-                                          isRequired: deliveryTeamSelected,
-                                          maxLines: 3,
-                                          formControlName: _deliveryTeamKey,
-                                          validationMessages: {
-                                            "required": (object) =>
-                                                localizations.translate(
-                                                  i18.common.corecommonRequired,
-                                                ),
-                                          },
                                         ),
-                                      //   ),
-                                      // ),
                                       if (isDistributor)
-                                        // InkWell(
-                                        //   onTap: () async {
-                                        //     Navigator.of(context).push(
-                                        //       MaterialPageRoute(
-                                        //         builder: (context) =>
-                                        //             const DigitScannerPage(
-                                        //           quantity: 1,
-                                        //           isGS1code: false,
-                                        //           singleValue: true,
-                                        //         ),
-                                        //         settings: const RouteSettings(
-                                        //           name: '/qr-scanner',
-                                        //         ),
-                                        //       ),
-                                        //     );
-                                        //   },
-                                        //   child: IgnorePointer(
-                                        //     child:
-                                        DigitTextFormField(
-                                          label: localizations.translate(
-                                            i18.manageStock
-                                                .cddSupervisorCodeLabel,
-                                          ),
-                                          // readOnly: true,
-                                          onChanged: (val) {
-                                            String? value =
-                                                val.value as String?;
-                                            if (value != null &&
-                                                value.trim().isNotEmpty) {
-                                              context
-                                                  .read<DigitScannerBloc>()
-                                                  .add(
-                                                    DigitScannerEvent
-                                                        .handleScanner(
-                                                      barCode: [],
-                                                      qrCode: [value],
-                                                      manualCode: value,
+                                        InkWell(
+                                          onTap: () async {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const DigitScannerPage(
+                                                  quantity: 1,
+                                                  isGS1code: false,
+                                                  singleValue: true,
+                                                ),
+                                                settings: const RouteSettings(
+                                                  name: '/qr-scanner',
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: IgnorePointer(
+                                            child: DigitTextFormField(
+                                              label: localizations.translate(
+                                                i18.manageStock
+                                                    .cddSupervisorCodeLabel,
+                                              ),
+                                              // readOnly: true,
+                                              onChanged: (val) {
+                                                String? value =
+                                                    val.value as String?;
+                                                if (value != null &&
+                                                    value.trim().isNotEmpty) {
+                                                  context
+                                                      .read<DigitScannerBloc>()
+                                                      .add(
+                                                        DigitScannerEvent
+                                                            .handleScanner(
+                                                          barCode: [],
+                                                          qrCode: [value],
+                                                          manualCode: value,
+                                                        ),
+                                                      );
+                                                } else {
+                                                  clearQRCodes();
+                                                }
+                                              },
+                                              suffix: IconButton(
+                                                onPressed: () {
+                                                  //[TODO: Add route to auto_route]
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const DigitScannerPage(
+                                                        quantity: 1,
+                                                        isGS1code: false,
+                                                        singleValue: true,
+                                                      ),
+                                                      settings:
+                                                          const RouteSettings(
+                                                        name: '/qr-scanner',
+                                                      ),
                                                     ),
                                                   );
-                                            } else {
-                                              clearQRCodes();
-                                            }
-                                          },
-                                          suffix: IconButton(
-                                            onPressed: () {
-                                              //[TODO: Add route to auto_route]
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const DigitScannerPage(
-                                                    quantity: 1,
-                                                    isGS1code: false,
-                                                    singleValue: true,
-                                                  ),
-                                                  settings: const RouteSettings(
-                                                    name: '/qr-scanner',
-                                                  ),
+                                                },
+                                                icon: Icon(
+                                                  Icons.qr_code_2,
+                                                  color: theme
+                                                      .colorScheme.secondary,
                                                 ),
-                                              );
-                                            },
-                                            icon: Icon(
-                                              Icons.qr_code_2,
-                                              color:
-                                                  theme.colorScheme.secondary,
+                                              ),
+                                              isRequired: isDistributor,
+                                              maxLines: 3,
+                                              formControlName: _supervisorKey,
+                                              validationMessages: {
+                                                "required": (object) =>
+                                                    localizations.translate(
+                                                      i18.common
+                                                          .corecommonRequired,
+                                                    ),
+                                              },
                                             ),
                                           ),
-                                          isRequired: isDistributor,
-                                          maxLines: 3,
-                                          formControlName: _supervisorKey,
-                                          validationMessages: {
-                                            "required": (object) =>
-                                                localizations.translate(
-                                                  i18.common.corecommonRequired,
-                                                ),
-                                          },
                                         ),
-                                      //   ),
-                                      // ),
                                       DigitTextFormField(
                                         formControlName:
                                             _transactionQuantityKey,

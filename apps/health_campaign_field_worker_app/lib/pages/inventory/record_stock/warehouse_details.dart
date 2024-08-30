@@ -52,7 +52,10 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
           value: facility,
         ),
         _teamCodeKey: FormControl<String>(
-          value: stockState.primaryId ?? context.loggedInUserUuid,
+          value: stockState.primaryId ??
+              context.loggedInUser.userName.toString() +
+                  Constants.pipeSeparator +
+                  context.loggedInUserUuid,
           validators: isDistributor ? [Validators.required] : [],
         ),
       });
@@ -212,12 +215,22 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                                                       ? facility
                                                       : FacilityModel(
                                                           id: teamCode
-                                                              .toString(),
+                                                              .toString()
+                                                              .split(
+                                                                Constants
+                                                                    .pipeSeparator,
+                                                              )
+                                                              .last,
                                                         ),
                                                   primaryId: (isDistributor
                                                           ? FacilityModel(
                                                               id: teamCode
-                                                                  .toString(),
+                                                                  .toString()
+                                                                  .split(
+                                                                    Constants
+                                                                        .pipeSeparator,
+                                                                  )
+                                                                  .last,
                                                             )
                                                           : facility)!
                                                       .id,
