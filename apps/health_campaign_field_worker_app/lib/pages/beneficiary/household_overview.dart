@@ -445,10 +445,8 @@ class _HouseholdOverviewPageState
                                                       sideEffectData,
                                                     )
                                                   : false,
-                                              // TODO Need to handle the null check
-                                              name: e.name?.givenName ?? ' - ',
-                                              // name:
-                                              //     '${e.name?.givenName ?? ' - '} ${e.name?.familyName ?? ' - '}',
+                                              name:
+                                                  '${e.name?.givenName ?? ' - '} ${e.name?.familyName ?? ' - '}',
                                               years: (e.dateOfBirth == null
                                                       ? null
                                                       : DigitDateUtils
@@ -510,6 +508,8 @@ class _HouseholdOverviewPageState
                                       onPressed: () async {
                                         final bloc = context
                                             .read<HouseholdOverviewBloc>();
+                                        final searchBloc = context
+                                            .read<SearchHouseholdsBloc>();
 
                                         final wrapper =
                                             state.householdMemberWrapper;
@@ -537,6 +537,14 @@ class _HouseholdOverviewPageState
                                             projectId: projectId,
                                             projectBeneficiaryType:
                                                 beneficiaryType,
+                                          ),
+                                        );
+
+                                        searchBloc.add(
+                                          SearchHouseholdsByHouseholdsEvent(
+                                            householdModel: wrapper.household,
+                                            projectId: projectId,
+                                            isProximityEnabled: false,
                                           ),
                                         );
                                       },

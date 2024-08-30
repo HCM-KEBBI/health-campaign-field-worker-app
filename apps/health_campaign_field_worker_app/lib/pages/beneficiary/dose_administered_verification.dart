@@ -72,12 +72,6 @@ class _DoseAdministeredVerificationPageState
                               '${state.selectedIndividual?.name?.givenName ?? "-"}')
                           .toString();
 
-                  // todo verify quantityDistributed
-
-                  var quantity = deliveryInterventionstate
-                          .oldTask?.resources?.first.quantity ??
-                      0;
-
                   var beneficiaryId = state.selectedIndividual?.identifiers
                           ?.lastWhere(
                             (e) =>
@@ -324,7 +318,8 @@ class _DoseAdministeredVerificationPageState
                                       i18.deliverIntervention
                                           .doseGivenCareGiver,
                                     )}",
-                                    {'{}': quantity.toString()},
+                                    // todo: verify this
+                                    {'{}': "2"},
                                     theme,
                                   ),
                                   _buildTextRow(
