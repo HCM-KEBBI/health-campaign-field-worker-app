@@ -508,6 +508,8 @@ class _HouseholdOverviewPageState
                                       onPressed: () async {
                                         final bloc = context
                                             .read<HouseholdOverviewBloc>();
+                                        final searchBloc = context
+                                            .read<SearchHouseholdsBloc>();
 
                                         final wrapper =
                                             state.householdMemberWrapper;
@@ -535,6 +537,14 @@ class _HouseholdOverviewPageState
                                             projectId: projectId,
                                             projectBeneficiaryType:
                                                 beneficiaryType,
+                                          ),
+                                        );
+
+                                        searchBloc.add(
+                                          SearchHouseholdsByHouseholdsEvent(
+                                            householdModel: wrapper.household,
+                                            projectId: projectId,
+                                            isProximityEnabled: false,
                                           ),
                                         );
                                       },
