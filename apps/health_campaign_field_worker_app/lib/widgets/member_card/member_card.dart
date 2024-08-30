@@ -252,7 +252,9 @@ class MemberCard extends StatelessWidget {
                     )
                   : Column(
                       children: [
-                        (isNotEligible || isBeneficiaryIneligible) &&
+                        (isNotEligible ||
+                                    isBeneficiaryIneligible ||
+                                    isBeneficiaryReferred) &&
                                 !doseStatus
                             ? const Offstage()
                             : !isNotEligible && redosePendingStatus

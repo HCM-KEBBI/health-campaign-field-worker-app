@@ -639,6 +639,9 @@ class DeliverIntervention {
   String get reasonForRedoseLabel =>
       'DELIVER_INTERVENTION_REASON_FOR_REDOSE_LABEL';
 
+  String get redoseQuantityLabel =>
+      'DELIVER_INTERVENTION_REDOSE_QUANTITY_LABEL';
+
   String get idTypeText => 'DELIVER_INTERVENTION_ID_TYPE_TEXT';
 
   String get idNumberText => 'DELIVER_INTERVENTION_ID_NUMBER_TEXT';

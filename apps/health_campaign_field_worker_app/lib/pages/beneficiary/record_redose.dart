@@ -54,7 +54,7 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
   static const _reDoseQuantityKey = 'reDoseQuantity';
 
   // Variable to track dose administration status
-  bool doseAdministered = false;
+  bool doseAdministered = true;
 
   // List of controllers for form elements
   final List _controllers = [];
@@ -404,9 +404,9 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                   padding:
                                                       const EdgeInsets.fromLTRB(
                                                     kPadding * 2,
+                                                    kPadding,
                                                     kPadding * 2,
-                                                    kPadding * 2,
-                                                    kPadding * 2,
+                                                    kPadding,
                                                   ),
                                                   child: Row(
                                                     children: [
