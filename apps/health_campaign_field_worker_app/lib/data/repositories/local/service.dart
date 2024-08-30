@@ -64,10 +64,10 @@ class ServiceLocalRepository extends ServiceLocalBaseRepository {
       clientAuditDetails: entity.clientAuditDetails,
       attributes: entity.attributes?.map((e) {
         return e.dataType == 'Number'
-            ? e.copyWith(value: int.tryParse(e.value))
+            ? e.copyWith(value: e.value != null ? int.tryParse(e.value) : 0)
             : e.dataType == 'MultiValueList'
                 ? e.copyWith(
-                    value: e.value.toString().split('.'),
+                    value: e.value != null ? e.value.toString().split('^') : [],
                     additionalDetails: e.additionalDetails != null
                         ? {"value": e.additionalDetails}
                         : null,

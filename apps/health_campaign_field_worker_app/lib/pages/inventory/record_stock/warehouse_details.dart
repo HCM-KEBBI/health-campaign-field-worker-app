@@ -48,18 +48,19 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
           value: context.boundary.name,
         ),
         _warehouseKey: FormControl<FacilityModel>(
-          validators: [Validators.required],
+          validators: isDistributor ? [] : [Validators.required],
           value: facility,
         ),
         _teamCodeKey: FormControl<String>(
           value: stockState.primaryId ?? context.loggedInUserUuid,
-          validators: deliveryTeamSelected ? [Validators.required] : [],
+          validators: isDistributor ? [Validators.required] : [],
         ),
       });
 
   @override
   Widget build(BuildContext context) {
     final recordStockBloc = BlocProvider.of<RecordStockBloc>(context);
+    final isDistributor = context.isDistributor;
 
     return BlocBuilder<ProjectBloc, ProjectState>(
       builder: (ctx, projectState) {
@@ -111,6 +112,21 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
             }
 
             final stockState = recordStockBloc.state;
+            String dateLabel = i18.warehouseDetails.dateOfReceipt;
+
+            switch (stockState.entryType) {
+              case StockRecordEntryType.dispatch:
+                dateLabel = isDistributor
+                    ? i18.warehouseDetails.dateOfReturn
+                    : i18.warehouseDetails.dateOfIssue;
+                break;
+              case StockRecordEntryType.returned:
+                dateLabel = i18.warehouseDetails.dateOfReturn;
+                break;
+              default:
+                dateLabel = i18.warehouseDetails.dateOfReceipt;
+                break;
+            }
 
             return Scaffold(
               body: GestureDetector(
@@ -119,7 +135,7 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                 },
                 child: ReactiveFormBuilder(
                   form: () => buildForm(
-                    deliveryTeamSelected,
+                    isDistributor,
                     stockState,
                   ),
                   builder: (context, form, child) {
@@ -159,7 +175,8 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                                             .control(_teamCodeKey)
                                             .value as String?;
 
-                                        if (facility == null) {
+                                        if (!isDistributor &&
+                                            facility == null) {
                                           DigitToast.show(
                                             context,
                                             options: DigitToastOptions(
@@ -171,7 +188,7 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                                               theme,
                                             ),
                                           );
-                                        } else if (deliveryTeamSelected &&
+                                        } else if (isDistributor &&
                                             (teamCode == null ||
                                                 teamCode.trim().isEmpty)) {
                                           DigitToast.show(
@@ -188,23 +205,23 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                                         } else {
                                           context.read<RecordStockBloc>().add(
                                                 RecordStockSaveWarehouseDetailsEvent(
+                                                  loggedInUserId:
+                                                      context.loggedInUserUuid,
                                                   dateOfRecord: dateOfRecord,
-                                                  facilityModel: facility,
-                                                  primaryId: (context
-                                                                  .isDistributor &&
-                                                              !context
-                                                                  .isWarehouseMgr
+                                                  facilityModel: !isDistributor
+                                                      ? facility
+                                                      : FacilityModel(
+                                                          id: teamCode
+                                                              .toString(),
+                                                        ),
+                                                  primaryId: (isDistributor
                                                           ? FacilityModel(
                                                               id: teamCode
                                                                   .toString(),
                                                             )
-                                                          : facility)
+                                                          : facility)!
                                                       .id,
-                                                  primaryType: context
-                                                              .isDistributor &&
-                                                          !context
-                                                              .isWarehouseMgr &&
-                                                          deliveryTeamSelected
+                                                  primaryType: isDistributor
                                                       ? 'STAFF'
                                                       : 'WAREHOUSE',
                                                 ),
@@ -236,7 +253,11 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                               children: [
                                 Text(
                                   localizations.translate(
-                                    i18.warehouseDetails.usDetails,
+                                    isDistributor
+                                        ? i18.warehouseDetails
+                                            .transactionDetailsLabel
+                                        : i18.warehouseDetails
+                                            .warehouseDetailsLabel,
                                   ),
                                   style: theme.textTheme.displayMedium,
                                 ),
@@ -246,7 +267,7 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                                     lastDate: DateTime.now(),
                                     formControlName: _dateOfEntryKey,
                                     label: localizations.translate(
-                                      i18.warehouseDetails.dateOfReceipt,
+                                      dateLabel,
                                     ),
                                     isRequired: false,
                                     confirmText: localizations.translate(
@@ -260,87 +281,88 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                                     readOnly: true,
                                     formControlName: _administrativeUnitKey,
                                     label: localizations.translate(
-                                      i18.warehouseDetails.organizationUnit,
+                                      i18.warehouseDetails.administrativeUnit,
                                     ),
                                   ),
                                 ]),
-                                InkWell(
-                                  onTap: () async {
-                                    final parent =
-                                    context.router.parent() as StackRouter;
-                                    final facility =
-                                    await parent.push<FacilityModel>(
-                                      FacilitySelectionRoute(
-                                        facilities: facilities,
-                                      ),
-                                    );
+                                if (!isDistributor)
+                                  InkWell(
+                                    onTap: () async {
+                                      final parent = context.router.parent()
+                                          as StackRouter;
+                                      final facility =
+                                          await parent.push<FacilityModel>(
+                                        FacilitySelectionRoute(
+                                          facilities: facilities,
+                                        ),
+                                      );
 
-                                    if (facility == null) return;
+                                      if (facility == null) return;
 
-                                    if (facility.id == 'Delivery Team') {
-                                      form.control(_teamCodeKey).value =
-                                          context.loggedInUserUuid;
-                                      setState(() {
-                                        deliveryTeamSelected = true;
-                                      });
-                                    } else {
-                                      setState(() {
-                                        deliveryTeamSelected = false;
-                                      });
-                                    }
-                                    form.control(_warehouseKey).value =
-                                        facility;
-                                  },
-                                  child: IgnorePointer(
-                                    child: DigitTextFormField(
-                                      valueAccessor: FacilityValueAccessor(
-                                        facilities,
-                                      ),
-                                      isRequired: true,
-                                      label: localizations.translate(
-                                        i18.warehouseDetails
-                                            .usNameCommunitySupervisor,
-                                      ),
-                                      suffix: const Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Icon(Icons.search),
-                                      ),
-                                      formControlName: _warehouseKey,
-                                      readOnly: false,
-                                      onTap: () async {
-                                        final parent =
-                                            context.router.parent() as StackRouter;
-                                        final facility =
-                                            await parent.push<FacilityModel>(
-                                          FacilitySelectionRoute(
-                                            facilities: facilities,
-                                          ),
-                                        );
+                                      if (facility.id == 'Delivery Team') {
+                                        form.control(_teamCodeKey).value =
+                                            context.loggedInUserUuid;
+                                        setState(() {
+                                          deliveryTeamSelected = true;
+                                        });
+                                      } else {
+                                        setState(() {
+                                          deliveryTeamSelected = false;
+                                        });
+                                      }
+                                      form.control(_warehouseKey).value =
+                                          facility;
+                                    },
+                                    child: IgnorePointer(
+                                      child: DigitTextFormField(
+                                        valueAccessor: FacilityValueAccessor(
+                                          facilities,
+                                        ),
+                                        isRequired: true,
+                                        label: localizations.translate(
+                                          i18.warehouseDetails.warehouseNameId,
+                                        ),
+                                        suffix: const Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Icon(Icons.search),
+                                        ),
+                                        formControlName: _warehouseKey,
+                                        readOnly: false,
+                                        onTap: () async {
+                                          final parent = context.router.parent()
+                                              as StackRouter;
+                                          final facility =
+                                              await parent.push<FacilityModel>(
+                                            FacilitySelectionRoute(
+                                              facilities: facilities,
+                                            ),
+                                          );
 
-                                        if (facility == null) return;
+                                          if (facility == null) return;
 
-                                        if (facility.id == 'Delivery Team') {
-                                          form.control(_teamCodeKey).value =
-                                              context.loggedInUserUuid;
-                                          setState(() {
-                                            deliveryTeamSelected = true;
-                                          });
-                                        } else {
-                                          setState(() {
-                                            deliveryTeamSelected = false;
-                                          });
-                                        }
-                                        form.control(_warehouseKey).value =
-                                            facility;
-                                      },
+                                          if (facility.id == 'Delivery Team') {
+                                            form.control(_teamCodeKey).value =
+                                                context.loggedInUserUuid;
+                                            setState(() {
+                                              deliveryTeamSelected = true;
+                                            });
+                                          } else {
+                                            setState(() {
+                                              deliveryTeamSelected = false;
+                                            });
+                                          }
+                                          form.control(_warehouseKey).value =
+                                              facility;
+                                        },
+                                      ),
                                     ),
                                   ),
-                                ),
-                                if (deliveryTeamSelected)
+                                if (isDistributor)
                                   DigitTextFormField(
                                     label: localizations.translate(
                                       i18.manageStock.cddTeamCodeLabel,
                                     ),
+                                    readOnly: isDistributor,
                                     formControlName: _teamCodeKey,
                                     onChanged: (val) {
                                       String? value = val as String?;
@@ -357,27 +379,27 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                                       }
                                     },
                                     isRequired: true,
-                                    suffix: IconButton(
-                                      onPressed: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const DigitScannerPage(
-                                              quantity: 1,
-                                              isGS1code: false,
-                                              singleValue: false,
-                                            ),
-                                            settings: const RouteSettings(
-                                              name: '/qr-scanner',
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      icon: Icon(
-                                        Icons.qr_code_2,
-                                        color: theme.colorScheme.secondary,
-                                      ),
-                                    ),
+                                    // suffix: IconButton(
+                                    //   onPressed: () {
+                                    //     Navigator.of(context).push(
+                                    //       MaterialPageRoute(
+                                    //         builder: (context) =>
+                                    //             const DigitScannerPage(
+                                    //           quantity: 1,
+                                    //           isGS1code: false,
+                                    //           singleValue: false,
+                                    //         ),
+                                    //         settings: const RouteSettings(
+                                    //           name: '/qr-scanner',
+                                    //         ),
+                                    //       ),
+                                    //     );
+                                    //   },
+                                    //   icon: Icon(
+                                    //     Icons.qr_code_2,
+                                    //     color: theme.colorScheme.secondary,
+                                    //   ),
+                                    // ),
                                   ),
                               ],
                             ),

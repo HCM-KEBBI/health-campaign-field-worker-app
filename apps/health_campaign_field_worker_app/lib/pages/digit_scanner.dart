@@ -439,6 +439,9 @@ class _DigitScannerPageState extends LocalizedState<DigitScannerPage> {
                                     } else {
                                       final bloc =
                                           context.read<DigitScannerBloc>();
+                                      if (widget.singleValue) {
+                                        codes = [];
+                                      }
                                       codes.add(form
                                           .control(_manualCodeFormKey)
                                           .value);

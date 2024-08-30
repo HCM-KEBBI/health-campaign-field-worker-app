@@ -56,6 +56,8 @@ class Common {
 
   String get coreCommonReasonRequired => 'CORE_COMMON_REASON_REQUIRED';
 
+  String get coreCommonOthersRequired => 'CORE_COMMON_OTHERS_REQUIRED';
+
   String get corecommonclose => 'CORE_COMMON_CLOSE';
 
   String get coreCommonOk => 'CORE_COMMON_OK';
@@ -745,9 +747,15 @@ class WarehouseDetails {
 
   String get warehouseDetailsLabel => 'WAREHOUSE_DETAILS_LABEL';
 
+  String get transactionDetailsLabel => 'TRANSACTION_DETAILS_LABEL';
+
   String get usDetails => 'US_DETAILS';
 
   String get dateOfReceipt => 'WAREHOUSE_DETAILS_DATE_OF_RECEIPT';
+
+  String get dateOfIssue => 'WAREHOUSE_DETAILS_DATE_OF_ISSUE';
+
+  String get dateOfReturn => 'WAREHOUSE_DETAILS_DATE_OF_RETURN';
 
   String get administrativeUnit => 'WAREHOUSE_DETAILS_ADMINISTRATIVE_UNIT';
 
@@ -797,6 +805,12 @@ class StockDetails {
 
   String get quantityReturnedLabel => 'STOCK_DETAILS_QUANTITY_RETURNED_SPAQ';
 
+  String get quantityPartialReturnedLabel =>
+      'STOCK_DETAILS_PARTIAL_QUANTITY_RETURNED_SPAQ';
+
+  String get quantityWastedReturnedLabel =>
+      'STOCK_DETAILS_WASTED_QUANTITY_RETURNED_SPAQ';
+
   String get quantityLostLabel => 'STOCK_DETAILS_QUANTITY_LOST';
 
   String get quantityDamagedLabel => 'STOCK_DETAILS_QUANTITY_DAMAGED';
@@ -831,6 +845,8 @@ class StockDetails {
   String get damagedSpaqDetails => 'DAMAGED_SPAQ_DETAILS';
   String get quantityDamagedCountLabel => 'STOCK_DAMAGED_QUANTITY_LABEL';
 
+  String get batchNumberLabel => 'STOCK_DETAILS_BATCH_NUMBER';
+
   String get countDialogTitle => 'STOCK_DETAILS_COUNT_DIALOG_TITLE';
 
   String get countContent => 'STOCK_DETAILS_COUNT_DIALOG_CONTENT';
@@ -841,6 +857,9 @@ class StockDetails {
   String get countDialogCancel =>
       'STOCK_DETAILS_COUNT_DIALOG_CANCEL_ACTION_LABEL';
   String get scannedResources => 'SCANNED_RESOURCES';
+
+  String get senderReceiverValidation =>
+      'STOCK_DETAILS_SENDER_RECEIVER_ID_VALIDATION';
 }
 
 class StockReconciliationDetails {
@@ -878,7 +897,7 @@ class StockReconciliationDetails {
 
   String get infoCardTitle => 'STOCK_RECONCILIATION_INFO_CARD_TITLE';
 
-  String get infoCardContent => 'STOCK_RECONCILIATION_INFO_CARD_CONTENT_SPAQ';
+  String get infoCardContent => 'STOCK_RECONCILIATION_INFO_CARD_CONTENT';
   String get infoCardDescription =>
       'STOCK_RECONCILIATION_INFO_CARD_DESCRIPTION_SPAQ';
 
@@ -928,10 +947,19 @@ class ManageStock {
   String get recordStockReceiptDescription =>
       'MANAGE_STOCK_RECEIPT_DESCRIPTION';
 
+  String get recordStockReceiptDistributorDescription =>
+      'MANAGE_STOCK_RECEIPT_DISTRIBUTOR_DESCRIPTION';
+
   String get recordStockIssuedLabel => 'MANAGE_STOCK_RECORDSTOCK_ISSUED_LABEL';
 
   String get recordStockIssuedDescription =>
       'MANAGE_STOCK_RECORDSTOCK_ISSUED_DESCRIPTION';
+
+  String get recordStockReturnedToLabel =>
+      'MANAGE_STOCK_RECORDSTOCK_RETURNED_TO_LABEL';
+
+  String get recordStockReturnedToDescription =>
+      'MANAGE_STOCK_RECORDSTOCK_RETURNED_TO_DESCRIPTION';
 
   String get recordStockReturnedLabel =>
       'MANAGE_STOCK_RECORDSTOCK_RETURNED_LABEL';
@@ -959,6 +987,7 @@ class ManageStock {
   String get recordSpaqDamaged => 'RECORD_SPAQ_DAMAGED';
   String get recordListOfSpaqDamaged => 'RECORD_LIST_OF_SPAQ_DAMAGED';
   String get cddTeamCodeLabel => 'STOCK_CDD_TEAM_CODE_LABEL';
+  String get cddSupervisorCodeLabel => 'STOCK_SUPERVISOR_CODE_LABEL';
   String get facilityRequired => 'STOCK_DETAILS_FACILITY_IS_REQUIRED';
   String get teamCodeRequired => 'STOCK_DETAILS_TEAM_CODE_IS_REQUIRED';
 }
@@ -1082,7 +1111,7 @@ class InventoryReportSelection {
   }
 
   String get inventoryReportReceiptLabel {
-    return 'INVENTORY_REPORT_SELECTION_RECEIPT_LABEL_SPAQ';
+    return 'INVENTORY_REPORT_SELECTION_RECEIPT_LABEL';
   }
 
   String get inventoryReportReceiptDescription {
@@ -1097,8 +1126,16 @@ class InventoryReportSelection {
     return 'INVENTORY_REPORT_SELECTION_ISSUED_DESCRIPTION';
   }
 
+  String get inventoryReportReturnedToLabel {
+    return 'INVENTORY_REPORT_SELECTION_RETURNED_TO_LABEL';
+  }
+
+  String get inventoryReportReturnedToDescription {
+    return 'INVENTORY_REPORT_SELECTION_RETURNED_TO_DESCRIPTION';
+  }
+
   String get inventoryReportReturnedLabel {
-    return 'INVENTORY_REPORT_SELECTION_RETURNED_LABEL_SPAQ';
+    return 'INVENTORY_REPORT_SELECTION_RETURNED_LABEL';
   }
 
   String get inventoryReportReturnedDescription {
@@ -1181,6 +1218,14 @@ class InventoryReportDetails {
     return 'INVENTORY_REPORT_DETAILS_RETURNED_QUANTITY_LABEL';
   }
 
+  String get partialReturnedQuantityLabel {
+    return 'INVENTORY_REPORT_DETAILS_PARTIAL_RETURNED_QUANTITY_LABEL';
+  }
+
+  String get wastedReturnedQuantityLabel {
+    return 'INVENTORY_REPORT_DETAILS_WASTED_RETURNED_QUANTITY_LABEL';
+  }
+
   String get damagedQuantityLabel {
     return 'INVENTORY_REPORT_DETAILS_DAMAGED_QUANTITY_LABEL';
   }
@@ -1199,6 +1244,10 @@ class InventoryReportDetails {
 
   String get returnedTransactingPartyLabel {
     return 'INVENTORY_REPORT_DETAILS_RETURNED_TRANSACTING_PARTY_LABEL';
+  }
+
+  String get returnedToTransactingPartyLabel {
+    return 'INVENTORY_REPORT_DETAILS_RETURNED_TO_TRANSACTING_PARTY_LABEL';
   }
 
   String get damagedTransactingPartyLabel {

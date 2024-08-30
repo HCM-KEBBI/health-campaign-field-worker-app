@@ -44,7 +44,6 @@ class ComplaintsDetailsViewPage extends StatelessWidget {
           ],
         ),
         footer: SizedBox(
-          height: 85,
           child: DigitCard(
             margin: const EdgeInsets.fromLTRB(0, kPadding, 0, 0),
             padding: const EdgeInsets.fromLTRB(kPadding, 0, kPadding, 0),

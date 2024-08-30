@@ -1,14 +1,17 @@
 import 'package:collection/collection.dart';
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gs1_barcode_parser/gs1_barcode_parser.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
+import '../../../blocs/app_initialization/app_initialization.dart';
 import '../../../blocs/digit_scanner/digit_scanner.dart';
 import '../../../blocs/facility/facility.dart';
 import '../../../blocs/product_variant/product_variant.dart';
 import '../../../blocs/record_stock/record_stock.dart';
+import '../../../data/local_store/no_sql/schema/app_configuration.dart';
 import '../../../models/data_model.dart';
 import '../../../router/app_router.dart';
 import '../../../utils/i18_key_constants.dart' as i18;
@@ -32,20 +35,33 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
   static const _productVariantKey = 'productVariant';
   static const _transactingPartyKey = 'transactingParty';
   static const _transactionQuantityKey = 'quantity';
-  static const _transactionDamagedQuantityKey = 'quantityDamaged';
+  static const _partialBlistersKey = 'partialBlistersReturned';
+  static const _wastedBlistersKey = 'wastedBlistersReturned';
   static const _commentsKey = 'comments';
-  List<ValidatorFunction> damagedQuantityValidator = [];
+  static const _transactionReasonKey = 'transactionReason';
+  static const _waybillNumberKey = 'waybillNumber';
+  static const _waybillQuantityKey = 'waybillQuantity';
+  static const _vehicleNumberKey = 'vehicleNumber';
+  static const _typeOfTransportKey = 'typeOfTransport';
+  static const _batchNumberKey = 'batchNumber';
+  static int maxQuantity = 10000;
+  static int minQuantity = 0;
+
+  List<ValidatorFunction> partialBlistersQuantityValidator = [];
+  List<ValidatorFunction> batchNumberValidators = [Validators.required];
+  List<ValidatorFunction> wastedBlistersQuantityValidator = [];
   List<ValidatorFunction> transactionQuantityValidator = [
     Validators.number,
     Validators.required,
-    Validators.min(0),
-    Validators.max(10000),
+    Validators.min(minQuantity),
+    Validators.max(maxQuantity),
   ];
   List<GS1Barcode> scannedResources = [];
   static const _deliveryTeamKey = 'deliveryTeam';
+  static const _supervisorKey = 'supervisor';
   bool deliveryTeamSelected = false;
 
-  FormGroup _form(List<FacilityModel> facilities) {
+  FormGroup _form(List<FacilityModel> facilities, bool isDistributor) {
     return fb.group({
       _productVariantKey: FormControl<ProductVariantModel>(
         validators: [Validators.required],
@@ -60,11 +76,53 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
       ),
       _transactionQuantityKey:
           FormControl<int>(validators: transactionQuantityValidator),
-      _transactionDamagedQuantityKey:
-          FormControl<int>(validators: damagedQuantityValidator),
+      _partialBlistersKey:
+          FormControl<int>(validators: partialBlistersQuantityValidator),
+      _wastedBlistersKey:
+          FormControl<int>(validators: wastedBlistersQuantityValidator),
       _commentsKey: FormControl<String>(),
       _deliveryTeamKey: FormControl<String>(
-        validators: deliveryTeamSelected ? [Validators.required] : [],
+        validators: (deliveryTeamSelected && !isDistributor)
+            ? [Validators.required]
+            : [],
+      ),
+      _supervisorKey: FormControl<String>(
+        validators: isDistributor ? [Validators.required] : [],
+      ),
+      _transactionReasonKey: FormControl<TransactionReason>(),
+      _waybillNumberKey: FormControl<String>(
+        validators: isDistributor
+            ? []
+            : [
+                Validators.required,
+              ],
+      ),
+      _waybillQuantityKey: FormControl<int>(
+        validators: isDistributor
+            ? []
+            : [
+                Validators.number,
+                Validators.required,
+                Validators.min(minQuantity),
+                Validators.max(maxQuantity),
+              ],
+      ),
+      _vehicleNumberKey: FormControl<String>(
+        validators: isDistributor
+            ? []
+            : [
+                Validators.required,
+              ],
+      ),
+      _typeOfTransportKey: FormControl<String>(
+        validators: isDistributor
+            ? []
+            : [
+                Validators.required,
+              ],
+      ),
+      _batchNumberKey: FormControl<String>(
+        validators: batchNumberValidators,
       ),
     });
   }
@@ -72,18 +130,19 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDistributor = context.isDistributor;
 
     return PopScope(
       onPopInvoked: (didPop) {
         final stockState = context.read<RecordStockBloc>().state;
-        if (stockState.primaryId != null) {
-          context.read<DigitScannerBloc>().add(
-                DigitScannerEvent.handleScanner(
-                  barCode: [],
-                  qrCode: [stockState.primaryId.toString()],
-                ),
-              );
-        }
+        // if (stockState.primaryId != null) {
+        //   context.read<DigitScannerBloc>().add(
+        //         DigitScannerEvent.handleScanner(
+        //           barCode: [],
+        //           qrCode: [stockState.primaryId.toString()],
+        //         ),
+        //       );
+        // }
       },
       child: Scaffold(
         body: BlocBuilder<LocationBloc, LocationState>(
@@ -100,6 +159,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
               builder: (context, stockState) {
                 StockRecordEntryType entryType = stockState.entryType;
                 const module = i18.stockDetails;
+                final isWarehouseMgr = context.isWarehouseMgr;
 
                 String pageTitle;
                 String transactionPartyLabel;
@@ -112,35 +172,53 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
 
                 switch (entryType) {
                   case StockRecordEntryType.receipt:
-                    pageTitle = module.receivedSpaqDetails;
+                    pageTitle = module.receivedPageTitle;
                     transactionPartyLabel =
                         module.selectTransactingPartyReceived;
                     quantityCountLabel = module.quantityReceivedLabel;
                     transactionType = TransactionType.received;
-                    transactionQuantityValidator = [
-                      Validators.number,
-                      Validators.required,
-                      Validators.min(0),
-                      Validators.max(20000),
-                    ];
                     break;
                   case StockRecordEntryType.dispatch:
-                    pageTitle = module.issuedSpaqDetails;
-                    transactionPartyLabel = module.selectTransactingPartyIssued;
-                    quantityCountLabel = module.quantitySentLabel;
+                    pageTitle = isDistributor
+                        ? module.returnedPageTitle
+                        : module.issuedPageTitle;
+                    transactionPartyLabel = isDistributor
+                        ? module.selectTransactingPartyReturned
+                        : module.selectTransactingPartyIssued;
+                    quantityCountLabel = isDistributor
+                        ? module.quantityReturnedLabel
+                        : module.quantitySentLabel;
                     transactionType = TransactionType.dispatched;
+                    if (context.isDistributor) {
+                      wastedBlistersQuantityValidator = [
+                        Validators.number,
+                        Validators.required,
+                        Validators.min(minQuantity),
+                        Validators.max(maxQuantity),
+                      ];
+
+                      partialBlistersQuantityValidator = [
+                        Validators.number,
+                        Validators.required,
+                        Validators.min(minQuantity),
+                        Validators.max(maxQuantity),
+                      ];
+
+                      batchNumberValidators = [];
+                    }
+
                     break;
                   case StockRecordEntryType.returned:
-                    pageTitle = module.returnedSpaqDetails;
+                    pageTitle = module.returnedPageTitle;
                     transactionPartyLabel =
                         module.selectTransactingPartyReturned;
                     quantityCountLabel = module.quantityReturnedLabel;
                     transactionType = TransactionType.received;
-                    damagedQuantityValidator = [
+                    partialBlistersQuantityValidator = [
                       Validators.number,
                       Validators.required,
-                      Validators.min(0),
-                      Validators.max(10000),
+                      Validators.min(minQuantity),
+                      Validators.max(maxQuantity),
                     ];
                     break;
                   case StockRecordEntryType.loss:
@@ -204,21 +282,37 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                     );
 
                     return ReactiveFormBuilder(
-                      form: () => _form(facilities),
+                      form: () => _form(facilities, isDistributor),
                       builder: (context, form, child) {
                         return BlocBuilder<DigitScannerBloc, DigitScannerState>(
                           builder: (context, scannerState) {
-                            if (form
-                                    .control(_deliveryTeamKey)
-                                    .value
-                                    .toString()
-                                    .isEmpty ||
-                                form.control(_deliveryTeamKey).value == null ||
-                                scannerState.qrCodes.isNotEmpty) {
-                              form.control(_deliveryTeamKey).value =
-                                  scannerState.qrCodes.isNotEmpty
-                                      ? scannerState.qrCodes.last
-                                      : '';
+                            if (isDistributor) {
+                              if (form
+                                      .control(_supervisorKey)
+                                      .value
+                                      .toString()
+                                      .isEmpty ||
+                                  form.control(_supervisorKey).value == null ||
+                                  scannerState.qrCodes.isNotEmpty) {
+                                form.control(_supervisorKey).value =
+                                    scannerState.qrCodes.isNotEmpty
+                                        ? scannerState.qrCodes.last
+                                        : '';
+                              }
+                            } else {
+                              if (form
+                                      .control(_deliveryTeamKey)
+                                      .value
+                                      .toString()
+                                      .isEmpty ||
+                                  form.control(_deliveryTeamKey).value ==
+                                      null ||
+                                  scannerState.qrCodes.isNotEmpty) {
+                                form.control(_deliveryTeamKey).value =
+                                    scannerState.qrCodes.isNotEmpty
+                                        ? scannerState.qrCodes.last
+                                        : '';
+                              }
                             }
 
                             if (scannerState.barCodes.isNotEmpty) {
@@ -233,16 +327,16 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                   handleback: () {
                                     final stockState =
                                         context.read<RecordStockBloc>().state;
-                                    if (stockState.primaryId != null) {
-                                      context.read<DigitScannerBloc>().add(
-                                            DigitScannerEvent.handleScanner(
-                                              barCode: [],
-                                              qrCode: [
-                                                stockState.primaryId.toString(),
-                                              ],
-                                            ),
-                                          );
-                                    }
+                                    // if (stockState.primaryId != null) {
+                                    //   context.read<DigitScannerBloc>().add(
+                                    //         DigitScannerEvent.handleScanner(
+                                    //           barCode: [],
+                                    //           qrCode: [
+                                    //             stockState.primaryId.toString(),
+                                    //           ],
+                                    //         ),
+                                    //       );
+                                    // }
                                   },
                                 ),
                               ]),
@@ -273,6 +367,39 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                     .control(_productVariantKey)
                                                     .value as ProductVariantModel;
 
+                                                final primaryType = BlocProvider
+                                                    .of<RecordStockBloc>(
+                                                  context,
+                                                ).state.primaryType;
+
+                                                final primaryId = BlocProvider
+                                                    .of<RecordStockBloc>(
+                                                  context,
+                                                ).state.primaryId;
+
+                                                final transactingParty = form
+                                                    .control(
+                                                      _transactingPartyKey,
+                                                    )
+                                                    .value as FacilityModel;
+
+                                                if (primaryId ==
+                                                    transactingParty.id) {
+                                                  DigitToast.show(
+                                                    context,
+                                                    options: DigitToastOptions(
+                                                      localizations.translate(
+                                                        i18.stockDetails
+                                                            .senderReceiverValidation,
+                                                      ),
+                                                      true,
+                                                      theme,
+                                                    ),
+                                                  );
+
+                                                  return;
+                                                }
+
                                                 switch (entryType) {
                                                   case StockRecordEntryType
                                                         .receipt:
@@ -295,19 +422,45 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                     break;
                                                 }
 
-                                                final transactingParty = form
+                                                final waybillNumber = form
+                                                    .control(_waybillNumberKey)
+                                                    .value as String?;
+
+                                                final waybillQuantity = form
                                                     .control(
-                                                        _transactingPartyKey)
-                                                    .value as FacilityModel;
+                                                      _waybillQuantityKey,
+                                                    )
+                                                    .value;
+
+                                                final vehicleNumber = form
+                                                    .control(_vehicleNumberKey)
+                                                    .value as String?;
+
+                                                final batchNumber = form
+                                                    .control(_batchNumberKey)
+                                                    .value as String?;
+                                                final transportType = form
+                                                    .control(
+                                                      _typeOfTransportKey,
+                                                    )
+                                                    .value as String?;
 
                                                 final quantity = form
                                                     .control(
-                                                        _transactionQuantityKey)
+                                                      _transactionQuantityKey,
+                                                    )
                                                     .value;
 
-                                                final damagedQuantity = form
+                                                final partialBlisters = form
                                                     .control(
-                                                        _transactionDamagedQuantityKey)
+                                                      _partialBlistersKey,
+                                                    )
+                                                    .value;
+
+                                                final wastedBlisters = form
+                                                    .control(
+                                                      _wastedBlistersKey,
+                                                    )
                                                     .value;
 
                                                 final lat =
@@ -347,8 +500,9 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                     'WAREHOUSE';
 
                                                 if (entryType ==
-                                                    StockRecordEntryType
-                                                        .dispatch) {
+                                                        StockRecordEntryType
+                                                            .dispatch &&
+                                                    !isDistributor) {
                                                   int issueQuantity =
                                                       quantity ?? 0;
 
@@ -451,20 +605,14 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                     .control(_deliveryTeamKey)
                                                     .value as String?;
 
+                                                final supervisorCode = form
+                                                    .control(_supervisorKey)
+                                                    .value as String?;
+
                                                 String? senderId;
                                                 String? senderType;
                                                 String? receiverId;
                                                 String? receiverType;
-
-                                                final primaryType = BlocProvider
-                                                    .of<RecordStockBloc>(
-                                                  context,
-                                                ).state.primaryType;
-
-                                                final primaryId = BlocProvider
-                                                    .of<RecordStockBloc>(
-                                                  context,
-                                                ).state.primaryId;
 
                                                 switch (entryType) {
                                                   case StockRecordEntryType
@@ -473,6 +621,8 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                         .loss:
                                                   case StockRecordEntryType
                                                         .damaged:
+                                                  case StockRecordEntryType
+                                                        .returned:
                                                     if (deliveryTeamSelected) {
                                                       senderId =
                                                           deliveryTeamName;
@@ -488,8 +638,6 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                     break;
                                                   case StockRecordEntryType
                                                         .dispatch:
-                                                  case StockRecordEntryType
-                                                        .returned:
                                                     if (deliveryTeamSelected) {
                                                       receiverId =
                                                           deliveryTeamName;
@@ -526,6 +674,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                       stockState.projectId,
                                                   referenceIdType: 'PROJECT',
                                                   quantity: quantity.toString(),
+                                                  waybillNumber: waybillNumber,
                                                   auditDetails: AuditDetails(
                                                     createdBy: context
                                                         .loggedInUserUuid,
@@ -545,7 +694,13 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   ),
                                                   additionalFields: [
                                                             comments,
-                                                            damagedQuantity,
+                                                            partialBlisters,
+                                                            wastedBlisters,
+                                                            waybillQuantity,
+                                                            batchNumber,
+                                                            vehicleNumber,
+                                                            transportType,
+                                                            supervisorCode
                                                           ].any((element) =>
                                                               element !=
                                                               null) ||
@@ -553,19 +708,69 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                       ? StockAdditionalFields(
                                                           version: 1,
                                                           fields: [
-                                                            if (damagedQuantity !=
+                                                            if (partialBlisters !=
                                                                 null)
                                                               AdditionalField(
-                                                                'damaged_quantity',
-                                                                damagedQuantity,
+                                                                _partialBlistersKey,
+                                                                partialBlisters,
+                                                              ),
+                                                            if (wastedBlisters !=
+                                                                null)
+                                                              AdditionalField(
+                                                                _wastedBlistersKey,
+                                                                wastedBlisters,
+                                                              ),
+                                                            if (waybillQuantity !=
+                                                                null)
+                                                              AdditionalField(
+                                                                'waybill_quantity',
+                                                                waybillQuantity
+                                                                    .toString(),
                                                               ),
                                                             if (comments !=
                                                                     null &&
                                                                 comments
+                                                                    .trim()
                                                                     .isNotEmpty)
                                                               AdditionalField(
                                                                 'comments',
                                                                 comments,
+                                                              ),
+                                                            if (batchNumber !=
+                                                                    null &&
+                                                                batchNumber
+                                                                    .trim()
+                                                                    .isNotEmpty)
+                                                              AdditionalField(
+                                                                _batchNumberKey,
+                                                                batchNumber,
+                                                              ),
+                                                            if (vehicleNumber !=
+                                                                    null &&
+                                                                vehicleNumber
+                                                                    .trim()
+                                                                    .isNotEmpty)
+                                                              AdditionalField(
+                                                                _vehicleNumberKey,
+                                                                vehicleNumber,
+                                                              ),
+                                                            if (transportType !=
+                                                                    null &&
+                                                                transportType
+                                                                    .trim()
+                                                                    .isNotEmpty)
+                                                              AdditionalField(
+                                                                _typeOfTransportKey,
+                                                                transportType,
+                                                              ),
+                                                            if (supervisorCode !=
+                                                                    null &&
+                                                                supervisorCode
+                                                                    .trim()
+                                                                    .isNotEmpty)
+                                                              AdditionalField(
+                                                                _supervisorKey,
+                                                                supervisorCode,
                                                               ),
                                                             if (hasLocationData) ...[
                                                               AdditionalField(
@@ -679,7 +884,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                 formControlName:
                                                     _productVariantKey,
                                                 label: localizations.translate(
-                                                  module.selectSpaqVariant,
+                                                  module.selectProductLabel,
                                                 ),
                                                 isRequired: true,
                                                 valueMapper: (value) {
@@ -713,21 +918,182 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                               final facility = await parent
                                                   .push<FacilityModel>(
                                                 FacilitySelectionRoute(
-                                                  facilities: teamFacilities,
+                                                  facilities: isDistributor
+                                                      ? facilities
+                                                      : teamFacilities,
                                                 ),
                                               );
 
                                               if (facility == null) return;
-                                              if (facility.id ==
-                                                  'Delivery Team') {
-                                                setState(() {
-                                                  deliveryTeamSelected = true;
-                                                });
-                                              } else {
-                                                setState(() {
-                                                  deliveryTeamSelected = false;
-                                                });
+
+                                              if (isWarehouseMgr) {
+                                                if (facility.id ==
+                                                    'Delivery Team') {
+                                                  setState(() {
+                                                    form
+                                                        .control(
+                                                      _waybillNumberKey,
+                                                    )
+                                                        .setValidators(
+                                                      [],
+                                                      updateParent: true,
+                                                      autoValidate: true,
+                                                    );
+                                                    form
+                                                        .control(
+                                                      _waybillQuantityKey,
+                                                    )
+                                                        .setValidators(
+                                                      [],
+                                                      updateParent: true,
+                                                      autoValidate: true,
+                                                    );
+                                                    form
+                                                        .control(
+                                                      _vehicleNumberKey,
+                                                    )
+                                                        .setValidators(
+                                                      [],
+                                                      updateParent: true,
+                                                      autoValidate: true,
+                                                    );
+                                                    form
+                                                        .control(
+                                                      _typeOfTransportKey,
+                                                    )
+                                                        .setValidators(
+                                                      [],
+                                                      updateParent: true,
+                                                      autoValidate: true,
+                                                    );
+                                                    form
+                                                        .control(
+                                                      _commentsKey,
+                                                    )
+                                                        .setValidators(
+                                                      [],
+                                                      updateParent: true,
+                                                      autoValidate: true,
+                                                    );
+                                                    deliveryTeamSelected = true;
+                                                    form
+                                                        .control(
+                                                      _deliveryTeamKey,
+                                                    )
+                                                        .setValidators(
+                                                      [
+                                                        Validators.required,
+                                                      ],
+                                                      updateParent: true,
+                                                      autoValidate: true,
+                                                    );
+                                                  });
+                                                } else {
+                                                  setState(() {
+                                                    form
+                                                        .control(
+                                                      _deliveryTeamKey,
+                                                    )
+                                                        .setValidators(
+                                                      [],
+                                                      updateParent: true,
+                                                      autoValidate: true,
+                                                    );
+                                                    deliveryTeamSelected =
+                                                        false;
+                                                    form
+                                                        .control(
+                                                      _waybillNumberKey,
+                                                    )
+                                                        .setValidators(
+                                                      [
+                                                        Validators.required,
+                                                      ],
+                                                      updateParent: true,
+                                                      autoValidate: true,
+                                                    );
+                                                    form
+                                                        .control(
+                                                      _waybillQuantityKey,
+                                                    )
+                                                        .setValidators(
+                                                      [
+                                                        Validators.number,
+                                                        Validators.required,
+                                                        Validators.min(
+                                                          minQuantity,
+                                                        ),
+                                                        Validators.max(
+                                                          maxQuantity,
+                                                        ),
+                                                      ],
+                                                      updateParent: true,
+                                                      autoValidate: true,
+                                                    );
+                                                    form
+                                                        .control(
+                                                      _vehicleNumberKey,
+                                                    )
+                                                        .setValidators(
+                                                      [
+                                                        Validators.required,
+                                                      ],
+                                                      updateParent: true,
+                                                      autoValidate: true,
+                                                    );
+                                                    form
+                                                        .control(
+                                                      _typeOfTransportKey,
+                                                    )
+                                                        .setValidators(
+                                                      [
+                                                        Validators.required,
+                                                      ],
+                                                      updateParent: true,
+                                                      autoValidate: true,
+                                                    );
+
+                                                    final quantity = form
+                                                        .control(
+                                                          _transactionQuantityKey,
+                                                        )
+                                                        .value as int?;
+                                                    final waybillQuantity = form
+                                                        .control(
+                                                          _waybillQuantityKey,
+                                                        )
+                                                        .value as int?;
+                                                    if (quantity !=
+                                                        waybillQuantity) {
+                                                      form
+                                                          .control(
+                                                        _commentsKey,
+                                                      )
+                                                          .setValidators(
+                                                        [Validators.required],
+                                                        updateParent: true,
+                                                        autoValidate: true,
+                                                      );
+                                                      form
+                                                          .control(
+                                                            _commentsKey,
+                                                          )
+                                                          .touched;
+                                                    } else {
+                                                      form
+                                                          .control(
+                                                        _commentsKey,
+                                                      )
+                                                          .setValidators(
+                                                        [],
+                                                        updateParent: true,
+                                                        autoValidate: true,
+                                                      );
+                                                    }
+                                                  });
+                                                }
                                               }
+
                                               form
                                                   .control(_transactingPartyKey)
                                                   .value = facility;
@@ -739,7 +1105,13 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   teamFacilities,
                                                 ),
                                                 label: localizations.translate(
-                                                  '${pageTitle}_${i18.stockReconciliationDetails.stockLabel}',
+                                                  (isDistributor &&
+                                                          stockState
+                                                                  .entryType ==
+                                                              StockRecordEntryType
+                                                                  .dispatch)
+                                                      ? transactionPartyLabel
+                                                      : '${pageTitle}_${i18.stockReconciliationDetails.stockLabel}',
                                                 ),
                                                 isRequired: true,
                                                 suffix: const Padding(
@@ -759,24 +1131,164 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   final facility = await parent
                                                       .push<FacilityModel>(
                                                     FacilitySelectionRoute(
-                                                      facilities:
-                                                          teamFacilities,
+                                                      facilities: isDistributor
+                                                          ? facilities
+                                                          : teamFacilities,
                                                     ),
                                                   );
 
                                                   if (facility == null) return;
-                                                  if (facility.id ==
-                                                      'Delivery Team') {
-                                                    setState(() {
-                                                      deliveryTeamSelected =
-                                                          true;
-                                                    });
-                                                  } else {
-                                                    setState(() {
-                                                      deliveryTeamSelected =
-                                                          false;
-                                                    });
+                                                  if (isWarehouseMgr) {
+                                                    if (facility.id ==
+                                                        'Delivery Team') {
+                                                      setState(() {
+                                                        form
+                                                            .control(
+                                                          _waybillNumberKey,
+                                                        )
+                                                            .setValidators(
+                                                          [],
+                                                          updateParent: true,
+                                                          autoValidate: true,
+                                                        );
+                                                        form
+                                                            .control(
+                                                          _waybillQuantityKey,
+                                                        )
+                                                            .setValidators(
+                                                          [],
+                                                          updateParent: true,
+                                                          autoValidate: true,
+                                                        );
+                                                        form
+                                                            .control(
+                                                          _vehicleNumberKey,
+                                                        )
+                                                            .setValidators(
+                                                          [],
+                                                          updateParent: true,
+                                                          autoValidate: true,
+                                                        );
+                                                        form
+                                                            .control(
+                                                          _typeOfTransportKey,
+                                                        )
+                                                            .setValidators(
+                                                          [],
+                                                          updateParent: true,
+                                                          autoValidate: true,
+                                                        );
+                                                        form
+                                                            .control(
+                                                          _commentsKey,
+                                                        )
+                                                            .setValidators(
+                                                          [],
+                                                          updateParent: true,
+                                                          autoValidate: true,
+                                                        );
+                                                        deliveryTeamSelected =
+                                                            true;
+                                                      });
+                                                    } else {
+                                                      setState(() {
+                                                        deliveryTeamSelected =
+                                                            false;
+                                                        form
+                                                            .control(
+                                                          _waybillNumberKey,
+                                                        )
+                                                            .setValidators(
+                                                          [
+                                                            Validators.required,
+                                                          ],
+                                                          updateParent: true,
+                                                          autoValidate: true,
+                                                        );
+                                                        form
+                                                            .control(
+                                                          _waybillQuantityKey,
+                                                        )
+                                                            .setValidators(
+                                                          [
+                                                            Validators.number,
+                                                            Validators.required,
+                                                            Validators.min(
+                                                                minQuantity),
+                                                            Validators.max(
+                                                                maxQuantity),
+                                                          ],
+                                                          updateParent: true,
+                                                          autoValidate: true,
+                                                        );
+                                                        form
+                                                            .control(
+                                                          _vehicleNumberKey,
+                                                        )
+                                                            .setValidators(
+                                                          [
+                                                            Validators.required,
+                                                          ],
+                                                          updateParent: true,
+                                                          autoValidate: true,
+                                                        );
+                                                        form
+                                                            .control(
+                                                          _typeOfTransportKey,
+                                                        )
+                                                            .setValidators(
+                                                          [
+                                                            Validators.required,
+                                                          ],
+                                                          updateParent: true,
+                                                          autoValidate: true,
+                                                        );
+
+                                                        final quantity = form
+                                                            .control(
+                                                              _transactionQuantityKey,
+                                                            )
+                                                            .value as int?;
+                                                        final waybillQuantity =
+                                                            form
+                                                                .control(
+                                                                  _waybillQuantityKey,
+                                                                )
+                                                                .value as int?;
+                                                        if (quantity !=
+                                                            waybillQuantity) {
+                                                          form
+                                                              .control(
+                                                            _commentsKey,
+                                                          )
+                                                              .setValidators(
+                                                            [
+                                                              Validators
+                                                                  .required,
+                                                            ],
+                                                            updateParent: true,
+                                                            autoValidate: true,
+                                                          );
+                                                          form
+                                                              .control(
+                                                                _commentsKey,
+                                                              )
+                                                              .touched;
+                                                        } else {
+                                                          form
+                                                              .control(
+                                                            _commentsKey,
+                                                          )
+                                                              .setValidators(
+                                                            [],
+                                                            updateParent: true,
+                                                            autoValidate: true,
+                                                          );
+                                                        }
+                                                      });
+                                                    }
                                                   }
+
                                                   form
                                                       .control(
                                                         _transactingPartyKey,
@@ -788,12 +1300,112 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                           );
                                         },
                                       ),
-                                      Visibility(
-                                        visible: deliveryTeamSelected,
-                                        child: DigitTextFormField(
+                                      if (!isDistributor)
+                                        // InkWell(
+                                        //   onTap: () async {
+                                        //     Navigator.of(context).push(
+                                        //       MaterialPageRoute(
+                                        //         builder: (context) =>
+                                        //             const DigitScannerPage(
+                                        //           quantity: 1,
+                                        //           isGS1code: false,
+                                        //           singleValue: true,
+                                        //         ),
+                                        //         settings: const RouteSettings(
+                                        //           name: '/qr-scanner',
+                                        //         ),
+                                        //       ),
+                                        //     );
+                                        //   },
+                                        //   child: IgnorePointer(
+                                        //     child:
+                                        DigitTextFormField(
                                           label: localizations.translate(
                                             i18.manageStock.cddTeamCodeLabel,
                                           ),
+                                          readOnly: !deliveryTeamSelected,
+                                          onChanged: (val) {
+                                            String? value =
+                                                val.value as String?;
+                                            if (value != null &&
+                                                value.trim().isNotEmpty) {
+                                              context
+                                                  .read<DigitScannerBloc>()
+                                                  .add(
+                                                    DigitScannerEvent
+                                                        .handleScanner(
+                                                      barCode: [],
+                                                      qrCode: [value],
+                                                      manualCode: value,
+                                                    ),
+                                                  );
+                                            } else {
+                                              clearQRCodes();
+                                            }
+                                          },
+                                          suffix: IconButton(
+                                            onPressed: !deliveryTeamSelected
+                                                ? null
+                                                : () {
+                                                    //[TODO: Add route to auto_route]
+                                                    Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            const DigitScannerPage(
+                                                          quantity: 1,
+                                                          isGS1code: false,
+                                                          singleValue: true,
+                                                        ),
+                                                        settings:
+                                                            const RouteSettings(
+                                                          name: '/qr-scanner',
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                            icon: Icon(
+                                              Icons.qr_code_2,
+                                              color:
+                                                  theme.colorScheme.secondary,
+                                            ),
+                                          ),
+                                          isRequired: deliveryTeamSelected,
+                                          maxLines: 3,
+                                          formControlName: _deliveryTeamKey,
+                                          validationMessages: {
+                                            "required": (object) =>
+                                                localizations.translate(
+                                                  i18.common.corecommonRequired,
+                                                ),
+                                          },
+                                        ),
+                                      //   ),
+                                      // ),
+                                      if (isDistributor)
+                                        // InkWell(
+                                        //   onTap: () async {
+                                        //     Navigator.of(context).push(
+                                        //       MaterialPageRoute(
+                                        //         builder: (context) =>
+                                        //             const DigitScannerPage(
+                                        //           quantity: 1,
+                                        //           isGS1code: false,
+                                        //           singleValue: true,
+                                        //         ),
+                                        //         settings: const RouteSettings(
+                                        //           name: '/qr-scanner',
+                                        //         ),
+                                        //       ),
+                                        //     );
+                                        //   },
+                                        //   child: IgnorePointer(
+                                        //     child:
+                                        DigitTextFormField(
+                                          label: localizations.translate(
+                                            i18.manageStock
+                                                .cddSupervisorCodeLabel,
+                                          ),
+                                          // readOnly: true,
                                           onChanged: (val) {
                                             String? value =
                                                 val.value as String?;
@@ -820,9 +1432,9 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                 MaterialPageRoute(
                                                   builder: (context) =>
                                                       const DigitScannerPage(
-                                                    quantity: 5,
+                                                    quantity: 1,
                                                     isGS1code: false,
-                                                    singleValue: false,
+                                                    singleValue: true,
                                                   ),
                                                   settings: const RouteSettings(
                                                     name: '/qr-scanner',
@@ -836,11 +1448,18 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   theme.colorScheme.secondary,
                                             ),
                                           ),
-                                          isRequired: deliveryTeamSelected,
+                                          isRequired: isDistributor,
                                           maxLines: 3,
-                                          formControlName: _deliveryTeamKey,
+                                          formControlName: _supervisorKey,
+                                          validationMessages: {
+                                            "required": (object) =>
+                                                localizations.translate(
+                                                  i18.common.corecommonRequired,
+                                                ),
+                                          },
                                         ),
-                                      ),
+                                      //   ),
+                                      // ),
                                       DigitTextFormField(
                                         formControlName:
                                             _transactionQuantityKey,
@@ -854,25 +1473,79 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                               localizations.translate(
                                                 '${quantityCountLabel}_VALIDATION',
                                               ),
-                                          "max": (object) =>
-                                              localizations.translate(
+                                          "max": (object) => localizations
+                                              .translate(
                                                 '${quantityCountLabel}_MAX_ERROR',
+                                              )
+                                              .replaceAll(
+                                                '{}',
+                                                maxQuantity.toString(),
                                               ),
-                                          "min": (object) =>
-                                              localizations.translate(
+                                          "min": (object) => localizations
+                                              .translate(
                                                 '${quantityCountLabel}_MIN_ERROR',
+                                              )
+                                              .replaceAll(
+                                                '{}',
+                                                minQuantity.toString(),
                                               ),
                                         },
                                         label: localizations.translate(
                                           quantityCountLabel,
                                         ),
+                                        onChanged: (control) {
+                                          if (isWarehouseMgr &&
+                                              !deliveryTeamSelected) {
+                                            final quantity = form
+                                                .control(
+                                                  _transactionQuantityKey,
+                                                )
+                                                .value as int?;
+                                            final waybillQuantity = form
+                                                .control(_waybillQuantityKey)
+                                                .value as int?;
+                                            if (quantity != waybillQuantity) {
+                                              setState(() {
+                                                form
+                                                    .control(
+                                                  _commentsKey,
+                                                )
+                                                    .setValidators(
+                                                  [Validators.required],
+                                                  updateParent: true,
+                                                  autoValidate: true,
+                                                );
+                                                form
+                                                    .control(
+                                                      _commentsKey,
+                                                    )
+                                                    .touched;
+                                              });
+                                            } else {
+                                              setState(() {
+                                                form
+                                                    .control(
+                                                  _commentsKey,
+                                                )
+                                                    .setValidators(
+                                                  [],
+                                                  updateParent: true,
+                                                  autoValidate: true,
+                                                );
+                                              });
+                                            }
+                                          }
+                                        },
                                       ),
                                       if ([
-                                        StockRecordEntryType.returned,
-                                      ].contains(entryType))
+                                            StockRecordEntryType.returned,
+                                          ].contains(entryType) ||
+                                          ([
+                                                StockRecordEntryType.dispatch,
+                                              ].contains(entryType) &&
+                                              context.isDistributor))
                                         DigitTextFormField(
-                                          formControlName:
-                                              _transactionDamagedQuantityKey,
+                                          formControlName: _partialBlistersKey,
                                           keyboardType: const TextInputType
                                               .numberWithOptions(
                                             decimal: true,
@@ -883,20 +1556,260 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                 localizations.translate(
                                                   '${quantityCountLabel}_VALIDATION',
                                                 ),
-                                            "max": (object) =>
-                                                localizations.translate(
+                                            "max": (object) => localizations
+                                                .translate(
                                                   '${quantityCountLabel}_MAX_ERROR',
+                                                )
+                                                .replaceAll(
+                                                  '{}',
+                                                  maxQuantity.toString(),
                                                 ),
-                                            "min": (object) =>
-                                                localizations.translate(
+                                            "min": (object) => localizations
+                                                .translate(
                                                   '${quantityCountLabel}_MIN_ERROR',
+                                                )
+                                                .replaceAll(
+                                                  '{}',
+                                                  minQuantity.toString(),
+                                                ),
+                                          },
+                                          label: localizations.translate(
+                                            module.quantityPartialReturnedLabel,
+                                          ),
+                                        ),
+                                      if ([
+                                            StockRecordEntryType.dispatch,
+                                          ].contains(entryType) &&
+                                          context.isDistributor)
+                                        DigitTextFormField(
+                                          formControlName: _wastedBlistersKey,
+                                          keyboardType: const TextInputType
+                                              .numberWithOptions(
+                                            decimal: true,
+                                          ),
+                                          isRequired: true,
+                                          validationMessages: {
+                                            "number": (object) =>
+                                                localizations.translate(
+                                                  '${quantityCountLabel}_VALIDATION',
+                                                ),
+                                            "max": (object) => localizations
+                                                .translate(
+                                                  '${quantityCountLabel}_MAX_ERROR',
+                                                )
+                                                .replaceAll(
+                                                  '{}',
+                                                  maxQuantity.toString(),
+                                                ),
+                                            "min": (object) => localizations
+                                                .translate(
+                                                  '${quantityCountLabel}_MIN_ERROR',
+                                                )
+                                                .replaceAll(
+                                                  '{}',
+                                                  minQuantity.toString(),
                                                 ),
                                           },
                                           label: localizations.translate(
                                             i18.stockDetails
-                                                .quantityDamagedCountLabel,
+                                                .quantityWastedReturnedLabel,
                                           ),
                                         ),
+                                      isWarehouseMgr && !deliveryTeamSelected
+                                          ? DigitTextFormField(
+                                              label: localizations.translate(
+                                                i18.stockDetails
+                                                    .waybillNumberLabel,
+                                              ),
+                                              isRequired: true,
+                                              formControlName:
+                                                  _waybillNumberKey,
+                                              validationMessages: {
+                                                'required': (object) =>
+                                                    localizations.translate(
+                                                      i18.common
+                                                          .corecommonRequired,
+                                                    ),
+                                              },
+                                            )
+                                          : const Offstage(),
+                                      isWarehouseMgr && !deliveryTeamSelected
+                                          ? DigitTextFormField(
+                                              label: localizations.translate(
+                                                i18.stockDetails
+                                                    .quantityOfProductIndicatedOnWaybillLabel,
+                                              ),
+                                              keyboardType: const TextInputType
+                                                  .numberWithOptions(
+                                                decimal: true,
+                                              ),
+                                              isRequired: true,
+                                              formControlName:
+                                                  _waybillQuantityKey,
+                                              validationMessages: {
+                                                "number": (object) =>
+                                                    localizations.translate(
+                                                      '${i18.stockDetails.quantityOfProductIndicatedOnWaybillLabel}_ERROR',
+                                                    ),
+                                                "max": (object) => localizations
+                                                    .translate(
+                                                      '${quantityCountLabel}_MAX_ERROR',
+                                                    )
+                                                    .replaceAll(
+                                                      '{}',
+                                                      maxQuantity.toString(),
+                                                    ),
+                                                "min": (object) => localizations
+                                                    .translate(
+                                                      '${quantityCountLabel}_MIN_ERROR',
+                                                    )
+                                                    .replaceAll(
+                                                      '{}',
+                                                      minQuantity.toString(),
+                                                    ),
+                                              },
+                                              onChanged: (control) {
+                                                if (isWarehouseMgr &&
+                                                    !deliveryTeamSelected) {
+                                                  final quantity = form
+                                                      .control(
+                                                        _transactionQuantityKey,
+                                                      )
+                                                      .value as int?;
+                                                  final waybillQuantity = form
+                                                      .control(
+                                                          _waybillQuantityKey)
+                                                      .value as int?;
+                                                  if (quantity !=
+                                                      waybillQuantity) {
+                                                    setState(() {
+                                                      form
+                                                          .control(
+                                                        _commentsKey,
+                                                      )
+                                                          .setValidators(
+                                                        [Validators.required],
+                                                        updateParent: true,
+                                                        autoValidate: true,
+                                                      );
+                                                      form
+                                                          .control(
+                                                            _commentsKey,
+                                                          )
+                                                          .touched;
+                                                    });
+                                                  } else {
+                                                    setState(() {
+                                                      form
+                                                          .control(
+                                                        _commentsKey,
+                                                      )
+                                                          .setValidators(
+                                                        [],
+                                                        updateParent: true,
+                                                        autoValidate: true,
+                                                      );
+                                                    });
+                                                  }
+                                                }
+                                              },
+                                            )
+                                          : const Offstage(),
+                                      if (!([
+                                            StockRecordEntryType.dispatch,
+                                          ].contains(entryType) &&
+                                          context.isDistributor))
+                                        DigitTextFormField(
+                                          label: localizations.translate(
+                                            i18.stockDetails.batchNumberLabel,
+                                          ),
+                                          isRequired: true,
+                                          formControlName: _batchNumberKey,
+                                          validationMessages: {
+                                            'required': (object) =>
+                                                localizations.translate(
+                                                  i18.common.corecommonRequired,
+                                                ),
+                                          },
+                                        ),
+                                      isWarehouseMgr && !deliveryTeamSelected
+                                          ? BlocBuilder<AppInitializationBloc,
+                                              AppInitializationState>(
+                                              builder: (context, state) =>
+                                                  state.maybeWhen(
+                                                orElse: () => const Offstage(),
+                                                initialized:
+                                                    (appConfiguration, _) {
+                                                  final transportTypeOptions =
+                                                      appConfiguration
+                                                              .transportTypes ??
+                                                          <TransportTypes>[];
+
+                                                  return DigitReactiveDropdown<
+                                                      String>(
+                                                    isRequired: true,
+                                                    label:
+                                                        localizations.translate(
+                                                      i18.stockDetails
+                                                          .transportTypeLabel,
+                                                    ),
+                                                    valueMapper: (e) =>
+                                                        localizations
+                                                            .translate(e),
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        form.control(
+                                                          _typeOfTransportKey,
+                                                        );
+                                                      });
+                                                    },
+                                                    initialValue:
+                                                        localizations.translate(
+                                                      transportTypeOptions
+                                                              .firstOrNull
+                                                              ?.code ??
+                                                          '',
+                                                    ),
+                                                    menuItems:
+                                                        transportTypeOptions
+                                                            .map(
+                                                      (e) {
+                                                        return e.code;
+                                                      },
+                                                    ).toList(),
+                                                    formControlName:
+                                                        _typeOfTransportKey,
+                                                    validationMessages: {
+                                                      'required': (object) =>
+                                                          localizations
+                                                              .translate(
+                                                            i18.common
+                                                                .corecommonRequired,
+                                                          ),
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                            )
+                                          : const Offstage(),
+                                      isWarehouseMgr && !deliveryTeamSelected
+                                          ? DigitTextFormField(
+                                              label: localizations.translate(
+                                                i18.stockDetails
+                                                    .vehicleNumberLabel,
+                                              ),
+                                              isRequired: true,
+                                              formControlName:
+                                                  _vehicleNumberKey,
+                                              validationMessages: {
+                                                'required': (object) =>
+                                                    localizations.translate(
+                                                      i18.common
+                                                          .corecommonRequired,
+                                                    ),
+                                              },
+                                            )
+                                          : const Offstage(),
                                       DigitTextFormField(
                                         label: localizations.translate(
                                           i18.stockDetails.commentsLabel,
@@ -904,105 +1817,13 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                         minLines: 3,
                                         maxLines: 3,
                                         formControlName: _commentsKey,
+                                        validationMessages: {
+                                          'required': (object) =>
+                                              localizations.translate(
+                                                i18.common.corecommonRequired,
+                                              ),
+                                        },
                                       ),
-                                      scannerState.barCodes.isEmpty
-                                          ? DigitOutlineIconButton(
-                                              buttonStyle:
-                                                  OutlinedButton.styleFrom(
-                                                shape:
-                                                    const RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.zero,
-                                                ),
-                                              ),
-                                              onPressed: () {
-                                                Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const DigitScannerPage(
-                                                      quantity: 5,
-                                                      isGS1code: true,
-                                                      singleValue: false,
-                                                    ),
-                                                    settings:
-                                                        const RouteSettings(
-                                                      name: '/qr-scanner',
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                              icon: Icons.qr_code,
-                                              label: localizations.translate(
-                                                i18.scanner.scanBales,
-                                              ),
-                                            )
-                                          : Column(
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Align(
-                                                      alignment:
-                                                          Alignment.centerLeft,
-                                                      child: Text(
-                                                        localizations.translate(
-                                                          i18.stockDetails
-                                                              .scannedResources,
-                                                        ),
-                                                        style: DigitTheme
-                                                            .instance
-                                                            .mobileTheme
-                                                            .textTheme
-                                                            .labelSmall,
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                        bottom: kPadding * 2,
-                                                      ),
-                                                      child: IconButton(
-                                                        alignment: Alignment
-                                                            .centerRight,
-                                                        color: theme.colorScheme
-                                                            .secondary,
-                                                        icon: const Icon(
-                                                            Icons.edit),
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .push(
-                                                            MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  const DigitScannerPage(
-                                                                quantity: 5,
-                                                                isGS1code: true,
-                                                                singleValue:
-                                                                    false,
-                                                              ),
-                                                              settings:
-                                                                  const RouteSettings(
-                                                                      name:
-                                                                          '/qr-scanner'),
-                                                            ),
-                                                          );
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                ...scannedResources.map(
-                                                  (e) => Align(
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    child: Text(e.elements
-                                                        .values.first.data
-                                                        .toString()),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
                                     ],
                                   ),
                                 ),

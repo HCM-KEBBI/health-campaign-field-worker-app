@@ -137,7 +137,8 @@ extension ContextUtilityExtensions on BuildContext {
     try {
       bool isWarehouseMgr = loggedInUserRoles
           .where(
-            (role) => role.code == RolesType.wareHouseManager.toValue(),
+            (role) => (role.code == RolesType.wareHouseManager.toValue() ||
+                role.code == RolesType.healthFacilitySupervisor.toValue()),
           )
           .toList()
           .isNotEmpty;
