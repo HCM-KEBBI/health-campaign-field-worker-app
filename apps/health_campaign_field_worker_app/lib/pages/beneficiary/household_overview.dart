@@ -445,10 +445,8 @@ class _HouseholdOverviewPageState
                                                       sideEffectData,
                                                     )
                                                   : false,
-                                              // TODO Need to handle the null check
-                                              name: e.name?.givenName ?? ' - ',
-                                              // name:
-                                              //     '${e.name?.givenName ?? ' - '} ${e.name?.familyName ?? ' - '}',
+                                              name:
+                                                  '${e.name?.givenName ?? ' - '} ${e.name?.familyName ?? ' - '}',
                                               years: (e.dateOfBirth == null
                                                       ? null
                                                       : DigitDateUtils
