@@ -273,7 +273,6 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                           updateTask(
                                                         successfulTask,
                                                         productvariantList,
-                                                        form,
                                                         quantityDistributedFormArray,
                                                       );
 
@@ -564,7 +563,6 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
   TaskModel updateTask(
     TaskModel oldTask,
     List<ProductVariantModel?> productvariantList,
-    FormGroup form,
     FormArray quantityDistributedFormArray,
   ) {
     final taskResources = oldTask.resources ?? [];
@@ -582,7 +580,7 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
           continue;
         }
         var quantityIndex = productvariantList.indexOf(productVariant);
-        var updatedResource;
+        TaskResourceModel updatedResource;
 
         if (resource.additionalFields == null) {
           quantity = quantityDistributedFormArray.value![quantityIndex];
