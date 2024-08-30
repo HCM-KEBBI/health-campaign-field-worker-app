@@ -27,6 +27,7 @@ const inventoryReportDetails = InventoryReportDetails();
 const syncDialog = SyncDialog();
 const referBeneficiary = ReferBeneficiary();
 const ineligibilityReasons = IneligibilityReasons();
+const scanner = Scanner();
 
 class Common {
   const Common();
@@ -54,6 +55,8 @@ class Common {
   String get corecommonRequired => 'CORE_COMMON_REQUIRED';
 
   String get coreCommonReasonRequired => 'CORE_COMMON_REASON_REQUIRED';
+
+  String get coreCommonOthersRequired => 'CORE_COMMON_OTHERS_REQUIRED';
 
   String get corecommonclose => 'CORE_COMMON_CLOSE';
 
@@ -735,9 +738,15 @@ class WarehouseDetails {
 
   String get warehouseDetailsLabel => 'WAREHOUSE_DETAILS_LABEL';
 
+  String get transactionDetailsLabel => 'TRANSACTION_DETAILS_LABEL';
+
   String get usDetails => 'US_DETAILS';
 
   String get dateOfReceipt => 'WAREHOUSE_DETAILS_DATE_OF_RECEIPT';
+
+  String get dateOfIssue => 'WAREHOUSE_DETAILS_DATE_OF_ISSUE';
+
+  String get dateOfReturn => 'WAREHOUSE_DETAILS_DATE_OF_RETURN';
 
   String get administrativeUnit => 'WAREHOUSE_DETAILS_ADMINISTRATIVE_UNIT';
 
@@ -787,6 +796,12 @@ class StockDetails {
 
   String get quantityReturnedLabel => 'STOCK_DETAILS_QUANTITY_RETURNED_SPAQ';
 
+  String get quantityPartialReturnedLabel =>
+      'STOCK_DETAILS_PARTIAL_QUANTITY_RETURNED_SPAQ';
+
+  String get quantityWastedReturnedLabel =>
+      'STOCK_DETAILS_WASTED_QUANTITY_RETURNED_SPAQ';
+
   String get quantityLostLabel => 'STOCK_DETAILS_QUANTITY_LOST';
 
   String get quantityDamagedLabel => 'STOCK_DETAILS_QUANTITY_DAMAGED';
@@ -821,6 +836,8 @@ class StockDetails {
   String get damagedSpaqDetails => 'DAMAGED_SPAQ_DETAILS';
   String get quantityDamagedCountLabel => 'STOCK_DAMAGED_QUANTITY_LABEL';
 
+  String get batchNumberLabel => 'STOCK_DETAILS_BATCH_NUMBER';
+
   String get countDialogTitle => 'STOCK_DETAILS_COUNT_DIALOG_TITLE';
 
   String get countContent => 'STOCK_DETAILS_COUNT_DIALOG_CONTENT';
@@ -830,6 +847,10 @@ class StockDetails {
 
   String get countDialogCancel =>
       'STOCK_DETAILS_COUNT_DIALOG_CANCEL_ACTION_LABEL';
+  String get scannedResources => 'SCANNED_RESOURCES';
+
+  String get senderReceiverValidation =>
+      'STOCK_DETAILS_SENDER_RECEIVER_ID_VALIDATION';
 }
 
 class StockReconciliationDetails {
@@ -867,7 +888,7 @@ class StockReconciliationDetails {
 
   String get infoCardTitle => 'STOCK_RECONCILIATION_INFO_CARD_TITLE';
 
-  String get infoCardContent => 'STOCK_RECONCILIATION_INFO_CARD_CONTENT_SPAQ';
+  String get infoCardContent => 'STOCK_RECONCILIATION_INFO_CARD_CONTENT';
   String get infoCardDescription =>
       'STOCK_RECONCILIATION_INFO_CARD_DESCRIPTION_SPAQ';
 
@@ -917,10 +938,19 @@ class ManageStock {
   String get recordStockReceiptDescription =>
       'MANAGE_STOCK_RECEIPT_DESCRIPTION';
 
+  String get recordStockReceiptDistributorDescription =>
+      'MANAGE_STOCK_RECEIPT_DISTRIBUTOR_DESCRIPTION';
+
   String get recordStockIssuedLabel => 'MANAGE_STOCK_RECORDSTOCK_ISSUED_LABEL';
 
   String get recordStockIssuedDescription =>
       'MANAGE_STOCK_RECORDSTOCK_ISSUED_DESCRIPTION';
+
+  String get recordStockReturnedToLabel =>
+      'MANAGE_STOCK_RECORDSTOCK_RETURNED_TO_LABEL';
+
+  String get recordStockReturnedToDescription =>
+      'MANAGE_STOCK_RECORDSTOCK_RETURNED_TO_DESCRIPTION';
 
   String get recordStockReturnedLabel =>
       'MANAGE_STOCK_RECORDSTOCK_RETURNED_LABEL';
@@ -947,6 +977,10 @@ class ManageStock {
   String get recordSpaqReturnedToFacility => 'RECORD_SPAQ_RETURNED_TO_FACILITY';
   String get recordSpaqDamaged => 'RECORD_SPAQ_DAMAGED';
   String get recordListOfSpaqDamaged => 'RECORD_LIST_OF_SPAQ_DAMAGED';
+  String get cddTeamCodeLabel => 'STOCK_CDD_TEAM_CODE_LABEL';
+  String get cddSupervisorCodeLabel => 'STOCK_SUPERVISOR_CODE_LABEL';
+  String get facilityRequired => 'STOCK_DETAILS_FACILITY_IS_REQUIRED';
+  String get teamCodeRequired => 'STOCK_DETAILS_TEAM_CODE_IS_REQUIRED';
 }
 
 class Complaints {
@@ -1068,7 +1102,7 @@ class InventoryReportSelection {
   }
 
   String get inventoryReportReceiptLabel {
-    return 'INVENTORY_REPORT_SELECTION_RECEIPT_LABEL_SPAQ';
+    return 'INVENTORY_REPORT_SELECTION_RECEIPT_LABEL';
   }
 
   String get inventoryReportReceiptDescription {
@@ -1083,8 +1117,16 @@ class InventoryReportSelection {
     return 'INVENTORY_REPORT_SELECTION_ISSUED_DESCRIPTION';
   }
 
+  String get inventoryReportReturnedToLabel {
+    return 'INVENTORY_REPORT_SELECTION_RETURNED_TO_LABEL';
+  }
+
+  String get inventoryReportReturnedToDescription {
+    return 'INVENTORY_REPORT_SELECTION_RETURNED_TO_DESCRIPTION';
+  }
+
   String get inventoryReportReturnedLabel {
-    return 'INVENTORY_REPORT_SELECTION_RETURNED_LABEL_SPAQ';
+    return 'INVENTORY_REPORT_SELECTION_RETURNED_LABEL';
   }
 
   String get inventoryReportReturnedDescription {
@@ -1167,6 +1209,14 @@ class InventoryReportDetails {
     return 'INVENTORY_REPORT_DETAILS_RETURNED_QUANTITY_LABEL';
   }
 
+  String get partialReturnedQuantityLabel {
+    return 'INVENTORY_REPORT_DETAILS_PARTIAL_RETURNED_QUANTITY_LABEL';
+  }
+
+  String get wastedReturnedQuantityLabel {
+    return 'INVENTORY_REPORT_DETAILS_WASTED_RETURNED_QUANTITY_LABEL';
+  }
+
   String get damagedQuantityLabel {
     return 'INVENTORY_REPORT_DETAILS_DAMAGED_QUANTITY_LABEL';
   }
@@ -1185,6 +1235,10 @@ class InventoryReportDetails {
 
   String get returnedTransactingPartyLabel {
     return 'INVENTORY_REPORT_DETAILS_RETURNED_TRANSACTING_PARTY_LABEL';
+  }
+
+  String get returnedToTransactingPartyLabel {
+    return 'INVENTORY_REPORT_DETAILS_RETURNED_TO_TRANSACTING_PARTY_LABEL';
   }
 
   String get damagedTransactingPartyLabel {
@@ -1298,4 +1352,28 @@ class IneligibilityReasons {
   String get dialogContent => 'INELIGIBILITY_REASONS_DIALOG_CONTENT';
   String get ineligibilityReasonsLabel => 'INELIGIBILITY_REASONS_LABEL';
   String get selectReasonsLabel => 'INELIGIBILITY_REASONS_SELECT_LABEL';
+}
+
+class Scanner {
+  const Scanner();
+
+  String get changingCameraLens => 'CHANGING_CAMERA_LENS';
+  String get flashOn => 'FLASH_ON';
+  String get flashOff => 'FLASH_OFF';
+  String get scannerLabel => 'SCANNER_LABEL';
+  String get barCodeScannerLabel => 'BARCODE_SCANNER';
+  String get manualScan => 'MANUAL_SCAN';
+  String get enterManualCode => 'ENTER_MANUAL_CODE';
+  String get resourcesScanned => 'RESOURCE_SCANNED';
+  String get resourceAlreadyScanned => 'RESOURCES_ALREADY_SCANNED';
+  String get manualCodeDescription => 'MANUAL_CODE_DESC';
+  String get resourceCode => 'RESOURCE_CODE';
+  String get scannerDialogTitle => 'SCANNER_DIALOG_TITLE';
+  String get scannerDialogContent => 'SCANNER_DIALOG_CONTENT';
+  String get scannerDialogPrimaryAction => 'SCANNER_DIALOG_PRIMARY_ACTION';
+  String get scannerDialogSecondaryAction => 'SCANNER_DIALOG_SECONDARY_ACTION';
+  String get scannedResourceCountMisMatch => 'SCANNED_RESOURCE_COUNT_MISMATCH';
+  String get barCodesFound => 'BARCODES_FOUND';
+  String get barCode => 'BARCODE';
+  String get scanBales => 'CORE_COMMON_SCAN_BALES';
 }
