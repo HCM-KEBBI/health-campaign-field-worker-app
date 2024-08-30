@@ -195,7 +195,7 @@ class _EligibilityChecklistViewPageState
                               context,
                               options: DigitDialogOptions(
                                 titleText: localizations.translate(
-                                  i18.checklist.checklistDialogLabel,
+                                  i18.checklist.submitButtonDialogLabelText,
                                 ),
                                 content: Text(localizations
                                     .translate(
