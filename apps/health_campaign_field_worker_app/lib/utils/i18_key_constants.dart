@@ -193,6 +193,8 @@ class Checklist {
 
   String get checklistDialogLabel => 'CHECKLIST_DIALOG_LABEL';
 
+  String get submitButtonDialogLabelText => 'CHECKLIST_DETAILS_SUBMIT';
+
   String get checklistDialogDescription => 'CHECKLIST_DIALOG_DESCRITPTION';
 
   String get checklistDialogDynamicDescription =>
