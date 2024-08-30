@@ -50,6 +50,15 @@ Widget buildTableContent(
   const paddingHeight = kPadding * 2;
   final containerHeight = (numRows + 1) * rowHeight + paddingHeight;
 
+  String? convertSKUForLocalization(String? s){
+    String ans="";
+    for(int i=0;i<s!.length;i++){
+      if(s[i]=='(')break;
+      ans+=s[i];
+    }
+    return ans;
+  }
+
   return Container(
     padding: const EdgeInsets.only(
       left: kPadding,
@@ -93,11 +102,15 @@ Widget buildTableContent(
                     .map(
                   (e) {
                     // Retrieve the SKU value for the product variant.
-                    final value = variant!
+                    final value1 = variant!
                         .firstWhere(
                           (element) => element.id == e.productVariantId,
-                        )
-                        .sku;
+                        ).sku?.toUpperCase()
+                        ;
+                   print(value1);
+                    final value=convertSKUForLocalization(value1);
+                    print(value);
+
                     final quantity = e.quantity;
 
                     return TableDataRow([
@@ -109,11 +122,12 @@ Widget buildTableContent(
                                   ?.indexOf(e) ==
                               0
                           ? TableData(
-                              '${localizations.translate(i18.beneficiaryDetails.beneficiaryDeliveryText)} ${deliverInterventionState.dose}',
+                              '${localizations.translate(i18.beneficiaryDetails.beneficiaryDoseText)} ${deliverInterventionState.dose}',
                               cellKey: 'dose',
                             )
                           : TableData(''),
                       // Display the SKU value in the second column.
+
                       TableData(
                         '$quantity - ${localizations.translate(value.toString())}',
                         cellKey: 'resources',

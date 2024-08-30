@@ -36,6 +36,15 @@ class _ResourceBeneficiaryCardState
     extends LocalizedState<ResourceBeneficiaryCard> {
   bool doseAdministered = false;
 
+  String? convertForLocalization(String? s){
+    String ans="";
+    for(int i=0;i<s!.length;i++){
+      if(s[i]=='(')break;
+      ans+=s[i];
+    }
+    return ans;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -70,7 +79,7 @@ class _ResourceBeneficiaryCardState
                     formControlName: 'resourceDelivered.${widget.cardIndex}',
                     valueMapper: (value) {
                       return localizations.translate(
-                        value.sku ?? value.id,
+                        convertForLocalization(value.sku) ?? value.id,
                       );
                     },
                   );
@@ -79,6 +88,7 @@ class _ResourceBeneficiaryCardState
             },
           ),
           DigitIntegerFormPicker(
+
             incrementer: true,
             formControlName: 'quantityDistributed.${widget.cardIndex}',
             form: widget.form,
