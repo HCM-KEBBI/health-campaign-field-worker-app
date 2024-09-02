@@ -533,51 +533,61 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                   builder: (context, state) {
                                     return Column(
                                       children: e.values!
-                                          .map((e) => DigitCheckboxTile(
-                                                label: localizations.translate(
-                                                  'CORE_COMMON_$e',
+                                          .map((e) => Padding(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                  kPadding * 4,
+                                                  0,
+                                                  kPadding,
+                                                  0,
                                                 ),
-                                                value: controller[index]
-                                                    .text
-                                                    .split(
-                                                      multiSelectionSeparator,
-                                                    )
-                                                    .contains(e),
-                                                onChanged: (value) {
-                                                  context
-                                                      .read<ServiceBloc>()
-                                                      .add(
-                                                        ServiceChecklistEvent(
-                                                          value: e.toString(),
-                                                          submitTriggered:
-                                                              submitTriggered,
-                                                        ),
-                                                      );
-                                                  final String ele;
-                                                  var val = controller[index]
+                                                child: DigitCheckboxTile(
+                                                  label:
+                                                      localizations.translate(
+                                                    'CORE_COMMON_$e',
+                                                  ),
+                                                  value: controller[index]
                                                       .text
                                                       .split(
                                                         multiSelectionSeparator,
+                                                      )
+                                                      .contains(e),
+                                                  onChanged: (value) {
+                                                    context
+                                                        .read<ServiceBloc>()
+                                                        .add(
+                                                          ServiceChecklistEvent(
+                                                            value: e.toString(),
+                                                            submitTriggered:
+                                                                submitTriggered,
+                                                          ),
+                                                        );
+                                                    final String ele;
+                                                    var val = controller[index]
+                                                        .text
+                                                        .split(
+                                                          multiSelectionSeparator,
+                                                        );
+                                                    if (val.contains(e)) {
+                                                      val.remove(e);
+                                                      ele = val.join(
+                                                        multiSelectionSeparator,
                                                       );
-                                                  if (val.contains(e)) {
-                                                    val.remove(e);
-                                                    ele = val.join(
-                                                      multiSelectionSeparator,
-                                                    );
-                                                  } else {
-                                                    ele =
-                                                        "${controller[index].text}$multiSelectionSeparator$e";
-                                                  }
-                                                  setState(() {
-                                                    controller[index].value =
-                                                        TextEditingController
-                                                            .fromValue(
-                                                      TextEditingValue(
-                                                        text: ele,
-                                                      ),
-                                                    ).value;
-                                                  });
-                                                },
+                                                    } else {
+                                                      ele =
+                                                          "${controller[index].text}$multiSelectionSeparator$e";
+                                                    }
+                                                    setState(() {
+                                                      controller[index].value =
+                                                          TextEditingController
+                                                              .fromValue(
+                                                        TextEditingValue(
+                                                          text: ele,
+                                                        ),
+                                                      ).value;
+                                                    });
+                                                  },
+                                                ),
                                               ))
                                           .toList(),
                                     );
@@ -593,7 +603,8 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                                 null &&
                                             controller[index]
                                                 .text
-                                                .contains(othersText))
+                                                .contains(othersText) &&
+                                            additionalController.length > index)
                                         ? Padding(
                                             padding: const EdgeInsets.only(
                                               left: 4.0,

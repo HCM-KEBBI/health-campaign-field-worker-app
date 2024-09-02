@@ -484,16 +484,7 @@ class _RecordReferralDetailsPageState
                                                         return;
                                                       } else if (value
                                                           .serviceDefinitionList
-                                                          .any((service) {
-                                                        return reasons
-                                                            .any((symptom) {
-                                                          return (service
-                                                                      .code ??
-                                                                  '')
-                                                              .contains(
-                                                                  symptom.key);
-                                                        });
-                                                      })) {
+                                                          .isEmpty) {
                                                         DigitToast.show(
                                                           context,
                                                           options:
