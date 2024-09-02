@@ -387,6 +387,25 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                             int index = (initialAttributes ?? []).indexOf(e);
 
                             return Column(children: [
+                              if (e.additionalDetails != null &&
+                                  (e.additionalDetails ?? {})
+                                      .keys
+                                      .contains(secDesc))
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Text(
+                                    localizations.translate(
+                                      '${selectedServiceDefinition?.code}.${e.additionalDetails?.entries.where((a) => a.key == secDesc).first.value}',
+                                    ),
+                                    style:
+                                        theme.textTheme.headlineLarge?.copyWith(
+                                      fontWeight: FontWeight.w300,
+                                      color: DigitTheme
+                                          .instance.colorScheme.shadow,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
                               if (e.dataType == 'String' &&
                                   !(code).contains('.')) ...[
                                 Column(
@@ -394,6 +413,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                     DigitTextField(
                                       autoValidation:
                                           AutovalidateMode.onUserInteraction,
+                                      textStyle: theme.textTheme.headlineMedium,
                                       isRequired: true,
                                       controller: controller[index],
                                       // inputFormatter: [
@@ -437,9 +457,10 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                   textStyle: theme.textTheme.headlineMedium,
                                   textInputType: TextInputType.number,
                                   inputFormatter: [
-                                    FilteringTextInputFormatter.allow(RegExp(
-                                      "[0-9]",
-                                    )),
+                                    FilteringTextInputFormatter.allow(
+                                      RegExp(r'[0-9]'),
+                                    ),
+                                    LengthLimitingTextInputFormatter(9),
                                   ],
                                   validator: (value) {
                                     if (((value == null || value == '') &&
@@ -490,6 +511,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                                 ?.copyWith(
                                               fontWeight: FontWeight.w100,
                                             ),
+                                            textAlign: TextAlign.left,
                                           ),
                                       ],
                                     ),
@@ -685,6 +707,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                       '${selectedServiceDefinition?.code}.${item.code}',
                     )} ${item.required == true ? '*' : ''}',
                     style: theme.textTheme.headlineSmall,
+                    textAlign: TextAlign.left,
                   ),
                   if (item.additionalDetails != null &&
                       (item.additionalDetails ?? {}).keys.contains(helpText))
@@ -696,6 +719,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                         ),
                         style: theme.textTheme.bodyMedium
                             ?.copyWith(fontWeight: FontWeight.w100),
+                        textAlign: TextAlign.left,
                       ),
                     ),
                 ],
@@ -825,9 +849,11 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: DigitTextField(
-          onChange: (value) {
-            checklistFormKey.currentState?.validate();
-          },
+          // onChange: (value) {
+          //   checklistFormKey.currentState?.validate();
+          // },
+          autoValidation: AutovalidateMode.onUserInteraction,
+          textStyle: theme.textTheme.headlineMedium,
           isRequired: item.required ?? true,
           controller: controller[index],
           validator: (value) {
@@ -858,9 +884,10 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
         textStyle: theme.textTheme.headlineMedium,
         textInputType: TextInputType.number,
         inputFormatter: [
-          FilteringTextInputFormatter.allow(RegExp(
-            "[0-9]",
-          )),
+          FilteringTextInputFormatter.allow(
+            RegExp(r'[0-9]'),
+          ),
+          LengthLimitingTextInputFormatter(9),
         ],
         validator: (value) {
           if (((value == null || value == '') && item.required == true)) {
@@ -908,6 +935,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                         '${selectedServiceDefinition?.code}.${item.additionalDetails?.entries.where((a) => a.key == helpText).first.value}',
                       )} ${item.required == true ? '*' : ''}',
                       style: theme.textTheme.headlineSmall,
+                      textAlign: TextAlign.left,
                     ),
                 ],
               ),

@@ -12,7 +12,7 @@ class DigitTextField extends StatelessWidget {
   final int? maxLines;
   final bool isRequired;
   final ValueChanged<String>? onChange;
-  final List<FilteringTextInputFormatter>? inputFormatter;
+  final List<TextInputFormatter>? inputFormatter;
   final FocusNode? focusNode;
   final TextInputType? textInputType;
   final String? pattern;
@@ -62,7 +62,7 @@ class DigitTextField extends StatelessWidget {
     ValueNotifier<String?> errorNotifier = ValueNotifier<String?>(null);
 
     return LabeledField(
-      labelStyle: Theme.of(context).textTheme.bodyLarge,
+      labelStyle: Theme.of(context).textTheme.headlineSmall,
       description: description,
       descriptionStyle: descriptionStyle,
       label: isRequired ? "$label *" : label,

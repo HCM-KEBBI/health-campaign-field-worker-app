@@ -115,6 +115,8 @@ class Constants {
   static const String logoutUserPath = '/user/_logout';
   static const String invalidAccessTokenKey = 'InvalidAccessTokenException';
   static const String checklistViewDateFormat = 'dd/MM/yyyy hh:mm a';
+  static const String reAdministeredKey = "reAdministered";
+  static const String pipeSeparator = ' || ';
 
   static List<LocalRepository> getLocalRepositories(
     LocalSqlDataStore sql,

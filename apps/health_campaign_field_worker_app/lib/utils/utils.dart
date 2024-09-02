@@ -307,11 +307,7 @@ bool checkEligibilityForAgeAndSideEffect(
   List<SideEffectModel>? sideEffects,
 ) {
   int totalAgeMonths = age.years * 12 + age.months;
-  bool skipAge = [
-    Status.administeredFailed.toValue(),
-    Status.administeredSuccess.toValue(),
-    Status.delivered.toValue(),
-  ].contains(tasks?.status);
+  bool skipAge = false;
   final currentCycle = projectType?.cycles?.firstWhereOrNull(
     (e) =>
         (e.startDate!) < DateTime.now().millisecondsSinceEpoch &&
@@ -418,6 +414,27 @@ bool checkStatus(
   } else {
     return false;
   }
+}
+
+bool redosePending(List<TaskModel>? tasks) {
+  if ((tasks ?? []).isEmpty) {
+    return true;
+  }
+  var successfulTask = tasks!
+      .where(
+        (element) => element.status == Status.administeredSuccess.toValue(),
+      )
+      .lastOrNull;
+  var redosePending = successfulTask != null &&
+      (successfulTask.additionalFields?.fields
+                  .where(
+                    (element) => element.key == Constants.reAdministeredKey,
+                  )
+                  .toList() ??
+              [])
+          .isEmpty;
+
+  return redosePending;
 }
 
 bool recordedSideEffect(

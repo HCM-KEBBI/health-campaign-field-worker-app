@@ -1,6 +1,7 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stream_transform/stream_transform.dart';
 
 import '../../blocs/delivery_intervention/deliver_intervention.dart';
 import '../../blocs/household_overview/household_overview.dart';
@@ -61,6 +62,7 @@ class MemberCard extends StatelessWidget {
     final theme = Theme.of(context);
     final beneficiaryType = context.beneficiaryType;
     final doseStatus = checkStatus(tasks, context.selectedCycle);
+    final redosePendingStatus = redosePending(tasks);
 
     return Container(
       decoration: BoxDecoration(
@@ -250,10 +252,12 @@ class MemberCard extends StatelessWidget {
                     )
                   : Column(
                       children: [
-                        (isNotEligible || isBeneficiaryIneligible) &&
+                        (isNotEligible ||
+                                    isBeneficiaryIneligible ||
+                                    isBeneficiaryReferred) &&
                                 !doseStatus
                             ? const Offstage()
-                            : !isNotEligible
+                            : !isNotEligible && redosePendingStatus
                                 ? DigitElevatedButton(
                                     child: Center(
                                       child: Text(
@@ -271,41 +275,65 @@ class MemberCard extends StatelessWidget {
                                                 i18.householdOverView
                                                     .viewDeliveryLabel,
                                               )
-                                            : localizations.translate(
-                                                i18.householdOverView
-                                                    .householdOverViewAssessmentActionText,
-                                              ),
+                                            : (tasks ?? []).isEmpty
+                                                ? localizations.translate(
+                                                    i18.householdOverView
+                                                        .householdOverViewAssessmentActionText,
+                                                  )
+                                                : localizations.translate(
+                                                    i18.householdOverView
+                                                        .householdOverViewRedoseActionText,
+                                                  ),
                                       ),
                                     ),
                                     onPressed: () async {
                                       final bloc =
                                           context.read<HouseholdOverviewBloc>();
-                                      Future.delayed(
-                                        const Duration(milliseconds: 200),
-                                        () {
-                                          bloc.add(
-                                            HouseholdOverviewReloadEvent(
-                                              projectId: context.projectId,
-                                              projectBeneficiaryType:
-                                                  beneficiaryType,
+                                      bloc.add(
+                                        HouseholdOverviewReloadEvent(
+                                          projectId: context.projectId,
+                                          projectBeneficiaryType:
+                                              beneficiaryType,
+                                        ),
+                                      );
+                                      bloc.add(
+                                        HouseholdOverviewEvent
+                                            .selectedIndividual(
+                                          individualModel: individual,
+                                        ),
+                                      );
+
+                                      // todo: verify this
+
+                                      if ((tasks ?? []).isEmpty) {
+                                        context.router.push(
+                                          EligibilityChecklistViewRoute(
+                                            projectBeneficiaryClientReferenceId:
+                                                projectBeneficiaryClientReferenceId,
+                                            individual: individual,
+                                          ),
+                                        );
+                                      } else {
+                                        var successfulTask = tasks!
+                                            .where(
+                                              (element) =>
+                                                  element.status ==
+                                                  Status.administeredSuccess
+                                                      .toValue(),
+                                            )
+                                            .lastOrNull;
+                                        if (redosePendingStatus) {
+                                          context.router.push(
+                                            RecordRedoseRoute(
+                                              tasks: [successfulTask!],
                                             ),
                                           );
-                                          bloc.add(
-                                            HouseholdOverviewEvent
-                                                .selectedIndividual(
-                                              individualModel: individual,
-                                            ),
+                                        } else {
+                                          context.router.push(
+                                            BeneficiaryDetailsRoute(),
                                           );
-                                        },
-                                      ).then((value) => {
-                                            context.router.push(
-                                              EligibilityChecklistViewRoute(
-                                                projectBeneficiaryClientReferenceId:
-                                                    projectBeneficiaryClientReferenceId,
-                                                individual: individual,
-                                              ),
-                                            ),
-                                          });
+                                        }
+                                      }
                                     },
                                   )
                                 : const Offstage(),
