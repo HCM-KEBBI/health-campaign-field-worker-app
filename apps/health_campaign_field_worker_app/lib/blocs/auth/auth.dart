@@ -74,7 +74,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         ));
       }
     } catch (_) {
-      localSecureStore.deleteAll();
+      final spaq1Count = await localSecureStore.spaq1;
+      final spaq2Count = await localSecureStore.spaq2;
+      await localSecureStore.deleteAll();
+      await localSecureStore.setSpaqCounts(spaq1Count, spaq2Count);
       emit(const AuthUnauthenticatedState());
       rethrow;
     }
@@ -155,7 +158,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(const AuthUnauthenticatedState());
       }
     } catch (error) {
+      final spaq1Count = await localSecureStore.spaq1;
+      final spaq2Count = await localSecureStore.spaq2;
       await localSecureStore.deleteAll();
+      await localSecureStore.setSpaqCounts(spaq1Count, spaq2Count);
       emit(const AuthUnauthenticatedState());
     }
   }
@@ -164,7 +170,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthLogoutWithoutTokenEvent event,
     AuthEmitter emit,
   ) async {
+    final spaq1Count = await localSecureStore.spaq1;
+    final spaq2Count = await localSecureStore.spaq2;
     await localSecureStore.deleteAll();
+    await localSecureStore.setSpaqCounts(spaq1Count, spaq2Count);
     emit(const AuthUnauthenticatedState());
   }
 }
