@@ -40,7 +40,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
   List<int> visibleChecklistIndexes = [];
   GlobalKey<FormState> checklistFormKey = GlobalKey<FormState>();
   String othersText = "OTHERS";
-  String yesText = "YES";
+  String yesText = "dummyText";
   String multiSelectionSeparator = "^";
   String helpText = "helpText";
   String secDesc = "secDesc";
@@ -468,7 +468,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                     FilteringTextInputFormatter.allow(
                                       RegExp(r'[0-9]'),
                                     ),
-                                    LengthLimitingTextInputFormatter(9),
+                                    LengthLimitingTextInputFormatter(11),
                                   ],
                                   validator: (value) {
                                     if (((value == null || value == '') &&
@@ -895,7 +895,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
           FilteringTextInputFormatter.allow(
             RegExp(r'[0-9]'),
           ),
-          LengthLimitingTextInputFormatter(9),
+          LengthLimitingTextInputFormatter(11),
         ],
         validator: (value) {
           if (((value == null || value == '') && item.required == true)) {

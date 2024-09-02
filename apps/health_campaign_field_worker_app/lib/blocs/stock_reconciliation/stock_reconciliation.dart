@@ -56,7 +56,9 @@ class StockReconciliationBloc
     StockReconciliationEmitter emit,
   ) async {
     emit(state.copyWith(dateOfReconciliation: event.dateOfReconciliation!));
-    add(const StockReconciliationCalculateEvent(loggedInUserId: ''));
+    add(StockReconciliationCalculateEvent(
+      loggedInUserId: event.loggedInUserId,
+    ));
   }
 
   FutureOr<void> _handleCalculate(
