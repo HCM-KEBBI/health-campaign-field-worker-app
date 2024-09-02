@@ -21,6 +21,8 @@ class LocalSecureStore {
   static const manualSyncKey = 'manualSyncKey';
   static const isSyncRunningKey = 'isSyncRunningKey';
   static const selectedProjectTypeKey = 'selectedProjectType';
+  static const spaq1Key = 'spaq1';
+  static const spaq2Key = 'spaq2';
 
   final storage = const FlutterSecureStorage();
 
@@ -157,6 +159,34 @@ class LocalSecureStore {
       default:
         return true;
     }
+  }
+
+  Future<int> get spaq1 async {
+    final spaq1Count = await storage.read(key: spaq1Key);
+
+    if (spaq1Count == null) return 0;
+
+    return int.parse(spaq1Count);
+  }
+
+  Future<int> get spaq2 async {
+    final spaq2Count = await storage.read(key: spaq2Key);
+
+    if (spaq2Count == null) return 0;
+
+    return int.parse(spaq2Count);
+  }
+
+  Future<void> setSpaqCounts(int spaq1, int spaq2) async {
+    await storage.write(
+      key: spaq1Key,
+      value: spaq1.toString(),
+    );
+
+    await storage.write(
+      key: spaq2Key,
+      value: spaq2.toString(),
+    );
   }
 
   Future<void> setSelectedProject(ProjectModel projectModel) async {

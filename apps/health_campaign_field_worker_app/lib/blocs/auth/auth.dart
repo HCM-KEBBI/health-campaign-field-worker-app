@@ -139,6 +139,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (isConnected) {
         final accessToken = await localSecureStore.accessToken;
         final user = await localSecureStore.userRequestModel;
+        final spaq1Count = await localSecureStore.spaq1;
+        final spaq2Count = await localSecureStore.spaq2;
         final tenantId = user?.tenantId;
         await authRepository.logOutUser(
           logoutPath: Constants.logoutUserPath,
@@ -148,6 +150,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           body: {'access_token': accessToken},
         );
         await localSecureStore.deleteAll();
+        await localSecureStore.setSpaqCounts(spaq1Count, spaq2Count);
 
         emit(const AuthUnauthenticatedState());
       }
