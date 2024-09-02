@@ -97,8 +97,7 @@ Widget buildTableContent(
                         .firstWhere(
                           (element) => element.id == e.productVariantId,
                         )
-                        .sku
-                        ?.toUpperCase();
+                        .sku;
 
                     final quantity = e.quantity;
 
