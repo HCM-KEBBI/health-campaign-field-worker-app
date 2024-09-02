@@ -36,14 +36,6 @@ class _ResourceBeneficiaryCardState
     extends LocalizedState<ResourceBeneficiaryCard> {
   bool doseAdministered = false;
 
-  String? convertForLocalization(String? s){
-    String ans="";
-    for(int i=0;i<s!.length;i++){
-      if(s[i]=='(')break;
-      ans+=s[i];
-    }
-    return ans;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +71,7 @@ class _ResourceBeneficiaryCardState
                     formControlName: 'resourceDelivered.${widget.cardIndex}',
                     valueMapper: (value) {
                       return localizations.translate(
-                        convertForLocalization(value.sku) ?? value.id,
+                        value.sku ?? value.id,
                       );
                     },
                   );

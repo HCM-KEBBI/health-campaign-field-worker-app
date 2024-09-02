@@ -710,6 +710,12 @@ class DeliverIntervention {
       'DELIVER_INTERVENTION_PAST_DOSE_DELIVERY_DETAILS_2';
   String get wasDosePastDeliveryDetailPart3 =>
       'DELIVER_INTERVENTION_PAST_DOSE_DELIVERY_DETAILS_3';
+
+  // []
+
+ String get  beneficiaryIneligibleDescription => 'BENEFICIARY_INELIGIBLE_DESC';
+ String get  beneficiaryReferralDescription=> 'BENEFICIARY_REFERRAL_DESC';
+ String get  SPAQRedirectionScreenDescription=> 'SPAQ_REDIRECTED_SCREEN_DESC';
 }
 
 class ProjectSelection {

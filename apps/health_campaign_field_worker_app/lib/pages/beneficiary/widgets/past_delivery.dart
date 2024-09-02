@@ -50,14 +50,7 @@ Widget buildTableContent(
   const paddingHeight = kPadding * 2;
   final containerHeight = (numRows + 1) * rowHeight + paddingHeight;
 
-  String? convertSKUForLocalization(String? s){
-    String ans="";
-    for(int i=0;i<s!.length;i++){
-      if(s[i]=='(')break;
-      ans+=s[i];
-    }
-    return ans;
-  }
+
 
   return Container(
     padding: const EdgeInsets.only(
@@ -102,14 +95,13 @@ Widget buildTableContent(
                     .map(
                   (e) {
                     // Retrieve the SKU value for the product variant.
-                    final value1 = variant!
+                    final value = variant!
                         .firstWhere(
                           (element) => element.id == e.productVariantId,
                         ).sku?.toUpperCase()
                         ;
-                   print(value1);
-                    final value=convertSKUForLocalization(value1);
-                    print(value);
+
+
 
                     final quantity = e.quantity;
 

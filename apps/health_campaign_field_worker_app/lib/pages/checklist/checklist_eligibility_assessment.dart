@@ -186,10 +186,16 @@ class _EligibilityChecklistViewPageState
                               ineligibilityReasons,
                             );
                             var descriptionText = ifIneligible
-                                ? 'the beneficiary is ineligible for SPAQ administration'
+                                ? localizations.translate(
+                              i18.deliverIntervention.beneficiaryIneligibleDescription,
+                            )
                                 : ifReferral
-                                    ? 'You are being redirected to the beneficiary referral screen'
-                                    : 'You are being redirected to SPAQ administration screen';
+                                    ? localizations.translate(
+                              i18.deliverIntervention.beneficiaryReferralDescription,
+                            )
+                                    : localizations.translate(
+                              i18.deliverIntervention.SPAQRedirectionScreenDescription,
+                            );
 
                             final shouldSubmit = await DigitDialog.show(
                               context,
