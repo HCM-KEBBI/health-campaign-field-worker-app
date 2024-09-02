@@ -711,11 +711,11 @@ class DeliverIntervention {
   String get wasDosePastDeliveryDetailPart3 =>
       'DELIVER_INTERVENTION_PAST_DOSE_DELIVERY_DETAILS_3';
 
-  // [new key added for SOAQ Redirection Screen Description]
+  // [new key added for SPAQ Redirection Screen Description]
 
   String get beneficiaryIneligibleDescription => 'BENEFICIARY_INELIGIBLE_DESC';
   String get beneficiaryReferralDescription => 'BENEFICIARY_REFERRAL_DESC';
-  String get SPAQRedirectionScreenDescription => 'SPAQ_REDIRECTED_SCREEN_DESC';
+  String get spaqRedirectionScreenDescription => 'SPAQ_REDIRECTED_SCREEN_DESC';
 }
 
 class ProjectSelection {

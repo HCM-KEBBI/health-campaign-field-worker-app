@@ -187,15 +187,18 @@ class _EligibilityChecklistViewPageState
                             );
                             var descriptionText = ifIneligible
                                 ? localizations.translate(
-                              i18.deliverIntervention.beneficiaryIneligibleDescription,
-                            )
+                                    i18.deliverIntervention
+                                        .beneficiaryIneligibleDescription,
+                                  )
                                 : ifReferral
                                     ? localizations.translate(
-                              i18.deliverIntervention.beneficiaryReferralDescription,
-                            )
+                                        i18.deliverIntervention
+                                            .beneficiaryReferralDescription,
+                                      )
                                     : localizations.translate(
-                              i18.deliverIntervention.SPAQRedirectionScreenDescription,
-                            );
+                                        i18.deliverIntervention
+                                            .spaqRedirectionScreenDescription,
+                                      );
 
                             final shouldSubmit = await DigitDialog.show(
                               context,
