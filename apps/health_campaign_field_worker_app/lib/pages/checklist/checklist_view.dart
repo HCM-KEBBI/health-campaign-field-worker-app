@@ -236,10 +236,6 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                                                     yesText,
                                                               ) !=
                                                           null &&
-                                                      context
-                                                          .isHealthFacilitySupervisor &&
-                                                      widget.referralClientRefId !=
-                                                          null &&
                                                       controller[i].text ==
                                                           attribute?[i]
                                                               .values?[1]
@@ -792,8 +788,6 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                     (element) => element == yesText,
                                   ) !=
                                   null &&
-                              context.isHealthFacilitySupervisor &&
-                              widget.referralClientRefId != null &&
                               controller[index].text ==
                                   item.values?[1].trim()) &&
                           !(context.isHealthFacilitySupervisor &&
