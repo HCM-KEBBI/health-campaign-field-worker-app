@@ -186,10 +186,19 @@ class _EligibilityChecklistViewPageState
                               ineligibilityReasons,
                             );
                             var descriptionText = ifIneligible
-                                ? '"Ineligible"'
+                                ? localizations.translate(
+                                    i18.deliverIntervention
+                                        .beneficiaryIneligibleDescription,
+                                  )
                                 : ifReferral
-                                    ? '"Referral"'
-                                    : '"Administration"';
+                                    ? localizations.translate(
+                                        i18.deliverIntervention
+                                            .beneficiaryReferralDescription,
+                                      )
+                                    : localizations.translate(
+                                        i18.deliverIntervention
+                                            .spaqRedirectionScreenDescription,
+                                      );
 
                             final shouldSubmit = await DigitDialog.show(
                               context,

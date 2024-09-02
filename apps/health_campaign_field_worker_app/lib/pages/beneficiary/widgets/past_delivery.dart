@@ -38,7 +38,7 @@ Widget buildTableContent(
     ),
   ];
 
-    // Calculate the height of the container based on the number of items in the table
+  // Calculate the height of the container based on the number of items in the table
 
   final projectState = context.read<ProjectBloc>().state;
   final item = projectState
@@ -55,7 +55,7 @@ Widget buildTableContent(
       left: kPadding,
       bottom: 0,
       right: kPadding,
-      top:  0,
+      top: 0,
     ),
     // [TODO - need to set the height of the card based on the number of items]
     height: containerHeight,
@@ -98,6 +98,7 @@ Widget buildTableContent(
                           (element) => element.id == e.productVariantId,
                         )
                         .sku;
+
                     final quantity = e.quantity;
 
                     return TableDataRow([
@@ -109,11 +110,12 @@ Widget buildTableContent(
                                   ?.indexOf(e) ==
                               0
                           ? TableData(
-                              '${localizations.translate(i18.beneficiaryDetails.beneficiaryDeliveryText)} ${deliverInterventionState.dose}',
+                              '${localizations.translate(i18.beneficiaryDetails.beneficiaryDoseText)} ${deliverInterventionState.dose}',
                               cellKey: 'dose',
                             )
                           : TableData(''),
                       // Display the SKU value in the second column.
+
                       TableData(
                         '$quantity - ${localizations.translate(value.toString())}',
                         cellKey: 'resources',
