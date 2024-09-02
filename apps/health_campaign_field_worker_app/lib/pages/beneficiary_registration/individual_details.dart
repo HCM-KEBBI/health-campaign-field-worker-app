@@ -431,7 +431,7 @@ class _IndividualDetailsPageState
                               label: localizations.translate(
                                 i18.individualDetails.mobileNumberLabelText,
                               ),
-                              maxLength: 10,
+                              maxLength: 11,
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(
                                   RegExp("[0-9]"),
