@@ -36,7 +36,6 @@ class _ResourceBeneficiaryCardState
     extends LocalizedState<ResourceBeneficiaryCard> {
   bool doseAdministered = false;
 
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -80,7 +79,6 @@ class _ResourceBeneficiaryCardState
             },
           ),
           DigitIntegerFormPicker(
-
             incrementer: true,
             formControlName: 'quantityDistributed.${widget.cardIndex}',
             form: widget.form,

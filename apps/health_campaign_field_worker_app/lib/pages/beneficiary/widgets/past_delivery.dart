@@ -38,7 +38,7 @@ Widget buildTableContent(
     ),
   ];
 
-    // Calculate the height of the container based on the number of items in the table
+  // Calculate the height of the container based on the number of items in the table
 
   final projectState = context.read<ProjectBloc>().state;
   final item = projectState
@@ -50,14 +50,12 @@ Widget buildTableContent(
   const paddingHeight = kPadding * 2;
   final containerHeight = (numRows + 1) * rowHeight + paddingHeight;
 
-
-
   return Container(
     padding: const EdgeInsets.only(
       left: kPadding,
       bottom: 0,
       right: kPadding,
-      top:  0,
+      top: 0,
     ),
     // [TODO - need to set the height of the card based on the number of items]
     height: containerHeight,
@@ -98,10 +96,9 @@ Widget buildTableContent(
                     final value = variant!
                         .firstWhere(
                           (element) => element.id == e.productVariantId,
-                        ).sku?.toUpperCase()
-                        ;
-
-
+                        )
+                        .sku
+                        ?.toUpperCase();
 
                     final quantity = e.quantity;
 
