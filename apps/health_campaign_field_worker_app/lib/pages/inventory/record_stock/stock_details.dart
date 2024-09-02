@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gs1_barcode_parser/gs1_barcode_parser.dart';
 import 'package:reactive_forms/reactive_forms.dart';
@@ -1475,6 +1476,12 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                       DigitTextFormField(
                                         formControlName:
                                             _transactionQuantityKey,
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.allow(
+                                            RegExp(r'[0-9]'),
+                                          ),
+                                          LengthLimitingTextInputFormatter(9),
+                                        ],
                                         keyboardType: const TextInputType
                                             .numberWithOptions(
                                           decimal: true,
@@ -1558,6 +1565,12 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                               context.isDistributor))
                                         DigitTextFormField(
                                           formControlName: _partialBlistersKey,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(
+                                              RegExp(r'[0-9]'),
+                                            ),
+                                            LengthLimitingTextInputFormatter(9),
+                                          ],
                                           keyboardType: const TextInputType
                                               .numberWithOptions(
                                             decimal: true,
@@ -1595,6 +1608,12 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                           context.isDistributor)
                                         DigitTextFormField(
                                           formControlName: _wastedBlistersKey,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(
+                                              RegExp(r'[0-9]'),
+                                            ),
+                                            LengthLimitingTextInputFormatter(9),
+                                          ],
                                           keyboardType: const TextInputType
                                               .numberWithOptions(
                                             decimal: true,
@@ -1651,6 +1670,14 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                 i18.stockDetails
                                                     .quantityOfProductIndicatedOnWaybillLabel,
                                               ),
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter
+                                                    .allow(
+                                                  RegExp(r'[0-9]'),
+                                                ),
+                                                LengthLimitingTextInputFormatter(
+                                                    9),
+                                              ],
                                               keyboardType: const TextInputType
                                                   .numberWithOptions(
                                                 decimal: true,

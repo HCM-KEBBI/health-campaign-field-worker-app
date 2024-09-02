@@ -236,6 +236,10 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                                                     yesText,
                                                               ) !=
                                                           null &&
+                                                      context
+                                                          .isHealthFacilitySupervisor &&
+                                                      widget.referralClientRefId !=
+                                                          null &&
                                                       controller[i].text ==
                                                           attribute?[i]
                                                               .values?[1]
@@ -468,7 +472,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                     FilteringTextInputFormatter.allow(
                                       RegExp(r'[0-9]'),
                                     ),
-                                    LengthLimitingTextInputFormatter(9),
+                                    LengthLimitingTextInputFormatter(11),
                                   ],
                                   validator: (value) {
                                     if (((value == null || value == '') &&
@@ -788,6 +792,8 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                     (element) => element == yesText,
                                   ) !=
                                   null &&
+                              context.isHealthFacilitySupervisor &&
+                              widget.referralClientRefId != null &&
                               controller[index].text ==
                                   item.values?[1].trim()) &&
                           !(context.isHealthFacilitySupervisor &&
@@ -895,7 +901,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
           FilteringTextInputFormatter.allow(
             RegExp(r'[0-9]'),
           ),
-          LengthLimitingTextInputFormatter(9),
+          LengthLimitingTextInputFormatter(11),
         ],
         validator: (value) {
           if (((value == null || value == '') && item.required == true)) {

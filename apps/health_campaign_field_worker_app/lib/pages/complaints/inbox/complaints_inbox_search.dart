@@ -144,7 +144,7 @@ class _ComplaintsInboxSearchPageState
                                   label: localizations.translate(
                                     i18.common.coreCommonMobileNumber,
                                   ),
-                                  maxLength: 10,
+                                  maxLength: 11,
                                   keyboardType: TextInputType.number,
                                   validationMessages: {
                                     'mobileNumber': (object) =>
