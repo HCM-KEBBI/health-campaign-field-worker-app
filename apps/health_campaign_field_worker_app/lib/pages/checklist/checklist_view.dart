@@ -119,20 +119,28 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                         }
                         final itemsAttributes = initialAttributes;
 
+                        // for (int i = 0; i < controller.length; i++) {
+                        //   if (itemsAttributes?[i].required == true &&
+                        //       ((itemsAttributes?[i].dataType ==
+                        //                   'SingleValueList' &&
+                        //               visibleChecklistIndexes
+                        //                   .any((e) => e == i) &&
+                        //               (controller[i].text == '')) ||
+                        //           (itemsAttributes?[i].dataType !=
+                        //                   'SingleValueList' &&
+                        //               (controller[i].text == '' &&
+                        //                   !(context
+                        //                           .isHealthFacilitySupervisor &&
+                        //                       widget.referralClientRefId !=
+                        //                           null))))) {
+                        //     return;
+                        //   }
+                        // }
+
                         for (int i = 0; i < controller.length; i++) {
                           if (itemsAttributes?[i].required == true &&
-                              ((itemsAttributes?[i].dataType ==
-                                          'SingleValueList' &&
-                                      visibleChecklistIndexes
-                                          .any((e) => e == i) &&
-                                      (controller[i].text == '')) ||
-                                  (itemsAttributes?[i].dataType !=
-                                          'SingleValueList' &&
-                                      (controller[i].text == '' &&
-                                          !(context
-                                                  .isHealthFacilitySupervisor &&
-                                              widget.referralClientRefId !=
-                                                  null))))) {
+                              visibleChecklistIndexes.any((e) => e == i) &&
+                              controller[i].text == '') {
                             return;
                           }
                         }
