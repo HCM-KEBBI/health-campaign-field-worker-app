@@ -151,8 +151,30 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
               listener: (context, stockState) {
                 stockState.mapOrNull(
                   persisted: (value) {
+                    StockRecordEntryType entryType = stockState.entryType;
+
                     final parent = context.router.parent() as StackRouter;
-                    parent.replace(AcknowledgementRoute());
+                    var currDescription = localizations.translate(
+                      i18.stockDetails.stockRecordDialogDynamicDescription,
+                    );
+
+                    if (entryType == StockRecordEntryType.receipt) {
+                      currDescription =
+                          currDescription.replaceAll('()', "incoming");
+                    } else if (entryType == StockRecordEntryType.dispatch) {
+                      currDescription = currDescription =
+                          currDescription.replaceAll('()', "outgoing");
+                    } else if (entryType == StockRecordEntryType.returned) {
+                      currDescription = currDescription =
+                          currDescription.replaceAll('()', "returning");
+                    }
+                    parent.replace(
+                      AcknowledgementRoute(
+                          label: localizations.translate(
+                            i18.stockDetails.stockRecordSuccessLabel,
+                          ),
+                          description: currDescription),
+                    );
                   },
                 );
               },

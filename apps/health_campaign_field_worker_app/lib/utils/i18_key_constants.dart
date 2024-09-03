@@ -869,6 +869,11 @@ class StockDetails {
 
   String get senderReceiverValidation =>
       'STOCK_DETAILS_SENDER_RECEIVER_ID_VALIDATION';
+
+  String get stockRecordDialogDynamicDescription =>
+      'STOCK_RECORD_DIALOG_DYNAMIC_DESCRIPTION';
+
+     String get stockRecordSuccessLabel => 'ACKNOWLEDGEMENT_RECORD_SUCCESS_LABEL_TEXT';
 }
 
 class StockReconciliationDetails {
