@@ -24,6 +24,8 @@ class LocalSecureStore {
   static const spaq1Key = 'spaq1';
   static const spaq2Key = 'spaq2';
 
+  List<String> keysToKeep = [spaq1Key, spaq2Key];
+
   final storage = const FlutterSecureStorage();
 
   static LocalSecureStore get instance => _instance;
@@ -264,6 +266,16 @@ class LocalSecureStore {
 
   Future<void> deleteAll() async {
     await storage.deleteAll();
+
+    Map<String, String> allValues = await storage.readAll();
+    List<String> allKeys = allValues.keys.toList();
+
+    List<String> keysToDelete =
+        allKeys.where((key) => !keysToKeep.contains(key)).toList();
+
+    for (String key in keysToDelete) {
+      await storage.delete(key: key);
+    }
   }
 
   /*Sets the bool value of project setup as true once project data is downloaded*/

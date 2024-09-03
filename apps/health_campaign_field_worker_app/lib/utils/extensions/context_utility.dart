@@ -197,8 +197,15 @@ extension ContextUtilityExtensions on BuildContext {
   List<UserRoleModel> get loggedInUserRoles {
     final authBloc = _get<AuthBloc>();
     final userRequestObject = authBloc.state.whenOrNull(
-      authenticated:
-          (accessToken, refreshToken, userModel, actionsWrapper, individualId) {
+      authenticated: (
+        accessToken,
+        refreshToken,
+        userModel,
+        actionsWrapper,
+        individualId,
+        spaq1,
+        spaq2,
+      ) {
         return userModel.roles;
       },
     );
@@ -213,8 +220,15 @@ extension ContextUtilityExtensions on BuildContext {
   String? get loggedInIndividualId {
     final authBloc = _get<AuthBloc>();
     final individualUUID = authBloc.state.whenOrNull(
-      authenticated:
-          (accessToken, refreshToken, userModel, actionsWrapper, individualId) {
+      authenticated: (
+        accessToken,
+        refreshToken,
+        userModel,
+        actionsWrapper,
+        individualId,
+        spaq1,
+        spaq2,
+      ) {
         return individualId;
       },
     );
@@ -226,13 +240,66 @@ extension ContextUtilityExtensions on BuildContext {
     return individualUUID;
   }
 
+  int get spaq1 {
+    final authBloc = _get<AuthBloc>();
+    final spaq1 = authBloc.state.whenOrNull(
+      authenticated: (
+        accessToken,
+        refreshToken,
+        userModel,
+        actionsWrapper,
+        individualId,
+        spaq1,
+        spaq2,
+      ) {
+        return spaq1;
+      },
+    );
+
+    if (spaq1 == null) {
+      return 0;
+    }
+
+    return spaq1;
+  }
+
+  int get spaq2 {
+    final authBloc = _get<AuthBloc>();
+    final spaq2 = authBloc.state.whenOrNull(
+      authenticated: (
+        accessToken,
+        refreshToken,
+        userModel,
+        actionsWrapper,
+        individualId,
+        spaq1,
+        spaq2,
+      ) {
+        return spaq2;
+      },
+    );
+
+    if (spaq2 == null) {
+      return 0;
+    }
+
+    return spaq2;
+  }
+
   String get loggedInUserUuid => loggedInUser.uuid;
 
   UserRequestModel get loggedInUser {
     final authBloc = _get<AuthBloc>();
     final userRequestObject = authBloc.state.whenOrNull(
-      authenticated:
-          (accessToken, refreshToken, userModel, actions, individualId) {
+      authenticated: (
+        accessToken,
+        refreshToken,
+        userModel,
+        actions,
+        individualId,
+        spaq1,
+        spaq2,
+      ) {
         return userModel;
       },
     );
