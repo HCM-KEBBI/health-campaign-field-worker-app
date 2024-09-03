@@ -82,11 +82,11 @@ class _ResourceBeneficiaryCardState
             incrementer: true,
             formControlName: 'quantityDistributed.${widget.cardIndex}',
             form: widget.form,
-            label: localizations.translate(
+            label: '${localizations.translate(
               widget.isAdministered
                   ? i18.deliverIntervention.redoseQuantityLabel
                   : i18.deliverIntervention.quantityDistributedLabel,
-            ),
+            )}*',
             minimum: 0,
             maximum: 1,
             buttonWidth: 50,

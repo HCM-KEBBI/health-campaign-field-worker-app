@@ -323,7 +323,8 @@ class BeneficiaryDetails {
   String get ctaProceed => 'PROCEED';
   String get beneficiaryDoseNo => 'BENEFICIARY_DETAILS_DOSE_NO';
   String get beneficiaryDose => 'BENEFICIARY_DETAILS_DOSE';
-  String get beneficiaryDeliveryText => 'DELIVERY';
+  String get beneficiaryDoseText => 'DOSE';
+  String get beneficiaryDeliveryText => 'DOSE';
   String get beneficiaryStatus => 'BENEFICIARY_DETAILS_STATUS';
   String get beneficiaryResources => 'BENEFICIARY_DETAILS_RESOURCES';
   String get beneficiaryQuantity => 'BENEFICIARY_DETAILS_QUANTITY';
@@ -718,6 +719,12 @@ class DeliverIntervention {
       'DELIVER_INTERVENTION_PAST_DOSE_DELIVERY_DETAILS_2';
   String get wasDosePastDeliveryDetailPart3 =>
       'DELIVER_INTERVENTION_PAST_DOSE_DELIVERY_DETAILS_3';
+
+  // [new key added for SPAQ Redirection Screen Description]
+
+  String get beneficiaryIneligibleDescription => 'BENEFICIARY_INELIGIBLE_DESC';
+  String get beneficiaryReferralDescription => 'BENEFICIARY_REFERRAL_DESC';
+  String get spaqRedirectionScreenDescription => 'SPAQ_REDIRECTED_SCREEN_DESC';
 }
 
 class ProjectSelection {

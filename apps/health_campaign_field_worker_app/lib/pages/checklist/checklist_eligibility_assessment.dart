@@ -186,10 +186,19 @@ class _EligibilityChecklistViewPageState
                               ineligibilityReasons,
                             );
                             var descriptionText = ifIneligible
-                                ? '"Ineligible"'
+                                ? localizations.translate(
+                                    i18.deliverIntervention
+                                        .beneficiaryIneligibleDescription,
+                                  )
                                 : ifReferral
-                                    ? '"Referral"'
-                                    : '"Administration"';
+                                    ? localizations.translate(
+                                        i18.deliverIntervention
+                                            .beneficiaryReferralDescription,
+                                      )
+                                    : localizations.translate(
+                                        i18.deliverIntervention
+                                            .spaqRedirectionScreenDescription,
+                                      );
 
                             final shouldSubmit = await DigitDialog.show(
                               context,
@@ -455,8 +464,7 @@ class _EligibilityChecklistViewPageState
                                 padding: const EdgeInsets.only(bottom: 8),
                                 child: Text(
                                   localizations.translate(
-                                    value.serviceDefinitionList.first.code
-                                        .toString(),
+                                    selectedServiceDefinition!.code.toString(),
                                   ),
                                   style: theme.textTheme.displayMedium,
                                   textAlign: TextAlign.left,
