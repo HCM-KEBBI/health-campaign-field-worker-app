@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:digit_components/digit_components.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../data/data_repository.dart';
@@ -43,6 +44,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on(_onLogout);
     on(_onAutoLogin);
     on(_onAuthLogoutWithoutToken);
+    on(_onAddSpaqCounts);
   }
 
   //_onAutoLogin event handles auto-login of the user when the user is already logged in and token is not expired, AuthenticatedWrapper is returned in UI
@@ -53,6 +55,55 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthLoadingState());
 
     try {
+      final accessToken = await localSecureStore.accessToken;
+      final refreshToken = await localSecureStore.refreshToken;
+      final userObject = await localSecureStore.userRequestModel;
+      final actionsList = await localSecureStore.savedActions;
+      final userIndividualId = await localSecureStore.userIndividualId;
+      final spaq1 = await localSecureStore.spaq1;
+      final spaq2 = await localSecureStore.spaq2;
+
+      if (accessToken == null ||
+          refreshToken == null ||
+          userObject == null ||
+          actionsList == null) {
+        emit(const AuthUnauthenticatedState());
+      } else {
+        emit(AuthAuthenticatedState(
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+          userModel: userObject,
+          individualId: userIndividualId,
+          actionsWrapper: actionsList,
+          spaq1Count: spaq1,
+          spaq2Count: spaq2,
+        ));
+      }
+    } catch (_) {
+      await localSecureStore.deleteAll();
+      emit(const AuthUnauthenticatedState());
+      rethrow;
+    }
+  }
+
+  FutureOr<void> _onAddSpaqCounts(
+    AuthAddSpaqCountsEvent event,
+    AuthEmitter emit,
+  ) async {
+    // emit(const AuthLoadingState());
+
+    try {
+      int spaq1 = await localSecureStore.spaq1;
+      int spaq2 = await localSecureStore.spaq2;
+
+      int additionSpaq1Count = event.spaq1Count;
+      int additionSpaq2Count = event.spaq2Count;
+
+      spaq1 = spaq1 + additionSpaq1Count;
+      spaq2 = spaq2 + additionSpaq2Count;
+
+      localSecureStore.setSpaqCounts(spaq1, spaq2);
+
       final accessToken = await localSecureStore.accessToken;
       final refreshToken = await localSecureStore.refreshToken;
       final userObject = await localSecureStore.userRequestModel;
@@ -71,13 +122,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           userModel: userObject,
           individualId: userIndividualId,
           actionsWrapper: actionsList,
+          spaq1Count: spaq1,
+          spaq2Count: spaq2,
         ));
       }
     } catch (_) {
-      final spaq1Count = await localSecureStore.spaq1;
-      final spaq2Count = await localSecureStore.spaq2;
       await localSecureStore.deleteAll();
-      await localSecureStore.setSpaqCounts(spaq1Count, spaq2Count);
       emit(const AuthUnauthenticatedState());
       rethrow;
     }
@@ -111,6 +161,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         },
       );
       await localSecureStore.setBoundaryRefetch(true);
+      final spaq1 = await localSecureStore.spaq1;
+      final spaq2 = await localSecureStore.spaq2;
 
       emit(
         AuthAuthenticatedState(
@@ -118,6 +170,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           refreshToken: result.refreshToken,
           userModel: result.userRequestModel,
           actionsWrapper: actionsWrapper,
+          spaq1Count: spaq1,
+          spaq2Count: spaq2,
         ),
       );
     } on DioError catch (error) {
@@ -142,8 +196,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (isConnected) {
         final accessToken = await localSecureStore.accessToken;
         final user = await localSecureStore.userRequestModel;
-        final spaq1Count = await localSecureStore.spaq1;
-        final spaq2Count = await localSecureStore.spaq2;
         final tenantId = user?.tenantId;
         await authRepository.logOutUser(
           logoutPath: Constants.logoutUserPath,
@@ -153,15 +205,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           body: {'access_token': accessToken},
         );
         await localSecureStore.deleteAll();
-        await localSecureStore.setSpaqCounts(spaq1Count, spaq2Count);
 
         emit(const AuthUnauthenticatedState());
       }
     } catch (error) {
-      final spaq1Count = await localSecureStore.spaq1;
-      final spaq2Count = await localSecureStore.spaq2;
       await localSecureStore.deleteAll();
-      await localSecureStore.setSpaqCounts(spaq1Count, spaq2Count);
       emit(const AuthUnauthenticatedState());
     }
   }
@@ -170,10 +218,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthLogoutWithoutTokenEvent event,
     AuthEmitter emit,
   ) async {
-    final spaq1Count = await localSecureStore.spaq1;
-    final spaq2Count = await localSecureStore.spaq2;
     await localSecureStore.deleteAll();
-    await localSecureStore.setSpaqCounts(spaq1Count, spaq2Count);
     emit(const AuthUnauthenticatedState());
   }
 }
@@ -185,6 +230,11 @@ class AuthEvent with _$AuthEvent {
     required String password,
     required String tenantId,
   }) = AuthLoginEvent;
+
+  const factory AuthEvent.addSpaqCounts({
+    required int spaq1Count,
+    required int spaq2Count,
+  }) = AuthAddSpaqCountsEvent;
 
   const factory AuthEvent.autoLogin({
     required String tenantId,
@@ -208,6 +258,8 @@ class AuthState with _$AuthState {
     required UserRequestModel userModel,
     required RoleActionsWrapperModel actionsWrapper,
     String? individualId,
+    int? spaq1Count,
+    int? spaq2Count,
   }) = AuthAuthenticatedState;
 
   const factory AuthState.error([String? error]) = AuthErrorState;
