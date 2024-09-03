@@ -811,53 +811,6 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   ),
                                                 );
 
-                                                if (isDistributor) {
-                                                  int spaq1 = 0;
-                                                  int spaq2 = 0;
-
-                                                  int totalQuantity = 0;
-
-                                                  totalQuantity = entryType ==
-                                                          StockRecordEntryType
-                                                              .dispatch
-                                                      ? ((quantity != null
-                                                                  ? int.parse(
-                                                                      quantity,
-                                                                    )
-                                                                  : 0) +
-                                                              (wastedBlisters !=
-                                                                      null
-                                                                  ? int.parse(
-                                                                      wastedBlisters,
-                                                                    )
-                                                                  : 0) +
-                                                              (partialBlisters !=
-                                                                      null
-                                                                  ? int.parse(
-                                                                      partialBlisters,
-                                                                    )
-                                                                  : 0)) *
-                                                          -1
-                                                      : quantity != null
-                                                          ? int.parse(
-                                                              quantity,
-                                                            )
-                                                          : 0;
-
-                                                  if (isSpaq1) {
-                                                    spaq1 = totalQuantity;
-                                                  } else {
-                                                    spaq2 = totalQuantity;
-                                                  }
-
-                                                  context.read<AuthBloc>().add(
-                                                        AuthAddSpaqCountsEvent(
-                                                          spaq1Count: spaq1,
-                                                          spaq2Count: spaq2,
-                                                        ),
-                                                      );
-                                                }
-
                                                 final submit = await DigitDialog
                                                     .show<bool>(
                                                   context,
@@ -906,6 +859,59 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   bloc.add(
                                                     const RecordStockCreateStockEntryEvent(),
                                                   );
+
+                                                  if (isDistributor) {
+                                                    int spaq1 = 0;
+                                                    int spaq2 = 0;
+
+                                                    int totalQuantity = 0;
+
+                                                    totalQuantity = entryType ==
+                                                            StockRecordEntryType
+                                                                .dispatch
+                                                        ? ((quantity != null
+                                                                    ? int.parse(
+                                                                        quantity
+                                                                            .toString(),
+                                                                      )
+                                                                    : 0) +
+                                                                (wastedBlisters !=
+                                                                        null
+                                                                    ? int.parse(
+                                                                        wastedBlisters
+                                                                            .toString(),
+                                                                      )
+                                                                    : 0) +
+                                                                (partialBlisters !=
+                                                                        null
+                                                                    ? int.parse(
+                                                                        partialBlisters
+                                                                            .toString(),
+                                                                      )
+                                                                    : 0)) *
+                                                            -1
+                                                        : quantity != null
+                                                            ? int.parse(
+                                                                quantity
+                                                                    .toString(),
+                                                              )
+                                                            : 0;
+
+                                                    if (isSpaq1) {
+                                                      spaq1 = totalQuantity;
+                                                    } else {
+                                                      spaq2 = totalQuantity;
+                                                    }
+
+                                                    context
+                                                        .read<AuthBloc>()
+                                                        .add(
+                                                          AuthAddSpaqCountsEvent(
+                                                            spaq1Count: spaq1,
+                                                            spaq2Count: spaq2,
+                                                          ),
+                                                        );
+                                                  }
                                                 }
                                               },
                                         child: Center(

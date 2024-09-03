@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import '../../blocs/app_initialization/app_initialization.dart';
+import '../../blocs/auth/auth.dart';
 import '../../blocs/delivery_intervention/deliver_intervention.dart';
 import '../../blocs/household_overview/household_overview.dart';
 import '../../blocs/product_variant/product_variant.dart';
@@ -346,6 +347,74 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                                   true,
                                                                   context
                                                                       .boundary,
+                                                                ),
+                                                              );
+
+                                                          int spaq1 = 0;
+                                                          int spaq2 = 0;
+
+                                                          var productVariantId =
+                                                              updatedTask
+                                                                  .resources!
+                                                                  .first
+                                                                  .productVariantId;
+                                                          final productVariant =
+                                                              productvariantList
+                                                                  .where((element) =>
+                                                                      element
+                                                                          ?.id ==
+                                                                      productVariantId)
+                                                                  .firstOrNull;
+
+                                                          var quantityIndex =
+                                                              productvariantList
+                                                                  .indexOf(
+                                                            productVariant,
+                                                          );
+
+                                                          final quantity =
+                                                              quantityDistributedFormArray
+                                                                      .value![
+                                                                  quantityIndex];
+
+                                                          if (productVariant ==
+                                                                  null ||
+                                                              productVariant
+                                                                      .sku ==
+                                                                  null ||
+                                                              productVariant
+                                                                  .sku!
+                                                                  .contains(
+                                                                Constants
+                                                                    .spaq1String,
+                                                              )) {
+                                                            spaq1 = quantity !=
+                                                                        null &&
+                                                                    quantity !=
+                                                                        'null'
+                                                                ? int.parse(quantity
+                                                                        .toString()) *
+                                                                    -1
+                                                                : 0;
+                                                          } else {
+                                                            spaq2 = quantity !=
+                                                                        null &&
+                                                                    quantity !=
+                                                                        'null'
+                                                                ? int.parse(quantity
+                                                                        .toString()) *
+                                                                    -1
+                                                                : 0;
+                                                          }
+
+                                                          context
+                                                              .read<AuthBloc>()
+                                                              .add(
+                                                                AuthAddSpaqCountsEvent(
+                                                                  spaq1Count:
+                                                                      spaq1,
+                                                                  spaq2Count:
+                                                                      spaq2,
                                                                 ),
                                                               );
 
