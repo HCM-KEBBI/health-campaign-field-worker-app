@@ -75,10 +75,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                 if (!isControllersInitialized) {
                   initialAttributes?.forEach((e) {
                     controller.add(TextEditingController());
-                    if (!(context.isHealthFacilitySupervisor &&
-                        widget.referralClientRefId != null)) {
-                      additionalController.add(TextEditingController());
-                    }
+                    additionalController.add(TextEditingController());
                   });
 
                   // Set the flag to true after initializing controllers
@@ -603,8 +600,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                                 null &&
                                             controller[index]
                                                 .text
-                                                .contains(othersText) &&
-                                            additionalController.length > index)
+                                                .contains(othersText))
                                         ? Padding(
                                             padding: const EdgeInsets.only(
                                               left: 4.0,

@@ -464,8 +464,7 @@ class _EligibilityChecklistViewPageState
                                 padding: const EdgeInsets.only(bottom: 8),
                                 child: Text(
                                   localizations.translate(
-                                    value.serviceDefinitionList.first.code
-                                        .toString(),
+                                    selectedServiceDefinition!.code.toString(),
                                   ),
                                   style: theme.textTheme.displayMedium,
                                   textAlign: TextAlign.left,
