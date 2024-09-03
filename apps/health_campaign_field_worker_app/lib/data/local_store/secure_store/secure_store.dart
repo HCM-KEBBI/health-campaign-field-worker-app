@@ -265,7 +265,7 @@ class LocalSecureStore {
   }
 
   Future<void> deleteAll() async {
-    await storage.deleteAll();
+    // await storage.deleteAll();
 
     Map<String, String> allValues = await storage.readAll();
     List<String> allKeys = allValues.keys.toList();
