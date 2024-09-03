@@ -8,6 +8,7 @@ import 'package:gs1_barcode_parser/gs1_barcode_parser.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import '../../../blocs/app_initialization/app_initialization.dart';
+import '../../../blocs/auth/auth.dart';
 import '../../../blocs/digit_scanner/digit_scanner.dart';
 import '../../../blocs/facility/facility.dart';
 import '../../../blocs/product_variant/product_variant.dart';
@@ -61,6 +62,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
   static const _deliveryTeamKey = 'deliveryTeam';
   static const _supervisorKey = 'supervisor';
   bool deliveryTeamSelected = false;
+  bool isSpaq1 = true;
 
   FormGroup _form(List<FacilityModel> facilities, bool isDistributor) {
     return fb.group({
@@ -709,7 +711,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                             batchNumber,
                                                             vehicleNumber,
                                                             transportType,
-                                                            supervisorCode
+                                                            supervisorCode,
                                                           ].any((element) =>
                                                               element !=
                                                               null) ||
@@ -808,6 +810,53 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                     stockModel: stockModel,
                                                   ),
                                                 );
+
+                                                if (isDistributor) {
+                                                  int spaq1 = 0;
+                                                  int spaq2 = 0;
+
+                                                  int totalQuantity = 0;
+
+                                                  totalQuantity = entryType ==
+                                                          StockRecordEntryType
+                                                              .dispatch
+                                                      ? ((quantity != null
+                                                                  ? int.parse(
+                                                                      quantity,
+                                                                    )
+                                                                  : 0) +
+                                                              (wastedBlisters !=
+                                                                      null
+                                                                  ? int.parse(
+                                                                      wastedBlisters,
+                                                                    )
+                                                                  : 0) +
+                                                              (partialBlisters !=
+                                                                      null
+                                                                  ? int.parse(
+                                                                      partialBlisters,
+                                                                    )
+                                                                  : 0)) *
+                                                          -1
+                                                      : quantity != null
+                                                          ? int.parse(
+                                                              quantity,
+                                                            )
+                                                          : 0;
+
+                                                  if (isSpaq1) {
+                                                    spaq1 = totalQuantity;
+                                                  } else {
+                                                    spaq2 = totalQuantity;
+                                                  }
+
+                                                  context.read<AuthBloc>().add(
+                                                        AuthAddSpaqCountsEvent(
+                                                          spaq1Count: spaq1,
+                                                          spaq2Count: spaq2,
+                                                        ),
+                                                      );
+                                                }
 
                                                 final submit = await DigitDialog
                                                     .show<bool>(
@@ -908,6 +957,12 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                       localizations.translate(
                                                         '${module.selectProductLabel}_IS_REQUIRED',
                                                       ),
+                                                },
+                                                onChanged: (value) {
+                                                  isSpaq1 = value.sku != null &&
+                                                      value.sku!.contains(
+                                                          Constants
+                                                              .spaq1String);
                                                 },
                                               );
                                             },
