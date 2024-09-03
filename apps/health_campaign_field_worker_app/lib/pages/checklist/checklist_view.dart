@@ -40,7 +40,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
   List<int> visibleChecklistIndexes = [];
   GlobalKey<FormState> checklistFormKey = GlobalKey<FormState>();
   String othersText = "OTHERS";
-  String yesText = "YES";
+  String yesText = "dummy";
   String multiSelectionSeparator = "^";
   String helpText = "helpText";
   String secDesc = "secDesc";
