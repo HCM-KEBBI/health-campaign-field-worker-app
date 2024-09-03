@@ -533,6 +533,7 @@ class _$AppRouter extends RootStackRouter {
           key: args.key,
           appLocalizations: args.appLocalizations,
           enableViewHousehold: args.enableViewHousehold,
+          isReferral: args.isReferral,
         ),
       );
     },
@@ -2814,6 +2815,7 @@ class HouseholdAcknowledgementRoute
     Key? key,
     AppLocalizations? appLocalizations,
     bool? enableViewHousehold,
+    bool? isReferral,
   }) : super(
           HouseholdAcknowledgementRoute.name,
           path: 'household-acknowledgement',
@@ -2821,6 +2823,7 @@ class HouseholdAcknowledgementRoute
             key: key,
             appLocalizations: appLocalizations,
             enableViewHousehold: enableViewHousehold,
+            isReferral: isReferral,
           ),
         );
 
@@ -2832,6 +2835,7 @@ class HouseholdAcknowledgementRouteArgs {
     this.key,
     this.appLocalizations,
     this.enableViewHousehold,
+    this.isReferral,
   });
 
   final Key? key;
@@ -2840,9 +2844,11 @@ class HouseholdAcknowledgementRouteArgs {
 
   final bool? enableViewHousehold;
 
+  final bool? isReferral;
+
   @override
   String toString() {
-    return 'HouseholdAcknowledgementRouteArgs{key: $key, appLocalizations: $appLocalizations, enableViewHousehold: $enableViewHousehold}';
+    return 'HouseholdAcknowledgementRouteArgs{key: $key, appLocalizations: $appLocalizations, enableViewHousehold: $enableViewHousehold, isReferral: $isReferral}';
   }
 }
 
