@@ -43,12 +43,14 @@ class _IndividualDetailsPageState
   static const _dobKey = 'dob';
   static const _genderKey = 'gender';
   static const _mobileNumberKey = 'mobileNumber';
+  DateTime now = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<BeneficiaryRegistrationBloc>();
     final router = context.router;
     final theme = Theme.of(context);
+    DateTime before150Years = DateTime(now.year - 150, now.month, now.day);
 
     return Scaffold(
       body: ReactiveFormBuilder(
@@ -372,6 +374,13 @@ class _IndividualDetailsPageState
                             yearsAndMonthsErrMsg: localizations.translate(
                               i18.individualDetails.yearsAndMonthsErrorText,
                             ),
+                            initialDate: before150Years,
+                            confirmText: localizations.translate(
+                              i18.common.coreCommonOk,
+                            ),
+                            cancelText: localizations.translate(
+                              i18.common.coreCommonCancel,
+                            ),
                             onChangeOfFormControl: (formControl) {
                               // Handle changes to the control's value here
                               final value = formControl.value;
@@ -382,7 +391,8 @@ class _IndividualDetailsPageState
                                     DigitDateUtils.calculateAge(value);
                                 if ((age.years == 0 && age.months == 0) ||
                                     age.months > 11 ||
-                                    (age.years >= 150 && age.months > 0)) {
+                                    (age.years > 150 ||
+                                        (age.years == 150 && age.months > 0))) {
                                   formControl.setErrors({'': true});
                                 } else {
                                   formControl.removeError('');
