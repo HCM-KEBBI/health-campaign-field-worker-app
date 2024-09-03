@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import '../../blocs/app_initialization/app_initialization.dart';
+import '../../blocs/auth/auth.dart';
 import '../../blocs/delivery_intervention/deliver_intervention.dart';
 import '../../blocs/household_overview/household_overview.dart';
 import '../../blocs/product_variant/product_variant.dart';
@@ -283,41 +284,110 @@ class _DeliverInterventionPageState
                                                               .name,
                                                         );
 
+                                                        TaskModel task =
+                                                            _getTaskModel(
+                                                          context,
+                                                          form: form,
+                                                          oldTask: null,
+                                                          projectBeneficiaryClientReferenceId:
+                                                              projectBeneficiary
+                                                                  .first
+                                                                  .clientReferenceId,
+                                                          dose:
+                                                              deliveryInterventionstate
+                                                                  .dose,
+                                                          cycle:
+                                                              deliveryInterventionstate
+                                                                  .cycle,
+                                                          deliveryStrategy:
+                                                              getDeliveryStrategy,
+                                                          address:
+                                                              householdMemberWrapper
+                                                                  .members
+                                                                  .first
+                                                                  .address
+                                                                  ?.first,
+                                                          latitude: lat,
+                                                          longitude: long,
+                                                        );
+
                                                         context
                                                             .read<
                                                                 DeliverInterventionBloc>()
                                                             .add(
                                                               DeliverInterventionSubmitEvent(
-                                                                [
-                                                                  _getTaskModel(
-                                                                    context,
-                                                                    form: form,
-                                                                    oldTask:
-                                                                        null,
-                                                                    projectBeneficiaryClientReferenceId:
-                                                                        projectBeneficiary
-                                                                            .first
-                                                                            .clientReferenceId,
-                                                                    dose: deliveryInterventionstate
-                                                                        .dose,
-                                                                    cycle: deliveryInterventionstate
-                                                                        .cycle,
-                                                                    deliveryStrategy:
-                                                                        getDeliveryStrategy,
-                                                                    address: householdMemberWrapper
-                                                                        .members
-                                                                        .first
-                                                                        .address
-                                                                        ?.first,
-                                                                    latitude:
-                                                                        lat,
-                                                                    longitude:
-                                                                        long,
-                                                                  ),
-                                                                ],
+                                                                [task],
                                                                 false,
                                                                 context
                                                                     .boundary,
+                                                              ),
+                                                            );
+
+                                                        int spaq1 = 0;
+                                                        int spaq2 = 0;
+
+                                                        final productvariantList =
+                                                            ((form.control(_resourceDeliveredKey)
+                                                                        as FormArray)
+                                                                    .value
+                                                                as List<
+                                                                    ProductVariantModel?>);
+
+                                                        if (productvariantList
+                                                                .isEmpty ||
+                                                            productvariantList
+                                                                    .first!
+                                                                    .sku ==
+                                                                null ||
+                                                            productvariantList
+                                                                .first!.sku!
+                                                                .contains(
+                                                              Constants
+                                                                  .spaq1String,
+                                                            )) {
+                                                          spaq1 = task
+                                                                          .resources!
+                                                                          .first
+                                                                          .quantity !=
+                                                                      null &&
+                                                                  task
+                                                                          .resources!
+                                                                          .first
+                                                                          .quantity !=
+                                                                      'null'
+                                                              ? int.parse(task
+                                                                      .resources!
+                                                                      .first
+                                                                      .quantity!) *
+                                                                  -1
+                                                              : 0;
+                                                        } else {
+                                                          spaq2 = task
+                                                                          .resources!
+                                                                          .first
+                                                                          .quantity !=
+                                                                      null &&
+                                                                  task
+                                                                          .resources!
+                                                                          .first
+                                                                          .quantity !=
+                                                                      'null'
+                                                              ? int.parse(task
+                                                                      .resources!
+                                                                      .first
+                                                                      .quantity!) *
+                                                                  -1
+                                                              : 0;
+                                                        }
+
+                                                        context
+                                                            .read<AuthBloc>()
+                                                            .add(
+                                                              AuthAddSpaqCountsEvent(
+                                                                spaq1Count:
+                                                                    spaq1,
+                                                                spaq2Count:
+                                                                    spaq2,
                                                               ),
                                                             );
 
