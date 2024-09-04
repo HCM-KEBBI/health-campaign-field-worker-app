@@ -55,7 +55,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
   List<ValidatorFunction> transactionQuantityValidator = [
     Validators.number,
     Validators.required,
-    Validators.min(minQuantity),
+    Validators.min(1),
     Validators.max(maxQuantity),
   ];
   List<GS1Barcode> scannedResources = [];
@@ -1582,7 +1582,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                               )
                                               .replaceAll(
                                                 '{}',
-                                                minQuantity.toString(),
+                                                '1',
                                               ),
                                         },
                                         label: localizations.translate(
