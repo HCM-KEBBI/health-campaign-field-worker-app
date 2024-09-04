@@ -880,8 +880,8 @@ class StockDetails {
 
   String get stockRecordDialogDynamicDescription =>
       'STOCK_RECORD_DIALOG_DYNAMIC_DESCRIPTION';
-
-     String get stockRecordSuccessLabel => 'ACKNOWLEDGEMENT_RECORD_SUCCESS_LABEL_TEXT';
+  String get stockRecordSuccessLabel =>
+      'ACKNOWLEDGEMENT_RECORD_SUCCESS_LABEL_TEXT';
 }
 
 class StockReconciliationDetails {
