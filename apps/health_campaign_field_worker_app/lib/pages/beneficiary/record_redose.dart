@@ -84,541 +84,446 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
       });
     }
 
-    return BlocBuilder<LocationBloc, LocationState>(
-      builder: (context, locationState) {
-        return ProductVariantBlocWrapper(
-          child: BlocBuilder<HouseholdOverviewBloc, HouseholdOverviewState>(
-            builder: (context, householdOverviewState) {
-              final householdMemberWrapper =
-                  householdOverviewState.householdMemberWrapper;
+    return ProductVariantBlocWrapper(
+      child: BlocBuilder<HouseholdOverviewBloc, HouseholdOverviewState>(
+        builder: (context, householdOverviewState) {
+          final householdMemberWrapper =
+              householdOverviewState.householdMemberWrapper;
 
-              final projectBeneficiary =
-                  context.beneficiaryType != BeneficiaryType.individual
-                      ? [householdMemberWrapper.projectBeneficiaries.first]
-                      : householdMemberWrapper.projectBeneficiaries
-                          .where(
-                            (element) =>
-                                element.beneficiaryClientReferenceId ==
-                                householdOverviewState
-                                    .selectedIndividual?.clientReferenceId,
-                          )
-                          .toList();
+          final projectBeneficiary =
+              context.beneficiaryType != BeneficiaryType.individual
+                  ? [householdMemberWrapper.projectBeneficiaries.first]
+                  : householdMemberWrapper.projectBeneficiaries
+                      .where(
+                        (element) =>
+                            element.beneficiaryClientReferenceId ==
+                            householdOverviewState
+                                .selectedIndividual?.clientReferenceId,
+                      )
+                      .toList();
 
-              final projectState = context.read<ProjectBloc>().state;
+          final projectState = context.read<ProjectBloc>().state;
 
-              return Scaffold(
-                body: householdOverviewState.loading
-                    ? const Center(child: CircularProgressIndicator())
-                    : BlocBuilder<DeliverInterventionBloc,
-                        DeliverInterventionState>(
-                        builder: (context, deliveryInterventionstate) {
-                          List<ProductVariantsModel>? productVariants =
-                              projectState.projectType?.cycles?.isNotEmpty ==
-                                      true
-                                  ? (fetchProductVariant(
-                                      projectState
-                                              .projectType!
-                                              .cycles![deliveryInterventionstate
-                                                      .cycle -
-                                                  1]
-                                              .deliveries?[
-                                          deliveryInterventionstate.dose - 1],
-                                      householdOverviewState.selectedIndividual,
-                                    )?.productVariants)
-                                  : projectState.projectType?.resources;
+          return Scaffold(
+            body: householdOverviewState.loading
+                ? const Center(child: CircularProgressIndicator())
+                : BlocBuilder<DeliverInterventionBloc,
+                    DeliverInterventionState>(
+                    builder: (context, deliveryInterventionstate) {
+                      List<ProductVariantsModel>? productVariants = projectState
+                                  .projectType?.cycles?.isNotEmpty ==
+                              true
+                          ? (fetchProductVariant(
+                              projectState
+                                  .projectType!
+                                  .cycles![deliveryInterventionstate.cycle - 1]
+                                  .deliveries?[deliveryInterventionstate
+                                      .dose -
+                                  1],
+                              householdOverviewState.selectedIndividual,
+                            )?.productVariants)
+                          : projectState.projectType?.resources;
 
-                          final int numberOfDoses = (projectState
-                                      .projectType?.cycles?.isNotEmpty ==
-                                  true)
-                              ? (projectState
-                                      .projectType
-                                      ?.cycles?[
-                                          deliveryInterventionstate.cycle - 1]
-                                      .deliveries
-                                      ?.length) ??
-                                  0
-                              : 0;
+                      return BlocBuilder<ProductVariantBloc,
+                          ProductVariantState>(
+                        builder: (context, productState) {
+                          return productState.maybeWhen(
+                            orElse: () => const Offstage(),
+                            fetched: (productVariantsvalue) {
+                              final variant = productState.whenOrNull(
+                                fetched: (productVariants) {
+                                  return productVariants;
+                                },
+                              );
 
-                          final String? getDeliveryStrategy = (projectState
-                                          .projectType?.cycles ??
-                                      [])
-                                  .isNotEmpty
-                              ? (projectState
-                                  .projectType
-                                  ?.cycles?[deliveryInterventionstate.cycle == 0
-                                      ? deliveryInterventionstate.cycle
-                                      : deliveryInterventionstate.cycle - 1]
-                                  .deliveries?[
-                                      deliveryInterventionstate.dose - 1]
-                                  .deliveryStrategy)
-                              : DeliverStrategyType.direct.toValue();
+                              return ReactiveFormBuilder(
+                                form: () => buildForm(
+                                  context,
+                                  productVariants,
+                                  variant,
+                                ),
+                                builder: (context, form, child) {
+                                  return ScrollableContent(
+                                    enableFixedButton: true,
+                                    footer: BlocBuilder<DeliverInterventionBloc,
+                                        DeliverInterventionState>(
+                                      builder: (context, state) {
+                                        return DigitCard(
+                                          margin: const EdgeInsets.fromLTRB(
+                                              0, kPadding, 0, 0),
+                                          padding: const EdgeInsets.fromLTRB(
+                                              kPadding, 0, kPadding, 0),
+                                          child: DigitElevatedButton(
+                                            onPressed: () async {
+                                              if (((form.control(
+                                                _resourceDeliveredKey,
+                                              ) as FormArray)
+                                                          .value
+                                                      as List<
+                                                          ProductVariantModel?>)
+                                                  .any((ele) =>
+                                                      ele?.productId == null)) {
+                                                await DigitToast.show(
+                                                  context,
+                                                  options: DigitToastOptions(
+                                                    localizations.translate(i18
+                                                        .deliverIntervention
+                                                        .resourceDeliveredValidation),
+                                                    true,
+                                                    theme,
+                                                  ),
+                                                );
+                                              } else {
+                                                // get the latest successful task
+                                                var successfulTask = widget
+                                                    .tasks
+                                                    .where((element) =>
+                                                        element.status ==
+                                                        Status
+                                                            .administeredSuccess
+                                                            .toValue())
+                                                    .lastOrNull;
+                                                // Extract productvariantList from the form
+                                                final productvariantList = ((form
+                                                                .control(
+                                                                    _resourceDeliveredKey)
+                                                            as FormArray)
+                                                        .value
+                                                    as List<
+                                                        ProductVariantModel?>);
 
-                          final steps = generateSteps(numberOfDoses);
+                                                var quantityDistributedFormArray =
+                                                    form.control(
+                                                  _quantityDistributedKey,
+                                                ) as FormArray?;
 
-                          return BlocBuilder<ProductVariantBloc,
-                              ProductVariantState>(
-                            builder: (context, productState) {
-                              return productState.maybeWhen(
-                                orElse: () => const Offstage(),
-                                fetched: (productVariantsvalue) {
-                                  final variant = productState.whenOrNull(
-                                    fetched: (productVariants) {
-                                      return productVariants;
-                                    },
-                                  );
+                                                if (successfulTask != null &&
+                                                    quantityDistributedFormArray !=
+                                                        null) {
+                                                  var updatedTask = updateTask(
+                                                    successfulTask,
+                                                    productvariantList,
+                                                    quantityDistributedFormArray,
+                                                    form,
+                                                  );
 
-                                  return ReactiveFormBuilder(
-                                    form: () => buildForm(
-                                      context,
-                                      productVariants,
-                                      variant,
-                                    ),
-                                    builder: (context, form, child) {
-                                      return ScrollableContent(
-                                        enableFixedButton: true,
-                                        footer: BlocBuilder<
-                                            DeliverInterventionBloc,
-                                            DeliverInterventionState>(
-                                          builder: (context, state) {
-                                            return DigitCard(
-                                              margin: const EdgeInsets.fromLTRB(
-                                                  0, kPadding, 0, 0),
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      kPadding, 0, kPadding, 0),
-                                              child: DigitElevatedButton(
-                                                onPressed: () async {
-                                                  if (((form.control(
-                                                    _resourceDeliveredKey,
-                                                  ) as FormArray)
-                                                              .value
-                                                          as List<
-                                                              ProductVariantModel?>)
-                                                      .any((ele) =>
-                                                          ele?.productId ==
-                                                          null)) {
-                                                    await DigitToast.show(
-                                                      context,
-                                                      options:
-                                                          DigitToastOptions(
-                                                        localizations.translate(i18
-                                                            .deliverIntervention
-                                                            .resourceDeliveredValidation),
-                                                        true,
-                                                        theme,
+                                                  final shouldSubmit =
+                                                      await DigitDialog.show<
+                                                          bool>(
+                                                    context,
+                                                    options: DigitDialogOptions(
+                                                      titleText: localizations
+                                                          .translate(
+                                                        i18.deliverIntervention
+                                                            .dialogTitle,
                                                       ),
-                                                    );
-                                                  } else if ((((form.control(
-                                                            _quantityDistributedKey,
-                                                          ) as FormArray)
-                                                              .value) ??
-                                                          [])
-                                                      .any((e) => e == 0)) {
-                                                    await DigitToast.show(
-                                                      context,
-                                                      options:
-                                                          DigitToastOptions(
-                                                        localizations.translate(i18
-                                                            .deliverIntervention
-                                                            .resourceCannotBeZero),
-                                                        true,
-                                                        theme,
+                                                      contentText: localizations
+                                                          .translate(
+                                                        i18.deliverIntervention
+                                                            .dialogContent,
                                                       ),
-                                                    );
-                                                  } else if (doseAdministered &&
-                                                      form
-                                                              .control(
-                                                                _deliveryCommentKey,
-                                                              )
-                                                              .value ==
-                                                          null) {
-                                                    await DigitToast.show(
-                                                      context,
-                                                      options:
-                                                          DigitToastOptions(
-                                                        localizations.translate(i18
-                                                            .deliverIntervention
-                                                            .deliveryCommentRequired),
-                                                        true,
-                                                        theme,
+                                                      primaryAction:
+                                                          DigitDialogActions(
+                                                        label: localizations
+                                                            .translate(
+                                                          i18.common
+                                                              .coreCommonSubmit,
+                                                        ),
+                                                        action: (ctx) {
+                                                          Navigator.of(
+                                                            context,
+                                                            rootNavigator: true,
+                                                          ).pop(true);
+                                                        },
                                                       ),
-                                                    );
-                                                  } else {
-                                                    // get the latest successful task
-                                                    var successfulTask = widget
-                                                        .tasks
-                                                        .where((element) =>
-                                                            element.status ==
-                                                            Status
-                                                                .administeredSuccess
-                                                                .toValue())
-                                                        .lastOrNull;
-                                                    // Extract productvariantList from the form
-                                                    final productvariantList =
-                                                        ((form.control(_resourceDeliveredKey)
-                                                                    as FormArray)
-                                                                .value
-                                                            as List<
-                                                                ProductVariantModel?>);
+                                                      secondaryAction:
+                                                          DigitDialogActions(
+                                                        label: localizations
+                                                            .translate(
+                                                          i18.common
+                                                              .coreCommonCancel,
+                                                        ),
+                                                        action: (context) =>
+                                                            Navigator.of(
+                                                          context,
+                                                          rootNavigator: true,
+                                                        ).pop(false),
+                                                      ),
+                                                    ),
+                                                  );
 
-                                                    var quantityDistributedFormArray =
-                                                        form.control(
-                                                      _quantityDistributedKey,
-                                                    ) as FormArray?;
-
-                                                    if (successfulTask !=
-                                                            null &&
-                                                        quantityDistributedFormArray !=
-                                                            null) {
-                                                      var updatedTask =
-                                                          updateTask(
-                                                        successfulTask,
-                                                        productvariantList,
-                                                        quantityDistributedFormArray,
+                                                  if (shouldSubmit ?? false) {
+                                                    if (context.mounted) {
+                                                      context.router
+                                                          .popUntilRouteWithName(
+                                                        BeneficiaryWrapperRoute
+                                                            .name,
                                                       );
 
-                                                      final shouldSubmit =
-                                                          await DigitDialog
-                                                              .show<bool>(
-                                                        context,
-                                                        options:
-                                                            DigitDialogOptions(
-                                                          titleText:
-                                                              localizations
-                                                                  .translate(
-                                                            i18.deliverIntervention
-                                                                .dialogTitle,
-                                                          ),
-                                                          contentText:
-                                                              localizations
-                                                                  .translate(
-                                                            i18.deliverIntervention
-                                                                .dialogContent,
-                                                          ),
-                                                          primaryAction:
-                                                              DigitDialogActions(
-                                                            label: localizations
-                                                                .translate(
-                                                              i18.common
-                                                                  .coreCommonSubmit,
+                                                      context
+                                                          .read<
+                                                              DeliverInterventionBloc>()
+                                                          .add(
+                                                            DeliverInterventionSubmitEvent(
+                                                              [
+                                                                updatedTask,
+                                                              ],
+                                                              true,
+                                                              context.boundary,
                                                             ),
-                                                            action: (ctx) {
-                                                              Navigator.of(
-                                                                context,
-                                                                rootNavigator:
-                                                                    true,
-                                                              ).pop(true);
-                                                            },
-                                                          ),
-                                                          secondaryAction:
-                                                              DigitDialogActions(
-                                                            label: localizations
-                                                                .translate(
-                                                              i18.common
-                                                                  .coreCommonCancel,
+                                                          );
+
+                                                      int spaq1 = 0;
+                                                      int spaq2 = 0;
+
+                                                      var productVariantId =
+                                                          updatedTask
+                                                              .resources!
+                                                              .first
+                                                              .productVariantId;
+                                                      final productVariant =
+                                                          productvariantList
+                                                              .where((element) =>
+                                                                  element?.id ==
+                                                                  productVariantId)
+                                                              .firstOrNull;
+
+                                                      var quantityIndex =
+                                                          productvariantList
+                                                              .indexOf(
+                                                        productVariant,
+                                                      );
+
+                                                      final quantity =
+                                                          quantityDistributedFormArray
+                                                                  .value![
+                                                              quantityIndex];
+
+                                                      if (productVariant ==
+                                                              null ||
+                                                          productVariant.sku ==
+                                                              null ||
+                                                          productVariant.sku!
+                                                              .contains(
+                                                            Constants
+                                                                .spaq1String,
+                                                          )) {
+                                                        spaq1 = quantity !=
+                                                                    null &&
+                                                                quantity !=
+                                                                    'null'
+                                                            ? int.parse(quantity
+                                                                    .toString()) *
+                                                                -1
+                                                            : 0;
+                                                      } else {
+                                                        spaq2 = quantity !=
+                                                                    null &&
+                                                                quantity !=
+                                                                    'null'
+                                                            ? int.parse(quantity
+                                                                    .toString()) *
+                                                                -1
+                                                            : 0;
+                                                      }
+
+                                                      context
+                                                          .read<AuthBloc>()
+                                                          .add(
+                                                            AuthAddSpaqCountsEvent(
+                                                              spaq1Count: spaq1,
+                                                              spaq2Count: spaq2,
                                                             ),
-                                                            action: (context) =>
-                                                                Navigator.of(
-                                                              context,
-                                                              rootNavigator:
-                                                                  true,
-                                                            ).pop(false),
-                                                          ),
+                                                          );
+                                                      final reloadState =
+                                                          context.read<
+                                                              HouseholdOverviewBloc>();
+
+                                                      reloadState.add(
+                                                        HouseholdOverviewReloadEvent(
+                                                          projectId:
+                                                              context.projectId,
+                                                          projectBeneficiaryType:
+                                                              context
+                                                                  .beneficiaryType,
                                                         ),
                                                       );
 
-                                                      if (shouldSubmit ??
-                                                          false) {
-                                                        if (context.mounted) {
-                                                          context.router
-                                                              .popUntilRouteWithName(
-                                                            BeneficiaryWrapperRoute
-                                                                .name,
-                                                          );
-
-                                                          context
-                                                              .read<
-                                                                  DeliverInterventionBloc>()
-                                                              .add(
-                                                                DeliverInterventionSubmitEvent(
-                                                                  [
-                                                                    updatedTask,
-                                                                  ],
-                                                                  true,
-                                                                  context
-                                                                      .boundary,
-                                                                ),
-                                                              );
-
-                                                          int spaq1 = 0;
-                                                          int spaq2 = 0;
-
-                                                          var productVariantId =
-                                                              updatedTask
-                                                                  .resources!
-                                                                  .first
-                                                                  .productVariantId;
-                                                          final productVariant =
-                                                              productvariantList
-                                                                  .where((element) =>
-                                                                      element
-                                                                          ?.id ==
-                                                                      productVariantId)
-                                                                  .firstOrNull;
-
-                                                          var quantityIndex =
-                                                              productvariantList
-                                                                  .indexOf(
-                                                            productVariant,
-                                                          );
-
-                                                          final quantity =
-                                                              quantityDistributedFormArray
-                                                                      .value![
-                                                                  quantityIndex];
-
-                                                          if (productVariant ==
-                                                                  null ||
-                                                              productVariant
-                                                                      .sku ==
-                                                                  null ||
-                                                              productVariant
-                                                                  .sku!
-                                                                  .contains(
-                                                                Constants
-                                                                    .spaq1String,
-                                                              )) {
-                                                            spaq1 = quantity !=
-                                                                        null &&
-                                                                    quantity !=
-                                                                        'null'
-                                                                ? int.parse(quantity
-                                                                        .toString()) *
-                                                                    -1
-                                                                : 0;
-                                                          } else {
-                                                            spaq2 = quantity !=
-                                                                        null &&
-                                                                    quantity !=
-                                                                        'null'
-                                                                ? int.parse(quantity
-                                                                        .toString()) *
-                                                                    -1
-                                                                : 0;
-                                                          }
-
-                                                          context
-                                                              .read<AuthBloc>()
-                                                              .add(
-                                                                AuthAddSpaqCountsEvent(
-                                                                  spaq1Count:
-                                                                      spaq1,
-                                                                  spaq2Count:
-                                                                      spaq2,
-                                                                ),
-                                                              );
-
-                                                          if (state.futureDeliveries !=
-                                                                  null &&
-                                                              state
-                                                                  .futureDeliveries!
-                                                                  .isNotEmpty &&
-                                                              projectState
-                                                                      .projectType
-                                                                      ?.cycles
-                                                                      ?.isNotEmpty ==
-                                                                  true) {
-                                                            context.router.push(
-                                                              SplashAcknowledgementRoute(
-                                                                doseAdministrationVerification:
-                                                                    true,
-                                                              ),
-                                                            );
-                                                          } else {
-                                                            context.router.push(
-                                                              SplashAcknowledgementRoute(
-                                                                enableBackToSearch:
-                                                                    true,
-                                                              ),
-                                                            );
-                                                          }
-                                                        }
-                                                      }
+                                                      context.router.push(
+                                                        HouseholdAcknowledgementRoute(
+                                                          enableViewHousehold:
+                                                              true,
+                                                        ),
+                                                      );
                                                     }
                                                   }
-                                                },
-                                                child: Center(
-                                                  child: Text(
-                                                    localizations.translate(
-                                                      i18.common
-                                                          .coreCommonSubmit,
-                                                    ),
-                                                  ),
+                                                }
+                                              }
+                                            },
+                                            child: Center(
+                                              child: Text(
+                                                localizations.translate(
+                                                  i18.common.coreCommonSubmit,
                                                 ),
                                               ),
-                                            );
-                                          },
-                                        ),
-                                        header: const Column(children: [
-                                          BackNavigationHelpHeaderWidget(
-                                            showHelp: false,
+                                            ),
                                           ),
-                                        ]),
+                                        );
+                                      },
+                                    ),
+                                    header: const Column(children: [
+                                      BackNavigationHelpHeaderWidget(
+                                        showHelp: false,
+                                      ),
+                                    ]),
+                                    children: [
+                                      Column(
                                         children: [
-                                          Column(
-                                            children: [
-                                              DigitCard(
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                    kPadding * 2,
-                                                    kPadding,
-                                                    kPadding * 2,
-                                                    kPadding,
-                                                  ),
-                                                  child: Row(
-                                                    children: [
-                                                      Expanded(
-                                                        child: Text(
-                                                          localizations
-                                                              .translate(
-                                                            i18.deliverIntervention
-                                                                .recordRedoseLabel,
-                                                          ),
-                                                          style: theme.textTheme
-                                                              .displayMedium,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
+                                          DigitCard(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                kPadding * 2,
+                                                kPadding,
+                                                kPadding * 2,
+                                                kPadding,
                                               ),
-                                              DigitCard(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Text(
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
                                                       localizations.translate(
                                                         i18.deliverIntervention
-                                                            .deliverInterventionResourceLabel,
+                                                            .recordRedoseLabel,
                                                       ),
                                                       style: theme.textTheme
-                                                          .headlineLarge,
+                                                          .displayMedium,
                                                     ),
-                                                    ..._controllers
-                                                        .map((e) =>
-                                                            ResourceBeneficiaryCard(
-                                                              form: form,
-                                                              cardIndex:
-                                                                  _controllers
-                                                                      .indexOf(
-                                                                e,
-                                                              ),
-                                                              totalItems:
-                                                                  _controllers
-                                                                      .length,
-                                                              isAdministered:
-                                                                  doseAdministered,
-                                                              onDelete:
-                                                                  (index) {
-                                                                (form.control(
-                                                                  _resourceDeliveredKey,
-                                                                ) as FormArray)
-                                                                    .removeAt(
-                                                                  index,
-                                                                );
-                                                                (form.control(
-                                                                  _quantityDistributedKey,
-                                                                ) as FormArray)
-                                                                    .removeAt(
-                                                                  index,
-                                                                );
-                                                                _controllers
-                                                                    .removeAt(
-                                                                  index,
-                                                                );
-                                                                setState(() {
-                                                                  _controllers;
-                                                                });
-                                                              },
-                                                            ))
-                                                        .toList(),
-                                                  ],
-                                                ),
+                                                  ),
+                                                ],
                                               ),
-                                              DigitCard(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    BlocBuilder<
-                                                        AppInitializationBloc,
-                                                        AppInitializationState>(
-                                                      builder:
-                                                          (context, state) {
-                                                        if (state
-                                                            is! AppInitialized) {
-                                                          return const Offstage();
-                                                        }
+                                            ),
+                                          ),
+                                          DigitCard(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  localizations.translate(
+                                                    i18.deliverIntervention
+                                                        .deliverInterventionResourceLabel,
+                                                  ),
+                                                  style: theme
+                                                      .textTheme.headlineLarge,
+                                                ),
+                                                ..._controllers
+                                                    .map((e) =>
+                                                        ResourceBeneficiaryCard(
+                                                          form: form,
+                                                          cardIndex:
+                                                              _controllers
+                                                                  .indexOf(
+                                                            e,
+                                                          ),
+                                                          totalItems:
+                                                              _controllers
+                                                                  .length,
+                                                          isAdministered:
+                                                              doseAdministered,
+                                                          onDelete: (index) {
+                                                            (form.control(
+                                                              _resourceDeliveredKey,
+                                                            ) as FormArray)
+                                                                .removeAt(
+                                                              index,
+                                                            );
+                                                            (form.control(
+                                                              _quantityDistributedKey,
+                                                            ) as FormArray)
+                                                                .removeAt(
+                                                              index,
+                                                            );
+                                                            _controllers
+                                                                .removeAt(
+                                                              index,
+                                                            );
+                                                            setState(() {
+                                                              _controllers;
+                                                            });
+                                                          },
+                                                        ))
+                                                    .toList(),
+                                              ],
+                                            ),
+                                          ),
+                                          DigitCard(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                BlocBuilder<
+                                                    AppInitializationBloc,
+                                                    AppInitializationState>(
+                                                  builder: (context, state) {
+                                                    if (state
+                                                        is! AppInitialized) {
+                                                      return const Offstage();
+                                                    }
 
-                                                        final deliveryCommentOptions = state
-                                                                .appConfiguration
-                                                                .deliveryCommentOptionsSmc ??
-                                                            <DeliveryCommentOptions>[];
+                                                    final deliveryCommentOptions = state
+                                                            .appConfiguration
+                                                            .deliveryCommentOptionsSmc ??
+                                                        <DeliveryCommentOptions>[];
 
-                                                        return DigitReactiveDropdown<
-                                                            String>(
-                                                          label: localizations
+                                                    return DigitReactiveDropdown<
+                                                        String>(
+                                                      label: localizations
+                                                          .translate(
+                                                        i18.deliverIntervention
+                                                            .reasonForRedoseLabel,
+                                                      ),
+                                                      readOnly: false,
+                                                      isRequired: true,
+                                                      valueMapper: (value) =>
+                                                          localizations
                                                               .translate(
-                                                            i18.deliverIntervention
-                                                                .reasonForRedoseLabel,
-                                                          ),
-                                                          readOnly: false,
-                                                          isRequired: true,
-                                                          valueMapper: (value) =>
-                                                              localizations
-                                                                  .translate(
-                                                            value,
-                                                          ),
-                                                          initialValue:
-                                                              deliveryCommentOptions
-                                                                  .firstOrNull
-                                                                  ?.name,
-                                                          menuItems:
-                                                              deliveryCommentOptions
-                                                                  .map((e) {
-                                                            return e.code;
-                                                          }).toList(),
-                                                          formControlName:
-                                                              _deliveryCommentKey,
-                                                        );
-                                                      },
-                                                    ),
-                                                  ],
+                                                        value,
+                                                      ),
+                                                      initialValue:
+                                                          deliveryCommentOptions
+                                                              .firstOrNull
+                                                              ?.name,
+                                                      menuItems:
+                                                          deliveryCommentOptions
+                                                              .map((e) {
+                                                        return e.code;
+                                                      }).toList(),
+                                                      formControlName:
+                                                          _deliveryCommentKey,
+                                                    );
+                                                  },
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ],
-                                      );
-                                    },
+                                      ),
+                                    ],
                                   );
                                 },
                               );
                             },
                           );
                         },
-                      ),
-              );
-            },
-          ),
-        );
-      },
+                      );
+                    },
+                  ),
+          );
+        },
+      ),
     );
   }
 
@@ -633,6 +538,7 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
     TaskModel oldTask,
     List<ProductVariantModel?> productvariantList,
     FormArray quantityDistributedFormArray,
+    FormGroup form,
   ) {
     final taskResources = oldTask.resources ?? [];
     List<TaskResourceModel> updatedTaskResources = [];
@@ -680,6 +586,11 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                     ],
                   ),
                 );
+        }
+        if (form.control(_deliveryCommentKey).value != null) {
+          updatedResource = updatedResource.copyWith(
+            deliveryComment: form.control(_deliveryCommentKey).value,
+          );
         }
         updatedTaskResources.add(updatedResource);
       }
