@@ -354,17 +354,46 @@ class _SearchBeneficiaryPageState
                 child: BlocBuilder<SearchHouseholdsBloc, SearchHouseholdsState>(
                   builder: (context, state) {
                     final router = context.router;
+                    final spaq1 = context.spaq1;
+                    final spaq2 = context.spaq2;
 
                     VoidCallback? onPressed;
 
                     onPressed = () {
                       FocusManager.instance.primaryFocus?.unfocus();
 
-                      router.push(BeneficiaryRegistrationWrapperRoute(
-                        initialState: BeneficiaryRegistrationCreateState(
-                          searchQuery: state.searchQuery,
-                        ),
-                      ));
+                      if (spaq1 >= 2 && spaq2 >= 2) {
+                        router.push(BeneficiaryRegistrationWrapperRoute(
+                          initialState: BeneficiaryRegistrationCreateState(
+                            searchQuery: state.searchQuery,
+                          ),
+                        ));
+                      } else {
+                        DigitDialog.show(
+                          context,
+                          options: DigitDialogOptions(
+                            titleText: localizations.translate(
+                              i18.beneficiaryDetails.insufficientStockHeading,
+                            ),
+                            titleIcon: Icon(
+                              Icons.warning,
+                              color: DigitTheme.instance.colorScheme.error,
+                            ),
+                            contentText: localizations.translate(
+                              i18.beneficiaryDetails.insufficientStockMessage,
+                            ),
+                            primaryAction: DigitDialogActions(
+                              label: localizations
+                                  .translate(i18.beneficiaryDetails.backToHome),
+                              action: (ctx) {
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                                context.router.replace(HomeRoute());
+                              },
+                            ),
+                          ),
+                        );
+                      }
                     };
 
                     return DigitElevatedButton(

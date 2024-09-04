@@ -3,18 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stream_transform/stream_transform.dart';
 
-import '../../blocs/delivery_intervention/deliver_intervention.dart';
 import '../../blocs/household_overview/household_overview.dart';
 import '../../blocs/localization/app_localization.dart';
+import '../../blocs/product_variant/product_variant.dart';
 import '../../models/data_model.dart';
 import '../../models/entities/identifier_types.dart';
+import '../../models/project_type/project_type_model.dart';
 import '../../router/app_router.dart';
-import '../../utils/environment_config.dart';
 import '../../utils/i18_key_constants.dart' as i18;
 import '../../utils/utils.dart';
 import '../action_card/action_card.dart';
 
 class MemberCard extends StatelessWidget {
+  final List<ProductVariantModel> variant;
   final String name;
   final String? gender;
   final int years;
@@ -37,6 +38,7 @@ class MemberCard extends StatelessWidget {
 
   const MemberCard({
     super.key,
+    required this.variant,
     required this.individual,
     required this.name,
     this.gender,
@@ -323,11 +325,70 @@ class MemberCard extends StatelessWidget {
                                             )
                                             .lastOrNull;
                                         if (redosePendingStatus) {
-                                          context.router.push(
-                                            RecordRedoseRoute(
-                                              tasks: [successfulTask!],
-                                            ),
-                                          );
+                                          final spaq1 = context.spaq1;
+                                          final spaq2 = context.spaq2;
+
+                                          final value = variant
+                                              .firstWhere(
+                                                (element) =>
+                                                    element.id ==
+                                                    successfulTask!.resources!
+                                                        .first.productVariantId,
+                                              )
+                                              .sku;
+
+                                          if (value == null ||
+                                              (value.contains(
+                                                    Constants.spaq1String,
+                                                  ) &&
+                                                  spaq1 >= 2) ||
+                                              (!value.contains(
+                                                    Constants.spaq1String,
+                                                  ) &&
+                                                  spaq2 >= 2)) {
+                                            context.router.push(
+                                              RecordRedoseRoute(
+                                                tasks: [successfulTask!],
+                                              ),
+                                            );
+                                          } else {
+                                            DigitDialog.show(
+                                              context,
+                                              options: DigitDialogOptions(
+                                                titleText:
+                                                    localizations.translate(
+                                                  i18.beneficiaryDetails
+                                                      .insufficientStockHeading,
+                                                ),
+                                                titleIcon: Icon(
+                                                  Icons.warning,
+                                                  color: DigitTheme.instance
+                                                      .colorScheme.error,
+                                                ),
+                                                contentText:
+                                                    localizations.translate(
+                                                  i18.beneficiaryDetails
+                                                      .insufficientStockMessageDelivery,
+                                                ),
+                                                primaryAction:
+                                                    DigitDialogActions(
+                                                  label: localizations
+                                                      .translate(i18
+                                                          .beneficiaryDetails
+                                                          .backToHome),
+                                                  action: (ctx) {
+                                                    Navigator.of(
+                                                      context,
+                                                      rootNavigator: true,
+                                                    ).pop();
+                                                    context.router.replace(
+                                                      HomeRoute(),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            );
+                                          }
                                         } else {
                                           context.router.push(
                                             BeneficiaryDetailsRoute(),
