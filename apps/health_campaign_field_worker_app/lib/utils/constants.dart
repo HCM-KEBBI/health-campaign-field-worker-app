@@ -117,6 +117,7 @@ class Constants {
   static const String checklistViewDateFormat = 'dd/MM/yyyy hh:mm a';
   static const String reAdministeredKey = "reAdministered";
   static const String pipeSeparator = ' || ';
+  static const String spaq1String = 'SPAQ 1';
 
   static List<LocalRepository> getLocalRepositories(
     LocalSqlDataStore sql,
