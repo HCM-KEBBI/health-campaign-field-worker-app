@@ -390,6 +390,7 @@ class BeneficiaryDetails {
   String get insufficientStockHeading => 'INSUFFICIENT_STOCK_HEADING';
   String get insufficientStockMessage => 'INSUFFICIENT_STOCK_MESSAGE';
   String get backToHome => 'BACK_TO_HOME';
+  String get backToHouseholdDetails => 'BACK_TO_HOUSEHOLD_DETAILS';
   String get insufficientStockMessageDelivery =>
       'INSUFFICIENT_STOCK_MESSAGE_DELIVERY';
 }

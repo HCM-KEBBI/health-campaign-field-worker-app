@@ -375,15 +375,12 @@ class MemberCard extends StatelessWidget {
                                                   label: localizations
                                                       .translate(i18
                                                           .beneficiaryDetails
-                                                          .backToHome),
+                                                          .backToHouseholdDetails),
                                                   action: (ctx) {
                                                     Navigator.of(
                                                       context,
                                                       rootNavigator: true,
                                                     ).pop();
-                                                    context.router.replace(
-                                                      HomeRoute(),
-                                                    );
                                                   },
                                                 ),
                                               ),

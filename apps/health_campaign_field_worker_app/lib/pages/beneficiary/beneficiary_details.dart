@@ -271,7 +271,7 @@ class _BeneficiaryDetailsPageState
                                                             label: localizations
                                                                 .translate(i18
                                                                     .beneficiaryDetails
-                                                                    .backToHome),
+                                                                    .backToHouseholdDetails),
                                                             action: (ctx) {
                                                               Navigator.of(
                                                                 context,
@@ -279,8 +279,9 @@ class _BeneficiaryDetailsPageState
                                                                     true,
                                                               ).pop();
                                                               context.router
-                                                                  .replace(
-                                                                HomeRoute(),
+                                                                  .popUntilRouteWithName(
+                                                                HouseholdOverviewRoute
+                                                                    .name,
                                                               );
                                                             },
                                                           ),
