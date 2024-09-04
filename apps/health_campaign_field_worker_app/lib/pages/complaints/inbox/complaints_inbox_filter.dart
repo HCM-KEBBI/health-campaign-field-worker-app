@@ -160,7 +160,6 @@ class _ComplaintsInboxFilterPageState
                                 i18.complaints.complaintsFilterClearAll,
                               ),
                               style: TextStyle(
-                                fontSize: 20,
                                 color: theme.colorScheme.secondary,
                               ),
                             ),
