@@ -197,9 +197,96 @@ class _BeneficiaryDetailsPageState
                                                           .ctaProceed),
                                                   action: (ctx) {
                                                     Navigator.of(ctx).pop();
-                                                    router.push(
-                                                      DeliverInterventionRoute(),
-                                                    );
+
+                                                    final spaq1 = context.spaq1;
+                                                    final spaq2 = context.spaq2;
+
+                                                    final currentCycle =
+                                                        deliverState.cycle >= 0
+                                                            ? deliverState.cycle
+                                                            : 0;
+
+                                                    // Calculate the current dose. If deliverInterventionState.dose is negative, set it to 0.
+                                                    final currentDose =
+                                                        deliverState.dose >= 0
+                                                            ? deliverState.dose
+                                                            : 0;
+                                                    final productVariants =
+                                                        fetchProductVariant(
+                                                      projectState
+                                                              .projectType!
+                                                              .cycles![
+                                                                  currentCycle - 1]
+                                                              .deliveries![
+                                                          currentDose - 1],
+                                                      state.selectedIndividual,
+                                                    )?.productVariants;
+
+                                                    final value = variant!
+                                                        .firstWhere(
+                                                          (element) =>
+                                                              element.id ==
+                                                              productVariants!
+                                                                  .first
+                                                                  .productVariantId,
+                                                        )
+                                                        .sku;
+
+                                                    if (value == null ||
+                                                        (value.contains(Constants
+                                                                .spaq1String) &&
+                                                            spaq1 >= 2) ||
+                                                        (!value.contains(Constants
+                                                                .spaq1String) &&
+                                                            spaq2 >= 2)) {
+                                                      router.push(
+                                                        DeliverInterventionRoute(),
+                                                      );
+                                                    } else {
+                                                      DigitDialog.show(
+                                                        context,
+                                                        options:
+                                                            DigitDialogOptions(
+                                                          titleText:
+                                                              localizations
+                                                                  .translate(
+                                                            i18.beneficiaryDetails
+                                                                .insufficientStockHeading,
+                                                          ),
+                                                          titleIcon: Icon(
+                                                            Icons.warning,
+                                                            color: DigitTheme
+                                                                .instance
+                                                                .colorScheme
+                                                                .error,
+                                                          ),
+                                                          contentText:
+                                                              localizations
+                                                                  .translate(
+                                                            i18.beneficiaryDetails
+                                                                .insufficientStockMessageDelivery,
+                                                          ),
+                                                          primaryAction:
+                                                              DigitDialogActions(
+                                                            label: localizations
+                                                                .translate(i18
+                                                                    .beneficiaryDetails
+                                                                    .backToHome),
+                                                            action: (ctx) {
+                                                              Navigator.of(
+                                                                context,
+                                                                rootNavigator:
+                                                                    true,
+                                                              ).pop();
+                                                              context.router
+                                                                  .replace(
+                                                                HomeRoute(),
+                                                              );
+                                                            },
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }
                                                   },
                                                 ),
                                               ),
