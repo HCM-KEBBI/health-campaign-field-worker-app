@@ -137,6 +137,9 @@ class _SearchBeneficiaryPageState
                                         onChanged: (value) {
                                           final bloc = context
                                               .read<SearchHouseholdsBloc>();
+                                          bloc.add(
+                                            const SearchHouseholdsClearEvent(),
+                                          );
 
                                           if (value.trim().length < 3 &&
                                               !isProximityEnabled) {
@@ -160,7 +163,7 @@ class _SearchBeneficiaryPageState
                                                 projectId: context.projectId,
                                                 maxRadius: appConfig.maxRadius!,
                                                 limit: bloc.state.limit,
-                                                offset: bloc.state.offset,
+                                                offset: 0,
                                               ));
                                             } else {
                                               bloc.add(
