@@ -406,7 +406,7 @@ class _ComplaintsDetailsPageState
                                         i18.complaints.complainantContactNumber,
                                       ),
                                       readOnly: isRaisedForSelf,
-                                      maxLength: 10,
+                                      maxLength: 11,
                                       isRequired: true,
                                       keyboardType: TextInputType.number,
                                       inputFormatters: [
@@ -445,7 +445,7 @@ class _ComplaintsDetailsPageState
                               label: localizations.translate(
                                 i18.complaints.supervisorContactNumber,
                               ),
-                              maxLength: 10,
+                              maxLength: 11,
                               keyboardType: TextInputType.number,
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(
@@ -526,7 +526,7 @@ class _ComplaintsDetailsPageState
         validators: [
           Validators.required,
           CustomValidator.validMobileNumber,
-          Validators.minLength(10),
+          Validators.minLength(11),
         ],
       ),
       _supervisorName: FormControl<String>(

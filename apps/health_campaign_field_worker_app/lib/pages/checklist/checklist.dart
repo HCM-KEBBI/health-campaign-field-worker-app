@@ -79,10 +79,9 @@ class _ChecklistPageState extends LocalizedState<ChecklistPage> {
                                       .indexOf(item.code!.split('.').last)
                                       .isNegative &&
                                   ![
-                                    "SMCMozambique.HF_RF_SICK.HEALTH_FACILITY_SUPERVISOR",
-                                    "SMCMozambique.HF_RF_DRUG_SE_PC.HEALTH_FACILITY_SUPERVISOR",
-                                    "SMCMozambique.HF_RF_FEVER.HEALTH_FACILITY_SUPERVISOR",
-                                    "SMCMozambique.HF_RF_DRUG_SE_CC.HEALTH_FACILITY_SUPERVISOR",
+                                    "SMCKebbi.HF_RF_SICK.HEALTH_FACILITY_SUPERVISOR",
+                                    "SMCKebbi.HF_RF_DRUG_SE.HEALTH_FACILITY_SUPERVISOR",
+                                    "SMCKebbi.HF_RF_FEVER.HEALTH_FACILITY_SUPERVISOR",
                                   ].contains(item.code!),
                             );
 

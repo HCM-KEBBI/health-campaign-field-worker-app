@@ -10,6 +10,7 @@ import 'package:isar/isar.dart';
 
 import '../../blocs/delivery_intervention/deliver_intervention.dart';
 import '../../blocs/household_overview/household_overview.dart';
+import '../../blocs/search_households/search_households.dart';
 import '../../blocs/service/service.dart';
 import '../../blocs/service_definition/service_definition.dart';
 import '../../models/data_model.dart';
@@ -424,6 +425,11 @@ class _EligibilityChecklistViewPageState
                                           context.boundary,
                                         ),
                                       );
+                                  final searchBloc =
+                                      context.read<SearchHouseholdsBloc>();
+                                  searchBloc.add(
+                                    const SearchHouseholdsClearEvent(),
+                                  );
 
                                   // todo check the routing once like what the back button should have text
                                   router.popAndPushAll(
@@ -464,8 +470,7 @@ class _EligibilityChecklistViewPageState
                                 padding: const EdgeInsets.only(bottom: 8),
                                 child: Text(
                                   localizations.translate(
-                                    value.serviceDefinitionList.first.code
-                                        .toString(),
+                                    selectedServiceDefinition!.code.toString(),
                                   ),
                                   style: theme.textTheme.displayMedium,
                                   textAlign: TextAlign.left,

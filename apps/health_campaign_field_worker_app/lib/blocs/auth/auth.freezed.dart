@@ -20,6 +20,7 @@ mixin _$AuthEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userId, String password, String tenantId)
         login,
+    required TResult Function(int spaq1Count, int spaq2Count) addSpaqCounts,
     required TResult Function(String tenantId) autoLogin,
     required TResult Function() logout,
     required TResult Function() logoutWithoutAuthToken,
@@ -28,6 +29,7 @@ mixin _$AuthEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userId, String password, String tenantId)? login,
+    TResult? Function(int spaq1Count, int spaq2Count)? addSpaqCounts,
     TResult? Function(String tenantId)? autoLogin,
     TResult? Function()? logout,
     TResult? Function()? logoutWithoutAuthToken,
@@ -36,6 +38,7 @@ mixin _$AuthEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userId, String password, String tenantId)? login,
+    TResult Function(int spaq1Count, int spaq2Count)? addSpaqCounts,
     TResult Function(String tenantId)? autoLogin,
     TResult Function()? logout,
     TResult Function()? logoutWithoutAuthToken,
@@ -45,6 +48,7 @@ mixin _$AuthEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoginEvent value) login,
+    required TResult Function(AuthAddSpaqCountsEvent value) addSpaqCounts,
     required TResult Function(AuthAutoLoginEvent value) autoLogin,
     required TResult Function(AuthLogoutEvent value) logout,
     required TResult Function(AuthLogoutWithoutTokenEvent value)
@@ -54,6 +58,7 @@ mixin _$AuthEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoginEvent value)? login,
+    TResult? Function(AuthAddSpaqCountsEvent value)? addSpaqCounts,
     TResult? Function(AuthAutoLoginEvent value)? autoLogin,
     TResult? Function(AuthLogoutEvent value)? logout,
     TResult? Function(AuthLogoutWithoutTokenEvent value)?
@@ -63,6 +68,7 @@ mixin _$AuthEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoginEvent value)? login,
+    TResult Function(AuthAddSpaqCountsEvent value)? addSpaqCounts,
     TResult Function(AuthAutoLoginEvent value)? autoLogin,
     TResult Function(AuthLogoutEvent value)? logout,
     TResult Function(AuthLogoutWithoutTokenEvent value)? logoutWithoutAuthToken,
@@ -131,7 +137,9 @@ class __$$AuthLoginEventImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AuthLoginEventImpl implements AuthLoginEvent {
+class _$AuthLoginEventImpl
+    with DiagnosticableTreeMixin
+    implements AuthLoginEvent {
   const _$AuthLoginEventImpl(
       {required this.userId, required this.password, required this.tenantId});
 
@@ -143,8 +151,18 @@ class _$AuthLoginEventImpl implements AuthLoginEvent {
   final String tenantId;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AuthEvent.login(userId: $userId, password: $password, tenantId: $tenantId)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AuthEvent.login'))
+      ..add(DiagnosticsProperty('userId', userId))
+      ..add(DiagnosticsProperty('password', password))
+      ..add(DiagnosticsProperty('tenantId', tenantId));
   }
 
   @override
@@ -174,6 +192,7 @@ class _$AuthLoginEventImpl implements AuthLoginEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userId, String password, String tenantId)
         login,
+    required TResult Function(int spaq1Count, int spaq2Count) addSpaqCounts,
     required TResult Function(String tenantId) autoLogin,
     required TResult Function() logout,
     required TResult Function() logoutWithoutAuthToken,
@@ -185,6 +204,7 @@ class _$AuthLoginEventImpl implements AuthLoginEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userId, String password, String tenantId)? login,
+    TResult? Function(int spaq1Count, int spaq2Count)? addSpaqCounts,
     TResult? Function(String tenantId)? autoLogin,
     TResult? Function()? logout,
     TResult? Function()? logoutWithoutAuthToken,
@@ -196,6 +216,7 @@ class _$AuthLoginEventImpl implements AuthLoginEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userId, String password, String tenantId)? login,
+    TResult Function(int spaq1Count, int spaq2Count)? addSpaqCounts,
     TResult Function(String tenantId)? autoLogin,
     TResult Function()? logout,
     TResult Function()? logoutWithoutAuthToken,
@@ -211,6 +232,7 @@ class _$AuthLoginEventImpl implements AuthLoginEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoginEvent value) login,
+    required TResult Function(AuthAddSpaqCountsEvent value) addSpaqCounts,
     required TResult Function(AuthAutoLoginEvent value) autoLogin,
     required TResult Function(AuthLogoutEvent value) logout,
     required TResult Function(AuthLogoutWithoutTokenEvent value)
@@ -223,6 +245,7 @@ class _$AuthLoginEventImpl implements AuthLoginEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoginEvent value)? login,
+    TResult? Function(AuthAddSpaqCountsEvent value)? addSpaqCounts,
     TResult? Function(AuthAutoLoginEvent value)? autoLogin,
     TResult? Function(AuthLogoutEvent value)? logout,
     TResult? Function(AuthLogoutWithoutTokenEvent value)?
@@ -235,6 +258,7 @@ class _$AuthLoginEventImpl implements AuthLoginEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoginEvent value)? login,
+    TResult Function(AuthAddSpaqCountsEvent value)? addSpaqCounts,
     TResult Function(AuthAutoLoginEvent value)? autoLogin,
     TResult Function(AuthLogoutEvent value)? logout,
     TResult Function(AuthLogoutWithoutTokenEvent value)? logoutWithoutAuthToken,
@@ -259,6 +283,188 @@ abstract class AuthLoginEvent implements AuthEvent {
   @JsonKey(ignore: true)
   _$$AuthLoginEventImplCopyWith<_$AuthLoginEventImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$AuthAddSpaqCountsEventImplCopyWith<$Res> {
+  factory _$$AuthAddSpaqCountsEventImplCopyWith(
+          _$AuthAddSpaqCountsEventImpl value,
+          $Res Function(_$AuthAddSpaqCountsEventImpl) then) =
+      __$$AuthAddSpaqCountsEventImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({int spaq1Count, int spaq2Count});
+}
+
+/// @nodoc
+class __$$AuthAddSpaqCountsEventImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$AuthAddSpaqCountsEventImpl>
+    implements _$$AuthAddSpaqCountsEventImplCopyWith<$Res> {
+  __$$AuthAddSpaqCountsEventImplCopyWithImpl(
+      _$AuthAddSpaqCountsEventImpl _value,
+      $Res Function(_$AuthAddSpaqCountsEventImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? spaq1Count = null,
+    Object? spaq2Count = null,
+  }) {
+    return _then(_$AuthAddSpaqCountsEventImpl(
+      spaq1Count: null == spaq1Count
+          ? _value.spaq1Count
+          : spaq1Count // ignore: cast_nullable_to_non_nullable
+              as int,
+      spaq2Count: null == spaq2Count
+          ? _value.spaq2Count
+          : spaq2Count // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$AuthAddSpaqCountsEventImpl
+    with DiagnosticableTreeMixin
+    implements AuthAddSpaqCountsEvent {
+  const _$AuthAddSpaqCountsEventImpl(
+      {required this.spaq1Count, required this.spaq2Count});
+
+  @override
+  final int spaq1Count;
+  @override
+  final int spaq2Count;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AuthEvent.addSpaqCounts(spaq1Count: $spaq1Count, spaq2Count: $spaq2Count)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AuthEvent.addSpaqCounts'))
+      ..add(DiagnosticsProperty('spaq1Count', spaq1Count))
+      ..add(DiagnosticsProperty('spaq2Count', spaq2Count));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AuthAddSpaqCountsEventImpl &&
+            (identical(other.spaq1Count, spaq1Count) ||
+                other.spaq1Count == spaq1Count) &&
+            (identical(other.spaq2Count, spaq2Count) ||
+                other.spaq2Count == spaq2Count));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, spaq1Count, spaq2Count);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AuthAddSpaqCountsEventImplCopyWith<_$AuthAddSpaqCountsEventImpl>
+      get copyWith => __$$AuthAddSpaqCountsEventImplCopyWithImpl<
+          _$AuthAddSpaqCountsEventImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String userId, String password, String tenantId)
+        login,
+    required TResult Function(int spaq1Count, int spaq2Count) addSpaqCounts,
+    required TResult Function(String tenantId) autoLogin,
+    required TResult Function() logout,
+    required TResult Function() logoutWithoutAuthToken,
+  }) {
+    return addSpaqCounts(spaq1Count, spaq2Count);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String userId, String password, String tenantId)? login,
+    TResult? Function(int spaq1Count, int spaq2Count)? addSpaqCounts,
+    TResult? Function(String tenantId)? autoLogin,
+    TResult? Function()? logout,
+    TResult? Function()? logoutWithoutAuthToken,
+  }) {
+    return addSpaqCounts?.call(spaq1Count, spaq2Count);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String userId, String password, String tenantId)? login,
+    TResult Function(int spaq1Count, int spaq2Count)? addSpaqCounts,
+    TResult Function(String tenantId)? autoLogin,
+    TResult Function()? logout,
+    TResult Function()? logoutWithoutAuthToken,
+    required TResult orElse(),
+  }) {
+    if (addSpaqCounts != null) {
+      return addSpaqCounts(spaq1Count, spaq2Count);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(AuthLoginEvent value) login,
+    required TResult Function(AuthAddSpaqCountsEvent value) addSpaqCounts,
+    required TResult Function(AuthAutoLoginEvent value) autoLogin,
+    required TResult Function(AuthLogoutEvent value) logout,
+    required TResult Function(AuthLogoutWithoutTokenEvent value)
+        logoutWithoutAuthToken,
+  }) {
+    return addSpaqCounts(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(AuthLoginEvent value)? login,
+    TResult? Function(AuthAddSpaqCountsEvent value)? addSpaqCounts,
+    TResult? Function(AuthAutoLoginEvent value)? autoLogin,
+    TResult? Function(AuthLogoutEvent value)? logout,
+    TResult? Function(AuthLogoutWithoutTokenEvent value)?
+        logoutWithoutAuthToken,
+  }) {
+    return addSpaqCounts?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(AuthLoginEvent value)? login,
+    TResult Function(AuthAddSpaqCountsEvent value)? addSpaqCounts,
+    TResult Function(AuthAutoLoginEvent value)? autoLogin,
+    TResult Function(AuthLogoutEvent value)? logout,
+    TResult Function(AuthLogoutWithoutTokenEvent value)? logoutWithoutAuthToken,
+    required TResult orElse(),
+  }) {
+    if (addSpaqCounts != null) {
+      return addSpaqCounts(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class AuthAddSpaqCountsEvent implements AuthEvent {
+  const factory AuthAddSpaqCountsEvent(
+      {required final int spaq1Count,
+      required final int spaq2Count}) = _$AuthAddSpaqCountsEventImpl;
+
+  int get spaq1Count;
+  int get spaq2Count;
+  @JsonKey(ignore: true)
+  _$$AuthAddSpaqCountsEventImplCopyWith<_$AuthAddSpaqCountsEventImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -294,15 +500,25 @@ class __$$AuthAutoLoginEventImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AuthAutoLoginEventImpl implements AuthAutoLoginEvent {
+class _$AuthAutoLoginEventImpl
+    with DiagnosticableTreeMixin
+    implements AuthAutoLoginEvent {
   const _$AuthAutoLoginEventImpl({required this.tenantId});
 
   @override
   final String tenantId;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AuthEvent.autoLogin(tenantId: $tenantId)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AuthEvent.autoLogin'))
+      ..add(DiagnosticsProperty('tenantId', tenantId));
   }
 
   @override
@@ -329,6 +545,7 @@ class _$AuthAutoLoginEventImpl implements AuthAutoLoginEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userId, String password, String tenantId)
         login,
+    required TResult Function(int spaq1Count, int spaq2Count) addSpaqCounts,
     required TResult Function(String tenantId) autoLogin,
     required TResult Function() logout,
     required TResult Function() logoutWithoutAuthToken,
@@ -340,6 +557,7 @@ class _$AuthAutoLoginEventImpl implements AuthAutoLoginEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userId, String password, String tenantId)? login,
+    TResult? Function(int spaq1Count, int spaq2Count)? addSpaqCounts,
     TResult? Function(String tenantId)? autoLogin,
     TResult? Function()? logout,
     TResult? Function()? logoutWithoutAuthToken,
@@ -351,6 +569,7 @@ class _$AuthAutoLoginEventImpl implements AuthAutoLoginEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userId, String password, String tenantId)? login,
+    TResult Function(int spaq1Count, int spaq2Count)? addSpaqCounts,
     TResult Function(String tenantId)? autoLogin,
     TResult Function()? logout,
     TResult Function()? logoutWithoutAuthToken,
@@ -366,6 +585,7 @@ class _$AuthAutoLoginEventImpl implements AuthAutoLoginEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoginEvent value) login,
+    required TResult Function(AuthAddSpaqCountsEvent value) addSpaqCounts,
     required TResult Function(AuthAutoLoginEvent value) autoLogin,
     required TResult Function(AuthLogoutEvent value) logout,
     required TResult Function(AuthLogoutWithoutTokenEvent value)
@@ -378,6 +598,7 @@ class _$AuthAutoLoginEventImpl implements AuthAutoLoginEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoginEvent value)? login,
+    TResult? Function(AuthAddSpaqCountsEvent value)? addSpaqCounts,
     TResult? Function(AuthAutoLoginEvent value)? autoLogin,
     TResult? Function(AuthLogoutEvent value)? logout,
     TResult? Function(AuthLogoutWithoutTokenEvent value)?
@@ -390,6 +611,7 @@ class _$AuthAutoLoginEventImpl implements AuthAutoLoginEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoginEvent value)? login,
+    TResult Function(AuthAddSpaqCountsEvent value)? addSpaqCounts,
     TResult Function(AuthAutoLoginEvent value)? autoLogin,
     TResult Function(AuthLogoutEvent value)? logout,
     TResult Function(AuthLogoutWithoutTokenEvent value)? logoutWithoutAuthToken,
@@ -430,12 +652,20 @@ class __$$AuthLogoutEventImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AuthLogoutEventImpl implements AuthLogoutEvent {
+class _$AuthLogoutEventImpl
+    with DiagnosticableTreeMixin
+    implements AuthLogoutEvent {
   const _$AuthLogoutEventImpl();
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AuthEvent.logout()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('type', 'AuthEvent.logout'));
   }
 
   @override
@@ -452,6 +682,7 @@ class _$AuthLogoutEventImpl implements AuthLogoutEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userId, String password, String tenantId)
         login,
+    required TResult Function(int spaq1Count, int spaq2Count) addSpaqCounts,
     required TResult Function(String tenantId) autoLogin,
     required TResult Function() logout,
     required TResult Function() logoutWithoutAuthToken,
@@ -463,6 +694,7 @@ class _$AuthLogoutEventImpl implements AuthLogoutEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userId, String password, String tenantId)? login,
+    TResult? Function(int spaq1Count, int spaq2Count)? addSpaqCounts,
     TResult? Function(String tenantId)? autoLogin,
     TResult? Function()? logout,
     TResult? Function()? logoutWithoutAuthToken,
@@ -474,6 +706,7 @@ class _$AuthLogoutEventImpl implements AuthLogoutEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userId, String password, String tenantId)? login,
+    TResult Function(int spaq1Count, int spaq2Count)? addSpaqCounts,
     TResult Function(String tenantId)? autoLogin,
     TResult Function()? logout,
     TResult Function()? logoutWithoutAuthToken,
@@ -489,6 +722,7 @@ class _$AuthLogoutEventImpl implements AuthLogoutEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoginEvent value) login,
+    required TResult Function(AuthAddSpaqCountsEvent value) addSpaqCounts,
     required TResult Function(AuthAutoLoginEvent value) autoLogin,
     required TResult Function(AuthLogoutEvent value) logout,
     required TResult Function(AuthLogoutWithoutTokenEvent value)
@@ -501,6 +735,7 @@ class _$AuthLogoutEventImpl implements AuthLogoutEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoginEvent value)? login,
+    TResult? Function(AuthAddSpaqCountsEvent value)? addSpaqCounts,
     TResult? Function(AuthAutoLoginEvent value)? autoLogin,
     TResult? Function(AuthLogoutEvent value)? logout,
     TResult? Function(AuthLogoutWithoutTokenEvent value)?
@@ -513,6 +748,7 @@ class _$AuthLogoutEventImpl implements AuthLogoutEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoginEvent value)? login,
+    TResult Function(AuthAddSpaqCountsEvent value)? addSpaqCounts,
     TResult Function(AuthAutoLoginEvent value)? autoLogin,
     TResult Function(AuthLogoutEvent value)? logout,
     TResult Function(AuthLogoutWithoutTokenEvent value)? logoutWithoutAuthToken,
@@ -549,12 +785,21 @@ class __$$AuthLogoutWithoutTokenEventImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AuthLogoutWithoutTokenEventImpl implements AuthLogoutWithoutTokenEvent {
+class _$AuthLogoutWithoutTokenEventImpl
+    with DiagnosticableTreeMixin
+    implements AuthLogoutWithoutTokenEvent {
   const _$AuthLogoutWithoutTokenEventImpl();
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AuthEvent.logoutWithoutAuthToken()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+        .add(DiagnosticsProperty('type', 'AuthEvent.logoutWithoutAuthToken'));
   }
 
   @override
@@ -572,6 +817,7 @@ class _$AuthLogoutWithoutTokenEventImpl implements AuthLogoutWithoutTokenEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userId, String password, String tenantId)
         login,
+    required TResult Function(int spaq1Count, int spaq2Count) addSpaqCounts,
     required TResult Function(String tenantId) autoLogin,
     required TResult Function() logout,
     required TResult Function() logoutWithoutAuthToken,
@@ -583,6 +829,7 @@ class _$AuthLogoutWithoutTokenEventImpl implements AuthLogoutWithoutTokenEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userId, String password, String tenantId)? login,
+    TResult? Function(int spaq1Count, int spaq2Count)? addSpaqCounts,
     TResult? Function(String tenantId)? autoLogin,
     TResult? Function()? logout,
     TResult? Function()? logoutWithoutAuthToken,
@@ -594,6 +841,7 @@ class _$AuthLogoutWithoutTokenEventImpl implements AuthLogoutWithoutTokenEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userId, String password, String tenantId)? login,
+    TResult Function(int spaq1Count, int spaq2Count)? addSpaqCounts,
     TResult Function(String tenantId)? autoLogin,
     TResult Function()? logout,
     TResult Function()? logoutWithoutAuthToken,
@@ -609,6 +857,7 @@ class _$AuthLogoutWithoutTokenEventImpl implements AuthLogoutWithoutTokenEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoginEvent value) login,
+    required TResult Function(AuthAddSpaqCountsEvent value) addSpaqCounts,
     required TResult Function(AuthAutoLoginEvent value) autoLogin,
     required TResult Function(AuthLogoutEvent value) logout,
     required TResult Function(AuthLogoutWithoutTokenEvent value)
@@ -621,6 +870,7 @@ class _$AuthLogoutWithoutTokenEventImpl implements AuthLogoutWithoutTokenEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoginEvent value)? login,
+    TResult? Function(AuthAddSpaqCountsEvent value)? addSpaqCounts,
     TResult? Function(AuthAutoLoginEvent value)? autoLogin,
     TResult? Function(AuthLogoutEvent value)? logout,
     TResult? Function(AuthLogoutWithoutTokenEvent value)?
@@ -633,6 +883,7 @@ class _$AuthLogoutWithoutTokenEventImpl implements AuthLogoutWithoutTokenEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoginEvent value)? login,
+    TResult Function(AuthAddSpaqCountsEvent value)? addSpaqCounts,
     TResult Function(AuthAutoLoginEvent value)? autoLogin,
     TResult Function(AuthLogoutEvent value)? logout,
     TResult Function(AuthLogoutWithoutTokenEvent value)? logoutWithoutAuthToken,
@@ -661,7 +912,9 @@ mixin _$AuthState {
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId)
+            String? individualId,
+            int? spaq1Count,
+            int? spaq2Count)
         authenticated,
     required TResult Function(String? error) error,
   }) =>
@@ -675,7 +928,9 @@ mixin _$AuthState {
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId)?
+            String? individualId,
+            int? spaq1Count,
+            int? spaq2Count)?
         authenticated,
     TResult? Function(String? error)? error,
   }) =>
@@ -689,7 +944,9 @@ mixin _$AuthState {
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId)?
+            String? individualId,
+            int? spaq1Count,
+            int? spaq2Count)?
         authenticated,
     TResult Function(String? error)? error,
     required TResult orElse(),
@@ -759,12 +1016,20 @@ class __$$AuthUnauthenticatedStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AuthUnauthenticatedStateImpl implements AuthUnauthenticatedState {
+class _$AuthUnauthenticatedStateImpl
+    with DiagnosticableTreeMixin
+    implements AuthUnauthenticatedState {
   const _$AuthUnauthenticatedStateImpl();
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AuthState.unauthenticated()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('type', 'AuthState.unauthenticated'));
   }
 
   @override
@@ -787,7 +1052,9 @@ class _$AuthUnauthenticatedStateImpl implements AuthUnauthenticatedState {
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId)
+            String? individualId,
+            int? spaq1Count,
+            int? spaq2Count)
         authenticated,
     required TResult Function(String? error) error,
   }) {
@@ -804,7 +1071,9 @@ class _$AuthUnauthenticatedStateImpl implements AuthUnauthenticatedState {
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId)?
+            String? individualId,
+            int? spaq1Count,
+            int? spaq2Count)?
         authenticated,
     TResult? Function(String? error)? error,
   }) {
@@ -821,7 +1090,9 @@ class _$AuthUnauthenticatedStateImpl implements AuthUnauthenticatedState {
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId)?
+            String? individualId,
+            int? spaq1Count,
+            int? spaq2Count)?
         authenticated,
     TResult Function(String? error)? error,
     required TResult orElse(),
@@ -892,12 +1163,20 @@ class __$$AuthLoadingStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AuthLoadingStateImpl implements AuthLoadingState {
+class _$AuthLoadingStateImpl
+    with DiagnosticableTreeMixin
+    implements AuthLoadingState {
   const _$AuthLoadingStateImpl();
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AuthState.loading()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('type', 'AuthState.loading'));
   }
 
   @override
@@ -919,7 +1198,9 @@ class _$AuthLoadingStateImpl implements AuthLoadingState {
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId)
+            String? individualId,
+            int? spaq1Count,
+            int? spaq2Count)
         authenticated,
     required TResult Function(String? error) error,
   }) {
@@ -936,7 +1217,9 @@ class _$AuthLoadingStateImpl implements AuthLoadingState {
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId)?
+            String? individualId,
+            int? spaq1Count,
+            int? spaq2Count)?
         authenticated,
     TResult? Function(String? error)? error,
   }) {
@@ -953,7 +1236,9 @@ class _$AuthLoadingStateImpl implements AuthLoadingState {
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId)?
+            String? individualId,
+            int? spaq1Count,
+            int? spaq2Count)?
         authenticated,
     TResult Function(String? error)? error,
     required TResult orElse(),
@@ -1018,7 +1303,9 @@ abstract class _$$AuthAuthenticatedStateImplCopyWith<$Res> {
       String refreshToken,
       UserRequestModel userModel,
       RoleActionsWrapperModel actionsWrapper,
-      String? individualId});
+      String? individualId,
+      int? spaq1Count,
+      int? spaq2Count});
 
   $UserRequestModelCopyWith<$Res> get userModel;
   $RoleActionsWrapperModelCopyWith<$Res> get actionsWrapper;
@@ -1041,6 +1328,8 @@ class __$$AuthAuthenticatedStateImplCopyWithImpl<$Res>
     Object? userModel = null,
     Object? actionsWrapper = null,
     Object? individualId = freezed,
+    Object? spaq1Count = freezed,
+    Object? spaq2Count = freezed,
   }) {
     return _then(_$AuthAuthenticatedStateImpl(
       accessToken: null == accessToken
@@ -1063,6 +1352,14 @@ class __$$AuthAuthenticatedStateImplCopyWithImpl<$Res>
           ? _value.individualId
           : individualId // ignore: cast_nullable_to_non_nullable
               as String?,
+      spaq1Count: freezed == spaq1Count
+          ? _value.spaq1Count
+          : spaq1Count // ignore: cast_nullable_to_non_nullable
+              as int?,
+      spaq2Count: freezed == spaq2Count
+          ? _value.spaq2Count
+          : spaq2Count // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 
@@ -1086,13 +1383,17 @@ class __$$AuthAuthenticatedStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AuthAuthenticatedStateImpl implements AuthAuthenticatedState {
+class _$AuthAuthenticatedStateImpl
+    with DiagnosticableTreeMixin
+    implements AuthAuthenticatedState {
   const _$AuthAuthenticatedStateImpl(
       {required this.accessToken,
       required this.refreshToken,
       required this.userModel,
       required this.actionsWrapper,
-      this.individualId});
+      this.individualId,
+      this.spaq1Count,
+      this.spaq2Count});
 
   @override
   final String accessToken;
@@ -1104,10 +1405,28 @@ class _$AuthAuthenticatedStateImpl implements AuthAuthenticatedState {
   final RoleActionsWrapperModel actionsWrapper;
   @override
   final String? individualId;
+  @override
+  final int? spaq1Count;
+  @override
+  final int? spaq2Count;
 
   @override
-  String toString() {
-    return 'AuthState.authenticated(accessToken: $accessToken, refreshToken: $refreshToken, userModel: $userModel, actionsWrapper: $actionsWrapper, individualId: $individualId)';
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AuthState.authenticated(accessToken: $accessToken, refreshToken: $refreshToken, userModel: $userModel, actionsWrapper: $actionsWrapper, individualId: $individualId, spaq1Count: $spaq1Count, spaq2Count: $spaq2Count)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AuthState.authenticated'))
+      ..add(DiagnosticsProperty('accessToken', accessToken))
+      ..add(DiagnosticsProperty('refreshToken', refreshToken))
+      ..add(DiagnosticsProperty('userModel', userModel))
+      ..add(DiagnosticsProperty('actionsWrapper', actionsWrapper))
+      ..add(DiagnosticsProperty('individualId', individualId))
+      ..add(DiagnosticsProperty('spaq1Count', spaq1Count))
+      ..add(DiagnosticsProperty('spaq2Count', spaq2Count));
   }
 
   @override
@@ -1124,12 +1443,16 @@ class _$AuthAuthenticatedStateImpl implements AuthAuthenticatedState {
             (identical(other.actionsWrapper, actionsWrapper) ||
                 other.actionsWrapper == actionsWrapper) &&
             (identical(other.individualId, individualId) ||
-                other.individualId == individualId));
+                other.individualId == individualId) &&
+            (identical(other.spaq1Count, spaq1Count) ||
+                other.spaq1Count == spaq1Count) &&
+            (identical(other.spaq2Count, spaq2Count) ||
+                other.spaq2Count == spaq2Count));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, accessToken, refreshToken,
-      userModel, actionsWrapper, individualId);
+      userModel, actionsWrapper, individualId, spaq1Count, spaq2Count);
 
   @JsonKey(ignore: true)
   @override
@@ -1148,12 +1471,14 @@ class _$AuthAuthenticatedStateImpl implements AuthAuthenticatedState {
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId)
+            String? individualId,
+            int? spaq1Count,
+            int? spaq2Count)
         authenticated,
     required TResult Function(String? error) error,
   }) {
-    return authenticated(
-        accessToken, refreshToken, userModel, actionsWrapper, individualId);
+    return authenticated(accessToken, refreshToken, userModel, actionsWrapper,
+        individualId, spaq1Count, spaq2Count);
   }
 
   @override
@@ -1166,12 +1491,14 @@ class _$AuthAuthenticatedStateImpl implements AuthAuthenticatedState {
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId)?
+            String? individualId,
+            int? spaq1Count,
+            int? spaq2Count)?
         authenticated,
     TResult? Function(String? error)? error,
   }) {
-    return authenticated?.call(
-        accessToken, refreshToken, userModel, actionsWrapper, individualId);
+    return authenticated?.call(accessToken, refreshToken, userModel,
+        actionsWrapper, individualId, spaq1Count, spaq2Count);
   }
 
   @override
@@ -1184,14 +1511,16 @@ class _$AuthAuthenticatedStateImpl implements AuthAuthenticatedState {
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId)?
+            String? individualId,
+            int? spaq1Count,
+            int? spaq2Count)?
         authenticated,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
     if (authenticated != null) {
-      return authenticated(
-          accessToken, refreshToken, userModel, actionsWrapper, individualId);
+      return authenticated(accessToken, refreshToken, userModel, actionsWrapper,
+          individualId, spaq1Count, spaq2Count);
     }
     return orElse();
   }
@@ -1240,13 +1569,17 @@ abstract class AuthAuthenticatedState implements AuthState {
       required final String refreshToken,
       required final UserRequestModel userModel,
       required final RoleActionsWrapperModel actionsWrapper,
-      final String? individualId}) = _$AuthAuthenticatedStateImpl;
+      final String? individualId,
+      final int? spaq1Count,
+      final int? spaq2Count}) = _$AuthAuthenticatedStateImpl;
 
   String get accessToken;
   String get refreshToken;
   UserRequestModel get userModel;
   RoleActionsWrapperModel get actionsWrapper;
   String? get individualId;
+  int? get spaq1Count;
+  int? get spaq2Count;
   @JsonKey(ignore: true)
   _$$AuthAuthenticatedStateImplCopyWith<_$AuthAuthenticatedStateImpl>
       get copyWith => throw _privateConstructorUsedError;
@@ -1285,15 +1618,25 @@ class __$$AuthErrorStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AuthErrorStateImpl implements AuthErrorState {
+class _$AuthErrorStateImpl
+    with DiagnosticableTreeMixin
+    implements AuthErrorState {
   const _$AuthErrorStateImpl([this.error]);
 
   @override
   final String? error;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AuthState.error(error: $error)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AuthState.error'))
+      ..add(DiagnosticsProperty('error', error));
   }
 
   @override
@@ -1324,7 +1667,9 @@ class _$AuthErrorStateImpl implements AuthErrorState {
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId)
+            String? individualId,
+            int? spaq1Count,
+            int? spaq2Count)
         authenticated,
     required TResult Function(String? error) error,
   }) {
@@ -1341,7 +1686,9 @@ class _$AuthErrorStateImpl implements AuthErrorState {
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId)?
+            String? individualId,
+            int? spaq1Count,
+            int? spaq2Count)?
         authenticated,
     TResult? Function(String? error)? error,
   }) {
@@ -1358,7 +1705,9 @@ class _$AuthErrorStateImpl implements AuthErrorState {
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId)?
+            String? individualId,
+            int? spaq1Count,
+            int? spaq2Count)?
         authenticated,
     TResult Function(String? error)? error,
     required TResult orElse(),

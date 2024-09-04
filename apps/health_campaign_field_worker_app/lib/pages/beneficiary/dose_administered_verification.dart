@@ -15,6 +15,7 @@ import '../../blocs/delivery_intervention/deliver_intervention.dart';
 import '../../blocs/household_overview/household_overview.dart';
 import '../../blocs/localization/app_localization.dart';
 import '../../blocs/product_variant/product_variant.dart';
+import '../../blocs/search_households/search_households.dart';
 import '../../models/data_model.dart';
 import '../../models/entities/identifier_types.dart';
 import '../../router/app_router.dart';
@@ -260,6 +261,12 @@ class _DoseAdministeredVerificationPageState
 
                                         final reloadState = context
                                             .read<HouseholdOverviewBloc>();
+
+                                        final searchBloc = context
+                                            .read<SearchHouseholdsBloc>();
+                                        searchBloc.add(
+                                          const SearchHouseholdsClearEvent(),
+                                        );
 
                                         Future.delayed(
                                           const Duration(milliseconds: 1000),

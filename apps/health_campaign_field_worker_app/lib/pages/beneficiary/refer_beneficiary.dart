@@ -10,6 +10,7 @@ import '../../blocs/delivery_intervention/deliver_intervention.dart';
 import '../../blocs/facility/facility.dart';
 import '../../blocs/household_overview/household_overview.dart';
 import '../../blocs/referral_management/referral_management.dart';
+import '../../blocs/search_households/search_households.dart';
 import '../../models/data_model.dart';
 import '../../router/app_router.dart';
 import '../../utils/environment_config.dart';
@@ -270,6 +271,11 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
 
                                     final reloadState =
                                         context.read<HouseholdOverviewBloc>();
+                                    final searchBloc =
+                                        context.read<SearchHouseholdsBloc>();
+                                    searchBloc.add(
+                                      const SearchHouseholdsClearEvent(),
+                                    );
 
                                     Future.delayed(
                                       const Duration(milliseconds: 500),
@@ -284,6 +290,7 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
                                     ).then(
                                       (value) => context.router.popAndPush(
                                         HouseholdAcknowledgementRoute(
+                                          isReferral: true,
                                           enableViewHousehold: true,
                                         ),
                                       ),

@@ -9,11 +9,13 @@ import '../../../widgets/localized.dart';
 
 class HouseholdAcknowledgementPage extends LocalizedStatefulWidget {
   final bool? enableViewHousehold;
+  final bool? isReferral;
 
   const HouseholdAcknowledgementPage({
     super.key,
     super.appLocalizations,
     this.enableViewHousehold,
+    this.isReferral,
   });
 
   @override
@@ -57,8 +59,9 @@ class _HouseholdAcknowledgementPageState
               description: localizations.translate(
                 i18.acknowledgementSuccess.acknowledgementDescriptionText,
               ),
-              label: localizations.translate(
-                  i18.acknowledgementSuccess.acknowledgementLabelText),
+              label: localizations.translate(widget.isReferral == true
+                  ? i18.acknowledgementSuccess.referAcknowledgementLabelText
+                  : i18.acknowledgementSuccess.acknowledgementLabelText),
             );
           },
         ),

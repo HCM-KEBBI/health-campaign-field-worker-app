@@ -40,7 +40,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
   List<int> visibleChecklistIndexes = [];
   GlobalKey<FormState> checklistFormKey = GlobalKey<FormState>();
   String othersText = "OTHERS";
-  String yesText = "YES";
+  String yesText = "dummy";
   String multiSelectionSeparator = "^";
   String helpText = "helpText";
   String secDesc = "secDesc";
@@ -75,10 +75,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                 if (!isControllersInitialized) {
                   initialAttributes?.forEach((e) {
                     controller.add(TextEditingController());
-                    if (!(context.isHealthFacilitySupervisor &&
-                        widget.referralClientRefId != null)) {
-                      additionalController.add(TextEditingController());
-                    }
+                    additionalController.add(TextEditingController());
                   });
 
                   // Set the flag to true after initializing controllers
@@ -119,20 +116,28 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                         }
                         final itemsAttributes = initialAttributes;
 
+                        // for (int i = 0; i < controller.length; i++) {
+                        //   if (itemsAttributes?[i].required == true &&
+                        //       ((itemsAttributes?[i].dataType ==
+                        //                   'SingleValueList' &&
+                        //               visibleChecklistIndexes
+                        //                   .any((e) => e == i) &&
+                        //               (controller[i].text == '')) ||
+                        //           (itemsAttributes?[i].dataType !=
+                        //                   'SingleValueList' &&
+                        //               (controller[i].text == '' &&
+                        //                   !(context
+                        //                           .isHealthFacilitySupervisor &&
+                        //                       widget.referralClientRefId !=
+                        //                           null))))) {
+                        //     return;
+                        //   }
+                        // }
+
                         for (int i = 0; i < controller.length; i++) {
                           if (itemsAttributes?[i].required == true &&
-                              ((itemsAttributes?[i].dataType ==
-                                          'SingleValueList' &&
-                                      visibleChecklistIndexes
-                                          .any((e) => e == i) &&
-                                      (controller[i].text == '')) ||
-                                  (itemsAttributes?[i].dataType !=
-                                          'SingleValueList' &&
-                                      (controller[i].text == '' &&
-                                          !(context
-                                                  .isHealthFacilitySupervisor &&
-                                              widget.referralClientRefId !=
-                                                  null))))) {
+                              visibleChecklistIndexes.any((e) => e == i) &&
+                              controller[i].text == '') {
                             return;
                           }
                         }
@@ -460,7 +465,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                     FilteringTextInputFormatter.allow(
                                       RegExp(r'[0-9]'),
                                     ),
-                                    LengthLimitingTextInputFormatter(9),
+                                    LengthLimitingTextInputFormatter(11),
                                   ],
                                   validator: (value) {
                                     if (((value == null || value == '') &&
@@ -521,51 +526,61 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                   builder: (context, state) {
                                     return Column(
                                       children: e.values!
-                                          .map((e) => DigitCheckboxTile(
-                                                label: localizations.translate(
-                                                  'CORE_COMMON_$e',
+                                          .map((e) => Padding(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                  kPadding * 4,
+                                                  0,
+                                                  kPadding,
+                                                  0,
                                                 ),
-                                                value: controller[index]
-                                                    .text
-                                                    .split(
-                                                      multiSelectionSeparator,
-                                                    )
-                                                    .contains(e),
-                                                onChanged: (value) {
-                                                  context
-                                                      .read<ServiceBloc>()
-                                                      .add(
-                                                        ServiceChecklistEvent(
-                                                          value: e.toString(),
-                                                          submitTriggered:
-                                                              submitTriggered,
-                                                        ),
-                                                      );
-                                                  final String ele;
-                                                  var val = controller[index]
+                                                child: DigitCheckboxTile(
+                                                  label:
+                                                      localizations.translate(
+                                                    'CORE_COMMON_$e',
+                                                  ),
+                                                  value: controller[index]
                                                       .text
                                                       .split(
                                                         multiSelectionSeparator,
+                                                      )
+                                                      .contains(e),
+                                                  onChanged: (value) {
+                                                    context
+                                                        .read<ServiceBloc>()
+                                                        .add(
+                                                          ServiceChecklistEvent(
+                                                            value: e.toString(),
+                                                            submitTriggered:
+                                                                submitTriggered,
+                                                          ),
+                                                        );
+                                                    final String ele;
+                                                    var val = controller[index]
+                                                        .text
+                                                        .split(
+                                                          multiSelectionSeparator,
+                                                        );
+                                                    if (val.contains(e)) {
+                                                      val.remove(e);
+                                                      ele = val.join(
+                                                        multiSelectionSeparator,
                                                       );
-                                                  if (val.contains(e)) {
-                                                    val.remove(e);
-                                                    ele = val.join(
-                                                      multiSelectionSeparator,
-                                                    );
-                                                  } else {
-                                                    ele =
-                                                        "${controller[index].text}$multiSelectionSeparator$e";
-                                                  }
-                                                  setState(() {
-                                                    controller[index].value =
-                                                        TextEditingController
-                                                            .fromValue(
-                                                      TextEditingValue(
-                                                        text: ele,
-                                                      ),
-                                                    ).value;
-                                                  });
-                                                },
+                                                    } else {
+                                                      ele =
+                                                          "${controller[index].text}$multiSelectionSeparator$e";
+                                                    }
+                                                    setState(() {
+                                                      controller[index].value =
+                                                          TextEditingController
+                                                              .fromValue(
+                                                        TextEditingValue(
+                                                          text: ele,
+                                                        ),
+                                                      ).value;
+                                                    });
+                                                  },
+                                                ),
                                               ))
                                           .toList(),
                                     );
@@ -887,7 +902,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
           FilteringTextInputFormatter.allow(
             RegExp(r'[0-9]'),
           ),
-          LengthLimitingTextInputFormatter(9),
+          LengthLimitingTextInputFormatter(11),
         ],
         validator: (value) {
           if (((value == null || value == '') && item.required == true)) {

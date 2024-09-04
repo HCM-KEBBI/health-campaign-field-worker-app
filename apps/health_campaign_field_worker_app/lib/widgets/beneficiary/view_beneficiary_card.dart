@@ -306,7 +306,7 @@ class _ViewBeneficiaryCardState extends LocalizedState<ViewBeneficiaryCard> {
                               !isBeneficiaryRefused &&
                               !isBeneficiaryIneligible &&
                               !isBeneficiaryReferred
-                          ? Status.visited.toValue()
+                          ? Status.delivered.toValue()
                           : Status.notVisited.toValue()
                       : null,
                   title: [
@@ -386,7 +386,7 @@ class _ViewBeneficiaryCardState extends LocalizedState<ViewBeneficiaryCard> {
       } else if (isStatusReset) {
         return localizations.translate(Status.notVisited.toValue());
       } else {
-        return localizations.translate(Status.visited.toValue());
+        return localizations.translate(Status.delivered.toValue());
       }
     } else {
       return localizations.translate(Status.notVisited.toValue());

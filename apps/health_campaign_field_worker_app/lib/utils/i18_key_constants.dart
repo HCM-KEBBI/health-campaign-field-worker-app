@@ -386,6 +386,12 @@ class BeneficiaryDetails {
   String get totalrecorddownload => 'TOTAL_RECORD_DOWNLOAD';
   String get insufficientStorageContent =>
       'INSUFFICIENT_STORAGE_WARNING_CONTENT';
+
+  String get insufficientStockHeading => 'INSUFFICIENT_STOCK_HEADING';
+  String get insufficientStockMessage => 'INSUFFICIENT_STOCK_MESSAGE';
+  String get backToHome => 'BACK_TO_HOME';
+  String get insufficientStockMessageDelivery =>
+      'INSUFFICIENT_STOCK_MESSAGE_DELIVERY';
 }
 
 class IndividualDetails {
@@ -489,6 +495,8 @@ class AcknowledgementSuccess {
       'ACKNOWLEDGEMENT_SUCCESS_DESCRIPTION_TEXT';
 
   String get acknowledgementLabelText => 'ACKNOWLEDGEMENT_SUCCESS_LABEL_TEXT';
+  String get referAcknowledgementLabelText =>
+      'REFER_ACKNOWLEDGEMENT_SUCCESS_LABEL_TEXT';
 
   String get goToHome => 'GO_TO_HOME_SCREEN';
   String get downloadmoredata => 'DOWNLOAD_MORE_DATA';

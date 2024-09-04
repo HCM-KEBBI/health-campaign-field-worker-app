@@ -273,7 +273,7 @@ class MainApplicationState extends State<MainApplication>
                                                   const EdgeInsets.all(8.0),
                                               child: Center(
                                                 child: AutoSizeText(
-                                                  'Formação'.toUpperCase(),
+                                                  'TRAINING'.toUpperCase(),
                                                   maxLines: 1,
                                                   style: TextStyle(
                                                     fontSize: 50,
@@ -353,7 +353,16 @@ class MainApplicationState extends State<MainApplication>
                                 orElse: () => [
                                   const UnauthenticatedRouteWrapper(),
                                 ],
-                                authenticated: (_, __, ___, ____, _____) => [
+                                authenticated: (
+                                  _,
+                                  __,
+                                  ___,
+                                  ____,
+                                  _____,
+                                  ______,
+                                  ________,
+                                ) =>
+                                    [
                                   AuthenticatedRouteWrapper(),
                                 ],
                               ),
