@@ -164,31 +164,80 @@ class LocalSecureStore {
   }
 
   Future<int> get spaq1 async {
-    final spaq1Count = await storage.read(key: spaq1Key);
+    final userBody = await storage.read(key: userObjectKey);
+    if (userBody == null) return 0;
+    final spaq1MapString = await storage.read(key: spaq1Key);
 
-    if (spaq1Count == null) return 0;
+    if (spaq1MapString == null) return 0;
 
-    return int.parse(spaq1Count);
+    try {
+      final user = UserRequestModel.fromJson(json.decode(userBody));
+
+      Map<String, dynamic> spaq1Map = json.decode(spaq1MapString);
+
+      return spaq1Map[user.uuid] != null ? spaq1Map[user.uuid] as int : 0;
+    } catch (_) {
+      return 0;
+    }
   }
 
   Future<int> get spaq2 async {
-    final spaq2Count = await storage.read(key: spaq2Key);
+    final userBody = await storage.read(key: userObjectKey);
+    if (userBody == null) return 0;
+    final spaq2MapString = await storage.read(key: spaq2Key);
 
-    if (spaq2Count == null) return 0;
+    if (spaq2MapString == null) return 0;
 
-    return int.parse(spaq2Count);
+    try {
+      final user = UserRequestModel.fromJson(json.decode(userBody));
+
+      Map<String, dynamic> spaq2Map = json.decode(spaq2MapString);
+
+      return spaq2Map[user.uuid] != null ? spaq2Map[user.uuid] as int : 0;
+    } catch (_) {
+      return 0;
+    }
   }
 
   Future<void> setSpaqCounts(int spaq1, int spaq2) async {
-    await storage.write(
-      key: spaq1Key,
-      value: spaq1.toString(),
-    );
+    final userBody = await storage.read(key: userObjectKey);
+    if (userBody == null) return;
 
-    await storage.write(
-      key: spaq2Key,
-      value: spaq2.toString(),
-    );
+    try {
+      final user = UserRequestModel.fromJson(json.decode(userBody));
+
+      final spaq1MapString = await storage.read(key: spaq1Key);
+      final spaq2MapString = await storage.read(key: spaq2Key);
+      Map<String, dynamic> spaq1Map = {};
+      Map<String, dynamic> spaq2Map = {};
+
+      if (spaq1MapString != null) {
+        try {
+          spaq1Map = json.decode(spaq1MapString);
+        } catch (_) {}
+      }
+
+      if (spaq2MapString != null) {
+        try {
+          spaq2Map = json.decode(spaq2MapString);
+        } catch (_) {}
+      }
+
+      spaq1Map[user.uuid] = spaq1;
+      spaq2Map[user.uuid] = spaq2;
+
+      await storage.write(
+        key: spaq1Key,
+        value: json.encode(spaq1Map),
+      );
+
+      await storage.write(
+        key: spaq2Key,
+        value: json.encode(spaq2Map),
+      );
+    } catch (_) {
+      return;
+    }
   }
 
   Future<void> setSelectedProject(ProjectModel projectModel) async {
