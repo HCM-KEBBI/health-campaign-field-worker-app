@@ -881,13 +881,6 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                                         wastedBlisters
                                                                             .toString(),
                                                                       )
-                                                                    : 0) +
-                                                                (partialBlisters !=
-                                                                        null
-                                                                    ? int.parse(
-                                                                        partialBlisters
-                                                                            .toString(),
-                                                                      )
                                                                     : 0)) *
                                                             -1
                                                         : quantity != null
