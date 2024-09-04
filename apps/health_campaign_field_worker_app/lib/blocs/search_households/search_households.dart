@@ -274,6 +274,10 @@ class SearchHouseholdsBloc
     for (final entry in groupedHouseholds.entries) {
       final householdId = entry.key;
 
+      final exisitingHousehold = state.householdMembers.firstWhereOrNull(
+        (element) => element.household.clientReferenceId == householdId,
+      );
+      if (exisitingHousehold != null) continue;
       if (householdId == null) continue;
 
       // Search for households based on client reference ID and proximity.
