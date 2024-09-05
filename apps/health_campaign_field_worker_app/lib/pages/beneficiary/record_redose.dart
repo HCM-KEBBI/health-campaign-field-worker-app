@@ -173,6 +173,22 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                     theme,
                                                   ),
                                                 );
+                                              } else if ((((form.control(
+                                                        _quantityDistributedKey,
+                                                      ) as FormArray)
+                                                          .value) ??
+                                                      [])
+                                                  .any((e) => e == 0)) {
+                                                await DigitToast.show(
+                                                  context,
+                                                  options: DigitToastOptions(
+                                                    localizations.translate(i18
+                                                        .deliverIntervention
+                                                        .resourceCannotBeZero),
+                                                    true,
+                                                    theme,
+                                                  ),
+                                                );
                                               } else {
                                                 // get the latest successful task
                                                 var successfulTask = widget
