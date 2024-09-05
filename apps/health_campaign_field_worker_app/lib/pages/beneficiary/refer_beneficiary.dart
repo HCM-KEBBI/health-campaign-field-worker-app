@@ -26,7 +26,7 @@ class ReferBeneficiaryPage extends LocalizedStatefulWidget {
   final String projectBeneficiaryClientRefId;
   final IndividualModel individual;
   final bool isReadministrationUnSuccessful;
-  final String? referralReason;
+  final List<String>? referralReasons;
   final String quantityWasted;
   final String? productVariantId;
 
@@ -39,7 +39,7 @@ class ReferBeneficiaryPage extends LocalizedStatefulWidget {
     this.isReadministrationUnSuccessful = false,
     this.quantityWasted = "00",
     this.productVariantId,
-    this.referralReason,
+    this.referralReasons,
   });
   @override
   State<ReferBeneficiaryPage> createState() => _ReferBeneficiaryPageState();
@@ -51,6 +51,7 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
   static const _referredByKey = 'referredBy';
   static const _referredToKey = 'referredTo';
   final clickedStatus = ValueNotifier<bool>(false);
+  static const referralReasons = "referralReasons";
 
   @override
   void dispose() {
@@ -92,7 +93,7 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
             ) ??
             [];
 
-        final reason = widget.referralReason ?? "";
+        final reasons = widget.referralReasons ?? [];
 
         return WillPopScope(
           onWillPop: () =>
@@ -123,7 +124,7 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
                               : () async {
                                   form.markAllAsTouched();
 
-                                  if (reason.isEmpty) {
+                                  if (reasons.isEmpty) {
                                     return;
                                   }
 
@@ -134,7 +135,7 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
                                     final recipient = form
                                         .control(_referredToKey)
                                         .value as FacilityModel;
-                                    final reason = widget.referralReason;
+                                    final reason = reasons.first;
                                     final recipientType = recipient.id == 'APS'
                                         ? 'STAFF'
                                         : 'FACILITY';
@@ -153,7 +154,7 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
                                         referrerId: context.loggedInUserUuid,
                                         recipientId: recipientId,
                                         recipientType: recipientType,
-                                        reasons: [reason ?? ""],
+                                        reasons: [reason],
                                         tenantId: envConfig.variables.tenantId,
                                         rowVersion: 1,
                                         auditDetails: AuditDetails(
@@ -177,7 +178,12 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
                                         additionalFields:
                                             ReferralAdditionalFields(
                                           version: 1,
-                                          fields: [],
+                                          fields: [
+                                            AdditionalField(
+                                              referralReasons,
+                                              reasons.join(","),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                       false,

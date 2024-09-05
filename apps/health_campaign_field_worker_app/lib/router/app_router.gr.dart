@@ -436,7 +436,7 @@ class _$AppRouter extends RootStackRouter {
           isReadministrationUnSuccessful: args.isReadministrationUnSuccessful,
           quantityWasted: args.quantityWasted,
           productVariantId: args.productVariantId,
-          referralReason: args.referralReason,
+          referralReasons: args.referralReasons,
         ),
       );
     },
@@ -2463,7 +2463,7 @@ class ReferBeneficiaryRoute extends PageRouteInfo<ReferBeneficiaryRouteArgs> {
     bool isReadministrationUnSuccessful = false,
     String quantityWasted = "00",
     String? productVariantId,
-    String? referralReason,
+    List<String>? referralReasons,
   }) : super(
           ReferBeneficiaryRoute.name,
           path: 'refer-beneficiary',
@@ -2476,7 +2476,7 @@ class ReferBeneficiaryRoute extends PageRouteInfo<ReferBeneficiaryRouteArgs> {
             isReadministrationUnSuccessful: isReadministrationUnSuccessful,
             quantityWasted: quantityWasted,
             productVariantId: productVariantId,
-            referralReason: referralReason,
+            referralReasons: referralReasons,
           ),
         );
 
@@ -2493,7 +2493,7 @@ class ReferBeneficiaryRouteArgs {
     this.isReadministrationUnSuccessful = false,
     this.quantityWasted = "00",
     this.productVariantId,
-    this.referralReason,
+    this.referralReasons,
   });
 
   final Key? key;
@@ -2512,11 +2512,11 @@ class ReferBeneficiaryRouteArgs {
 
   final String? productVariantId;
 
-  final String? referralReason;
+  final List<String>? referralReasons;
 
   @override
   String toString() {
-    return 'ReferBeneficiaryRouteArgs{key: $key, appLocalizations: $appLocalizations, isEditing: $isEditing, projectBeneficiaryClientRefId: $projectBeneficiaryClientRefId, individual: $individual, isReadministrationUnSuccessful: $isReadministrationUnSuccessful, quantityWasted: $quantityWasted, productVariantId: $productVariantId, referralReason: $referralReason}';
+    return 'ReferBeneficiaryRouteArgs{key: $key, appLocalizations: $appLocalizations, isEditing: $isEditing, projectBeneficiaryClientRefId: $projectBeneficiaryClientRefId, individual: $individual, isReadministrationUnSuccessful: $isReadministrationUnSuccessful, quantityWasted: $quantityWasted, productVariantId: $productVariantId, referralReasons: $referralReasons}';
   }
 }
 
