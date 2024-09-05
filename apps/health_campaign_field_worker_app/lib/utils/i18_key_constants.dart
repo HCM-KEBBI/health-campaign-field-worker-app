@@ -654,7 +654,8 @@ class DeliverIntervention {
       'DELIVER_INTERVENTION_DELIVERY_COMMENT_LABEL';
   String get reasonForRedoseLabel =>
       'DELIVER_INTERVENTION_REASON_FOR_REDOSE_LABEL';
-
+  String get selectReasonForRedoseLabel =>
+      'DELIVER_INTERVENTION_SELECT_REASON_FOR_REDOSE_LABEL';
   String get redoseQuantityLabel =>
       'DELIVER_INTERVENTION_REDOSE_QUANTITY_LABEL';
 
