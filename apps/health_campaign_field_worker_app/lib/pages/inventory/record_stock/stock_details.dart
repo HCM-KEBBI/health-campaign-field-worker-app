@@ -64,7 +64,8 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
   bool deliveryTeamSelected = false;
   bool isSpaq1 = true;
 
-  FormGroup _form(List<FacilityModel> facilities, bool isDistributor) {
+  FormGroup _form(List<FacilityModel> facilities, bool isDistributor,
+      bool isHealthFacilitySupervisor) {
     return fb.group({
       _productVariantKey: FormControl<ProductVariantModel>(
         validators: [Validators.required],
@@ -85,7 +86,9 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
           FormControl<int>(validators: wastedBlistersQuantityValidator),
       _commentsKey: FormControl<String>(),
       _deliveryTeamKey: FormControl<String>(
-        validators: (deliveryTeamSelected && !isDistributor)
+        validators: (deliveryTeamSelected &&
+                !isDistributor &&
+                isHealthFacilitySupervisor)
             ? [Validators.required]
             : [],
       ),
@@ -134,6 +137,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDistributor = context.isDistributor;
+    final isHealthFacilitySupervisor = context.isHealthFacilitySupervisor;
 
     return PopScope(
       onPopInvoked: (didPop) {
@@ -307,7 +311,8 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                     );
 
                     return ReactiveFormBuilder(
-                      form: () => _form(facilities, isDistributor),
+                      form: () => _form(facilities, isDistributor,
+                          isHealthFacilitySupervisor),
                       builder: (context, form, child) {
                         return BlocBuilder<DigitScannerBloc, DigitScannerState>(
                           builder: (context, scannerState) {
@@ -982,8 +987,8 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                 onChanged: (value) {
                                                   isSpaq1 = value.sku != null &&
                                                       value.sku!.contains(
-                                                          Constants
-                                                              .spaq1String);
+                                                        Constants.spaq1String,
+                                                      );
                                                 },
                                               );
                                             },
@@ -1003,7 +1008,8 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                               final facility = await parent
                                                   .push<FacilityModel>(
                                                 FacilitySelectionRoute(
-                                                  facilities: isDistributor
+                                                  facilities: (isDistributor ||
+                                                          !isHealthFacilitySupervisor)
                                                       ? facilities
                                                       : teamFacilities,
                                                 ),
@@ -1216,7 +1222,8 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   final facility = await parent
                                                       .push<FacilityModel>(
                                                     FacilitySelectionRoute(
-                                                      facilities: isDistributor
+                                                      facilities: (isDistributor ||
+                                                              !isHealthFacilitySupervisor)
                                                           ? facilities
                                                           : teamFacilities,
                                                     ),
@@ -1385,7 +1392,8 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                           );
                                         },
                                       ),
-                                      if (!isDistributor)
+                                      if (!isDistributor &&
+                                          isHealthFacilitySupervisor)
                                         InkWell(
                                           onTap: () async {
                                             Navigator.of(context).push(
