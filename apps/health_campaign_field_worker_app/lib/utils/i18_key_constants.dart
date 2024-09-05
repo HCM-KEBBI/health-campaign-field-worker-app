@@ -513,6 +513,9 @@ class HouseholdDetails {
   String get dateOfRegistrationLabel =>
       'HOUSEHOLD_DETAILS_DATE_OF_REGISTRATION_LABEL';
 
+  String get dateOfAdministrationLabel =>
+      'HOUSEHOLD_DETAILS_DATE_OF_ADMINISTRATION_LABEL';
+
   String get noOfMembersCountLabel => 'NO_OF_MEMBERS_COUNT_LABEL';
   String get viewHouseHoldDetailsAction =>
       'VIEW_HOUSEHOLD_DETAILS_ACTION_LABEL';
@@ -881,7 +884,8 @@ class StockDetails {
   String get stockRecordDialogDynamicDescription =>
       'STOCK_RECORD_DIALOG_DYNAMIC_DESCRIPTION';
 
-     String get stockRecordSuccessLabel => 'ACKNOWLEDGEMENT_RECORD_SUCCESS_LABEL_TEXT';
+  String get stockRecordSuccessLabel =>
+      'ACKNOWLEDGEMENT_RECORD_SUCCESS_LABEL_TEXT';
 }
 
 class StockReconciliationDetails {
