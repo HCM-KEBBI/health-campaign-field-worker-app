@@ -27,6 +27,8 @@ class _AcknowledgementPageState extends LocalizedState<AcknowledgementPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    bool isStock =
+        (widget.description != null && widget.description!.contains("stock"));
 
     return Scaffold(
       body: DigitAcknowledgement.success(
@@ -44,11 +46,16 @@ class _AcknowledgementPageState extends LocalizedState<AcknowledgementPage> {
               i18.acknowledgementSuccess.acknowledgementLabelText,
             ),
         action: () {
-          context.router.pop();
+          isStock
+              ? context.router.popUntilRouteWithName(HomeRoute.name)
+              : context.router.pop();
         },
         enableBackToSearch: widget.isDataRecordSuccess ? false : true,
-        actionLabel:
-            localizations.translate(i18.acknowledgementSuccess.actionLabelText),
+        actionLabel: isStock
+            ? localizations
+                .translate(i18.inventoryReportDetails.backToHomeButtonLabel)
+            : localizations
+                .translate(i18.acknowledgementSuccess.actionLabelText),
       ),
       bottomNavigationBar: Offstage(
         offstage: !widget.isDataRecordSuccess,
