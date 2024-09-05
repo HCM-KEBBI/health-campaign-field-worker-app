@@ -81,94 +81,95 @@ class _RecordDeliveryCycleState extends LocalizedState<RecordDeliveryCycle> {
                               true,
                             )
                           : const SizedBox.shrink(),
-                      if ((pastCycles ?? []).isNotEmpty)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            StatefulBuilder(
-                              builder: (context, setState) {
-                                return Column(children: [
-                                  isExpanded
-                                      ? buildCycleAndDoseTable(
-                                          pastCycles ?? [],
-                                          headerList,
-                                          null,
-                                          false,
-                                        )
-                                      : const Offstage(),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width,
-                                    child: Center(
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            isExpanded = !isExpanded;
-                                            isDivider = !isDivider;
-                                          });
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: kPadding / 2,
-                                              ),
-                                              child: TextButton(
-                                                style: TextButton.styleFrom(
-                                                  padding: const EdgeInsets.all(
-                                                    0,
-                                                  ),
-                                                ),
-                                                onPressed: null,
-                                                child: Text(
-                                                  style: TextStyle(
-                                                    fontSize: kPadding * 2,
-                                                    decoration: TextDecoration
-                                                        .underline,
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .secondary,
-                                                  ),
-                                                  isExpanded
-                                                      ? localizations.translate(
-                                                          i18.deliverIntervention
-                                                              .hidePastCycles,
-                                                        )
-                                                      : localizations.translate(
-                                                          i18.deliverIntervention
-                                                              .viewPastCycles,
-                                                        ),
-                                                ),
-                                              ),
-                                            ),
-                                            !isExpanded
-                                                ? Icon(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .secondary,
-                                                    Icons.keyboard_arrow_down,
-                                                    size: 24,
-                                                  )
-                                                : Icon(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .secondary,
-                                                    Icons.keyboard_arrow_up,
-                                                    size: 24,
-                                                  ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ]);
-                              },
-                            ),
-                          ],
-                        ),
+                      //solution customisation
+                      // if ((pastCycles ?? []).isNotEmpty)
+                      //   Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: <Widget>[
+                      //       StatefulBuilder(
+                      //         builder: (context, setState) {
+                      //           return Column(children: [
+                      //             isExpanded
+                      //                 ? buildCycleAndDoseTable(
+                      //                     pastCycles ?? [],
+                      //                     headerList,
+                      //                     null,
+                      //                     false,
+                      //                   )
+                      //                 : const Offstage(),
+                      //             SizedBox(
+                      //               width: MediaQuery.of(context).size.width,
+                      //               child: Center(
+                      //                 child: GestureDetector(
+                      //                   onTap: () {
+                      //                     setState(() {
+                      //                       isExpanded = !isExpanded;
+                      //                       isDivider = !isDivider;
+                      //                     });
+                      //                   },
+                      //                   child: Row(
+                      //                     mainAxisAlignment:
+                      //                         MainAxisAlignment.center,
+                      //                     mainAxisSize: MainAxisSize.min,
+                      //                     children: [
+                      //                       Padding(
+                      //                         padding:
+                      //                             const EdgeInsets.symmetric(
+                      //                           horizontal: kPadding / 2,
+                      //                         ),
+                      //                         child: TextButton(
+                      //                           style: TextButton.styleFrom(
+                      //                             padding: const EdgeInsets.all(
+                      //                               0,
+                      //                             ),
+                      //                           ),
+                      //                           onPressed: null,
+                      //                           child: Text(
+                      //                             style: TextStyle(
+                      //                               fontSize: kPadding * 2,
+                      //                               decoration: TextDecoration
+                      //                                   .underline,
+                      //                               color: Theme.of(context)
+                      //                                   .colorScheme
+                      //                                   .secondary,
+                      //                             ),
+                      //                             isExpanded
+                      //                                 ? localizations.translate(
+                      //                                     i18.deliverIntervention
+                      //                                         .hidePastCycles,
+                      //                                   )
+                      //                                 : localizations.translate(
+                      //                                     i18.deliverIntervention
+                      //                                         .viewPastCycles,
+                      //                                   ),
+                      //                           ),
+                      //                         ),
+                      //                       ),
+                      //                       !isExpanded
+                      //                           ? Icon(
+                      //                               color: Theme.of(context)
+                      //                                   .colorScheme
+                      //                                   .secondary,
+                      //                               Icons.keyboard_arrow_down,
+                      //                               size: 24,
+                      //                             )
+                      //                           : Icon(
+                      //                               color: Theme.of(context)
+                      //                                   .colorScheme
+                      //                                   .secondary,
+                      //                               Icons.keyboard_arrow_up,
+                      //                               size: 24,
+                      //                             ),
+                      //                     ],
+                      //                   ),
+                      //                 ),
+                      //               ),
+                      //             ),
+                      //           ]);
+                      //         },
+                      //       ),
+                      //     ],
+                      //   ),
                     ]);
                   },
                 );
@@ -301,9 +302,9 @@ class _RecordDeliveryCycleState extends LocalizedState<RecordDeliveryCycle> {
             const SizedBox(
               height: 16,
             ),
-              const Divider(
-                thickness: 1.0,
-              ),
+            const Divider(
+              thickness: 1.0,
+            ),
           ],
         ),
       );

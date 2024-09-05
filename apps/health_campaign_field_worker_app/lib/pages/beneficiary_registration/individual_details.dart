@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/utils/date_utils.dart';
 import 'package:digit_components/widgets/atoms/digit_checkbox.dart';
+import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_dob_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -45,6 +46,8 @@ class _IndividualDetailsPageState
   static const _mobileNumberKey = 'mobileNumber';
   DateTime now = DateTime.now();
 
+  bool isHeadAgeValid = true;
+
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<BeneficiaryRegistrationBloc>();
@@ -64,13 +67,14 @@ class _IndividualDetailsPageState
                   (router.parent() as StackRouter).pop();
                 } else {
                   (router.parent() as StackRouter).pop();
-                  context.read<SearchHouseholdsBloc>().add(
-                        SearchHouseholdsByHouseholdsEvent(
-                          householdModel: value.householdModel,
-                          projectId: context.projectId,
-                          isProximityEnabled: false,
-                        ),
-                      );
+                  // solution customisation
+                  // context.read<SearchHouseholdsBloc>().add(
+                  //       SearchHouseholdsByHouseholdsEvent(
+                  //         householdModel: value.householdModel,
+                  //         projectId: context.projectId,
+                  //         isProximityEnabled: false,
+                  //       ),
+                  //     );
                   router.push(BeneficiaryAcknowledgementRoute(
                     enableViewHousehold: true,
                   ));
@@ -90,6 +94,21 @@ class _IndividualDetailsPageState
                   onPressed: () async {
                     if (form.control(_dobKey).value == null) {
                       form.control(_dobKey).setErrors({'': true});
+                    }
+
+                    if (!isHeadAgeValid) {
+                      await DigitToast.show(
+                        context,
+                        options: DigitToastOptions(
+                          localizations.translate(
+                            i18.individualDetails.headAgeValidError,
+                          ),
+                          true,
+                          theme,
+                        ),
+                      );
+
+                      return;
                     }
                     final userId = context.loggedInUserUuid;
                     final projectId = context.projectId;
@@ -394,7 +413,13 @@ class _IndividualDetailsPageState
                                     (age.years > 150 ||
                                         (age.years == 150 && age.months > 0))) {
                                   formControl.setErrors({'': true});
+                                } else if (widget.isHeadOfHousehold &&
+                                    age.years < 18) {
+                                  isHeadAgeValid = false;
                                 } else {
+                                  if (widget.isHeadOfHousehold) {
+                                    isHeadAgeValid = true;
+                                  }
                                   formControl.removeError('');
                                 }
                               }
