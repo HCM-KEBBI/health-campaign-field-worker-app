@@ -493,14 +493,20 @@ class _InventoryReportDetailsPageState
                                                               ? facilityMap[model
                                                                           .senderId]
                                                                       ?.name ??
-                                                                  model
-                                                                      .senderType ??
+                                                                  (model.senderType ==
+                                                                          'STAFF'
+                                                                      ? 'Delivery Team'
+                                                                      : model
+                                                                          .senderType) ??
                                                                   ''
                                                               : facilityMap[model
                                                                           .receiverId]
                                                                       ?.name ??
-                                                                  model
-                                                                      .receiverType ??
+                                                                  (model.receiverType ==
+                                                                          'STAFF'
+                                                                      ? 'Delivery Team'
+                                                                      : model
+                                                                          .receiverType) ??
                                                                   '',
                                                         ),
                                                       ],
