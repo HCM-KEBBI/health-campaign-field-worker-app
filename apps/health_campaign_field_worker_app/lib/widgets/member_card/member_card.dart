@@ -142,31 +142,40 @@ class MemberCard extends StatelessWidget {
                   ),
                 ],
               ),
-              Positioned(
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: DigitIconButton(
-                    onPressed: () => DigitActionDialog.show(
-                      context,
-                      widget: ActionCard(
-                        items: [
-                          ActionCardModel(
-                            icon: Icons.edit,
-                            label: localizations.translate(
-                              i18.memberCard.editIndividualDetails,
+              (tasks ?? [])
+                          .where(
+                            (element) =>
+                                element.status ==
+                                Status.administeredSuccess.toValue(),
+                          )
+                          .lastOrNull ==
+                      null
+                  ? Positioned(
+                      child: Align(
+                        alignment: Alignment.topRight,
+                        child: DigitIconButton(
+                          onPressed: () => DigitActionDialog.show(
+                            context,
+                            widget: ActionCard(
+                              items: [
+                                ActionCardModel(
+                                  icon: Icons.edit,
+                                  label: localizations.translate(
+                                    i18.memberCard.editIndividualDetails,
+                                  ),
+                                  action: editMemberAction,
+                                ),
+                              ],
                             ),
-                            action: editMemberAction,
                           ),
-                        ],
+                          iconText: localizations.translate(
+                            i18.memberCard.editDetails,
+                          ),
+                          icon: Icons.edit,
+                        ),
                       ),
-                    ),
-                    iconText: localizations.translate(
-                      i18.memberCard.editDetails,
-                    ),
-                    icon: Icons.edit,
-                  ),
-                ),
-              ),
+                    )
+                  : const Offstage(),
             ],
           ),
           SizedBox(
