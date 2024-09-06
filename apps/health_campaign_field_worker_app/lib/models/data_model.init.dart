@@ -207,9 +207,3 @@ void initializeMappers() {
   p54.AttendanceLogModelMapper.ensureInitialized();
   p55.AttendeeModelMapper.ensureInitialized();
 }
-
-
-
-
-
-
