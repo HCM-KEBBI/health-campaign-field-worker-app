@@ -177,10 +177,12 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                     }
                     parent.replace(
                       AcknowledgementRoute(
-                          label: localizations.translate(
-                            i18.stockDetails.stockRecordSuccessLabel,
-                          ),
-                          description: currDescription),
+                        isStock: true,
+                        label: localizations.translate(
+                          i18.stockDetails.stockRecordSuccessLabel,
+                        ),
+                        description: currDescription,
+                      ),
                     );
                   },
                 );

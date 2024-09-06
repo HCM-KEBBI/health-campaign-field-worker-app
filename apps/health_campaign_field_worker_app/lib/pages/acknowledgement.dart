@@ -9,11 +9,13 @@ class AcknowledgementPage extends LocalizedStatefulWidget {
   bool isDataRecordSuccess;
   String? label;
   String? description;
+  bool? isStock;
   Map<String, dynamic>? descriptionTableData;
   AcknowledgementPage({
     super.key,
     super.appLocalizations,
     this.isDataRecordSuccess = false,
+    this.isStock = false,
     this.label,
     this.description,
     this.descriptionTableData,
@@ -44,11 +46,16 @@ class _AcknowledgementPageState extends LocalizedState<AcknowledgementPage> {
               i18.acknowledgementSuccess.acknowledgementLabelText,
             ),
         action: () {
-          context.router.pop();
+          widget.isStock!
+              ? context.router.popUntilRouteWithName(HomeRoute.name)
+              : context.router.pop();
         },
         enableBackToSearch: widget.isDataRecordSuccess ? false : true,
-        actionLabel:
-            localizations.translate(i18.acknowledgementSuccess.actionLabelText),
+        actionLabel: widget.isStock!
+            ? localizations
+                .translate(i18.inventoryReportDetails.backToHomeButtonLabel)
+            : localizations
+                .translate(i18.acknowledgementSuccess.actionLabelText),
       ),
       bottomNavigationBar: Offstage(
         offstage: !widget.isDataRecordSuccess,

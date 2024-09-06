@@ -155,6 +155,10 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                               kPadding, 0, kPadding, 0),
                                           child: DigitElevatedButton(
                                             onPressed: () async {
+                                              form.markAllAsTouched();
+                                              if (!form.valid) {
+                                                return;
+                                              }
                                               if (((form.control(
                                                 _resourceDeliveredKey,
                                               ) as FormArray)
@@ -503,6 +507,14 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                       ),
                                                       readOnly: false,
                                                       isRequired: true,
+                                                      validationMessages: {
+                                                        'required': (object) =>
+                                                            localizations
+                                                                .translate(
+                                                              i18.deliverIntervention
+                                                                  .selectReasonForRedoseLabel,
+                                                            ),
+                                                      },
                                                       valueMapper: (value) =>
                                                           localizations
                                                               .translate(
@@ -686,7 +698,9 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
         ),
       ]),
       _deliveryCommentKey: FormControl<String>(
-        validators: [],
+        validators: [
+          Validators.required,
+        ],
       ),
       _doseAdministeredByKey: FormControl<String>(
         validators: [],
