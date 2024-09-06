@@ -155,11 +155,10 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                               kPadding, 0, kPadding, 0),
                                           child: DigitElevatedButton(
                                             onPressed: () async {
+                                              form.markAllAsTouched();
                                               if (!form.valid) {
-                                                form.markAllAsTouched(); // Mark all fields as touched to show validation errors
-                                                return; // Stop execution if the form is invalid
+                                                return;
                                               }
-
                                               if (((form.control(
                                                 _resourceDeliveredKey,
                                               ) as FormArray)

@@ -638,6 +638,9 @@ class DeliverIntervention {
   String get dateOfRegistrationLabel =>
       'DELIVER_INTERVENTION_DATE_OF_REGISTRATION_LABEL';
 
+  String get dateOfAdministrationLabel =>
+      'DELIVER_INTERVENTION_DATE_OF_ADMINISTRATION_LABEL';
+
   String get resourceDeliveredLabel =>
       'DELIVER_INTERVENTION_RESOURCE_DELIVERED_LABEL_SPAQ';
 

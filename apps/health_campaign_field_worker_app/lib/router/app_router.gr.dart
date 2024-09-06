@@ -136,6 +136,7 @@ class _$AppRouter extends RootStackRouter {
           key: args.key,
           appLocalizations: args.appLocalizations,
           isDataRecordSuccess: args.isDataRecordSuccess,
+          isStock: args.isStock,
           label: args.label,
           description: args.description,
           descriptionTableData: args.descriptionTableData,
@@ -1496,6 +1497,7 @@ class AcknowledgementRoute extends PageRouteInfo<AcknowledgementRouteArgs> {
     Key? key,
     AppLocalizations? appLocalizations,
     bool isDataRecordSuccess = false,
+    bool? isStock = false,
     String? label,
     String? description,
     Map<String, dynamic>? descriptionTableData,
@@ -1506,6 +1508,7 @@ class AcknowledgementRoute extends PageRouteInfo<AcknowledgementRouteArgs> {
             key: key,
             appLocalizations: appLocalizations,
             isDataRecordSuccess: isDataRecordSuccess,
+            isStock: isStock,
             label: label,
             description: description,
             descriptionTableData: descriptionTableData,
@@ -1520,6 +1523,7 @@ class AcknowledgementRouteArgs {
     this.key,
     this.appLocalizations,
     this.isDataRecordSuccess = false,
+    this.isStock = false,
     this.label,
     this.description,
     this.descriptionTableData,
@@ -1531,6 +1535,8 @@ class AcknowledgementRouteArgs {
 
   final bool isDataRecordSuccess;
 
+  final bool? isStock;
+
   final String? label;
 
   final String? description;
@@ -1539,7 +1545,7 @@ class AcknowledgementRouteArgs {
 
   @override
   String toString() {
-    return 'AcknowledgementRouteArgs{key: $key, appLocalizations: $appLocalizations, isDataRecordSuccess: $isDataRecordSuccess, label: $label, description: $description, descriptionTableData: $descriptionTableData}';
+    return 'AcknowledgementRouteArgs{key: $key, appLocalizations: $appLocalizations, isDataRecordSuccess: $isDataRecordSuccess, isStock: $isStock, label: $label, description: $description, descriptionTableData: $descriptionTableData}';
   }
 }
 

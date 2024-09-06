@@ -173,7 +173,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                     }
                     parent.replace(
                       AcknowledgementRoute(
-                        // isDataRecordSuccess: true,
+                        isStock: true,
                         label: localizations.translate(
                           i18.stockDetails.stockRecordSuccessLabel,
                         ),
