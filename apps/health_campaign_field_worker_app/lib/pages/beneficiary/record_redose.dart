@@ -496,7 +496,7 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                             localizations
                                                                 .translate(
                                                               i18.deliverIntervention
-                                                                  .selectReasonForRedoseLabel,
+                                                                  .reasonForRedoseLabel,
                                                             ),
                                                       },
                                                       valueMapper: (value) =>
