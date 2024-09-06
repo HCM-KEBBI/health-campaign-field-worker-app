@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../router/app_router.dart';
 import '../../../utils/i18_key_constants.dart' as i18;
 import '../../../widgets/localized.dart';
+import '../../blocs/household_overview/household_overview.dart';
 import '../../blocs/search_households/search_households.dart';
 import '../../models/entities/identifier_types.dart';
 
@@ -39,6 +40,10 @@ class _BeneficiaryAcknowledgementPageState
     return Scaffold(
       body: DigitAcknowledgement.success(
         action: () {
+          final searchBloc = context.read<SearchHouseholdsBloc>();
+          searchBloc.add(
+            const SearchHouseholdsClearEvent(),
+          );
           context.router.pop();
         },
         secondaryAction: () {
@@ -86,5 +91,3 @@ class _BeneficiaryAcknowledgementPageState
         : '';
   }
 }
-
-
