@@ -201,9 +201,15 @@ void initializeMappers() {
   p50.PgrComplaintResponseModelMapper.ensureInitialized();
   p50.PgrComplainantResponseModelMapper.ensureInitialized();
   p50.PgrServiceResponseModelMapper.ensureInitialized();
-p51.AttendanceRegisterModelMapper.ensureInitialized();
-p52.StaffModelMapper.ensureInitialized();
-p53.AttendanceAuditDetailsMapper.ensureInitialized();
-p54.AttendanceLogModelMapper.ensureInitialized();
-p55.AttendeeModelMapper.ensureInitialized();
+  p51.AttendanceRegisterModelMapper.ensureInitialized();
+  p52.StaffModelMapper.ensureInitialized();
+  p53.AttendanceAuditDetailsMapper.ensureInitialized();
+  p54.AttendanceLogModelMapper.ensureInitialized();
+  p55.AttendeeModelMapper.ensureInitialized();
 }
+
+
+
+
+
+

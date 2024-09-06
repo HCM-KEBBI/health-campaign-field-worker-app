@@ -486,7 +486,7 @@ class _DeliverInterventionPageState
                                                       label: localizations
                                                           .translate(
                                                         i18.householdDetails
-                                                            .dateOfRegistrationLabel,
+                                                            .dateOfAdministrationLabel,
                                                       ),
                                                       confirmText: localizations
                                                           .translate(
