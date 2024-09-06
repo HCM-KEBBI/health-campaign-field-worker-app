@@ -13,6 +13,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 import '../../../utils/validations.dart' as validation;
 import '../../blocs/app_initialization/app_initialization.dart';
 import '../../blocs/beneficiary_registration/beneficiary_registration.dart';
+import '../../blocs/household_overview/household_overview.dart';
 import '../../blocs/search_households/search_households.dart';
 import '../../data/local_store/no_sql/schema/app_configuration.dart';
 import '../../models/data_model.dart';
@@ -67,14 +68,13 @@ class _IndividualDetailsPageState
                   (router.parent() as StackRouter).pop();
                 } else {
                   (router.parent() as StackRouter).pop();
-                  // solution customisation
-                  // context.read<SearchHouseholdsBloc>().add(
-                  //       SearchHouseholdsByHouseholdsEvent(
-                  //         householdModel: value.householdModel,
-                  //         projectId: context.projectId,
-                  //         isProximityEnabled: false,
-                  //       ),
-                  //     );
+                  context.read<SearchHouseholdsBloc>().add(
+                        SearchHouseholdsByHouseholdsEvent(
+                          householdModel: value.householdModel,
+                          projectId: context.projectId,
+                          isProximityEnabled: false,
+                        ),
+                      );
                   router.push(BeneficiaryAcknowledgementRoute(
                     enableViewHousehold: true,
                   ));

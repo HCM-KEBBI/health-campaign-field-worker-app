@@ -511,6 +511,10 @@ class _RecordReferralDetailsPageState
                                                             .control(
                                                                 _nameOfChildKey)
                                                             .value as String;
+                                                        final beneficiaryID = form
+                                                            .control(
+                                                                _beneficiaryIdKey)
+                                                            .value as String?;
                                                         final referralCode = form
                                                             .control(
                                                                 _referralCodeKey)
@@ -562,6 +566,8 @@ class _RecordReferralDetailsPageState
                                                                   referralCode,
                                                               symptom:
                                                                   symptom.key,
+                                                              beneficiaryId:
+                                                                  beneficiaryID,
                                                               tenantId:
                                                                   envConfig
                                                                       .variables

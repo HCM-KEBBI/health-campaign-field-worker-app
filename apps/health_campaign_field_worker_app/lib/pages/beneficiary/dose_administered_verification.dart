@@ -68,9 +68,9 @@ class _DoseAdministeredVerificationPageState
                   DeliverInterventionState>(
                 builder: (context, deliveryInterventionstate) {
                   var beneficiaryName =
-                      ('${state.selectedIndividual?.name?.familyName ?? "-"}'
+                      ('${state.selectedIndividual?.name?.givenName ?? "-"}'
                               " "
-                              '${state.selectedIndividual?.name?.givenName ?? "-"}')
+                              '${state.selectedIndividual?.name?.familyName ?? "-"}')
                           .toString();
 
                   var beneficiaryId = state.selectedIndividual?.identifiers
