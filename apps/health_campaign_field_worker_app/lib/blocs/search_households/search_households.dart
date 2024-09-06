@@ -394,14 +394,18 @@ class SearchHouseholdsBloc
 
     if (event.isProximityEnabled) {
       // Fetch individual results based on proximity and other criteria.
-      proximityBasedIndividualResults = await addressRepository
-          .searchHouseHoldByIndividual(AddressSearchModel(
-        latitude: event.latitude,
-        longitude: event.longitude,
-        maxRadius: event.maxRadius,
-        offset: event.offset,
-        limit: event.limit,
-      ));
+      proximityBasedIndividualResults =
+          await addressRepository.searchHouseHoldByIndividual(
+        AddressSearchModel(
+          latitude: event.latitude,
+          longitude: event.longitude,
+          maxRadius: event.maxRadius,
+          offset: event.offset,
+          limit: event.limit,
+        ),
+        null,
+        event.searchText.trim(),
+      );
     }
     // Extract individual IDs from proximity-based individual results.
     final List<String> indIds = proximityBasedIndividualResults

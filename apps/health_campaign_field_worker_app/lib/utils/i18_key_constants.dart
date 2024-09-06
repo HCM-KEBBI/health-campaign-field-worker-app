@@ -390,6 +390,7 @@ class BeneficiaryDetails {
   String get insufficientStockHeading => 'INSUFFICIENT_STOCK_HEADING';
   String get insufficientStockMessage => 'INSUFFICIENT_STOCK_MESSAGE';
   String get backToHome => 'BACK_TO_HOME';
+  String get backToHouseholdDetails => 'BACK_TO_HOUSEHOLD_DETAILS';
   String get insufficientStockMessageDelivery =>
       'INSUFFICIENT_STOCK_MESSAGE_DELIVERY';
 }
@@ -461,6 +462,8 @@ class IndividualDetails {
   String get lastNameLengthError => 'LAST_NAME_LENGTH_ERROR_MESSAGE';
 
   String get lastNameIsRequiredError => 'LAST_NAME_REQUIRED_ERROR_MESSAGE';
+
+  String get headAgeValidError => 'HEAD_VALID_AGE_ERROR_MESSAGE';
 }
 
 class HouseholdLocation {
@@ -887,7 +890,6 @@ class StockDetails {
 
   String get stockRecordDialogDynamicDescription =>
       'STOCK_RECORD_DIALOG_DYNAMIC_DESCRIPTION';
-
   String get stockRecordSuccessLabel =>
       'ACKNOWLEDGEMENT_RECORD_SUCCESS_LABEL_TEXT';
 }

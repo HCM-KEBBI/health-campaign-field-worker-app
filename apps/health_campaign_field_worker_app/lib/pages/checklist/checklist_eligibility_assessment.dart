@@ -177,7 +177,7 @@ class _EligibilityChecklistViewPageState
                               responses[attributeCode] = value;
                             }
 
-                            List<String?> referralReasons = [];
+                            List<String>? referralReasons = [];
                             List<String?> ineligibilityReasons = [];
 
                             ifReferral = isReferral(responses, referralReasons);
@@ -289,55 +289,6 @@ class _EligibilityChecklistViewPageState
                                       ));
                                     }
 
-                                    context.read<ServiceBloc>().add(
-                                          ServiceCreateEvent(
-                                            serviceModel: ServiceModel(
-                                              createdAt: DigitDateUtils
-                                                  .getDateFromTimestamp(
-                                                DateTime.now()
-                                                    .toLocal()
-                                                    .millisecondsSinceEpoch,
-                                                dateFormat:
-                                                    "dd/MM/yyyy hh:mm a",
-                                              ),
-                                              tenantId:
-                                                  selectedServiceDefinition!
-                                                      .tenantId,
-                                              clientId: context
-                                                          .isHealthFacilitySupervisor &&
-                                                      widget.referralClientRefId !=
-                                                          null
-                                                  ? widget.referralClientRefId
-                                                      .toString()
-                                                  : referenceId,
-                                              serviceDefId:
-                                                  selectedServiceDefinition?.id,
-                                              attributes: attributes,
-                                              rowVersion: 1,
-                                              accountId: context.projectId,
-                                              auditDetails: AuditDetails(
-                                                createdBy:
-                                                    context.loggedInUserUuid,
-                                                createdTime: DateTime.now()
-                                                    .millisecondsSinceEpoch,
-                                              ),
-                                              clientAuditDetails:
-                                                  ClientAuditDetails(
-                                                createdBy:
-                                                    context.loggedInUserUuid,
-                                                createdTime: context
-                                                    .millisecondsSinceEpoch(),
-                                                lastModifiedBy:
-                                                    context.loggedInUserUuid,
-                                                lastModifiedTime: context
-                                                    .millisecondsSinceEpoch(),
-                                              ),
-                                              additionalDetails:
-                                                  context.boundary.code,
-                                            ),
-                                          ),
-                                        );
-
                                     Navigator.of(
                                       context,
                                       rootNavigator: true,
@@ -446,7 +397,7 @@ class _EligibilityChecklistViewPageState
                                           projectBeneficiaryClientReferenceId ??
                                               "",
                                       individual: widget.individual!,
-                                      referralReason: referralReasons.first,
+                                      referralReasons: referralReasons,
                                     ),
                                   );
                                 } else {
@@ -931,22 +882,34 @@ class _EligibilityChecklistViewPageState
     var q1Key = "KBEA1";
     var q2Key = "KBEA2";
     var q4Key = "KBEA3.NO.ADT1";
+    Map<String, String> referralKeysVsCode = {
+      q1Key: "SICK",
+      q2Key: "FEVER",
+      q4Key: "DRUG_SE_PC",
+    };
     // TODO Configure the reasons ,verify hardcoded strings
 
     if (responses.isNotEmpty) {
       if (responses.containsKey(q1Key) && responses[q1Key]!.isNotEmpty) {
         isReferral = responses[q1Key] == yes ? true : false;
-        isReferral ? referralReasons.add("SICK") : null;
       }
       if (!isReferral &&
           (responses.containsKey(q2Key) && responses[q2Key]!.isNotEmpty)) {
         isReferral = responses[q2Key] == yes ? true : false;
-        isReferral ? referralReasons.add("FEVER") : null;
       }
       if (!isReferral &&
           (responses.containsKey(q4Key) && responses[q4Key]!.isNotEmpty)) {
         isReferral = responses[q4Key] == yes ? true : false;
-        isReferral ? referralReasons.add("DRUG_SE_PC") : null;
+      }
+    }
+    if (isReferral) {
+      for (var entry in referralKeysVsCode.entries) {
+        if (responses.containsKey(entry.key) &&
+            responses[entry.key]!.isNotEmpty) {
+          if (responses[entry.key] == yes) {
+            referralReasons.add(entry.value);
+          }
+        }
       }
     }
 

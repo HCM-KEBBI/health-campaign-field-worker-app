@@ -19,56 +19,55 @@ class AddressLocalRepository {
     String? userId,
   ]) async {
     final selectQuery = sql.select(sql.address).join(
-    [
-      leftOuterJoin(
-        sql.household,
-        sql.household.clientReferenceId.equalsExp(
-          sql.address.relatedClientReferenceId,
+      [
+        leftOuterJoin(
+          sql.household,
+          sql.household.clientReferenceId.equalsExp(
+            sql.address.relatedClientReferenceId,
+          ),
         ),
-      ),
-    ],
-  );
+      ],
+    );
 
-  (selectQuery
-        ..where(buildAnd([
-          sql.address.relatedClientReferenceId.isNotNull(),
-          sql.household.clientReferenceId.isNotNull(),
-          if (query.latitude != null &&
-              query.longitude != null &&
-              query.maxRadius != null)
-            CustomExpression<bool>('''
+    (selectQuery
+          ..where(buildAnd([
+            sql.address.relatedClientReferenceId.isNotNull(),
+            sql.household.clientReferenceId.isNotNull(),
+            if (query.latitude != null &&
+                query.longitude != null &&
+                query.maxRadius != null)
+              CustomExpression<bool>('''
           (6371393 * acos(
               cos(${query.latitude! * math.pi / 180.0}) * cos((address.latitude * ${math.pi / 180.0}))
               * cos((address.longitude * ${math.pi / 180.0}) - ${query.longitude! * math.pi / 180.0})
               + sin(${query.latitude! * math.pi / 180.0}) * sin((address.latitude * ${math.pi / 180.0}))
           )) <= ${query.maxRadius!}
       '''),
-          if (query.latitude != null &&
-              query.longitude != null &&
-              query.maxRadius != null)
-            sql.address.longitude.isNotNull(),
-          sql.address.latitude.isNotNull(),
-        ])))
-      .orderBy([
-        if (query.latitude != null &&
-            query.longitude != null &&
-            query.maxRadius != null)
-          OrderingTerm(
-            expression: CustomExpression<double>('''
+            if (query.latitude != null &&
+                query.longitude != null &&
+                query.maxRadius != null)
+              sql.address.longitude.isNotNull(),
+            sql.address.latitude.isNotNull(),
+          ])))
+        .orderBy([
+      if (query.latitude != null &&
+          query.longitude != null &&
+          query.maxRadius != null)
+        OrderingTerm(
+          expression: CustomExpression<double>('''
             (6371393 * acos(
                 cos(${query.latitude! * math.pi / 180.0}) * cos((address.latitude * ${math.pi / 180.0}))
                 * cos((address.longitude * ${math.pi / 180.0}) - ${query.longitude! * math.pi / 180.0})
                 + sin(${query.latitude! * math.pi / 180.0}) * sin((address.latitude * ${math.pi / 180.0}))
             ))
           '''),
-            mode: OrderingMode.asc,
-          ),
-      ]);
+          mode: OrderingMode.asc,
+        ),
+    ]);
 
-      selectQuery
-      .limit(query.limit ?? 50, offset: query.offset ?? 0);
+    selectQuery.limit(query.limit ?? 50, offset: query.offset ?? 0);
 
-  final results = await selectQuery.get();
+    final results = await selectQuery.get();
 
     return results
         .map((e) {
@@ -127,57 +126,71 @@ class AddressLocalRepository {
   FutureOr<List<IndividualModel>> searchHouseHoldByIndividual(
     AddressSearchModel query, [
     String? userId,
+    String? name,
   ]) async {
-  final selectQuery = sql.select(sql.address).join(
-    [
-      leftOuterJoin(
-        sql.individual,
-        sql.individual.clientReferenceId.equalsExp(
-          sql.address.relatedClientReferenceId,
+    final selectQuery = sql.select(sql.address).join(
+      [
+        leftOuterJoin(
+          sql.individual,
+          sql.individual.clientReferenceId.equalsExp(
+            sql.address.relatedClientReferenceId,
+          ),
         ),
-      ),
-    ],
-  );
+        leftOuterJoin(
+          sql.name,
+          sql.name.individualClientReferenceId.equalsExp(
+            sql.individual.clientReferenceId,
+          ),
+        ),
+      ],
+    );
 
-  (selectQuery
-        ..where(buildAnd([
-          sql.address.relatedClientReferenceId.isNotNull(),
-          sql.individual.clientReferenceId.isNotNull(),
-          if (query.latitude != null &&
-              query.longitude != null &&
-              query.maxRadius != null)
-            CustomExpression<bool>('''
+    (selectQuery
+          ..where(buildAnd([
+            sql.address.relatedClientReferenceId.isNotNull(),
+            sql.individual.clientReferenceId.isNotNull(),
+            if (name != null && name.isNotEmpty)
+              buildOr([
+                sql.name.givenName.contains(
+                  name,
+                ),
+                sql.name.familyName.contains(
+                  name,
+                ),
+              ]),
+            if (query.latitude != null &&
+                query.longitude != null &&
+                query.maxRadius != null)
+              CustomExpression<bool>('''
           (6371393 * acos(
               cos(${query.latitude! * math.pi / 180.0}) * cos((address.latitude * ${math.pi / 180.0}))
               * cos((address.longitude * ${math.pi / 180.0}) - ${query.longitude! * math.pi / 180.0})
               + sin(${query.latitude! * math.pi / 180.0}) * sin((address.latitude * ${math.pi / 180.0}))
           )) <= ${query.maxRadius!}
       '''),
-          if (query.latitude != null &&
-              query.longitude != null &&
-              query.maxRadius != null)
-            sql.address.longitude.isNotNull(),
-          sql.address.latitude.isNotNull(),
-        ])))
-      .orderBy([
-        if (query.latitude != null &&
-            query.longitude != null &&
-            query.maxRadius != null)
-          OrderingTerm(
-            expression: CustomExpression<double>('''
+            if (query.latitude != null &&
+                query.longitude != null &&
+                query.maxRadius != null)
+              sql.address.longitude.isNotNull(),
+            sql.address.latitude.isNotNull(),
+          ])))
+        .orderBy([
+      if (query.latitude != null &&
+          query.longitude != null &&
+          query.maxRadius != null)
+        OrderingTerm(
+          expression: CustomExpression<double>('''
             (6371393 * acos(
                 cos(${query.latitude! * math.pi / 180.0}) * cos((address.latitude * ${math.pi / 180.0}))
                 * cos((address.longitude * ${math.pi / 180.0}) - ${query.longitude! * math.pi / 180.0})
                 + sin(${query.latitude! * math.pi / 180.0}) * sin((address.latitude * ${math.pi / 180.0}))
             ))
           '''),
-            mode: OrderingMode.asc,
-          ),
-      ]);
-      
-      selectQuery
-      .limit(query.limit ?? 50, offset: query.offset ?? 0);
+          mode: OrderingMode.asc,
+        ),
+    ]);
 
+    selectQuery.limit(query.limit ?? 50, offset: query.offset ?? 0);
 
     final results = await selectQuery.get();
 

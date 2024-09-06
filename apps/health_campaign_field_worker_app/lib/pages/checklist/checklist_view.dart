@@ -171,6 +171,53 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                 List<ServiceAttributesModel> attributes = [];
                                 for (int i = 0; i < controller.length; i++) {
                                   final attribute = initialAttributes;
+
+                                  String? additionalDetailValue = context
+                                              .isHealthFacilitySupervisor &&
+                                          widget.referralClientRefId != null
+                                      ? null
+                                      : ((attribute?[i]
+                                                          .values
+                                                          ?.firstWhereOrNull(
+                                                            (element) =>
+                                                                element ==
+                                                                yesText,
+                                                          ) !=
+                                                      null &&
+                                                  controller[i].text ==
+                                                      attribute?[i]
+                                                          .values?[1]
+                                                          .trim()) ||
+                                              (attribute?[i]
+                                                          .values
+                                                          ?.firstWhereOrNull(
+                                                            (element) =>
+                                                                element
+                                                                    .toUpperCase() ==
+                                                                othersText,
+                                                          ) !=
+                                                      null &&
+                                                  controller[i]
+                                                          .text
+                                                          .split(
+                                                            multiSelectionSeparator,
+                                                          )
+                                                          .firstWhereOrNull(
+                                                            (element) =>
+                                                                element
+                                                                    .toUpperCase() ==
+                                                                othersText,
+                                                          ) !=
+                                                      null))
+                                          ? additionalController[i]
+                                                  .text
+                                                  .toString()
+                                                  .isEmpty
+                                              ? null
+                                              : additionalController[i]
+                                                  .text
+                                                  .toString()
+                                          : null;
                                   attributes.add(
                                     ServiceAttributesModel(
                                       auditDetails: AuditDetails(
@@ -221,52 +268,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                                       .checklist.notSelectedKey,
                                       rowVersion: 1,
                                       tenantId: attribute?[i].tenantId,
-                                      additionalDetails: context
-                                                  .isHealthFacilitySupervisor &&
-                                              widget.referralClientRefId != null
-                                          ? null
-                                          : ((attribute?[i]
-                                                              .values
-                                                              ?.firstWhereOrNull(
-                                                                (element) =>
-                                                                    element ==
-                                                                    yesText,
-                                                              ) !=
-                                                          null &&
-                                                      controller[i].text ==
-                                                          attribute?[i]
-                                                              .values?[1]
-                                                              .trim()) ||
-                                                  (attribute?[i]
-                                                              .values
-                                                              ?.firstWhereOrNull(
-                                                                (element) =>
-                                                                    element
-                                                                        .toUpperCase() ==
-                                                                    othersText,
-                                                              ) !=
-                                                          null &&
-                                                      controller[i]
-                                                              .text
-                                                              .split(
-                                                                multiSelectionSeparator,
-                                                              )
-                                                              .firstWhereOrNull(
-                                                                (element) =>
-                                                                    element
-                                                                        .toUpperCase() ==
-                                                                    othersText,
-                                                              ) !=
-                                                          null))
-                                              ? additionalController[i]
-                                                      .text
-                                                      .toString()
-                                                      .isEmpty
-                                                  ? null
-                                                  : additionalController[i]
-                                                      .text
-                                                      .toString()
-                                              : null,
+                                      additionalDetails: additionalDetailValue,
                                       additionalFields:
                                           ServiceAttributesAdditionalFields(
                                         version: 1,
@@ -279,6 +281,11 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                             'longitude',
                                             longitude,
                                           ),
+                                          if (additionalDetailValue != null)
+                                            AdditionalField(
+                                              'reason',
+                                              additionalDetailValue,
+                                            ),
                                         ],
                                       ),
                                     ),
