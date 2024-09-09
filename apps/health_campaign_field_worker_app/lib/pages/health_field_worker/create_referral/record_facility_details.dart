@@ -283,8 +283,8 @@ class _ReferralFacilityPageState extends LocalizedState<ReferralFacilityPage> {
                                     //         i18.common.corecommonRequired,
                                     //       ),
                                     // },
-                                    // isRequired: true,
-                                    readOnly: viewOnly,
+                                    isRequired: true,
+                                    readOnly: true,
                                   ),
                                   DigitTextFormField(
                                     formControlName: _referredByKey,
