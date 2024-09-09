@@ -284,7 +284,7 @@ class _ReferralFacilityPageState extends LocalizedState<ReferralFacilityPage> {
                                     //       ),
                                     // },
                                     // isRequired: true,
-                                    readOnly: viewOnly,
+                                    readOnly: true,
                                   ),
                                   DigitTextFormField(
                                     formControlName: _referredByKey,
