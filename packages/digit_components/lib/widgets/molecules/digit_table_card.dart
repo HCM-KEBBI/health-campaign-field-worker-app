@@ -12,18 +12,17 @@ class DigitTableCard extends StatelessWidget {
   final TextStyle? labelStyle;
   final TextStyle? descriptionStyle;
 
-  const DigitTableCard({
-    super.key,
-    required this.element,
-    this.border,
-    this.color,
-    this.padding,
-    this.gap = 0,
-    this.fraction = 1.8,
-    this.topPadding,
-    this.labelStyle,
-    this.descriptionStyle,
-  });
+  const DigitTableCard(
+      {super.key,
+      required this.element,
+      this.border,
+      this.color,
+      this.padding,
+      this.gap = 0,
+      this.fraction = 1.8,
+      this.topPadding,
+      this.labelStyle,
+      this.descriptionStyle});
 
   @override
   Widget build(BuildContext context) {
@@ -38,34 +37,41 @@ class DigitTableCard extends StatelessWidget {
         child: Padding(
           padding: padding ?? const EdgeInsets.only(bottom: 16),
           child: Column(
-            children: element.keys
-                .map((e) => Container(
-                      margin: DigitTheme.instance.verticalMargin,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width / fraction,
-                            child: Text(
-                              e,
-                              style:
-                                  labelStyle ?? theme.textTheme.headlineSmall,
-                              textAlign: TextAlign.start,
-                            ),
-                          ),
-                          SizedBox(width: gap),
-                          Flexible(
-                              child: Padding(
-                            padding: const EdgeInsets.only(top: 1.4),
-                            child: Text(
-                              element[e].toString(),
-                              style: descriptionStyle,
-                            ),
-                          )),
-                        ],
+            children: element.entries.map((e) {
+              final key = e.key;
+              final value = e.value;
+              // If the value is a String, use the default description style.
+              // If the value is a Widget (e.g., Text), render it as-is.
+              return Container(
+                margin: DigitTheme.instance.verticalMargin,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / fraction,
+                      child: Text(
+                        key,
+                        style: labelStyle ?? theme.textTheme.headlineSmall,
+                        textAlign: TextAlign.start,
                       ),
-                    ))
-                .toList(),
+                    ),
+                    SizedBox(width: gap),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 1.4),
+                        child: value is Widget
+                            ? value // If it's a widget, render it as-is.
+                            : Text(
+                                value.toString(),
+                                style: descriptionStyle ??
+                                    theme.textTheme.bodyMedium,
+                              ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
           ),
         ),
       ),
