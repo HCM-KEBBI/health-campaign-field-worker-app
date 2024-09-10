@@ -178,7 +178,7 @@ class _ReferralFacilityPageState extends LocalizedState<ReferralFacilityPage> {
                                       i18.referBeneficiary
                                           .dateOfEvaluationLabel,
                                     ),
-                                    isEnabled: viewOnly,
+                                    isEnabled: true,
                                     isRequired: true,
                                     initialDate: DateTime.now(),
                                     cancelText: localizations.translate(
