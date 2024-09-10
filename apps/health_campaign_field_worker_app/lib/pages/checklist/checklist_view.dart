@@ -420,93 +420,108 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                 ),
                               if (e.dataType == 'String' &&
                                   !(code).contains('.')) ...[
-                                Column(
-                                  children: [
-                                    DigitTextField(
-                                      autoValidation:
-                                          AutovalidateMode.onUserInteraction,
-                                      textStyle: theme.textTheme.headlineMedium,
-                                      isRequired: true,
-                                      controller: controller[index],
-                                      // inputFormatter: [
-                                      //   FilteringTextInputFormatter.allow(RegExp(
-                                      //     "[a-zA-Z0-9]",
-                                      //   )),
-                                      // ],
-                                      validator: (value) {
-                                        if (((value == null || value == '') &&
-                                            e.required == true)) {
-                                          return localizations.translate(
-                                            i18.common.corecommonRequired,
-                                          );
-                                        }
-                                        if (e.regex != null) {
-                                          return (RegExp(e.regex!)
-                                                  .hasMatch(value!))
-                                              ? null
-                                              : localizations
-                                                  .translate("${code}_REGEX");
-                                        }
+                                Padding(
+                                  padding: const EdgeInsets.all(kPadding),
+                                  child: Column(
+                                    children: [
+                                      DigitTextField(
+                                        autoValidation:
+                                            AutovalidateMode.onUserInteraction,
+                                        textStyle:
+                                            theme.textTheme.headlineMedium,
+                                        isRequired: true,
+                                        controller: controller[index],
+                                        // inputFormatter: [
+                                        //   FilteringTextInputFormatter.allow(RegExp(
+                                        //     "[a-zA-Z0-9]",
+                                        //   )),
+                                        // ],
+                                        validator: (value) {
+                                          if (((value == null || value == '') &&
+                                              e.required == true)) {
+                                            return localizations.translate(
+                                              i18.common.corecommonRequired,
+                                            );
+                                          }
+                                          if (e.regex != null) {
+                                            return (RegExp(e.regex!)
+                                                    .hasMatch(value!))
+                                                ? null
+                                                : localizations
+                                                    .translate("${code}_REGEX");
+                                          }
 
-                                        return null;
-                                      },
-                                      label: localizations.translate(
-                                        '${value.selectedServiceDefinition?.code}.$code',
+                                          return null;
+                                        },
+                                        label: localizations.translate(
+                                          '${value.selectedServiceDefinition?.code}.$code',
+                                        ),
+                                        description: description != null
+                                            ? localizations.translate(
+                                                '${value.selectedServiceDefinition?.code}.$description',
+                                              )
+                                            : null,
                                       ),
-                                      description: description != null
-                                          ? localizations.translate(
-                                              '${value.selectedServiceDefinition?.code}.$description',
-                                            )
-                                          : null,
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ] else if (e.dataType == 'Number' &&
                                   !(code).contains('.')) ...[
-                                DigitTextField(
-                                  autoValidation:
-                                      AutovalidateMode.onUserInteraction,
-                                  textStyle: theme.textTheme.headlineMedium,
-                                  textInputType: TextInputType.number,
-                                  inputFormatter: [
-                                    FilteringTextInputFormatter.allow(
-                                      RegExp(r'[0-9]'),
-                                    ),
-                                    LengthLimitingTextInputFormatter(11),
-                                  ],
-                                  validator: (value) {
-                                    if (((value == null || value == '') &&
-                                        e.required == true)) {
-                                      return localizations.translate(
-                                        i18.common.corecommonRequired,
-                                      );
-                                    }
-                                    if (e.regex != null) {
-                                      return (RegExp(e.regex!).hasMatch(value!))
-                                          ? null
-                                          : localizations
-                                              .translate("${code}_REGEX");
-                                    }
+                                Padding(
+                                  padding: const EdgeInsets.all(kPadding),
+                                  child: Column(
+                                    children: [
+                                      DigitTextField(
+                                        autoValidation:
+                                            AutovalidateMode.onUserInteraction,
+                                        textStyle:
+                                            theme.textTheme.headlineMedium,
+                                        textInputType: TextInputType.number,
+                                        inputFormatter: [
+                                          FilteringTextInputFormatter.allow(
+                                            RegExp(r'[0-9]'),
+                                          ),
+                                          LengthLimitingTextInputFormatter(11),
+                                        ],
+                                        validator: (value) {
+                                          if (((value == null || value == '') &&
+                                              e.required == true)) {
+                                            return localizations.translate(
+                                              i18.common.corecommonRequired,
+                                            );
+                                          }
+                                          if (e.regex != null) {
+                                            return (RegExp(e.regex!)
+                                                    .hasMatch(value!))
+                                                ? null
+                                                : localizations
+                                                    .translate("${code}_REGEX");
+                                          }
 
-                                    return null;
-                                  },
-                                  controller: controller[index],
-                                  label: '${localizations.translate(
-                                        '${value.selectedServiceDefinition?.code}.$code',
-                                      ).trim()} ${e.required == true ? '*' : ''}',
-                                  description: description != null
-                                      ? localizations.translate(
-                                          '${value.selectedServiceDefinition?.code}.$description',
-                                        )
-                                      : description,
+                                          return null;
+                                        },
+                                        controller: controller[index],
+                                        label: '${localizations.translate(
+                                              '${value.selectedServiceDefinition?.code}.$code',
+                                            ).trim()} ${e.required == true ? '*' : ''}',
+                                        description: description != null
+                                            ? localizations.translate(
+                                                '${value.selectedServiceDefinition?.code}.$description',
+                                              )
+                                            : description,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ] else if (e.dataType == 'MultiValueList' &&
                                   !(code).contains('.')) ...[
                                 Align(
                                   alignment: Alignment.topLeft,
                                   child: Padding(
-                                    padding: const EdgeInsets.all(8),
+                                    padding: const EdgeInsets.all(16),
                                     child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           '${localizations.translate(
@@ -723,6 +738,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
             child: Padding(
               padding: const EdgeInsets.all(16.0), // Add padding here
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     '${localizations.translate(
