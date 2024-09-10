@@ -495,7 +495,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
                     ),
                   ),
                   contentText:
-                      '${localizations.translate(i18.attendance.confirmationDesc)} \n ${localizations.translate(i18.attendance.confirmationDescNote)}',
+                      '${localizations.translate(i18.attendance.confirmationDesc)}\n${localizations.translate(i18.attendance.confirmationDescNote)}',
                   primaryAction: DigitDialogActions(
                     label: localizations.translate(
                       i18.attendance.proceed,
