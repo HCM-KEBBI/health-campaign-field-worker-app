@@ -41,7 +41,6 @@ class HomePage extends LocalizedStatefulWidget {
 
 class _HomePageState extends LocalizedState<HomePage> {
   late StreamSubscription<ConnectivityResult> subscription;
-  bool isDialogOpen = false;
 
   @override
   initState() {
@@ -199,8 +198,7 @@ class _HomePageState extends LocalizedState<HomePage> {
                       completedSync: () async {
                         Navigator.of(context, rootNavigator: true).pop();
                         await localSecureStore.setManualSyncTrigger(false);
-                        if (context.mounted && !isDialogOpen) {
-                          isDialogOpen = true;
+                        if (context.mounted) {
                           DigitSyncDialog.show(
                             context,
                             type: DigitSyncDialogType.complete,
@@ -212,7 +210,6 @@ class _HomePageState extends LocalizedState<HomePage> {
                                 i18.syncDialog.closeButtonLabel,
                               ),
                               action: (ctx) {
-                                isDialogOpen = false;
                                 Navigator.pop(ctx);
                               },
                             ),
