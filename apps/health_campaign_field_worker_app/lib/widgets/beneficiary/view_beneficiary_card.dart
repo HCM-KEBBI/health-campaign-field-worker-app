@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../blocs/project/project.dart';
 import '../../blocs/search_households/search_households.dart';
 import '../../models/data_model.dart';
+import '../../models/entities/identifier_types.dart';
 import '../../utils/i18_key_constants.dart' as i18;
 import '../../utils/utils.dart';
 import '../localized.dart';
@@ -80,6 +81,12 @@ class _ViewBeneficiaryCardState extends LocalizedState<ViewBeneficiaryCard> {
         ),
         cellKey: 'gender',
       ),
+      TableHeader(
+        localizations.translate(
+          i18.common.coreCommonBeneficiaryId,
+        ),
+        cellKey: 'beneficiaryId',
+      ),
     ];
     final filteredHeaderList = context.beneficiaryType !=
             BeneficiaryType.individual
@@ -140,6 +147,17 @@ class _ViewBeneficiaryCardState extends LocalizedState<ViewBeneficiaryCard> {
                   DateTime.now()
               : DateTime.now(),
         ).months;
+
+        final beneficiaryId = e.identifiers
+                ?.lastWhere(
+                  (e) =>
+                      e.identifierType ==
+                      IdentifierTypes.uniqueBeneficiaryID.toValue(),
+                )
+                .identifierId ??
+            localizations.translate(
+              i18.common.noResultsFound,
+            );
 
         final isNotEligible = !checkEligibilityForAgeAndSideEffect(
           DigitDOBAge(
@@ -225,6 +243,10 @@ class _ViewBeneficiaryCardState extends LocalizedState<ViewBeneficiaryCard> {
           TableData(
             localizations.translate(e.gender?.name.toUpperCase() ?? '--'),
             cellKey: 'gender',
+          ),
+          TableData(
+            beneficiaryId,
+            cellKey: 'beneficiaryId',
           ),
         ];
 

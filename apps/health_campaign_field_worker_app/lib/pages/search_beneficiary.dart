@@ -103,25 +103,24 @@ class _SearchBeneficiaryPageState
                           padding: const EdgeInsets.all(kPadding),
                           child: Column(
                             children: [
-                              if (!isKeyboardVisible)
-                                Padding(
-                                  padding: const EdgeInsets.all(kPadding),
-                                  child: Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Text(
-                                      localizations.translate(
-                                        context.beneficiaryType !=
-                                                BeneficiaryType.individual
-                                            ? i18.searchBeneficiary
-                                                .statisticsLabelText
-                                            : i18.searchBeneficiary
-                                                .searchIndividualLabelText,
-                                      ),
-                                      style: theme.textTheme.displayMedium,
-                                      textAlign: TextAlign.left,
+                              Padding(
+                                padding: const EdgeInsets.all(kPadding),
+                                child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    localizations.translate(
+                                      context.beneficiaryType !=
+                                              BeneficiaryType.individual
+                                          ? i18.searchBeneficiary
+                                              .statisticsLabelText
+                                          : i18.searchBeneficiary
+                                              .searchIndividualLabelText,
                                     ),
+                                    style: theme.textTheme.displayMedium,
+                                    textAlign: TextAlign.left,
                                   ),
                                 ),
+                              ),
                               BlocBuilder<LocationBloc, LocationState>(
                                 builder: (context, locationState) {
                                   return Column(
@@ -366,6 +365,7 @@ class _SearchBeneficiaryPageState
                       FocusManager.instance.primaryFocus?.unfocus();
 
                       if (spaq1 >= 2 && spaq2 >= 2) {
+                        searchController.clear();
                         router.push(BeneficiaryRegistrationWrapperRoute(
                           initialState: BeneficiaryRegistrationCreateState(
                             searchQuery: state.searchQuery,

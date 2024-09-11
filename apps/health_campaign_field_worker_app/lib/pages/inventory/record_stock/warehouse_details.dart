@@ -84,6 +84,16 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
           builder: (ctx, facilityState) {
             final facilities = facilityState.whenOrNull(
                   fetched: (facilities, _, __) {
+                    if (ctx.selectedProject.address?.boundaryType == 'State') {
+                      List<FacilityModel> filteredFacilities = facilities
+                          .where(
+                            (element) => element.usage == 'State Facility',
+                          )
+                          .toList();
+                      facilities = filteredFacilities.isEmpty
+                          ? facilities
+                          : filteredFacilities;
+                    }
                     final teamFacilities = [
                       FacilityModel(
                         id: 'Delivery Team',
