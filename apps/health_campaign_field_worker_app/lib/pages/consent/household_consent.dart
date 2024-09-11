@@ -6,7 +6,6 @@ import '../../blocs/household_overview/household_overview.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import '../../blocs/beneficiary_registration/beneficiary_registration.dart';
-import '../../blocs/search_households/search_households.dart';
 import '../../models/data_model.dart';
 import '../../router/app_router.dart';
 import '../../utils/environment_config.dart';
@@ -120,12 +119,6 @@ class _HouseHoldConsentPageState extends LocalizedState<HouseHoldConsentPage> {
                                   household: household,
                                   isConsent: isConsent,
                                 ),
-                              );
-                              // clear search on consent being no
-                              final searchBloc =
-                                  context.read<SearchHouseholdsBloc>();
-                              searchBloc.add(
-                                const SearchHouseholdsClearEvent(),
                               );
                               context.router
                                   .push(ConsentHouseholdAcknowledgementRoute());

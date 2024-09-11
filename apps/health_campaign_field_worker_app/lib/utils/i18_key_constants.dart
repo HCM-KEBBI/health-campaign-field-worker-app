@@ -43,7 +43,6 @@ class Common {
   String get coreCommonEmailId => 'CORE_COMMON_EMAIL_ID';
 
   String get coreCommonGender => 'CORE_COMMON_GENDER';
-  String get coreCommonBeneficiaryId => 'CORE_COMMON_BENEFICIARY_ID';
 
   String get coreCommonMobileNumber => 'CORE_COMMON_MOBILE_NUMBER';
 

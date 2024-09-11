@@ -116,6 +116,9 @@ class MemberCard extends StatelessWidget {
                                         .identifierId ??
                                     localizations
                                         .translate(i18.common.noResultsFound),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),

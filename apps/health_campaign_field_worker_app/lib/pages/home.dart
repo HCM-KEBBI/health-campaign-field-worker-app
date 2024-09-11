@@ -317,9 +317,7 @@ class _HomePageState extends LocalizedState<HomePage> {
         label: localizations.translate(
           i18.syncDialog.closeButtonLabel,
         ),
-        action: (ctx) {
-          Navigator.pop(ctx);
-        },
+        action: (ctx) => Navigator.pop(ctx),
       ),
     );
   }
