@@ -24,7 +24,7 @@
   </queries>
   <!--#enddocregion android-queries-->
    <application
-        android:label="Nigeria Digital Health Platform (NDHP)"
+        android:label="Nig Gov"
         android:name="${applicationName}"
         android:allowBackup="false"
         android:fullBackupOnly="false"
