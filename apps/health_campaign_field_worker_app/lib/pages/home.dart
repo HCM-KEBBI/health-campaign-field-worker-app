@@ -41,7 +41,6 @@ class HomePage extends LocalizedStatefulWidget {
 
 class _HomePageState extends LocalizedState<HomePage> {
   late StreamSubscription<ConnectivityResult> subscription;
-  bool isDialogOpen = false;
 
   @override
   initState() {
@@ -199,8 +198,7 @@ class _HomePageState extends LocalizedState<HomePage> {
                       completedSync: () async {
                         Navigator.of(context, rootNavigator: true).pop();
                         await localSecureStore.setManualSyncTrigger(false);
-                        if (context.mounted && !isDialogOpen) {
-                          isDialogOpen = true;
+                        if (context.mounted) {
                           DigitSyncDialog.show(
                             context,
                             type: DigitSyncDialogType.complete,
@@ -212,7 +210,6 @@ class _HomePageState extends LocalizedState<HomePage> {
                                 i18.syncDialog.closeButtonLabel,
                               ),
                               action: (ctx) {
-                                isDialogOpen = false;
                                 Navigator.pop(ctx);
                               },
                             ),
@@ -500,69 +497,72 @@ class _HomePageState extends LocalizedState<HomePage> {
   }
 
   void _attemptSyncUp(BuildContext context) {
-    context.read<SyncBloc>().add(
-          SyncSyncUpEvent(
-            userId: context.loggedInUserUuid,
-            localRepositories: [
-              context.read<
-                  LocalRepository<HouseholdModel, HouseholdSearchModel>>(),
-              context.read<
-                  LocalRepository<IndividualModel, IndividualSearchModel>>(),
-              context.read<
-                  LocalRepository<ProjectBeneficiaryModel,
-                      ProjectBeneficiarySearchModel>>(),
-              context.read<
-                  LocalRepository<HouseholdMemberModel,
-                      HouseholdMemberSearchModel>>(),
-              context.read<LocalRepository<TaskModel, TaskSearchModel>>(),
-              context
-                  .read<LocalRepository<ReferralModel, ReferralSearchModel>>(),
-              context.read<
-                  LocalRepository<SideEffectModel, SideEffectSearchModel>>(),
-              context.read<LocalRepository<StockModel, StockSearchModel>>(),
-              context.read<LocalRepository<ServiceModel, ServiceSearchModel>>(),
-              context.read<
-                  LocalRepository<StockReconciliationModel,
-                      StockReconciliationSearchModel>>(),
-              context.read<
-                  LocalRepository<PgrServiceModel, PgrServiceSearchModel>>(),
-              context.read<
-                  LocalRepository<HFReferralModel, HFReferralSearchModel>>(),
-              context.read<
-                  LocalRepository<HCMAttendanceLogModel,
-                      HCMAttendanceLogSearchModel>>(),
-            ],
-            remoteRepositories: [
-              context.read<
-                  RemoteRepository<HouseholdModel, HouseholdSearchModel>>(),
-              context.read<
-                  RemoteRepository<IndividualModel, IndividualSearchModel>>(),
-              context.read<
-                  RemoteRepository<ProjectBeneficiaryModel,
-                      ProjectBeneficiarySearchModel>>(),
-              context.read<
-                  RemoteRepository<HouseholdMemberModel,
-                      HouseholdMemberSearchModel>>(),
-              context.read<RemoteRepository<TaskModel, TaskSearchModel>>(),
-              context
-                  .read<RemoteRepository<ReferralModel, ReferralSearchModel>>(),
-              context.read<
-                  RemoteRepository<SideEffectModel, SideEffectSearchModel>>(),
-              context.read<RemoteRepository<StockModel, StockSearchModel>>(),
-              context
-                  .read<RemoteRepository<ServiceModel, ServiceSearchModel>>(),
-              context.read<
-                  RemoteRepository<StockReconciliationModel,
-                      StockReconciliationSearchModel>>(),
-              context.read<
-                  RemoteRepository<PgrServiceModel, PgrServiceSearchModel>>(),
-              context.read<
-                  RemoteRepository<HFReferralModel, HFReferralSearchModel>>(),
-              context.read<
-                  RemoteRepository<HCMAttendanceLogModel,
-                      HCMAttendanceLogSearchModel>>(),
-            ],
-          ),
-        );
+    if (context.mounted) {
+      context.read<SyncBloc>().add(
+            SyncSyncUpEvent(
+              userId: context.loggedInUserUuid,
+              localRepositories: [
+                context.read<
+                    LocalRepository<HouseholdModel, HouseholdSearchModel>>(),
+                context.read<
+                    LocalRepository<IndividualModel, IndividualSearchModel>>(),
+                context.read<
+                    LocalRepository<ProjectBeneficiaryModel,
+                        ProjectBeneficiarySearchModel>>(),
+                context.read<
+                    LocalRepository<HouseholdMemberModel,
+                        HouseholdMemberSearchModel>>(),
+                context.read<LocalRepository<TaskModel, TaskSearchModel>>(),
+                context.read<
+                    LocalRepository<ReferralModel, ReferralSearchModel>>(),
+                context.read<
+                    LocalRepository<SideEffectModel, SideEffectSearchModel>>(),
+                context.read<LocalRepository<StockModel, StockSearchModel>>(),
+                context
+                    .read<LocalRepository<ServiceModel, ServiceSearchModel>>(),
+                context.read<
+                    LocalRepository<StockReconciliationModel,
+                        StockReconciliationSearchModel>>(),
+                context.read<
+                    LocalRepository<PgrServiceModel, PgrServiceSearchModel>>(),
+                context.read<
+                    LocalRepository<HFReferralModel, HFReferralSearchModel>>(),
+                context.read<
+                    LocalRepository<HCMAttendanceLogModel,
+                        HCMAttendanceLogSearchModel>>(),
+              ],
+              remoteRepositories: [
+                context.read<
+                    RemoteRepository<HouseholdModel, HouseholdSearchModel>>(),
+                context.read<
+                    RemoteRepository<IndividualModel, IndividualSearchModel>>(),
+                context.read<
+                    RemoteRepository<ProjectBeneficiaryModel,
+                        ProjectBeneficiarySearchModel>>(),
+                context.read<
+                    RemoteRepository<HouseholdMemberModel,
+                        HouseholdMemberSearchModel>>(),
+                context.read<RemoteRepository<TaskModel, TaskSearchModel>>(),
+                context.read<
+                    RemoteRepository<ReferralModel, ReferralSearchModel>>(),
+                context.read<
+                    RemoteRepository<SideEffectModel, SideEffectSearchModel>>(),
+                context.read<RemoteRepository<StockModel, StockSearchModel>>(),
+                context
+                    .read<RemoteRepository<ServiceModel, ServiceSearchModel>>(),
+                context.read<
+                    RemoteRepository<StockReconciliationModel,
+                        StockReconciliationSearchModel>>(),
+                context.read<
+                    RemoteRepository<PgrServiceModel, PgrServiceSearchModel>>(),
+                context.read<
+                    RemoteRepository<HFReferralModel, HFReferralSearchModel>>(),
+                context.read<
+                    RemoteRepository<HCMAttendanceLogModel,
+                        HCMAttendanceLogSearchModel>>(),
+              ],
+            ),
+          );
+    }
   }
 }
