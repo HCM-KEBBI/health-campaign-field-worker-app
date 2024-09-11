@@ -1,9 +1,13 @@
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/utils/date_utils.dart';
 import 'package:digit_components/widgets/atoms/digit_radio_button_list.dart';
 import 'package:digit_components/widgets/atoms/digit_reactive_search_dropdown.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
+import 'package:digit_components/widgets/digit_dob_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import '../../../blocs/app_initialization/app_initialization.dart';
@@ -39,9 +43,11 @@ class _RecordReferralDetailsPageState
   static const _referralReason = 'referralReason';
   static const _cycleKey = 'cycle';
   static const _referredByKey = 'referredBy';
+  static const _dobKey = 'dob';
   static const _referralCodeKey = 'referralCode';
   final clickedStatus = ValueNotifier<bool>(false);
   static const _beneficiaryIdKey = 'beneficiaryId';
+  DateTime now = DateTime.now();
 
   @override
   void dispose() {
@@ -53,6 +59,7 @@ class _RecordReferralDetailsPageState
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     // final router = context.router;
+    DateTime before150Years = DateTime(now.year - 150, now.month, now.day);
 
     return BlocBuilder<ServiceDefinitionBloc, ServiceDefinitionState>(
       builder: (context, state) {
@@ -92,6 +99,12 @@ class _RecordReferralDetailsPageState
                                     onPressed: isClicked
                                         ? null
                                         : () {
+                                            if (form.control(_dobKey).value ==
+                                                null) {
+                                              form
+                                                  .control(_dobKey)
+                                                  .setErrors({'': true});
+                                            }
                                             if (form.control(_cycleKey).value ==
                                                 null) {
                                               clickedStatus.value = false;
@@ -177,6 +190,15 @@ class _RecordReferralDetailsPageState
                                               final referralCode = form
                                                   .control(_referralCodeKey)
                                                   .value as String?;
+                                              final dob = form
+                                                  .control(_dobKey)
+                                                  .value as DateTime?;
+                                              String? dobString;
+                                              if (dob != null) {
+                                                dobString = DateFormat(
+                                                  'dd/MM/yyyy',
+                                                ).format(dob);
+                                              }
                                               final symptom = form
                                                   .control(_referralReason)
                                                   .value as KeyValue;
@@ -306,6 +328,16 @@ class _RecordReferralDetailsPageState
                                                                 .cycle
                                                                 .toValue(),
                                                             cycle,
+                                                          ),
+                                                        if (dob != null &&
+                                                            dobString!
+                                                                .trim()
+                                                                .isNotEmpty)
+                                                          AdditionalField(
+                                                            AdditionalFieldsType
+                                                                .age
+                                                                .toValue(),
+                                                            dobString.trim(),
                                                           ),
                                                       ],
                                                     ),
@@ -519,6 +551,16 @@ class _RecordReferralDetailsPageState
                                                             .control(
                                                                 _referralCodeKey)
                                                             .value as String?;
+                                                        final dob = form
+                                                            .control(_dobKey)
+                                                            .value as DateTime?;
+                                                        String? dobString;
+                                                        if (dob != null) {
+                                                          dobString =
+                                                              DateFormat(
+                                                            'dd/MM/yyyy',
+                                                          ).format(dob);
+                                                        }
                                                         final symptom = form
                                                             .control(
                                                                 _referralReason)
@@ -663,6 +705,18 @@ class _RecordReferralDetailsPageState
                                                                           .toValue(),
                                                                       cycle,
                                                                     ),
+                                                                  if (dob !=
+                                                                          null &&
+                                                                      dobString!
+                                                                          .trim()
+                                                                          .isNotEmpty)
+                                                                    AdditionalField(
+                                                                      AdditionalFieldsType
+                                                                          .age
+                                                                          .toValue(),
+                                                                      dobString
+                                                                          .trim(),
+                                                                    ),
                                                                 ],
                                                               ),
                                                             ),
@@ -699,16 +753,17 @@ class _RecordReferralDetailsPageState
                                               child: Center(
                                                 child: Text(
                                                   localizations.translate(
-                                                      recordState.mapOrNull(
-                                                            create: (value) => value
-                                                                    .viewOnly
-                                                                ? i18.common
-                                                                    .coreCommonNext
-                                                                : i18.common
-                                                                    .coreCommonSubmit,
-                                                          ) ??
-                                                          i18.common
-                                                              .coreCommonSubmit),
+                                                    recordState.mapOrNull(
+                                                          create: (value) => value
+                                                                  .viewOnly
+                                                              ? i18.common
+                                                                  .coreCommonNext
+                                                              : i18.common
+                                                                  .coreCommonSubmit,
+                                                        ) ??
+                                                        i18.common
+                                                            .coreCommonSubmit,
+                                                  ),
                                                 ),
                                               ),
                                             );
@@ -779,6 +834,61 @@ class _RecordReferralDetailsPageState
                                               localizations.translate(
                                                 i18.common.corecommonRequired,
                                               ),
+                                        },
+                                      ),
+                                      DigitDobPicker(
+                                        datePickerFormControl: _dobKey,
+                                        datePickerLabel:
+                                            localizations.translate(
+                                          i18.individualDetails.dobLabelText,
+                                        ),
+                                        ageFieldLabel: localizations.translate(
+                                          i18.individualDetails.ageLabelText,
+                                        ),
+                                        yearsHintLabel: localizations.translate(
+                                          i18.individualDetails.yearsHintText,
+                                        ),
+                                        monthsHintLabel:
+                                            localizations.translate(
+                                          i18.individualDetails.monthsHintText,
+                                        ),
+                                        separatorLabel: localizations.translate(
+                                          i18.individualDetails
+                                              .separatorLabelText,
+                                        ),
+                                        yearsAndMonthsErrMsg:
+                                            localizations.translate(
+                                          i18.individualDetails
+                                              .yearsAndMonthsErrorText,
+                                        ),
+                                        initialDate: before150Years,
+                                        confirmText: localizations.translate(
+                                          i18.common.coreCommonOk,
+                                        ),
+                                        cancelText: localizations.translate(
+                                          i18.common.coreCommonCancel,
+                                        ),
+                                        onChangeOfFormControl: (formControl) {
+                                          // Handle changes to the control's value here
+                                          final value = formControl.value;
+                                          if (value == null) {
+                                            formControl.setErrors({'': true});
+                                          } else {
+                                            DigitDOBAge age =
+                                                DigitDateUtils.calculateAge(
+                                              value,
+                                            );
+                                            if ((age.years == 0 &&
+                                                    age.months == 0) ||
+                                                age.months > 11 ||
+                                                (age.years > 150 ||
+                                                    (age.years == 150 &&
+                                                        age.months > 0))) {
+                                              formControl.setErrors({'': true});
+                                            } else {
+                                              formControl.removeError('');
+                                            }
+                                          }
                                         },
                                       ),
                                       DigitTextFormField(
@@ -892,6 +1002,21 @@ class _RecordReferralDetailsPageState
                   .where((e) => e.key == AdditionalFieldsType.cycle.toValue())
                   .first
                   .value
+              : null,
+        ),
+        disabled: referralState.mapOrNull(
+              create: (value) => value.viewOnly,
+            ) ??
+            false,
+      ),
+      _dobKey: FormControl<DateTime>(
+        value: referralState.mapOrNull(
+          create: (value) => value.viewOnly
+              ? DateFormat("dd/MM/yyyy").parse(value
+                  .hfReferralModel?.additionalFields?.fields
+                  .where((e) => e.key == AdditionalFieldsType.age.toValue())
+                  .first
+                  .value)
               : null,
         ),
         disabled: referralState.mapOrNull(

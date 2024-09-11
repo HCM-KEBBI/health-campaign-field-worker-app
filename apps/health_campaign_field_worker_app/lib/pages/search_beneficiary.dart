@@ -365,6 +365,7 @@ class _SearchBeneficiaryPageState
                       FocusManager.instance.primaryFocus?.unfocus();
 
                       if (spaq1 >= 2 && spaq2 >= 2) {
+                        searchController.clear();
                         router.push(BeneficiaryRegistrationWrapperRoute(
                           initialState: BeneficiaryRegistrationCreateState(
                             searchQuery: state.searchQuery,
