@@ -73,9 +73,6 @@ class DigitTextFormField extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              color: (readOnly && hideKeyboard == false)
-                  ? const DigitColors().seaShellGray
-                  : null,
               child: ReactiveTextField(
                   onChanged: onChanged,
                   readOnly: readOnly,
@@ -101,10 +98,12 @@ class DigitTextFormField extends StatelessWidget {
                       ? InputDecoration(
                           enabledBorder: DigitTheme
                               .instance.inputDecorationTheme.disabledBorder,
-                          fillColor: DigitTheme.instance.colors.cloudGray,
+                          filled: true,
+                          fillColor: DigitTheme.instance.colors.seaShellGray,
                           focusedBorder: DigitTheme
                               .instance.inputDecorationTheme.disabledBorder,
                           focusColor: DigitTheme.instance.colors.cloudGray,
+                          enabled: false,
                           suffixIcon: suffix == null
                               ? null
                               : InkWell(
