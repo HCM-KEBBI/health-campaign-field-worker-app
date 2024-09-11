@@ -363,63 +363,31 @@ class _BeneficiaryDetailsPageState
                                     i18.beneficiaryDetails.beneficiaryId,
                                   ): context.beneficiaryType !=
                                           BeneficiaryType.individual
-                                      ? (householdMemberWrapper
-                                                  .headOfHousehold.identifiers
-                                                  ?.lastWhere(
-                                                    (e) =>
-                                                        e.identifierType ==
-                                                        IdentifierTypes
-                                                            .uniqueBeneficiaryID
-                                                            .toValue(),
-                                                  )
-                                                  .identifierId !=
-                                              null)
-                                          ? Text(
-                                              householdMemberWrapper
-                                                  .headOfHousehold.identifiers!
-                                                  .lastWhere(
-                                                    (e) =>
-                                                        e.identifierType ==
-                                                        IdentifierTypes
-                                                            .uniqueBeneficiaryID
-                                                            .toValue(),
-                                                  )
-                                                  .identifierId!,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            )
-                                          : localizations.translate(
-                                              i18.common.noResultsFound,
-                                            )
-                                      : (state.selectedIndividual?.identifiers
-                                                  ?.lastWhere(
-                                                    (e) =>
-                                                        e.identifierType ==
-                                                        IdentifierTypes
-                                                            .uniqueBeneficiaryID
-                                                            .toValue(),
-                                                  )
-                                                  .identifierId) !=
-                                              null
-                                          ? Text(
-                                              state.selectedIndividual!
-                                                  .identifiers!
-                                                  .lastWhere(
-                                                    (e) =>
-                                                        e.identifierType ==
-                                                        IdentifierTypes
-                                                            .uniqueBeneficiaryID
-                                                            .toValue(),
-                                                  )
-                                                  .identifierId!,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            )
-                                          : localizations.translate(
-                                              i18.common.noResultsFound,
-                                            ),
+                                      ? householdMemberWrapper
+                                              .headOfHousehold.identifiers
+                                              ?.lastWhere(
+                                                (e) =>
+                                                    e.identifierType ==
+                                                    IdentifierTypes
+                                                        .uniqueBeneficiaryID
+                                                        .toValue(),
+                                              )
+                                              .identifierId ??
+                                          localizations.translate(
+                                            i18.common.noResultsFound,
+                                          )
+                                      : state.selectedIndividual?.identifiers
+                                              ?.lastWhere(
+                                                (e) =>
+                                                    e.identifierType ==
+                                                    IdentifierTypes
+                                                        .uniqueBeneficiaryID
+                                                        .toValue(),
+                                              )
+                                              .identifierId ??
+                                          localizations.translate(
+                                            i18.common.noResultsFound,
+                                          ),
                                   localizations.translate(
                                     i18.common.coreCommonAge,
                                   ): () {
