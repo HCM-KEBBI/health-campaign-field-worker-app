@@ -178,7 +178,7 @@ class _ReferralFacilityPageState extends LocalizedState<ReferralFacilityPage> {
                                       i18.referBeneficiary
                                           .dateOfEvaluationLabel,
                                     ),
-                                    isEnabled: true,
+                                    isEnabled: false,
                                     isRequired: true,
                                     initialDate: DateTime.now(),
                                     cancelText: localizations.translate(
@@ -283,7 +283,7 @@ class _ReferralFacilityPageState extends LocalizedState<ReferralFacilityPage> {
                                     //         i18.common.corecommonRequired,
                                     //       ),
                                     // },
-                                    // isRequired: true,
+                                    isRequired: true,
                                     readOnly: true,
                                   ),
                                   DigitTextFormField(

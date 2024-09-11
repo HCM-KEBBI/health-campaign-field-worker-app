@@ -489,7 +489,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
                     i18.attendance.confirmationLabel,
                   ),
                   contentText:
-                      '${localizations.translate(i18.attendance.confirmationDesc)} \n\n${localizations.translate(i18.attendance.confirmationDescNote)}',
+                      '${localizations.translate(i18.attendance.confirmationDesc)}\n${localizations.translate(i18.attendance.confirmationDescNote)}',
                   primaryAction: DigitDialogActions(
                     label: localizations.translate(
                       i18.attendance.proceed,
@@ -565,7 +565,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
               color: Colors.white.withOpacity(0.25),
               child: Container(
                 width: MediaQuery.of(context).size.width / 1.25,
-                height: MediaQuery.of(context).size.height / 2.28,
+                height: MediaQuery.of(context).size.height / 3.0,
                 color: Colors.white.withOpacity(1),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
