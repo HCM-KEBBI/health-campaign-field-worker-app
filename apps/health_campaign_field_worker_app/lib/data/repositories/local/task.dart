@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
+import 'package:drift/isolate.dart';
 
 import '../../../models/data_model.dart';
 import '../../../utils/utils.dart';
@@ -397,27 +398,35 @@ class TaskLocalRepository extends TaskLocalBaseRepository {
         }).toList() ??
         [];
 
-    await sql.batch((batch) {
-      batch.update(
-        sql.task,
-        taskCompanion,
-        where: (table) => table.clientReferenceId.equals(
-          entity.clientReferenceId,
-        ),
-      );
+    await sql.computeWithDatabase(
+      computation: (database) async {
+        await sql.batch((batch) {
+          batch.update(
+            sql.task,
+            taskCompanion,
+            where: (table) => table.clientReferenceId.equals(
+              entity.clientReferenceId,
+            ),
+          );
 
-      if (addressCompanion != null) {
-        batch.update(
-          sql.address,
-          addressCompanion,
-          where: (table) => table.relatedClientReferenceId.equals(
-            addressCompanion.relatedClientReferenceId.value!,
-          ),
-        );
-      }
+          if (addressCompanion != null) {
+            batch.update(
+              sql.address,
+              addressCompanion,
+              where: (table) => table.relatedClientReferenceId.equals(
+                addressCompanion.relatedClientReferenceId.value!,
+              ),
+            );
+          }
 
-      batch.insertAllOnConflictUpdate(sql.taskResource, resourcesCompanions);
-    });
+          batch.insertAllOnConflictUpdate(
+              sql.taskResource, resourcesCompanions);
+        });
+      },
+      connect: (connect) {
+        return LocalSqlDataStore(connect);
+      },
+    );
 
     await super.update(entity, createOpLog: createOpLog);
   }
