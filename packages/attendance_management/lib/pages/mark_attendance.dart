@@ -489,11 +489,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
                     i18.attendance.confirmationLabel,
                   ),
                   contentText:
-<<<<<<< HEAD
                       '${localizations.translate(i18.attendance.confirmationDesc)}\n${localizations.translate(i18.attendance.confirmationDescNote)}',
-=======
-                      '${localizations.translate(i18.attendance.confirmationDesc)} \n\n${localizations.translate(i18.attendance.confirmationDescNote)}',
->>>>>>> parent of 509248f0 (updated scanner scrren gap and mark attendence popup screen)
                   primaryAction: DigitDialogActions(
                     label: localizations.translate(
                       i18.attendance.proceed,
