@@ -237,7 +237,7 @@ class _DigitScannerPageState extends LocalizedState<DigitScannerPage> {
                           ),
                         ),
                         Positioned(
-                          bottom: (kPadding * 6),
+                          bottom: (kPadding * 7.5),
                           height: widget.isGS1code
                               ? state.barCodes.length < 3
                                   ? (state.barCodes.length * 60) + 80

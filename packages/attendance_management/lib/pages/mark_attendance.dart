@@ -485,17 +485,15 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
               showOverlay(
                 context,
                 DigitDialogOptions(
-                  title: Text(
-                    localizations.translate(
-                      i18.attendance.confirmationLabel,
-                    ),
-                    style: const TextStyle(
-                      fontSize: 23,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  titleText: localizations.translate(
+                    i18.attendance.confirmationLabel,
                   ),
                   contentText:
+<<<<<<< HEAD
                       '${localizations.translate(i18.attendance.confirmationDesc)}\n${localizations.translate(i18.attendance.confirmationDescNote)}',
+=======
+                      '${localizations.translate(i18.attendance.confirmationDesc)} \n\n${localizations.translate(i18.attendance.confirmationDescNote)}',
+>>>>>>> parent of 509248f0 (updated scanner scrren gap and mark attendence popup screen)
                   primaryAction: DigitDialogActions(
                     label: localizations.translate(
                       i18.attendance.proceed,
@@ -571,7 +569,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
               color: Colors.white.withOpacity(0.25),
               child: Container(
                 width: MediaQuery.of(context).size.width / 1.25,
-                height: MediaQuery.of(context).size.height / 3,
+                height: MediaQuery.of(context).size.height / 2.28,
                 color: Colors.white.withOpacity(1),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
