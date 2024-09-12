@@ -91,6 +91,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                 isHealthFacilitySupervisor)
             ? [Validators.required]
             : [],
+        value: '',
       ),
       _supervisorKey: FormControl<String>(
         validators: isDistributor ? [Validators.required] : [],
