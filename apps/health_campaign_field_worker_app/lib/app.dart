@@ -53,6 +53,12 @@ class MainApplication extends StatefulWidget {
 class MainApplicationState extends State<MainApplication>
     with WidgetsBindingObserver {
   @override
+  void initState() {
+    requestDisableBatteryOptimization();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [

@@ -16,6 +16,7 @@ import 'package:digit_components/utils/date_utils.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_dialog.dart';
 import 'package:digit_components/widgets/digit_sync_dialog.dart';
+import 'package:disable_battery_optimization/disable_battery_optimization.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -165,6 +166,7 @@ performBackgroundService({
       final isStarted = await service.startService();
       if (!isStarted) {
         await service.startService();
+        requestDisableBatteryOptimization();
       }
     }
   } else {
@@ -708,6 +710,15 @@ getLocalizationString(Isar isar, String selectedLocale) async {
   }
 
   return localizationValues;
+}
+
+Future<void> requestDisableBatteryOptimization() async {
+  bool isIgnoringBatteryOptimizations =
+      await DisableBatteryOptimization.isBatteryOptimizationDisabled ?? false;
+
+  if (!isIgnoringBatteryOptimizations) {
+    await DisableBatteryOptimization.showDisableBatteryOptimizationSettings();
+  }
 }
 
 class UniqueIdGeneration {

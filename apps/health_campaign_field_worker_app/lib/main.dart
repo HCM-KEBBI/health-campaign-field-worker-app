@@ -28,7 +28,7 @@ int i = 0;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-initializeMappers();
+  initializeMappers();
   final info = await PackageInfo.fromPlatform();
 
   Bloc.observer = AppBlocObserver();
@@ -61,16 +61,17 @@ class AppLifecycleObserver extends WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     super.didChangeAppLifecycleState(state);
-
+    final localSecureStore = LocalSecureStore.instance;
     if (state == AppLifecycleState.paused) {
-      final localSecureStore = LocalSecureStore.instance;
-      await localSecureStore.setAppInActive(true);
+      setBgRunning(true);
       // Stop the background service when the app is terminated
     } else if (state == AppLifecycleState.resumed) {
       // Stop the background service when the app is terminated
-
-      final localSecureStore = LocalSecureStore.instance;
-      await localSecureStore.setAppInActive(false);
+      setBgRunning(false);
+      final isRunning = await FlutterBackgroundService().isRunning();
+      final localSecureStore = LocalSecureStore.instance,
+          isBgRunning = await localSecureStore.isBackgroundSerivceRunning;
+      if (!isRunning && isBgRunning) {}
     }
   }
 }

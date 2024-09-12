@@ -11,6 +11,7 @@
    <uses-permission android:name="com.android.alarm.permission.SCHEDULE_EXACT_ALARM" />
    <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+   <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <!--#docregion android-queries-->
   <!-- Provide required visibility configuration for API level 30 and above -->
   <queries>
@@ -35,11 +36,13 @@
             android:turnScreenOn="true"
             android:name=".MainActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:enableOnBackInvokedCallback="true">
 
 
             <!-- Specifies an Android theme to apply to this Activity as soon as
