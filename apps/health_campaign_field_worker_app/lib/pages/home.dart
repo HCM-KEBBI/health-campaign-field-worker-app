@@ -223,7 +223,7 @@ class _HomePageState extends LocalizedState<HomePage> {
                       },
                       failedSync: () async {
                         await localSecureStore.setManualSyncTrigger(false);
-                        if (context.mounted) {
+                        if (context.mounted && !isDialogOpen) {
                           _showSyncFailedDialog(
                             context,
                             message: localizations.translate(
@@ -234,7 +234,7 @@ class _HomePageState extends LocalizedState<HomePage> {
                       },
                       failedDownSync: () async {
                         await localSecureStore.setManualSyncTrigger(false);
-                        if (context.mounted) {
+                        if (context.mounted && !isDialogOpen) {
                           _showSyncFailedDialog(
                             context,
                             message: localizations.translate(
@@ -245,7 +245,7 @@ class _HomePageState extends LocalizedState<HomePage> {
                       },
                       failedUpSync: () async {
                         await localSecureStore.setManualSyncTrigger(false);
-                        if (context.mounted) {
+                        if (context.mounted && !isDialogOpen) {
                           _showSyncFailedDialog(
                             context,
                             message: localizations.translate(
@@ -304,6 +304,7 @@ class _HomePageState extends LocalizedState<HomePage> {
     required String message,
   }) {
     Navigator.of(context, rootNavigator: true).pop();
+    isDialogOpen = true;
 
     DigitSyncDialog.show(
       context,
@@ -314,6 +315,7 @@ class _HomePageState extends LocalizedState<HomePage> {
           i18.syncDialog.retryButtonLabel,
         ),
         action: (ctx) {
+          isDialogOpen = false;
           Navigator.pop(ctx);
           _attemptSyncUp(context);
         },
@@ -323,6 +325,7 @@ class _HomePageState extends LocalizedState<HomePage> {
           i18.syncDialog.closeButtonLabel,
         ),
         action: (ctx) {
+          isDialogOpen = false;
           Navigator.pop(ctx);
         },
       ),
