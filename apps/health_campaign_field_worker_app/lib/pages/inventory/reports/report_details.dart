@@ -187,12 +187,31 @@ class _InventoryReportDetailsPageState
                                             ),
                                           ),
                                           builder: (context, state) {
-                                            final facilities = state.whenOrNull(
-                                                  fetched:
-                                                      (facilities, _, __) =>
-                                                          facilities,
-                                                ) ??
-                                                [];
+                                            List<FacilityModel> facilities =
+                                                state.whenOrNull(
+                                                      fetched:
+                                                          (facilities, _, __) =>
+                                                              facilities,
+                                                    ) ??
+                                                    [];
+
+                                            if (context.selectedProject.address
+                                                    ?.boundaryType ==
+                                                'State') {
+                                              List<FacilityModel>
+                                                  filteredFacilities =
+                                                  facilities
+                                                      .where(
+                                                        (element) =>
+                                                            element.usage ==
+                                                            'State Facility',
+                                                      )
+                                                      .toList();
+                                              facilities =
+                                                  filteredFacilities.isEmpty
+                                                      ? facilities
+                                                      : filteredFacilities;
+                                            }
                                             final allFacilities =
                                                 state.whenOrNull(
                                                       fetched: (
