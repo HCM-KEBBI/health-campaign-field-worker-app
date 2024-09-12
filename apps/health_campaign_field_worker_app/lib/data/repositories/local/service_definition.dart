@@ -18,28 +18,30 @@ class ServiceDefinitionLocalRepository
     bool createOpLog = false,
     DataOperation dataOperation = DataOperation.create,
   }) async {
-    final serviceDefinitionCompanion = entity.companion;
-    final attributes = entity.attributes;
-    await sql.batch((batch) {
-      batch.insert(
-        sql.serviceDefinition,
-        serviceDefinitionCompanion,
-        mode: InsertMode.insertOrReplace,
-      );
-      if (attributes != null) {
-        final attributesCompanions = attributes.map((e) {
-          return e.companion;
-        }).toList();
-
-        batch.insertAll(
-          sql.attributes,
-          attributesCompanions,
+    return retryLocalCallOperation(() async {
+      final serviceDefinitionCompanion = entity.companion;
+      final attributes = entity.attributes;
+      await sql.batch((batch) {
+        batch.insert(
+          sql.serviceDefinition,
+          serviceDefinitionCompanion,
           mode: InsertMode.insertOrReplace,
         );
-      }
-    });
+        if (attributes != null) {
+          final attributesCompanions = attributes.map((e) {
+            return e.companion;
+          }).toList();
 
-    await super.create(entity, createOpLog: false);
+          batch.insertAll(
+            sql.attributes,
+            attributesCompanions,
+            mode: InsertMode.insertOrReplace,
+          );
+        }
+      });
+
+      await super.create(entity, createOpLog: false);
+    });
   }
 
   @override
@@ -47,73 +49,75 @@ class ServiceDefinitionLocalRepository
     ServiceDefinitionSearchModel query, {
     bool createOpLog = false,
   }) async {
-    final selectQuery = sql.select(sql.serviceDefinition).join([]);
+    return retryLocalCallOperation(() async {
+      final selectQuery = sql.select(sql.serviceDefinition).join([]);
 
-    final results = await (selectQuery
-          ..where(buildAnd([
-            if (query.id != null)
-              sql.serviceDefinition.id.equals(
-                query.id!,
-              ),
-          ])))
-        .get();
-
-    final List<ServiceDefinitionModel> serviceDefinitionList = [];
-    for (final e in results) {
-      final data = e.readTable(sql.serviceDefinition);
-      final selectattributeQuery = sql.select(sql.attributes).join([]);
-
-      final val = await (selectattributeQuery
+      final results = await (selectQuery
             ..where(buildAnd([
-              sql.attributes.referenceId.equals(
-                data.id!,
-              ),
+              if (query.id != null)
+                sql.serviceDefinition.id.equals(
+                  query.id!,
+                ),
             ])))
           .get();
 
-      final res = val.map((e) {
-        final result = e.readTableOrNull(sql.attributes);
-        if (result != null) {
-          List<String> list = result.values != null
-              ? result.values!
-                  .replaceFirst('[', '')
-                  .replaceFirst(']', '')
-                  .replaceAll(" ", '')
-                  .split(',')
-              : [];
-          if (list.isEmpty) list.removeRange(0, list.length);
+      final List<ServiceDefinitionModel> serviceDefinitionList = [];
+      for (final e in results) {
+        final data = e.readTable(sql.serviceDefinition);
+        final selectattributeQuery = sql.select(sql.attributes).join([]);
 
-          return AttributesModel(
-            id: result.id,
-            code: result.code,
-            dataType: result.dataType,
-            referenceId: result.referenceId,
-            additionalDetails: result.additionalDetails == null
-                ? null
-                : jsonDecode(result.additionalDetails!.toString()),
-            tenantId: result.tenantId,
-            values: result.values?.isNotEmpty == true ? list : null,
-            isActive: result.isActive,
-            required: result.required,
-            regex: result.regex,
-            order: result.order,
-            isDeleted: result.isDeleted,
-            rowVersion: result.rowVersion,
-          );
-        }
-      }).toList();
+        final val = await (selectattributeQuery
+              ..where(buildAnd([
+                sql.attributes.referenceId.equals(
+                  data.id!,
+                ),
+              ])))
+            .get();
 
-      serviceDefinitionList.add(ServiceDefinitionModel(
-        id: data.id,
-        tenantId: data.tenantId,
-        rowVersion: data.rowVersion,
-        code: data.code,
-        isActive: data.isActive,
-        isDeleted: data.isDeleted,
-        attributes: res.whereNotNull().toList(),
-      ));
-    }
+        final res = val.map((e) {
+          final result = e.readTableOrNull(sql.attributes);
+          if (result != null) {
+            List<String> list = result.values != null
+                ? result.values!
+                    .replaceFirst('[', '')
+                    .replaceFirst(']', '')
+                    .replaceAll(" ", '')
+                    .split(',')
+                : [];
+            if (list.isEmpty) list.removeRange(0, list.length);
 
-    return serviceDefinitionList;
+            return AttributesModel(
+              id: result.id,
+              code: result.code,
+              dataType: result.dataType,
+              referenceId: result.referenceId,
+              additionalDetails: result.additionalDetails == null
+                  ? null
+                  : jsonDecode(result.additionalDetails!.toString()),
+              tenantId: result.tenantId,
+              values: result.values?.isNotEmpty == true ? list : null,
+              isActive: result.isActive,
+              required: result.required,
+              regex: result.regex,
+              order: result.order,
+              isDeleted: result.isDeleted,
+              rowVersion: result.rowVersion,
+            );
+          }
+        }).toList();
+
+        serviceDefinitionList.add(ServiceDefinitionModel(
+          id: data.id,
+          tenantId: data.tenantId,
+          rowVersion: data.rowVersion,
+          code: data.code,
+          isActive: data.isActive,
+          isDeleted: data.isDeleted,
+          attributes: res.whereNotNull().toList(),
+        ));
+      }
+
+      return serviceDefinitionList;
+    });
   }
 }

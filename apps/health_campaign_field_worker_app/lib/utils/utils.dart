@@ -17,6 +17,7 @@ import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_dialog.dart';
 import 'package:digit_components/widgets/digit_sync_dialog.dart';
 import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -141,6 +142,28 @@ class CustomValidator {
 
     return null;
   }
+}
+
+Future<T> retryLocalCallOperation<T>(
+  Future<T> Function() operation, {
+  int maxRetries = 5,
+  Duration retryDelay = const Duration(seconds: 1),
+}) async {
+  int retryCount = 0;
+  while (retryCount < maxRetries) {
+    try {
+      return await operation();
+    } catch (e) {
+      if (e is SqliteException && e.extendedResultCode == 5) {
+        retryCount++;
+        await Future.delayed(retryDelay); // Wait before retrying
+      } else {
+        rethrow; // Exit loop on unexpected errors
+      }
+    }
+  }
+  throw Exception(
+      'Failed to complete the database operation after $maxRetries retries.');
 }
 
 setBgRunning(bool isBgRunning) async {
