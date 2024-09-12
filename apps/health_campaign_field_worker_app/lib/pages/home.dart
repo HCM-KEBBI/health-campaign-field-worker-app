@@ -72,6 +72,7 @@ class _HomePageState extends LocalizedState<HomePage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final localSecureStore = LocalSecureStore.instance;
+    bool _isSyncDialogVisible = false;
 
     List<GlobalKey<OverlayWidgetState>> overlayWidgetStateList = [];
     List<GlobalKey<DigitWalkthroughState>> walkthroughWidgetStateList = [];
@@ -184,7 +185,8 @@ class _HomePageState extends LocalizedState<HomePage> {
                       orElse: () => null,
                       syncInProgress: () async {
                         await localSecureStore.setManualSyncTrigger(true);
-                        if (context.mounted) {
+                        if (!_isSyncDialogVisible && context.mounted) {
+                          _isSyncDialogVisible = true;
                           DigitSyncDialog.show(
                             context,
                             type: DigitSyncDialogType.inProgress,
@@ -192,12 +194,19 @@ class _HomePageState extends LocalizedState<HomePage> {
                               i18.syncDialog.syncInProgressTitle,
                             ),
                             barrierDismissible: false,
-                          );
+                          ).then((_) {
+                            _isSyncDialogVisible = false;
+                          });
                         }
                       },
                       completedSync: () async {
-                        Navigator.of(context, rootNavigator: true).pop();
+                        if (_isSyncDialogVisible) {
+                          Navigator.of(context, rootNavigator: true).pop();
+                          _isSyncDialogVisible = false;
+                        }
+
                         await localSecureStore.setManualSyncTrigger(false);
+
                         if (context.mounted) {
                           DigitSyncDialog.show(
                             context,
@@ -213,10 +222,17 @@ class _HomePageState extends LocalizedState<HomePage> {
                                 Navigator.pop(ctx);
                               },
                             ),
-                          );
+                          ).then((_) {
+                            _isSyncDialogVisible = false;
+                          });
+                          ;
                         }
                       },
                       failedSync: () async {
+                        if (_isSyncDialogVisible) {
+                          Navigator.of(context, rootNavigator: true).pop();
+                          _isSyncDialogVisible = false;
+                        }
                         await localSecureStore.setManualSyncTrigger(false);
                         if (context.mounted) {
                           _showSyncFailedDialog(
