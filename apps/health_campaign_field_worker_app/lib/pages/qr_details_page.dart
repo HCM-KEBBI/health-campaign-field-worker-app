@@ -72,7 +72,9 @@ class _UserQRDetailsPageState extends LocalizedState<UserQRDetailsPage> {
                           padding: const EdgeInsets.all(kPadding),
                           child: Card(
                             child: QrImageView(
-                              data: context.loggedInUserUuid,
+                              data: value.userModel.userName.toString() +
+                                  Constants.pipeSeparator +
+                                  context.loggedInUserUuid,
                               version: QrVersions.auto,
                               size: MediaQuery.of(context).size.width / 1.25,
                             ),
