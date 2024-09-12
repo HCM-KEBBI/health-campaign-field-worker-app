@@ -41,6 +41,7 @@ class HomePage extends LocalizedStatefulWidget {
 
 class _HomePageState extends LocalizedState<HomePage> {
   late StreamSubscription<ConnectivityResult> subscription;
+  bool isDialogOpen = false;
 
   @override
   initState() {
@@ -196,24 +197,28 @@ class _HomePageState extends LocalizedState<HomePage> {
                         }
                       },
                       completedSync: () async {
-                        Navigator.of(context, rootNavigator: true).pop();
-                        await localSecureStore.setManualSyncTrigger(false);
-                        if (context.mounted) {
-                          DigitSyncDialog.show(
-                            context,
-                            type: DigitSyncDialogType.complete,
-                            label: localizations.translate(
-                              i18.syncDialog.dataSyncedTitle,
-                            ),
-                            primaryAction: DigitDialogActions(
+                        if (!isDialogOpen) {
+                          Navigator.of(context, rootNavigator: true).pop();
+                          await localSecureStore.setManualSyncTrigger(false);
+                          if (context.mounted) {
+                            isDialogOpen = true;
+                            DigitSyncDialog.show(
+                              context,
+                              type: DigitSyncDialogType.complete,
                               label: localizations.translate(
-                                i18.syncDialog.closeButtonLabel,
+                                i18.syncDialog.dataSyncedTitle,
                               ),
-                              action: (ctx) {
-                                Navigator.pop(ctx);
-                              },
-                            ),
-                          );
+                              primaryAction: DigitDialogActions(
+                                label: localizations.translate(
+                                  i18.syncDialog.closeButtonLabel,
+                                ),
+                                action: (ctx) {
+                                  isDialogOpen = false;
+                                  Navigator.pop(ctx);
+                                },
+                              ),
+                            );
+                          }
                         }
                       },
                       failedSync: () async {
