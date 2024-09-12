@@ -94,6 +94,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
       ),
       _supervisorKey: FormControl<String>(
         validators: isDistributor ? [Validators.required] : [],
+        value: '',
       ),
       _transactionReasonKey: FormControl<TransactionReason>(),
       _waybillNumberKey: FormControl<String>(
