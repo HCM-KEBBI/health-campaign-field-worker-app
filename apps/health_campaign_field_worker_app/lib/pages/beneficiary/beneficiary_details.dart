@@ -195,11 +195,13 @@ class _BeneficiaryDetailsPageState
                                                       .translate(i18
                                                           .beneficiaryDetails
                                                           .ctaProceed),
-                                                  action: (ctx) {
+                                                  action: (ctx) async {
                                                     Navigator.of(ctx).pop();
 
-                                                    final spaq1 = context.spaq1;
-                                                    final spaq2 = context.spaq2;
+                                                    final spaq1 =
+                                                        await context.spaq1;
+                                                    final spaq2 =
+                                                        await context.spaq2;
 
                                                     final currentCycle =
                                                         deliverState.cycle >= 0

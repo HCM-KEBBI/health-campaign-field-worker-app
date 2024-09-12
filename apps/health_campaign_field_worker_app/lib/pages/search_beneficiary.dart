@@ -356,13 +356,15 @@ class _SearchBeneficiaryPageState
                 child: BlocBuilder<SearchHouseholdsBloc, SearchHouseholdsState>(
                   builder: (context, state) {
                     final router = context.router;
-                    final spaq1 = context.spaq1;
-                    final spaq2 = context.spaq2;
+                    final ctx = context;
 
                     VoidCallback? onPressed;
 
-                    onPressed = () {
+                    onPressed = () async {
                       FocusManager.instance.primaryFocus?.unfocus();
+
+                      final spaq1 = await ctx.spaq1;
+                      final spaq2 = await ctx.spaq2;
 
                       if (spaq1 >= 2 && spaq2 >= 2) {
                         searchController.clear();

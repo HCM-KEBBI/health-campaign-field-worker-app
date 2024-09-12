@@ -8,6 +8,7 @@ import '../../blocs/auth/auth.dart';
 import '../../blocs/boundary/boundary.dart';
 import '../../blocs/project/project.dart';
 import '../../data/data_repository.dart';
+import '../../data/local_store/secure_store/secure_store.dart';
 import '../../data/network_manager.dart';
 import '../../models/auth/auth_model.dart';
 import '../../models/data_model.dart';

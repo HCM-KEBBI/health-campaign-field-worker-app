@@ -17,6 +17,7 @@ import '../../blocs/product_variant/product_variant.dart';
 import '../../blocs/project/project.dart';
 import '../../blocs/search_households/search_households.dart';
 import '../../data/local_store/no_sql/schema/app_configuration.dart';
+import '../../data/local_store/secure_store/secure_store.dart';
 import '../../models/data_model.dart';
 import '../../models/project_type/project_type_model.dart';
 import '../../router/app_router.dart';
@@ -347,14 +348,22 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                             : 0;
                                                       }
 
-                                                      context
-                                                          .read<AuthBloc>()
-                                                          .add(
-                                                            AuthAddSpaqCountsEvent(
-                                                              spaq1Count: spaq1,
-                                                              spaq2Count: spaq2,
-                                                            ),
-                                                          );
+                                                      // context
+                                                      //     .read<AuthBloc>()
+                                                      //     .add(
+                                                      //       AuthAddSpaqCountsEvent(
+                                                      //         spaq1Count: spaq1,
+                                                      //         spaq2Count: spaq2,
+                                                      //       ),
+                                                      //     );
+
+                                                      LocalSecureStore.instance
+                                                          .setSpaqCounts(
+                                                        (await context.spaq1) +
+                                                            spaq1,
+                                                        (await context.spaq2) +
+                                                            spaq2,
+                                                      );
                                                       final reloadState =
                                                           context.read<
                                                               HouseholdOverviewBloc>();

@@ -197,8 +197,8 @@ class _ComplaintsInboxFilterPageState
                                       userModel,
                                       actions,
                                       individualId,
-                                      spaq1,
-                                      spaq2,
+                                      // spaq1,
+                                      // spaq2,
                                     ) {
                                       return userModel.name;
                                     },

@@ -14,6 +14,7 @@ import '../../../blocs/facility/facility.dart';
 import '../../../blocs/product_variant/product_variant.dart';
 import '../../../blocs/record_stock/record_stock.dart';
 import '../../../data/local_store/no_sql/schema/app_configuration.dart';
+import '../../../data/local_store/secure_store/secure_store.dart';
 import '../../../models/data_model.dart';
 import '../../../router/app_router.dart';
 import '../../../utils/i18_key_constants.dart' as i18;
@@ -927,14 +928,22 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                       spaq2 = totalQuantity;
                                                     }
 
-                                                    context
-                                                        .read<AuthBloc>()
-                                                        .add(
-                                                          AuthAddSpaqCountsEvent(
-                                                            spaq1Count: spaq1,
-                                                            spaq2Count: spaq2,
-                                                          ),
-                                                        );
+                                                    // context
+                                                    //     .read<AuthBloc>()
+                                                    //     .add(
+                                                    //       AuthAddSpaqCountsEvent(
+                                                    //         spaq1Count: spaq1,
+                                                    //         spaq2Count: spaq2,
+                                                    //       ),
+                                                    //     );
+
+                                                    LocalSecureStore.instance
+                                                        .setSpaqCounts(
+                                                      (await context.spaq1) +
+                                                          spaq1,
+                                                      (await context.spaq2) +
+                                                          spaq2,
+                                                    );
                                                   }
                                                 }
                                               },

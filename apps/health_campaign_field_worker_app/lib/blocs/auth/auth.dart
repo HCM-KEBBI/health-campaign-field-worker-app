@@ -44,7 +44,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on(_onLogout);
     on(_onAutoLogin);
     on(_onAuthLogoutWithoutToken);
-    on(_onAddSpaqCounts);
+    // on(_onAddSpaqCounts);
   }
 
   //_onAutoLogin event handles auto-login of the user when the user is already logged in and token is not expired, AuthenticatedWrapper is returned in UI
@@ -60,8 +60,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final userObject = await localSecureStore.userRequestModel;
       final actionsList = await localSecureStore.savedActions;
       final userIndividualId = await localSecureStore.userIndividualId;
-      final spaq1 = await localSecureStore.spaq1;
-      final spaq2 = await localSecureStore.spaq2;
 
       if (accessToken == null ||
           refreshToken == null ||
@@ -75,8 +73,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           userModel: userObject,
           individualId: userIndividualId,
           actionsWrapper: actionsList,
-          spaq1Count: spaq1,
-          spaq2Count: spaq2,
         ));
       }
     } catch (_) {
@@ -86,52 +82,52 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  FutureOr<void> _onAddSpaqCounts(
-    AuthAddSpaqCountsEvent event,
-    AuthEmitter emit,
-  ) async {
-    // emit(const AuthLoadingState());
+  // FutureOr<void> _onAddSpaqCounts(
+  //   AuthAddSpaqCountsEvent event,
+  //   AuthEmitter emit,
+  // ) async {
+  //   // emit(const AuthLoadingState());
 
-    try {
-      int spaq1 = await localSecureStore.spaq1;
-      int spaq2 = await localSecureStore.spaq2;
+  //   try {
+  //     int spaq1 = await localSecureStore.spaq1;
+  //     int spaq2 = await localSecureStore.spaq2;
 
-      int additionSpaq1Count = event.spaq1Count;
-      int additionSpaq2Count = event.spaq2Count;
+  //     int additionSpaq1Count = event.spaq1Count;
+  //     int additionSpaq2Count = event.spaq2Count;
 
-      spaq1 = spaq1 + additionSpaq1Count;
-      spaq2 = spaq2 + additionSpaq2Count;
+  //     spaq1 = spaq1 + additionSpaq1Count;
+  //     spaq2 = spaq2 + additionSpaq2Count;
 
-      localSecureStore.setSpaqCounts(spaq1, spaq2);
+  //     localSecureStore.setSpaqCounts(spaq1, spaq2);
 
-      final accessToken = await localSecureStore.accessToken;
-      final refreshToken = await localSecureStore.refreshToken;
-      final userObject = await localSecureStore.userRequestModel;
-      final actionsList = await localSecureStore.savedActions;
-      final userIndividualId = await localSecureStore.userIndividualId;
+  //     final accessToken = await localSecureStore.accessToken;
+  //     final refreshToken = await localSecureStore.refreshToken;
+  //     final userObject = await localSecureStore.userRequestModel;
+  //     final actionsList = await localSecureStore.savedActions;
+  //     final userIndividualId = await localSecureStore.userIndividualId;
 
-      if (accessToken == null ||
-          refreshToken == null ||
-          userObject == null ||
-          actionsList == null) {
-        emit(const AuthUnauthenticatedState());
-      } else {
-        emit(AuthAuthenticatedState(
-          accessToken: accessToken,
-          refreshToken: refreshToken,
-          userModel: userObject,
-          individualId: userIndividualId,
-          actionsWrapper: actionsList,
-          spaq1Count: spaq1,
-          spaq2Count: spaq2,
-        ));
-      }
-    } catch (_) {
-      await localSecureStore.deleteAll();
-      emit(const AuthUnauthenticatedState());
-      rethrow;
-    }
-  }
+  //     if (accessToken == null ||
+  //         refreshToken == null ||
+  //         userObject == null ||
+  //         actionsList == null) {
+  //       emit(const AuthUnauthenticatedState());
+  //     } else {
+  //       emit(AuthResourceCountState(
+  //         accessToken: accessToken,
+  //         refreshToken: refreshToken,
+  //         userModel: userObject,
+  //         individualId: userIndividualId,
+  //         actionsWrapper: actionsList,
+  //         spaq1Count: spaq1,
+  //         spaq2Count: spaq2,
+  //       ));
+  //     }
+  //   } catch (_) {
+  //     await localSecureStore.deleteAll();
+  //     emit(const AuthUnauthenticatedState());
+  //     rethrow;
+  //   }
+  // }
 
   //_onLogin event handles login of the user
   // Here we set the authToken and loggedIn user details in local storage and allow the user to perform actions
@@ -161,8 +157,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         },
       );
       await localSecureStore.setBoundaryRefetch(true);
-      final spaq1 = await localSecureStore.spaq1;
-      final spaq2 = await localSecureStore.spaq2;
+      // final spaq1 = await localSecureStore.spaq1;
+      // final spaq2 = await localSecureStore.spaq2;
 
       emit(
         AuthAuthenticatedState(
@@ -170,8 +166,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           refreshToken: result.refreshToken,
           userModel: result.userRequestModel,
           actionsWrapper: actionsWrapper,
-          spaq1Count: spaq1,
-          spaq2Count: spaq2,
+          // spaq1Count: spaq1,
+          // spaq2Count: spaq2,
         ),
       );
     } on DioError catch (error) {
@@ -258,9 +254,12 @@ class AuthState with _$AuthState {
     required UserRequestModel userModel,
     required RoleActionsWrapperModel actionsWrapper,
     String? individualId,
-    int? spaq1Count,
-    int? spaq2Count,
   }) = AuthAuthenticatedState;
+
+  // const factory AuthState.resourceCount({
+  //   int? spaq1Count,
+  //   int? spaq2Count,
+  // }) = AuthResourceCountState;
 
   const factory AuthState.error([String? error]) = AuthErrorState;
 }

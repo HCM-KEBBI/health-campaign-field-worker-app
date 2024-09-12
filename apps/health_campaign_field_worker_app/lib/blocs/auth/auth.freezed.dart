@@ -912,9 +912,7 @@ mixin _$AuthState {
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId,
-            int? spaq1Count,
-            int? spaq2Count)
+            String? individualId)
         authenticated,
     required TResult Function(String? error) error,
   }) =>
@@ -928,9 +926,7 @@ mixin _$AuthState {
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId,
-            int? spaq1Count,
-            int? spaq2Count)?
+            String? individualId)?
         authenticated,
     TResult? Function(String? error)? error,
   }) =>
@@ -944,9 +940,7 @@ mixin _$AuthState {
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId,
-            int? spaq1Count,
-            int? spaq2Count)?
+            String? individualId)?
         authenticated,
     TResult Function(String? error)? error,
     required TResult orElse(),
@@ -1052,9 +1046,7 @@ class _$AuthUnauthenticatedStateImpl
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId,
-            int? spaq1Count,
-            int? spaq2Count)
+            String? individualId)
         authenticated,
     required TResult Function(String? error) error,
   }) {
@@ -1071,9 +1063,7 @@ class _$AuthUnauthenticatedStateImpl
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId,
-            int? spaq1Count,
-            int? spaq2Count)?
+            String? individualId)?
         authenticated,
     TResult? Function(String? error)? error,
   }) {
@@ -1090,9 +1080,7 @@ class _$AuthUnauthenticatedStateImpl
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId,
-            int? spaq1Count,
-            int? spaq2Count)?
+            String? individualId)?
         authenticated,
     TResult Function(String? error)? error,
     required TResult orElse(),
@@ -1198,9 +1186,7 @@ class _$AuthLoadingStateImpl
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId,
-            int? spaq1Count,
-            int? spaq2Count)
+            String? individualId)
         authenticated,
     required TResult Function(String? error) error,
   }) {
@@ -1217,9 +1203,7 @@ class _$AuthLoadingStateImpl
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId,
-            int? spaq1Count,
-            int? spaq2Count)?
+            String? individualId)?
         authenticated,
     TResult? Function(String? error)? error,
   }) {
@@ -1236,9 +1220,7 @@ class _$AuthLoadingStateImpl
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId,
-            int? spaq1Count,
-            int? spaq2Count)?
+            String? individualId)?
         authenticated,
     TResult Function(String? error)? error,
     required TResult orElse(),
@@ -1303,9 +1285,7 @@ abstract class _$$AuthAuthenticatedStateImplCopyWith<$Res> {
       String refreshToken,
       UserRequestModel userModel,
       RoleActionsWrapperModel actionsWrapper,
-      String? individualId,
-      int? spaq1Count,
-      int? spaq2Count});
+      String? individualId});
 
   $UserRequestModelCopyWith<$Res> get userModel;
   $RoleActionsWrapperModelCopyWith<$Res> get actionsWrapper;
@@ -1328,8 +1308,6 @@ class __$$AuthAuthenticatedStateImplCopyWithImpl<$Res>
     Object? userModel = null,
     Object? actionsWrapper = null,
     Object? individualId = freezed,
-    Object? spaq1Count = freezed,
-    Object? spaq2Count = freezed,
   }) {
     return _then(_$AuthAuthenticatedStateImpl(
       accessToken: null == accessToken
@@ -1352,14 +1330,6 @@ class __$$AuthAuthenticatedStateImplCopyWithImpl<$Res>
           ? _value.individualId
           : individualId // ignore: cast_nullable_to_non_nullable
               as String?,
-      spaq1Count: freezed == spaq1Count
-          ? _value.spaq1Count
-          : spaq1Count // ignore: cast_nullable_to_non_nullable
-              as int?,
-      spaq2Count: freezed == spaq2Count
-          ? _value.spaq2Count
-          : spaq2Count // ignore: cast_nullable_to_non_nullable
-              as int?,
     ));
   }
 
@@ -1391,9 +1361,7 @@ class _$AuthAuthenticatedStateImpl
       required this.refreshToken,
       required this.userModel,
       required this.actionsWrapper,
-      this.individualId,
-      this.spaq1Count,
-      this.spaq2Count});
+      this.individualId});
 
   @override
   final String accessToken;
@@ -1405,14 +1373,10 @@ class _$AuthAuthenticatedStateImpl
   final RoleActionsWrapperModel actionsWrapper;
   @override
   final String? individualId;
-  @override
-  final int? spaq1Count;
-  @override
-  final int? spaq2Count;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AuthState.authenticated(accessToken: $accessToken, refreshToken: $refreshToken, userModel: $userModel, actionsWrapper: $actionsWrapper, individualId: $individualId, spaq1Count: $spaq1Count, spaq2Count: $spaq2Count)';
+    return 'AuthState.authenticated(accessToken: $accessToken, refreshToken: $refreshToken, userModel: $userModel, actionsWrapper: $actionsWrapper, individualId: $individualId)';
   }
 
   @override
@@ -1424,9 +1388,7 @@ class _$AuthAuthenticatedStateImpl
       ..add(DiagnosticsProperty('refreshToken', refreshToken))
       ..add(DiagnosticsProperty('userModel', userModel))
       ..add(DiagnosticsProperty('actionsWrapper', actionsWrapper))
-      ..add(DiagnosticsProperty('individualId', individualId))
-      ..add(DiagnosticsProperty('spaq1Count', spaq1Count))
-      ..add(DiagnosticsProperty('spaq2Count', spaq2Count));
+      ..add(DiagnosticsProperty('individualId', individualId));
   }
 
   @override
@@ -1443,16 +1405,12 @@ class _$AuthAuthenticatedStateImpl
             (identical(other.actionsWrapper, actionsWrapper) ||
                 other.actionsWrapper == actionsWrapper) &&
             (identical(other.individualId, individualId) ||
-                other.individualId == individualId) &&
-            (identical(other.spaq1Count, spaq1Count) ||
-                other.spaq1Count == spaq1Count) &&
-            (identical(other.spaq2Count, spaq2Count) ||
-                other.spaq2Count == spaq2Count));
+                other.individualId == individualId));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, accessToken, refreshToken,
-      userModel, actionsWrapper, individualId, spaq1Count, spaq2Count);
+      userModel, actionsWrapper, individualId);
 
   @JsonKey(ignore: true)
   @override
@@ -1471,14 +1429,12 @@ class _$AuthAuthenticatedStateImpl
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId,
-            int? spaq1Count,
-            int? spaq2Count)
+            String? individualId)
         authenticated,
     required TResult Function(String? error) error,
   }) {
-    return authenticated(accessToken, refreshToken, userModel, actionsWrapper,
-        individualId, spaq1Count, spaq2Count);
+    return authenticated(
+        accessToken, refreshToken, userModel, actionsWrapper, individualId);
   }
 
   @override
@@ -1491,14 +1447,12 @@ class _$AuthAuthenticatedStateImpl
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId,
-            int? spaq1Count,
-            int? spaq2Count)?
+            String? individualId)?
         authenticated,
     TResult? Function(String? error)? error,
   }) {
-    return authenticated?.call(accessToken, refreshToken, userModel,
-        actionsWrapper, individualId, spaq1Count, spaq2Count);
+    return authenticated?.call(
+        accessToken, refreshToken, userModel, actionsWrapper, individualId);
   }
 
   @override
@@ -1511,16 +1465,14 @@ class _$AuthAuthenticatedStateImpl
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId,
-            int? spaq1Count,
-            int? spaq2Count)?
+            String? individualId)?
         authenticated,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
     if (authenticated != null) {
-      return authenticated(accessToken, refreshToken, userModel, actionsWrapper,
-          individualId, spaq1Count, spaq2Count);
+      return authenticated(
+          accessToken, refreshToken, userModel, actionsWrapper, individualId);
     }
     return orElse();
   }
@@ -1569,17 +1521,13 @@ abstract class AuthAuthenticatedState implements AuthState {
       required final String refreshToken,
       required final UserRequestModel userModel,
       required final RoleActionsWrapperModel actionsWrapper,
-      final String? individualId,
-      final int? spaq1Count,
-      final int? spaq2Count}) = _$AuthAuthenticatedStateImpl;
+      final String? individualId}) = _$AuthAuthenticatedStateImpl;
 
   String get accessToken;
   String get refreshToken;
   UserRequestModel get userModel;
   RoleActionsWrapperModel get actionsWrapper;
   String? get individualId;
-  int? get spaq1Count;
-  int? get spaq2Count;
   @JsonKey(ignore: true)
   _$$AuthAuthenticatedStateImplCopyWith<_$AuthAuthenticatedStateImpl>
       get copyWith => throw _privateConstructorUsedError;
@@ -1667,9 +1615,7 @@ class _$AuthErrorStateImpl
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId,
-            int? spaq1Count,
-            int? spaq2Count)
+            String? individualId)
         authenticated,
     required TResult Function(String? error) error,
   }) {
@@ -1686,9 +1632,7 @@ class _$AuthErrorStateImpl
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId,
-            int? spaq1Count,
-            int? spaq2Count)?
+            String? individualId)?
         authenticated,
     TResult? Function(String? error)? error,
   }) {
@@ -1705,9 +1649,7 @@ class _$AuthErrorStateImpl
             String refreshToken,
             UserRequestModel userModel,
             RoleActionsWrapperModel actionsWrapper,
-            String? individualId,
-            int? spaq1Count,
-            int? spaq2Count)?
+            String? individualId)?
         authenticated,
     TResult Function(String? error)? error,
     required TResult orElse(),

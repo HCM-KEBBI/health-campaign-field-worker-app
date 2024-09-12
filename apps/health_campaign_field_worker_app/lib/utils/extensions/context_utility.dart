@@ -203,8 +203,8 @@ extension ContextUtilityExtensions on BuildContext {
         userModel,
         actionsWrapper,
         individualId,
-        spaq1,
-        spaq2,
+        // spaq1,
+        // spaq2,
       ) {
         return userModel.roles;
       },
@@ -226,8 +226,8 @@ extension ContextUtilityExtensions on BuildContext {
         userModel,
         actionsWrapper,
         individualId,
-        spaq1,
-        spaq2,
+        // spaq1,
+        // spaq2,
       ) {
         return individualId;
       },
@@ -240,50 +240,12 @@ extension ContextUtilityExtensions on BuildContext {
     return individualUUID;
   }
 
-  int get spaq1 {
-    final authBloc = _get<AuthBloc>();
-    final spaq1 = authBloc.state.whenOrNull(
-      authenticated: (
-        accessToken,
-        refreshToken,
-        userModel,
-        actionsWrapper,
-        individualId,
-        spaq1,
-        spaq2,
-      ) {
-        return spaq1;
-      },
-    );
-
-    if (spaq1 == null) {
-      return 0;
-    }
-
-    return spaq1;
+  Future<int> get spaq1 async {
+    return await LocalSecureStore.instance.spaq1;
   }
 
-  int get spaq2 {
-    final authBloc = _get<AuthBloc>();
-    final spaq2 = authBloc.state.whenOrNull(
-      authenticated: (
-        accessToken,
-        refreshToken,
-        userModel,
-        actionsWrapper,
-        individualId,
-        spaq1,
-        spaq2,
-      ) {
-        return spaq2;
-      },
-    );
-
-    if (spaq2 == null) {
-      return 0;
-    }
-
-    return spaq2;
+  Future<int> get spaq2 async {
+    return await LocalSecureStore.instance.spaq2;
   }
 
   String get loggedInUserUuid => loggedInUser.uuid;
@@ -297,8 +259,8 @@ extension ContextUtilityExtensions on BuildContext {
         userModel,
         actions,
         individualId,
-        spaq1,
-        spaq2,
+        // spaq1,
+        // spaq2,
       ) {
         return userModel;
       },

@@ -335,8 +335,8 @@ class MemberCard extends StatelessWidget {
                                             )
                                             .lastOrNull;
                                         if (redosePendingStatus) {
-                                          final spaq1 = context.spaq1;
-                                          final spaq2 = context.spaq2;
+                                          final spaq1 = await context.spaq1;
+                                          final spaq2 = await context.spaq2;
 
                                           final value = variant
                                               .firstWhere(
