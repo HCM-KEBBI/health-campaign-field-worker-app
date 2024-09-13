@@ -361,12 +361,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                   handleback: () {
                                     final stockState =
                                         context.read<RecordStockBloc>().state;
-                                    context.read<DigitScannerBloc>().add(
-                                          const DigitScannerEvent.handleScanner(
-                                            barCode: [],
-                                            qrCode: [],
-                                          ),
-                                        );
+                                    clearQRCodes();
                                     // if (stockState.primaryId != null) {
                                     //   context.read<DigitScannerBloc>().add(
                                     //         DigitScannerEvent.handleScanner(
