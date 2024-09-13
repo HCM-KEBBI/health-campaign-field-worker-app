@@ -144,6 +144,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
     return PopScope(
       onPopInvoked: (didPop) {
         final stockState = context.read<RecordStockBloc>().state;
+        clearQRCodes();
         // if (stockState.primaryId != null) {
         //   context.read<DigitScannerBloc>().add(
         //         DigitScannerEvent.handleScanner(
