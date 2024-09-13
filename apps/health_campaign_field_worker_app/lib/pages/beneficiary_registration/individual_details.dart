@@ -548,7 +548,7 @@ class _IndividualDetailsPageState
         : null;
 
     identifier ??= IdentifierModel(
-      clientReferenceId: individual.clientReferenceId,
+      clientReferenceId: IdGen.i.identifier,
       tenantId: envConfig.variables.tenantId,
       rowVersion: 1,
       auditDetails: AuditDetails(
