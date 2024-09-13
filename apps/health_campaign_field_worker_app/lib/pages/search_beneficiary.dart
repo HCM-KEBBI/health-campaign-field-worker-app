@@ -391,7 +391,8 @@ class _SearchBeneficiaryPageState
                               action: (ctx) {
                                 Navigator.of(context, rootNavigator: true)
                                     .pop();
-                                context.router.replace(HomeRoute());
+                                context.router
+                                    .popUntilRouteWithName(HomeRoute.name);
                               },
                             ),
                           ),

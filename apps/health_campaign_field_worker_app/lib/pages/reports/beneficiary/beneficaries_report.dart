@@ -56,7 +56,7 @@ class BeneficiariesReportState extends LocalizedState<BeneficiariesReportPage> {
                   padding: const EdgeInsets.fromLTRB(kPadding, 0, kPadding, 0),
                   child: DigitElevatedButton(
                     onPressed: () {
-                      context.router.replace(HomeRoute());
+                      context.router.replaceAll([HomeRoute()]);
                     },
                     child: Text(localizations.translate(
                       i18.acknowledgementSuccess.goToHome,
