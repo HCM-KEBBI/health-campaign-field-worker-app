@@ -485,8 +485,14 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
               showOverlay(
                 context,
                 DigitDialogOptions(
-                  titleText: localizations.translate(
-                    i18.attendance.confirmationLabel,
+                  title: Text(
+                    localizations.translate(
+                      i18.attendance.confirmationLabel,
+                    ),
+                    style: const TextStyle(
+                      fontSize: 23,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   contentText:
                       '${localizations.translate(i18.attendance.confirmationDesc)}\n${localizations.translate(i18.attendance.confirmationDescNote)}',

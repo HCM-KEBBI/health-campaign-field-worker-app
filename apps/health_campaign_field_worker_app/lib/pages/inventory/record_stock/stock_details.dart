@@ -144,6 +144,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
     return PopScope(
       onPopInvoked: (didPop) {
         final stockState = context.read<RecordStockBloc>().state;
+        clearQRCodes();
         // if (stockState.primaryId != null) {
         //   context.read<DigitScannerBloc>().add(
         //         DigitScannerEvent.handleScanner(
@@ -361,6 +362,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                   handleback: () {
                                     final stockState =
                                         context.read<RecordStockBloc>().state;
+                                    clearQRCodes();
                                     // if (stockState.primaryId != null) {
                                     //   context.read<DigitScannerBloc>().add(
                                     //         DigitScannerEvent.handleScanner(
@@ -1407,6 +1409,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   quantity: 1,
                                                   isGS1code: false,
                                                   singleValue: true,
+                                                  validateQR: true,
                                                 ),
                                                 settings: const RouteSettings(
                                                   name: '/qr-scanner',
@@ -1453,6 +1456,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                               quantity: 1,
                                                               isGS1code: false,
                                                               singleValue: true,
+                                                              validateQR: true,
                                                             ),
                                                             settings:
                                                                 const RouteSettings(
@@ -1491,6 +1495,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   quantity: 1,
                                                   isGS1code: false,
                                                   singleValue: true,
+                                                  validateQR: true,
                                                 ),
                                                 settings: const RouteSettings(
                                                   name: '/qr-scanner',
@@ -1534,6 +1539,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                         quantity: 1,
                                                         isGS1code: false,
                                                         singleValue: true,
+                                                        validateQR: true,
                                                       ),
                                                       settings:
                                                           const RouteSettings(
