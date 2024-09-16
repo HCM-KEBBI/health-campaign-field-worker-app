@@ -511,7 +511,8 @@ class _ComplaintsDetailsPageState
         validators: [Validators.required],
       ),
       _complaintRaisedFor: FormControl<String>(
-        value: complaintDetails?.complaintRaisedFor,
+        value: complaintDetails?.complaintRaisedFor ??
+            i18.complaints.raisedForMyself,
         disabled: shouldDisableForm,
         validators: [Validators.required],
       ),
