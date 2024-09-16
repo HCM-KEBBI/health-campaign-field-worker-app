@@ -385,8 +385,6 @@ class _EligibilityChecklistViewPageState
                                   // todo check the routing once like what the back button should have text
                                   router.popAndPushAll(
                                     [
-                                      HomeRoute(),
-                                      SearchBeneficiaryRoute(),
                                       AcknowledgementRoute(),
                                     ],
                                   );
