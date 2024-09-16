@@ -593,7 +593,25 @@ class _IndividualDetailsPageState
         : context.selectedProjectType!.id;
     individual = individual.copyWith(
       additionalFields: individual.additionalFields == null
-          ? null
+          ? IndividualAdditionalFields(
+              version: 1,
+              fields: [
+                AdditionalField(
+                  "projectId",
+                  context.projectId,
+                ),
+                if (cycleIndex.isNotEmpty)
+                  AdditionalField(
+                    "cycleIndex",
+                    cycleIndex,
+                  ),
+                if (projectTypeId.isNotEmpty)
+                  AdditionalField(
+                    "projectTypeId",
+                    projectTypeId,
+                  ),
+              ],
+            )
           : individual.additionalFields!.copyWith(
               fields: [
                 ...individual.additionalFields!.fields,
