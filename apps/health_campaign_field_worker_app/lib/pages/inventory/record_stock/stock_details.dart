@@ -1409,6 +1409,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   quantity: 1,
                                                   isGS1code: false,
                                                   singleValue: true,
+                                                  validateQR: true,
                                                 ),
                                                 settings: const RouteSettings(
                                                   name: '/qr-scanner',
@@ -1455,6 +1456,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                               quantity: 1,
                                                               isGS1code: false,
                                                               singleValue: true,
+                                                              validateQR: true,
                                                             ),
                                                             settings:
                                                                 const RouteSettings(
@@ -1493,6 +1495,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   quantity: 1,
                                                   isGS1code: false,
                                                   singleValue: true,
+                                                  validateQR: true,
                                                 ),
                                                 settings: const RouteSettings(
                                                   name: '/qr-scanner',
@@ -1536,6 +1539,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                         quantity: 1,
                                                         isGS1code: false,
                                                         singleValue: true,
+                                                        validateQR: true,
                                                       ),
                                                       settings:
                                                           const RouteSettings(

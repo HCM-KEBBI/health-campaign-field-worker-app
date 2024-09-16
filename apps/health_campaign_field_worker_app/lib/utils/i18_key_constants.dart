@@ -1418,4 +1418,5 @@ class Scanner {
   String get barCodesFound => 'BARCODES_FOUND';
   String get barCode => 'BARCODE';
   String get scanBales => 'CORE_COMMON_SCAN_BALES';
+  String get invalidQRCode => 'INVALID_QR_CODE';
 }

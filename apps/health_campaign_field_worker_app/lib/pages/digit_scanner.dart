@@ -21,6 +21,7 @@ class DigitScannerPage extends LocalizedStatefulWidget {
   final int quantity;
   final bool isGS1code;
   final bool isEditEnabled;
+  final bool validateQR;
 
   const DigitScannerPage({
     super.key,
@@ -29,6 +30,7 @@ class DigitScannerPage extends LocalizedStatefulWidget {
     required this.isGS1code,
     this.singleValue = false,
     this.isEditEnabled = false,
+    this.validateQR = false,
   });
 
   @override
@@ -540,6 +542,12 @@ class _DigitScannerPageState extends LocalizedState<DigitScannerPage> {
   }
 
   Future<void> storeCodeWrapper(String code) async {
+    if (widget.validateQR && !code.contains(Constants.pipeSeparator)) {
+      handleErrorWrapper(localizations.translate(i18.scanner.invalidQRCode));
+      await Future.delayed(const Duration(seconds: 2));
+      return;
+    }
+
     await DigitScannerUtils().storeCode(
       context: context,
       code: code,
