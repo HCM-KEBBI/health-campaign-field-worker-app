@@ -118,6 +118,12 @@ class Constants {
   static const String reAdministeredKey = "reAdministered";
   static const String pipeSeparator = ' || ';
   static const String spaq1String = 'SPAQ 1';
+  static const String centralFacility = 'Central Facility';
+  static const String stateBoundaryLevel = 'State';
+  static const String stateFacility = 'State Facility';
+  static const String lgaBoundaryLevel = 'LGA';
+  static const String lgaFacility = 'LGA Facility';
+  static const String healthFacility = 'Health Facility';
 
   static List<LocalRepository> getLocalRepositories(
     LocalSqlDataStore sql,

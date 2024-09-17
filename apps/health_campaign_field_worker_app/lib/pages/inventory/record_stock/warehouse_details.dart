@@ -84,10 +84,32 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
           builder: (ctx, facilityState) {
             final facilities = facilityState.whenOrNull(
                   fetched: (facilities, _, __) {
-                    if (ctx.selectedProject.address?.boundaryType == 'State') {
+                    if (ctx.selectedProject.address?.boundaryType ==
+                        Constants.stateBoundaryLevel) {
                       List<FacilityModel> filteredFacilities = facilities
                           .where(
-                            (element) => element.usage == 'State Facility',
+                            (element) =>
+                                element.usage == Constants.stateFacility,
+                          )
+                          .toList();
+                      facilities = filteredFacilities.isEmpty
+                          ? facilities
+                          : filteredFacilities;
+                    } else if (ctx.selectedProject.address?.boundaryType ==
+                        Constants.lgaBoundaryLevel) {
+                      List<FacilityModel> filteredFacilities = facilities
+                          .where(
+                            (element) => element.usage == Constants.lgaFacility,
+                          )
+                          .toList();
+                      facilities = filteredFacilities.isEmpty
+                          ? facilities
+                          : filteredFacilities;
+                    } else {
+                      List<FacilityModel> filteredFacilities = facilities
+                          .where(
+                            (element) =>
+                                element.usage == Constants.healthFacility,
                           )
                           .toList();
                       facilities = filteredFacilities.isEmpty
