@@ -555,6 +555,10 @@ Future<bool> getIsConnected() async {
   }
 }
 
+int getAgeMonths(DigitDOBAge age) {
+  return (age.years * 12) + age.months;
+}
+
 void showDownloadDialog(
   BuildContext context, {
   required DownloadBeneficiary model,
