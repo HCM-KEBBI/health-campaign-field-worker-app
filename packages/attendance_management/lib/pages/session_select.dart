@@ -253,6 +253,7 @@ class _AttendanceDateSessionSelectionPageState
                                         label: localizations.translate(
                                           i18.attendance.dateOfSession,
                                         ),
+                                        isEnabled: false,
                                         formControlName: _dateOfSession,
                                         cancelText: localizations.translate(
                                             i18.common.coreCommonCancel),

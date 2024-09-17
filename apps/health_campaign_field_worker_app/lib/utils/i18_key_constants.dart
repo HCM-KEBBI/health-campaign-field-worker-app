@@ -1385,6 +1385,7 @@ class ReferBeneficiary {
       'REFERRAL_CONFIRMATION_DIALOG_BOX_CONTENT';
   String get referAlertDialogTitle => 'REFERRAL_ALERT_DIALOG_TITLE';
   String get referAlertDialogContent => 'REFERRAL_ALERT_DIALOG_CONTENT';
+  String get validationForReferralAge => 'REFERRAL_AGE_VALIDATION';
 }
 
 class IneligibilityReasons {

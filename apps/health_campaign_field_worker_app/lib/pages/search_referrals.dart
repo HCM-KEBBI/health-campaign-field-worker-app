@@ -162,9 +162,7 @@ class _SearchReferralsPageState extends LocalizedState<SearchReferralsPage> {
 
                           VoidCallback? onPressed;
 
-                          onPressed = state.loading ||
-                                  state.searchQuery == null ||
-                                  (state.searchQuery ?? '').length < 2
+                          onPressed = state.loading
                               ? null
                               : () {
                                   FocusManager.instance.primaryFocus?.unfocus();
