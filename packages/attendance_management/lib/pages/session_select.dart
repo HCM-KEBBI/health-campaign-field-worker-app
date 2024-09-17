@@ -354,7 +354,7 @@ class _AttendanceDateSessionSelectionPageState
     }
 
     // Return missed attendance days with description
-    return "$missedDays${AttendanceLocalization.of(context).translate(i18.attendance.missedAttendanceDescription)}";
+    return missedDays;
   }
 
   isAttendanceCompleted(DateTime selectedDate) {
