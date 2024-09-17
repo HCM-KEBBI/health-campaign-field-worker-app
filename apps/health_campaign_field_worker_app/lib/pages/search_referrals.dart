@@ -162,24 +162,27 @@ class _SearchReferralsPageState extends LocalizedState<SearchReferralsPage> {
 
                           VoidCallback? onPressed;
 
-                          onPressed = () {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            final bloc = context.read<SearchReferralsBloc>();
-                            router.push(
-                              HFCreateReferralWrapperRoute(
-                                viewOnly: false,
-                                hfReferralModel: HFReferralModel(
-                                  clientReferenceId: '',
-                                  name: state.searchQuery,
-                                  beneficiaryId: state.tag,
-                                ),
-                              ),
-                            );
-                            searchController.clear();
-                            bloc.add(
-                              const SearchReferralsClearEvent(),
-                            );
-                          };
+                          onPressed = state.loading
+                              ? null
+                              : () {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                  final bloc =
+                                      context.read<SearchReferralsBloc>();
+                                  router.push(
+                                    HFCreateReferralWrapperRoute(
+                                      viewOnly: false,
+                                      hfReferralModel: HFReferralModel(
+                                        clientReferenceId: '',
+                                        name: state.searchQuery,
+                                        beneficiaryId: state.tag,
+                                      ),
+                                    ),
+                                  );
+                                  searchController.clear();
+                                  bloc.add(
+                                    const SearchReferralsClearEvent(),
+                                  );
+                                };
 
                           return DigitElevatedButton(
                             onPressed: onPressed,
