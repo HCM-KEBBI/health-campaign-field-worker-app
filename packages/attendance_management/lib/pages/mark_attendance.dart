@@ -571,7 +571,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
               color: Colors.white.withOpacity(0.25),
               child: Container(
                 width: MediaQuery.of(context).size.width / 1.25,
-                height: MediaQuery.of(context).size.height / 3.0,
+                height: MediaQuery.of(context).size.height / 2.5,
                 color: Colors.white.withOpacity(1),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
