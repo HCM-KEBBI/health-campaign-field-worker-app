@@ -95,6 +95,11 @@ class _IndividualDetailsPageState
                     if (form.control(_dobKey).value == null) {
                       form.control(_dobKey).setErrors({'': true});
                     }
+                    if (widget.isHeadOfHousehold) {
+                      final value = form.control(_dobKey).value;
+                      DigitDOBAge age = DigitDateUtils.calculateAge(value);
+                      isHeadAgeValid = age.years >= 18;
+                    }
 
                     if (!isHeadAgeValid) {
                       await DigitToast.show(
@@ -413,13 +418,7 @@ class _IndividualDetailsPageState
                                     (age.years > 150 ||
                                         (age.years == 150 && age.months > 0))) {
                                   formControl.setErrors({'': true});
-                                } else if (widget.isHeadOfHousehold &&
-                                    age.years < 18) {
-                                  isHeadAgeValid = false;
                                 } else {
-                                  if (widget.isHeadOfHousehold) {
-                                    isHeadAgeValid = true;
-                                  }
                                   formControl.removeError('');
                                 }
                               }

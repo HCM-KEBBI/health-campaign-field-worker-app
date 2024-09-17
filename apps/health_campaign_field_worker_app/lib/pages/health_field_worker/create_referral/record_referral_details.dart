@@ -98,13 +98,39 @@ class _RecordReferralDetailsPageState
                                   return DigitElevatedButton(
                                     onPressed: isClicked
                                         ? null
-                                        : () {
+                                        : () async {
                                             if (form.control(_dobKey).value ==
                                                 null) {
+                                              clickedStatus.value = false;
                                               form
                                                   .control(_dobKey)
                                                   .setErrors({'': true});
                                             }
+                                            final dobValue =
+                                                form.control(_dobKey).value;
+                                            DigitDOBAge age =
+                                                DigitDateUtils.calculateAge(
+                                              dobValue,
+                                            );
+                                            final ageInMonths =
+                                                getAgeMonths(age);
+                                            if (ageInMonths < 3 ||
+                                                ageInMonths > 62) {
+                                              await DigitToast.show(
+                                                context,
+                                                options: DigitToastOptions(
+                                                  localizations.translate(
+                                                    i18.referBeneficiary
+                                                        .validationForReferralAge,
+                                                  ),
+                                                  true,
+                                                  theme,
+                                                ),
+                                              );
+
+                                              return;
+                                            }
+
                                             if (form.control(_cycleKey).value ==
                                                 null) {
                                               clickedStatus.value = false;
@@ -409,7 +435,46 @@ class _RecordReferralDetailsPageState
                                             return DigitElevatedButton(
                                               onPressed: isClicked
                                                   ? null
-                                                  : () {
+                                                  : () async {
+                                                      if (form
+                                                              .control(_dobKey)
+                                                              .value ==
+                                                          null) {
+                                                        clickedStatus.value =
+                                                            false;
+                                                        form
+                                                            .control(_dobKey)
+                                                            .setErrors(
+                                                                {'': true});
+                                                      }
+                                                      final dobValue = form
+                                                          .control(_dobKey)
+                                                          .value;
+                                                      DigitDOBAge age =
+                                                          DigitDateUtils
+                                                              .calculateAge(
+                                                        dobValue,
+                                                      );
+                                                      final ageInMonths =
+                                                          getAgeMonths(age);
+                                                      if (ageInMonths < 3 ||
+                                                          ageInMonths > 62) {
+                                                        await DigitToast.show(
+                                                          context,
+                                                          options:
+                                                              DigitToastOptions(
+                                                            localizations
+                                                                .translate(
+                                                              i18.referBeneficiary
+                                                                  .validationForReferralAge,
+                                                            ),
+                                                            true,
+                                                            theme,
+                                                          ),
+                                                        );
+
+                                                        return;
+                                                      }
                                                       if (form
                                                               .control(
                                                                   _cycleKey)
@@ -808,7 +873,7 @@ class _RecordReferralDetailsPageState
                                         ),
                                         form: form,
                                         isRequired: true,
-                                        enabled: !viewOnly,
+                                        enabled: false,
                                         menuItems: context.cycles,
                                         formControlName: _cycleKey,
                                         valueMapper: (value) {
@@ -1002,7 +1067,7 @@ class _RecordReferralDetailsPageState
                   .where((e) => e.key == AdditionalFieldsType.cycle.toValue())
                   .first
                   .value
-              : null,
+              : context.cycles.last, //TODO do this based on time
         ),
         disabled: referralState.mapOrNull(
               create: (value) => value.viewOnly,
