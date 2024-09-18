@@ -70,6 +70,9 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
     bool isHealthFacilitySupervisor,
     StockRecordEntryType entryType,
   ) {
+    deliveryTeamSelected = context.isHealthFacilitySupervisor &&
+        entryType != StockRecordEntryType.receipt;
+
     return fb.group({
       _productVariantKey: FormControl<ProductVariantModel>(
         validators: [Validators.required],
@@ -103,14 +106,14 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
       ),
       _transactionReasonKey: FormControl<TransactionReason>(),
       _waybillNumberKey: FormControl<String>(
-        validators: isDistributor
+        validators: (isDistributor || deliveryTeamSelected)
             ? []
             : [
                 Validators.required,
               ],
       ),
       _waybillQuantityKey: FormControl<int>(
-        validators: isDistributor
+        validators: (isDistributor || deliveryTeamSelected)
             ? []
             : [
                 Validators.number,
@@ -120,14 +123,14 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
               ],
       ),
       _vehicleNumberKey: FormControl<String>(
-        validators: isDistributor
+        validators: (isDistributor || deliveryTeamSelected)
             ? []
             : [
                 Validators.required,
               ],
       ),
       _typeOfTransportKey: FormControl<String>(
-        validators: isDistributor
+        validators: (isDistributor || deliveryTeamSelected)
             ? []
             : [
                 Validators.required,
