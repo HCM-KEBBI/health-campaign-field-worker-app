@@ -172,52 +172,50 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                 for (int i = 0; i < controller.length; i++) {
                                   final attribute = initialAttributes;
 
-                                  String? additionalDetailValue = context
-                                              .isHealthFacilitySupervisor &&
-                                          widget.referralClientRefId != null
-                                      ? null
-                                      : ((attribute?[i]
-                                                          .values
-                                                          ?.firstWhereOrNull(
-                                                            (element) =>
-                                                                element ==
-                                                                yesText,
-                                                          ) !=
-                                                      null &&
-                                                  controller[i].text ==
-                                                      attribute?[i]
-                                                          .values?[1]
-                                                          .trim()) ||
-                                              (attribute?[i]
-                                                          .values
-                                                          ?.firstWhereOrNull(
-                                                            (element) =>
-                                                                element
-                                                                    .toUpperCase() ==
-                                                                othersText,
-                                                          ) !=
-                                                      null &&
-                                                  controller[i]
-                                                          .text
-                                                          .split(
-                                                            multiSelectionSeparator,
-                                                          )
-                                                          .firstWhereOrNull(
-                                                            (element) =>
-                                                                element
-                                                                    .toUpperCase() ==
-                                                                othersText,
-                                                          ) !=
-                                                      null))
-                                          ? additionalController[i]
-                                                  .text
-                                                  .toString()
-                                                  .isEmpty
-                                              ? null
-                                              : additionalController[i]
-                                                  .text
-                                                  .toString()
-                                          : null;
+                                  String? additionalDetailValue = ((attribute?[
+                                                          i]
+                                                      .values
+                                                      ?.firstWhereOrNull(
+                                                        (element) =>
+                                                            element == yesText,
+                                                      ) !=
+                                                  null &&
+                                              controller[i].text ==
+                                                  attribute?[i]
+                                                      .values?[1]
+                                                      .trim() &&
+                                              !context
+                                                  .isHealthFacilitySupervisor) ||
+                                          (attribute?[i]
+                                                      .values
+                                                      ?.firstWhereOrNull(
+                                                        (element) =>
+                                                            element
+                                                                .toUpperCase() ==
+                                                            othersText,
+                                                      ) !=
+                                                  null &&
+                                              controller[i]
+                                                      .text
+                                                      .split(
+                                                        multiSelectionSeparator,
+                                                      )
+                                                      .firstWhereOrNull(
+                                                        (element) =>
+                                                            element
+                                                                .toUpperCase() ==
+                                                            othersText,
+                                                      ) !=
+                                                  null))
+                                      ? additionalController[i]
+                                              .text
+                                              .toString()
+                                              .isEmpty
+                                          ? null
+                                          : additionalController[i]
+                                              .text
+                                              .toString()
+                                      : null;
                                   attributes.add(
                                     ServiceAttributesModel(
                                       auditDetails: AuditDetails(
