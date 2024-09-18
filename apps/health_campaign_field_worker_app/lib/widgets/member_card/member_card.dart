@@ -388,7 +388,7 @@ class MemberCard extends StatelessWidget {
                                                           .backToHouseholdDetails),
                                                   action: (ctx) {
                                                     Navigator.of(
-                                                      context,
+                                                      ctx,
                                                       rootNavigator: true,
                                                     ).pop();
                                                   },
