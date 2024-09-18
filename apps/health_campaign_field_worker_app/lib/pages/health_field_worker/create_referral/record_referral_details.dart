@@ -873,7 +873,7 @@ class _RecordReferralDetailsPageState
                                         ),
                                         form: form,
                                         isRequired: true,
-                                        enabled: !viewOnly,
+                                        enabled: false,
                                         menuItems: context.cycles,
                                         formControlName: _cycleKey,
                                         valueMapper: (value) {
@@ -1067,7 +1067,7 @@ class _RecordReferralDetailsPageState
                   .where((e) => e.key == AdditionalFieldsType.cycle.toValue())
                   .first
                   .value
-              : null,
+              : context.cycles.last, //TODO do this based on time
         ),
         disabled: referralState.mapOrNull(
               create: (value) => value.viewOnly,

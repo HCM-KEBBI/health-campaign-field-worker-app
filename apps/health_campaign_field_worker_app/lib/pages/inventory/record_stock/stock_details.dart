@@ -64,8 +64,12 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
   bool deliveryTeamSelected = false;
   bool isSpaq1 = true;
 
-  FormGroup _form(List<FacilityModel> facilities, bool isDistributor,
-      bool isHealthFacilitySupervisor) {
+  FormGroup _form(
+    List<FacilityModel> facilities,
+    bool isDistributor,
+    bool isHealthFacilitySupervisor,
+    StockRecordEntryType entryType,
+  ) {
     return fb.group({
       _productVariantKey: FormControl<ProductVariantModel>(
         validators: [Validators.required],
@@ -86,9 +90,9 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
           FormControl<int>(validators: wastedBlistersQuantityValidator),
       _commentsKey: FormControl<String>(),
       _deliveryTeamKey: FormControl<String>(
-        validators: (deliveryTeamSelected &&
-                !isDistributor &&
-                isHealthFacilitySupervisor)
+        validators: (!isDistributor &&
+                isHealthFacilitySupervisor &&
+                entryType != StockRecordEntryType.receipt)
             ? [Validators.required]
             : [],
         value: '',
@@ -195,6 +199,9 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                 const module = i18.stockDetails;
                 final isWarehouseMgr = context.isWarehouseMgr;
 
+                deliveryTeamSelected = context.isHealthFacilitySupervisor &&
+                    entryType != StockRecordEntryType.receipt;
+
                 String pageTitle;
                 String transactionPartyLabel;
                 String quantityCountLabel;
@@ -285,30 +292,65 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
 
                 return BlocBuilder<FacilityBloc, FacilityState>(
                   builder: (context, state) {
-                    List<FacilityModel> unSortedFacilities = state.whenOrNull(
+                    List<FacilityModel> facilities = state.whenOrNull(
                           fetched: (_, facilities, __) => facilities,
                         ) ??
                         [];
+                    List<FacilityModel> mappedFacilities = state.whenOrNull(
+                          fetched: (facilities, _, __) => facilities,
+                        ) ??
+                        [];
+                    List<FacilityModel> filteredFacilities = [];
 
-                    if ([
-                          StockRecordEntryType.dispatch,
-                          StockRecordEntryType.returned,
-                        ].contains(entryType) &&
-                        context.isSupervisor) {
-                      unSortedFacilities = unSortedFacilities
-                          .where((element) => element.usage == 'DeliveryTeam')
-                          .toList();
+                    if (context.selectedProject.address?.boundaryType ==
+                        Constants.stateBoundaryLevel) {
+                      filteredFacilities = entryType ==
+                              StockRecordEntryType.receipt
+                          ? facilities
+                              .where((element) =>
+                                  element.usage == Constants.centralFacility)
+                              .toList()
+                          : facilities
+                              .where((element) =>
+                                  element.usage == Constants.lgaFacility)
+                              .toList();
+                    } else if (context.selectedProject.address?.boundaryType ==
+                        Constants.lgaBoundaryLevel) {
+                      filteredFacilities = entryType ==
+                              StockRecordEntryType.receipt
+                          ? facilities
+                              .where((element) =>
+                                  element.usage == Constants.stateFacility)
+                              .toList()
+                          : mappedFacilities
+                              .where((element) =>
+                                  element.usage == Constants.healthFacility)
+                              .toList();
+                    } else {
+                      filteredFacilities = context.isDistributor
+                          ? mappedFacilities
+                              .where((element) =>
+                                  element.usage == Constants.healthFacility)
+                              .toList()
+                          : entryType == StockRecordEntryType.receipt
+                              ? mappedFacilities
+                                  .where((element) =>
+                                      element.usage == Constants.lgaFacility)
+                                  .toList()
+                              : [];
                     }
 
-                    var facilities = unSortedFacilities.toList();
-                    facilities.sort((a, b) =>
-                        (b.auditDetails?.lastModifiedTime ?? 0).compareTo(
-                          (a.auditDetails?.lastModifiedTime ?? 0),
-                        ));
+                    facilities = context.isHealthFacilitySupervisor &&
+                            entryType != StockRecordEntryType.receipt
+                        ? []
+                        : filteredFacilities.isEmpty
+                            ? facilities
+                            : filteredFacilities;
+
                     final teamFacilities = [
                       FacilityModel(
                         id: 'Delivery Team',
-                        name: 'Delivery Team',
+                        name: 'CDD Team',
                       ),
                     ];
                     teamFacilities.addAll(
@@ -316,8 +358,15 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                     );
 
                     return ReactiveFormBuilder(
-                      form: () => _form(facilities, isDistributor,
-                          isHealthFacilitySupervisor),
+                      form: () => _form(
+                        context.isHealthFacilitySupervisor &&
+                                entryType != StockRecordEntryType.receipt
+                            ? teamFacilities
+                            : facilities,
+                        isDistributor,
+                        isHealthFacilitySupervisor,
+                        entryType,
+                      ),
                       builder: (context, form, child) {
                         return BlocBuilder<DigitScannerBloc, DigitScannerState>(
                           builder: (context, scannerState) {
@@ -1014,10 +1063,13 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                               final facility = await parent
                                                   .push<FacilityModel>(
                                                 FacilitySelectionRoute(
-                                                  facilities: (isDistributor ||
-                                                          !isHealthFacilitySupervisor)
-                                                      ? facilities
-                                                      : teamFacilities,
+                                                  facilities:
+                                                      (isHealthFacilitySupervisor &&
+                                                              entryType !=
+                                                                  StockRecordEntryType
+                                                                      .receipt)
+                                                          ? teamFacilities
+                                                          : facilities,
                                                 ),
                                               );
 
@@ -1228,10 +1280,13 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   final facility = await parent
                                                       .push<FacilityModel>(
                                                     FacilitySelectionRoute(
-                                                      facilities: (isDistributor ||
-                                                              !isHealthFacilitySupervisor)
-                                                          ? facilities
-                                                          : teamFacilities,
+                                                      facilities:
+                                                          (isHealthFacilitySupervisor &&
+                                                                  entryType !=
+                                                                      StockRecordEntryType
+                                                                          .receipt)
+                                                              ? teamFacilities
+                                                              : facilities,
                                                     ),
                                                   );
 
@@ -1399,7 +1454,9 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                         },
                                       ),
                                       if (!isDistributor &&
-                                          isHealthFacilitySupervisor)
+                                          isHealthFacilitySupervisor &&
+                                          entryType !=
+                                              StockRecordEntryType.receipt)
                                         InkWell(
                                           onTap: () async {
                                             Navigator.of(context).push(
@@ -1423,7 +1480,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                 i18.manageStock
                                                     .cddTeamCodeLabel,
                                               ),
-                                              readOnly: !deliveryTeamSelected,
+                                              readOnly: false,
                                               onChanged: (val) {
                                                 String? value =
                                                     val.value as String?;
@@ -1444,35 +1501,31 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                 }
                                               },
                                               suffix: IconButton(
-                                                onPressed: !deliveryTeamSelected
-                                                    ? null
-                                                    : () {
-                                                        //[TODO: Add route to auto_route]
-                                                        Navigator.of(context)
-                                                            .push(
-                                                          MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                const DigitScannerPage(
-                                                              quantity: 1,
-                                                              isGS1code: false,
-                                                              singleValue: true,
-                                                              validateQR: true,
-                                                            ),
-                                                            settings:
-                                                                const RouteSettings(
-                                                              name:
-                                                                  '/qr-scanner',
-                                                            ),
-                                                          ),
-                                                        );
-                                                      },
+                                                onPressed: () {
+                                                  //[TODO: Add route to auto_route]
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const DigitScannerPage(
+                                                        quantity: 1,
+                                                        isGS1code: false,
+                                                        singleValue: true,
+                                                        validateQR: true,
+                                                      ),
+                                                      settings:
+                                                          const RouteSettings(
+                                                        name: '/qr-scanner',
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
                                                 icon: Icon(
                                                   Icons.qr_code_2,
                                                   color: theme
                                                       .colorScheme.secondary,
                                                 ),
                                               ),
-                                              isRequired: deliveryTeamSelected,
+                                              isRequired: true,
                                               maxLines: 3,
                                               formControlName: _deliveryTeamKey,
                                               validationMessages: {
