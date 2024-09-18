@@ -82,7 +82,7 @@ class _SearchReferralsPageState extends LocalizedState<SearchReferralsPage> {
                                   onChanged: (value) {
                                     final bloc =
                                         context.read<SearchReferralsBloc>();
-                                    if (value.trim().length < 2) {
+                                    if (value.trim().length < 3) {
                                       bloc.add(
                                         const SearchReferralsClearEvent(),
                                       );

@@ -895,9 +895,23 @@ class _RecordReferralDetailsPageState
                                         readOnly: viewOnly,
                                         isRequired: true,
                                         validationMessages: {
-                                          'required': (_) =>
+                                          'required': (object) =>
                                               localizations.translate(
                                                 i18.common.corecommonRequired,
+                                              ),
+                                          'minLength': (object) =>
+                                              localizations.translate(
+                                                i18.individualDetails
+                                                    .firstNameLengthError,
+                                              ),
+                                          'maxLength': (object) =>
+                                              localizations.translate(
+                                                i18.individualDetails
+                                                    .firstNameLengthError,
+                                              ),
+                                          "min3": (object) =>
+                                              localizations.translate(
+                                                i18.common.min3CharsRequired,
                                               ),
                                         },
                                       ),
@@ -1105,6 +1119,8 @@ class _RecordReferralDetailsPageState
             false,
         validators: [
           Validators.required,
+          CustomValidator.requiredMin3,
+          Validators.maxLength(200),
         ],
       ),
       _beneficiaryIdKey: FormControl<String>(
