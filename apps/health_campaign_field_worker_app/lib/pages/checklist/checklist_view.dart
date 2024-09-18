@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/utils/date_utils.dart';
+import 'package:digit_components/widgets/digit_sync_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,6 +13,7 @@ import '../../blocs/service/service.dart';
 import '../../blocs/service_definition/service_definition.dart';
 import '../../models/data_model.dart';
 import '../../router/app_router.dart';
+import '../../utils/digit_components_utils.dart';
 import '../../utils/i18_key_constants.dart' as i18;
 import '../../utils/utils.dart';
 import '../../widgets/header/back_navigation_help_header.dart';
@@ -44,6 +46,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
   String multiSelectionSeparator = "^";
   String helpText = "helpText";
   String secDesc = "secDesc";
+  bool triggerLocalization = false;
 
   @override
   void initState() {
@@ -94,60 +97,12 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                       const BackNavigationHelpHeaderWidget(),
                   ]),
                   enableFixedButton: true,
-                  footer: DigitCard(
-                    margin: const EdgeInsets.fromLTRB(0, kPadding, 0, 0),
-                    padding:
-                        const EdgeInsets.fromLTRB(kPadding, 0, kPadding, 0),
-                    child: DigitElevatedButton(
-                      onPressed: () async {
+                  footer: BlocListener<LocationBloc, LocationState>(
+                    listener: (context, state) async {
+                      if (state.accuracy != null && triggerLocalization) {
+                        triggerLocalization = false;
+                        DigitComponentsUtils().hideDialog(context);
                         final router = context.router;
-                        submitTriggered = true;
-
-                        context.read<ServiceBloc>().add(
-                              const ServiceChecklistEvent(
-                                value: '',
-                                submitTriggered: true,
-                              ),
-                            );
-                        final isValid =
-                            checklistFormKey.currentState?.validate();
-                        if (!isValid!) {
-                          return;
-                        }
-                        final itemsAttributes = initialAttributes;
-
-                        // for (int i = 0; i < controller.length; i++) {
-                        //   if (itemsAttributes?[i].required == true &&
-                        //       ((itemsAttributes?[i].dataType ==
-                        //                   'SingleValueList' &&
-                        //               visibleChecklistIndexes
-                        //                   .any((e) => e == i) &&
-                        //               (controller[i].text == '')) ||
-                        //           (itemsAttributes?[i].dataType !=
-                        //                   'SingleValueList' &&
-                        //               (controller[i].text == '' &&
-                        //                   !(context
-                        //                           .isHealthFacilitySupervisor &&
-                        //                       widget.referralClientRefId !=
-                        //                           null))))) {
-                        //     return;
-                        //   }
-                        // }
-
-                        for (int i = 0; i < controller.length; i++) {
-                          if (itemsAttributes?[i].required == true &&
-                              visibleChecklistIndexes.any((e) => e == i) &&
-                              controller[i].text == '') {
-                            return;
-                          }
-                        }
-
-                        // Request location from LocationBloc
-                        context
-                            .read<LocationBloc>()
-                            .add(const LocationEvent.load());
-
-                        // Wait for the location to be obtained
                         final locationState =
                             context.read<LocationBloc>().state;
                         double? latitude = locationState.latitude;
@@ -367,9 +322,73 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                           }
                           router.push(AcknowledgementRoute());
                         }
-                      },
-                      child: Text(
-                        localizations.translate(i18.common.coreCommonSubmit),
+                      }
+                    },
+                    child: DigitCard(
+                      margin: const EdgeInsets.fromLTRB(0, kPadding, 0, 0),
+                      padding:
+                          const EdgeInsets.fromLTRB(kPadding, 0, kPadding, 0),
+                      child: DigitElevatedButton(
+                        onPressed: () async {
+                          final router = context.router;
+                          submitTriggered = true;
+
+                          context.read<ServiceBloc>().add(
+                                const ServiceChecklistEvent(
+                                  value: '',
+                                  submitTriggered: true,
+                                ),
+                              );
+                          final isValid =
+                              checklistFormKey.currentState?.validate();
+                          if (!isValid!) {
+                            return;
+                          }
+                          final itemsAttributes = initialAttributes;
+
+                          // for (int i = 0; i < controller.length; i++) {
+                          //   if (itemsAttributes?[i].required == true &&
+                          //       ((itemsAttributes?[i].dataType ==
+                          //                   'SingleValueList' &&
+                          //               visibleChecklistIndexes
+                          //                   .any((e) => e == i) &&
+                          //               (controller[i].text == '')) ||
+                          //           (itemsAttributes?[i].dataType !=
+                          //                   'SingleValueList' &&
+                          //               (controller[i].text == '' &&
+                          //                   !(context
+                          //                           .isHealthFacilitySupervisor &&
+                          //                       widget.referralClientRefId !=
+                          //                           null))))) {
+                          //     return;
+                          //   }
+                          // }
+
+                          for (int i = 0; i < controller.length; i++) {
+                            if (itemsAttributes?[i].required == true &&
+                                visibleChecklistIndexes.any((e) => e == i) &&
+                                controller[i].text == '') {
+                              return;
+                            }
+                          }
+                          triggerLocalization = true;
+
+                          // Request location from LocationBloc
+                          context
+                              .read<LocationBloc>()
+                              .add(const LocationEvent.load());
+
+                          DigitComponentsUtils().showLocationCapturingDialog(
+                            context,
+                            localizations.translate("Location capturing"),
+                            DigitSyncDialogType.inProgress,
+                          );
+
+                          // Wait for the location to be obtained
+                        },
+                        child: Text(
+                          localizations.translate(i18.common.coreCommonSubmit),
+                        ),
                       ),
                     ),
                   ),
