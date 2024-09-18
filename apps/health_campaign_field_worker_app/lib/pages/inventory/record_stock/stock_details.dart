@@ -199,6 +199,9 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                 const module = i18.stockDetails;
                 final isWarehouseMgr = context.isWarehouseMgr;
 
+                deliveryTeamSelected = context.isHealthFacilitySupervisor &&
+                    entryType != StockRecordEntryType.receipt;
+
                 String pageTitle;
                 String transactionPartyLabel;
                 String quantityCountLabel;
