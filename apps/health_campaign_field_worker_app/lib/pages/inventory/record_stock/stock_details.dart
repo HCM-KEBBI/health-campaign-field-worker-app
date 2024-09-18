@@ -1477,7 +1477,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                 i18.manageStock
                                                     .cddTeamCodeLabel,
                                               ),
-                                              readOnly: !deliveryTeamSelected,
+                                              readOnly: false,
                                               onChanged: (val) {
                                                 String? value =
                                                     val.value as String?;
@@ -1498,28 +1498,24 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                 }
                                               },
                                               suffix: IconButton(
-                                                onPressed: !deliveryTeamSelected
-                                                    ? null
-                                                    : () {
-                                                        //[TODO: Add route to auto_route]
-                                                        Navigator.of(context)
-                                                            .push(
-                                                          MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                const DigitScannerPage(
-                                                              quantity: 1,
-                                                              isGS1code: false,
-                                                              singleValue: true,
-                                                              validateQR: true,
-                                                            ),
-                                                            settings:
-                                                                const RouteSettings(
-                                                              name:
-                                                                  '/qr-scanner',
-                                                            ),
-                                                          ),
-                                                        );
-                                                      },
+                                                onPressed: () {
+                                                  //[TODO: Add route to auto_route]
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const DigitScannerPage(
+                                                        quantity: 1,
+                                                        isGS1code: false,
+                                                        singleValue: true,
+                                                        validateQR: true,
+                                                      ),
+                                                      settings:
+                                                          const RouteSettings(
+                                                        name: '/qr-scanner',
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
                                                 icon: Icon(
                                                   Icons.qr_code_2,
                                                   color: theme
