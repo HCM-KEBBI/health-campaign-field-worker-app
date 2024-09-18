@@ -380,7 +380,8 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
 
                           DigitComponentsUtils().showLocationCapturingDialog(
                             context,
-                            localizations.translate("Location capturing"),
+                            localizations
+                                .translate(i18.common.locationCapturing),
                             DigitSyncDialogType.inProgress,
                           );
 
