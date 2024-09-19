@@ -13,38 +13,40 @@ class SideEffectLocalRepository extends SideEffectLocalBaseRepository {
   void listenToChanges({
     required SideEffectSearchModel query,
     required void Function(List<SideEffectModel> data) listener,
-  }) {
-    final select = sql.select(sql.sideEffect).join([])
-      ..where(
-        buildOr([
-          if (query.id != null)
-            sql.sideEffect.id.equals(
-              query.id!,
-            ),
-        ]),
-      );
+  }) async {
+    return retryLocalCallOperation(() async {
+      final select = sql.select(sql.sideEffect).join([])
+        ..where(
+          buildOr([
+            if (query.id != null)
+              sql.sideEffect.id.equals(
+                query.id!,
+              ),
+          ]),
+        );
 
-    select.watch().listen((results) {
-      final data = results
-          .map((e) {
-            final sideEffect = e.readTableOrNull(sql.sideEffect);
-            if (sideEffect == null) return null;
+      select.watch().listen((results) {
+        final data = results
+            .map((e) {
+              final sideEffect = e.readTableOrNull(sql.sideEffect);
+              if (sideEffect == null) return null;
 
-            return SideEffectModel(
-              id: sideEffect.id,
-              clientReferenceId: sideEffect.clientReferenceId,
-              taskClientReferenceId: sideEffect.taskClientReferenceId,
-              reAttempts: sideEffect.reAttempts,
-              rowVersion: sideEffect.rowVersion,
-              tenantId: sideEffect.tenantId,
-              isDeleted: sideEffect.isDeleted,
-            );
-          })
-          .whereNotNull()
-          .where((element) => element.isDeleted != true)
-          .toList();
+              return SideEffectModel(
+                id: sideEffect.id,
+                clientReferenceId: sideEffect.clientReferenceId,
+                taskClientReferenceId: sideEffect.taskClientReferenceId,
+                reAttempts: sideEffect.reAttempts,
+                rowVersion: sideEffect.rowVersion,
+                tenantId: sideEffect.tenantId,
+                isDeleted: sideEffect.isDeleted,
+              );
+            })
+            .whereNotNull()
+            .where((element) => element.isDeleted != true)
+            .toList();
 
-      listener(data);
+        listener(data);
+      });
     });
   }
 
@@ -112,10 +114,12 @@ class SideEffectLocalRepository extends SideEffectLocalBaseRepository {
     bool createOpLog = true,
     DataOperation dataOperation = DataOperation.create,
   }) async {
-    final sideEffectsCompanion = entity.companion;
-    await sql.batch((batch) async {
-      batch.insert(sql.sideEffect, sideEffectsCompanion);
-      await super.create(entity);
+    return retryLocalCallOperation(() async {
+      final sideEffectsCompanion = entity.companion;
+      await sql.batch((batch) async {
+        batch.insert(sql.sideEffect, sideEffectsCompanion);
+        await super.create(entity);
+      });
     });
   }
 
@@ -123,14 +127,16 @@ class SideEffectLocalRepository extends SideEffectLocalBaseRepository {
   FutureOr<void> bulkCreate(
     List<SideEffectModel> entities,
   ) async {
-    final sideEffectCompanions = entities.map((e) => e.companion).toList();
+    return retryLocalCallOperation(() async {
+      final sideEffectCompanions = entities.map((e) => e.companion).toList();
 
-    await sql.batch((batch) async {
-      batch.insertAll(
-        sql.sideEffect,
-        sideEffectCompanions,
-        mode: InsertMode.insertOrReplace,
-      );
+      await sql.batch((batch) async {
+        batch.insertAll(
+          sql.sideEffect,
+          sideEffectCompanions,
+          mode: InsertMode.insertOrReplace,
+        );
+      });
     });
   }
 
@@ -139,18 +145,20 @@ class SideEffectLocalRepository extends SideEffectLocalBaseRepository {
     SideEffectModel entity, {
     bool createOpLog = true,
   }) async {
-    final sideEffectsCompanion = entity.companion;
+    return retryLocalCallOperation(() async {
+      final sideEffectsCompanion = entity.companion;
 
-    await sql.batch((batch) {
-      batch.update(
-        sql.sideEffect,
-        sideEffectsCompanion,
-        where: (table) => table.clientReferenceId.equals(
-          entity.clientReferenceId,
-        ),
-      );
+      await sql.batch((batch) {
+        batch.update(
+          sql.sideEffect,
+          sideEffectsCompanion,
+          where: (table) => table.clientReferenceId.equals(
+            entity.clientReferenceId,
+          ),
+        );
+      });
+
+      await super.update(entity, createOpLog: createOpLog);
     });
-
-    await super.update(entity, createOpLog: createOpLog);
   }
 }

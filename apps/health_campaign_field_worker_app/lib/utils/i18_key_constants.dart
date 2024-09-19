@@ -123,6 +123,7 @@ class Common {
   String get coreCommonDownloadFailed => 'CORE_COMMON_DOWNLOAD_FAILED';
   String get noMatchFound => 'CORE_COMMON_NO_MATCH_FOUND';
   String get loading => 'CORE_COMMON_LOADING';
+  String get locationCapturing => 'CAPTURING_LOCATION';
 }
 
 class AdverseEvents {

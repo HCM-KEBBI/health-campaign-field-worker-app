@@ -14,48 +14,51 @@ class ProjectBeneficiaryLocalRepository
     required void Function(List<ProjectBeneficiaryModel> data) listener,
     String? userId,
   }) async {
-    final select = sql.select(sql.projectBeneficiary)
-      ..where(
-        (tbl) => buildOr([
-          if (userId != null) tbl.auditCreatedBy.equals(userId),
-          if (query.projectId != null) tbl.projectId.equals(query.projectId!),
-          if (query.beneficiaryRegistrationDateGte != null)
-            tbl.dateOfRegistration.isBiggerOrEqualValue(
-              query.beneficiaryRegistrationDateGte!.millisecondsSinceEpoch,
-            ),
-          if (query.beneficiaryRegistrationDateLte != null)
-            tbl.dateOfRegistration.isSmallerOrEqualValue(
-              query.beneficiaryRegistrationDateLte!.millisecondsSinceEpoch,
-            ),
-        ]),
-      );
-
-    if (query.limit != null && query.offset != null) {
-      select.limit(query.limit!, offset: query.offset);
-    }
-
-    select.watch().listen((event) {
-      final data = event.map((e) {
-        return ProjectBeneficiaryModel(
-          clientReferenceId: e.clientReferenceId,
-          dateOfRegistration: e.dateOfRegistration,
-          projectId: e.projectId,
-          tenantId: e.tenantId,
-          beneficiaryClientReferenceId: e.beneficiaryClientReferenceId,
-          id: e.id,
-          rowVersion: e.rowVersion,
-          isDeleted: e.isDeleted,
-          beneficiaryId: e.beneficiaryId,
-          auditDetails: (e.auditCreatedBy != null && e.auditCreatedTime != null)
-              ? AuditDetails(
-                  createdBy: e.auditCreatedBy!,
-                  createdTime: e.auditCreatedTime!,
-                )
-              : null,
+    return retryLocalCallOperation(() async {
+      final select = sql.select(sql.projectBeneficiary)
+        ..where(
+          (tbl) => buildOr([
+            if (userId != null) tbl.auditCreatedBy.equals(userId),
+            if (query.projectId != null) tbl.projectId.equals(query.projectId!),
+            if (query.beneficiaryRegistrationDateGte != null)
+              tbl.dateOfRegistration.isBiggerOrEqualValue(
+                query.beneficiaryRegistrationDateGte!.millisecondsSinceEpoch,
+              ),
+            if (query.beneficiaryRegistrationDateLte != null)
+              tbl.dateOfRegistration.isSmallerOrEqualValue(
+                query.beneficiaryRegistrationDateLte!.millisecondsSinceEpoch,
+              ),
+          ]),
         );
-      }).toList();
 
-      listener(data);
+      if (query.limit != null && query.offset != null) {
+        select.limit(query.limit!, offset: query.offset);
+      }
+
+      select.watch().listen((event) {
+        final data = event.map((e) {
+          return ProjectBeneficiaryModel(
+            clientReferenceId: e.clientReferenceId,
+            dateOfRegistration: e.dateOfRegistration,
+            projectId: e.projectId,
+            tenantId: e.tenantId,
+            beneficiaryClientReferenceId: e.beneficiaryClientReferenceId,
+            id: e.id,
+            rowVersion: e.rowVersion,
+            isDeleted: e.isDeleted,
+            beneficiaryId: e.beneficiaryId,
+            auditDetails:
+                (e.auditCreatedBy != null && e.auditCreatedTime != null)
+                    ? AuditDetails(
+                        createdBy: e.auditCreatedBy!,
+                        createdTime: e.auditCreatedTime!,
+                      )
+                    : null,
+          );
+        }).toList();
+
+        listener(data);
+      });
     });
   }
 
@@ -63,15 +66,17 @@ class ProjectBeneficiaryLocalRepository
   FutureOr<void> bulkCreate(
     List<ProjectBeneficiaryModel> entities,
   ) async {
-    final projectBeneficiaryCompanions =
-        entities.map((e) => e.companion).toList();
+    return retryLocalCallOperation(() async {
+      final projectBeneficiaryCompanions =
+          entities.map((e) => e.companion).toList();
 
-    await sql.batch((batch) async {
-      batch.insertAll(
-        sql.projectBeneficiary,
-        projectBeneficiaryCompanions,
-        mode: InsertMode.insertOrReplace,
-      );
+      await sql.batch((batch) async {
+        batch.insertAll(
+          sql.projectBeneficiary,
+          projectBeneficiaryCompanions,
+          mode: InsertMode.insertOrReplace,
+        );
+      });
     });
   }
 
@@ -80,77 +85,79 @@ class ProjectBeneficiaryLocalRepository
     ProjectBeneficiarySearchModel query, [
     String? userId,
   ]) async {
-    final selectQuery = sql.select(sql.projectBeneficiary).join([]);
-    final results = await (selectQuery
-          ..where(
-            buildAnd(
-              [
-                if (query.clientReferenceId != null)
-                  sql.projectBeneficiary.clientReferenceId.isIn(
-                    query.clientReferenceId!,
-                  ),
-                if (query.beneficiaryClientReferenceId != null)
-                  sql.projectBeneficiary.beneficiaryClientReferenceId
-                      .isIn(query.beneficiaryClientReferenceId!),
-                if (query.id != null)
-                  sql.projectBeneficiary.id.equals(
-                    query.id!,
-                  ),
-                if (query.projectId != null)
-                  sql.projectBeneficiary.projectId.equals(
-                    query.projectId!,
-                  ),
-                if (query.beneficiaryId != null)
-                  sql.projectBeneficiary.beneficiaryId.equals(
-                    query.beneficiaryId!,
-                  ),
-                if (query.dateOfRegistrationTime != null)
-                  sql.projectBeneficiary.dateOfRegistration.equals(
-                    query.dateOfRegistration!,
-                  ),
-                if (userId != null)
-                  sql.projectBeneficiary.auditCreatedBy.equals(
-                    userId,
-                  ),
-              ],
-            ),
-          ))
-        .get();
+    return retryLocalCallOperation<List<ProjectBeneficiaryModel>>(() async {
+      final selectQuery = sql.select(sql.projectBeneficiary).join([]);
+      final results = await (selectQuery
+            ..where(
+              buildAnd(
+                [
+                  if (query.clientReferenceId != null)
+                    sql.projectBeneficiary.clientReferenceId.isIn(
+                      query.clientReferenceId!,
+                    ),
+                  if (query.beneficiaryClientReferenceId != null)
+                    sql.projectBeneficiary.beneficiaryClientReferenceId
+                        .isIn(query.beneficiaryClientReferenceId!),
+                  if (query.id != null)
+                    sql.projectBeneficiary.id.equals(
+                      query.id!,
+                    ),
+                  if (query.projectId != null)
+                    sql.projectBeneficiary.projectId.equals(
+                      query.projectId!,
+                    ),
+                  if (query.beneficiaryId != null)
+                    sql.projectBeneficiary.beneficiaryId.equals(
+                      query.beneficiaryId!,
+                    ),
+                  if (query.dateOfRegistrationTime != null)
+                    sql.projectBeneficiary.dateOfRegistration.equals(
+                      query.dateOfRegistration!,
+                    ),
+                  if (userId != null)
+                    sql.projectBeneficiary.auditCreatedBy.equals(
+                      userId,
+                    ),
+                ],
+              ),
+            ))
+          .get();
 
-    return results
-        .map((e) {
-          final projectBeneficiary = e.readTable(sql.projectBeneficiary);
+      return results
+          .map((e) {
+            final projectBeneficiary = e.readTable(sql.projectBeneficiary);
 
-          return ProjectBeneficiaryModel(
-            clientReferenceId: projectBeneficiary.clientReferenceId,
-            tenantId: projectBeneficiary.tenantId,
-            rowVersion: projectBeneficiary.rowVersion,
-            id: projectBeneficiary.id,
-            isDeleted: projectBeneficiary.isDeleted,
-            beneficiaryClientReferenceId:
-                projectBeneficiary.beneficiaryClientReferenceId,
-            beneficiaryId: projectBeneficiary.beneficiaryId,
-            dateOfRegistration: projectBeneficiary.dateOfRegistration,
-            projectId: projectBeneficiary.projectId,
-            auditDetails: AuditDetails(
-              createdTime: projectBeneficiary.auditCreatedTime!,
-              createdBy: projectBeneficiary.auditCreatedBy!,
-              lastModifiedBy: projectBeneficiary.auditModifiedBy,
-              lastModifiedTime: projectBeneficiary.auditModifiedTime,
-            ),
-            clientAuditDetails: (projectBeneficiary.clientCreatedBy != null &&
-                    projectBeneficiary.clientCreatedTime != null)
-                ? ClientAuditDetails(
-                    createdBy: projectBeneficiary.clientCreatedBy!,
-                    createdTime: projectBeneficiary.clientCreatedTime!,
-                    lastModifiedBy: projectBeneficiary.clientModifiedBy,
-                    lastModifiedTime: projectBeneficiary.clientModifiedTime,
-                  )
-                : null,
-          );
-        })
-        .where((element) => element.isDeleted != true)
-        .toList();
+            return ProjectBeneficiaryModel(
+              clientReferenceId: projectBeneficiary.clientReferenceId,
+              tenantId: projectBeneficiary.tenantId,
+              rowVersion: projectBeneficiary.rowVersion,
+              id: projectBeneficiary.id,
+              isDeleted: projectBeneficiary.isDeleted,
+              beneficiaryClientReferenceId:
+                  projectBeneficiary.beneficiaryClientReferenceId,
+              beneficiaryId: projectBeneficiary.beneficiaryId,
+              dateOfRegistration: projectBeneficiary.dateOfRegistration,
+              projectId: projectBeneficiary.projectId,
+              auditDetails: AuditDetails(
+                createdTime: projectBeneficiary.auditCreatedTime!,
+                createdBy: projectBeneficiary.auditCreatedBy!,
+                lastModifiedBy: projectBeneficiary.auditModifiedBy,
+                lastModifiedTime: projectBeneficiary.auditModifiedTime,
+              ),
+              clientAuditDetails: (projectBeneficiary.clientCreatedBy != null &&
+                      projectBeneficiary.clientCreatedTime != null)
+                  ? ClientAuditDetails(
+                      createdBy: projectBeneficiary.clientCreatedBy!,
+                      createdTime: projectBeneficiary.clientCreatedTime!,
+                      lastModifiedBy: projectBeneficiary.clientModifiedBy,
+                      lastModifiedTime: projectBeneficiary.clientModifiedTime,
+                    )
+                  : null,
+            );
+          })
+          .where((element) => element.isDeleted != true)
+          .toList();
+    });
   }
 
   @override
@@ -159,12 +166,14 @@ class ProjectBeneficiaryLocalRepository
     bool createOpLog = true,
     DataOperation dataOperation = DataOperation.create,
   }) async {
-    final projectBeneficiaryCompanion = entity.companion;
-    await sql.batch((batch) {
-      batch.insert(sql.projectBeneficiary, projectBeneficiaryCompanion);
-    });
+    return retryLocalCallOperation(() async {
+      final projectBeneficiaryCompanion = entity.companion;
+      await sql.batch((batch) {
+        batch.insert(sql.projectBeneficiary, projectBeneficiaryCompanion);
+      });
 
-    await super.create(entity);
+      await super.create(entity);
+    });
   }
 
   @override
@@ -172,19 +181,21 @@ class ProjectBeneficiaryLocalRepository
     ProjectBeneficiaryModel entity, {
     bool createOpLog = true,
   }) async {
-    final projectBeneficiaryCompanion = entity.companion;
+    return retryLocalCallOperation(() async {
+      final projectBeneficiaryCompanion = entity.companion;
 
-    await sql.batch((batch) {
-      batch.update(
-        sql.projectBeneficiary,
-        projectBeneficiaryCompanion,
-        where: (table) => table.clientReferenceId.equals(
-          entity.clientReferenceId,
-        ),
-      );
+      await sql.batch((batch) {
+        batch.update(
+          sql.projectBeneficiary,
+          projectBeneficiaryCompanion,
+          where: (table) => table.clientReferenceId.equals(
+            entity.clientReferenceId,
+          ),
+        );
+      });
+
+      return super.update(entity, createOpLog: createOpLog);
     });
-
-    return super.update(entity, createOpLog: createOpLog);
   }
 
   @override
@@ -192,29 +203,31 @@ class ProjectBeneficiaryLocalRepository
     ProjectBeneficiaryModel entity, {
     bool createOpLog = true,
   }) async {
-    final updated = entity.copyWith(
-      isDeleted: true,
-      rowVersion: entity.rowVersion,
-      clientAuditDetails: (entity.clientAuditDetails?.createdBy != null &&
-              entity.clientAuditDetails?.createdTime != null)
-          ? ClientAuditDetails(
-              createdBy: entity.clientAuditDetails!.createdBy,
-              createdTime: entity.clientAuditDetails!.createdTime,
-              lastModifiedBy: entity.clientAuditDetails!.lastModifiedBy,
-              lastModifiedTime: DateTime.now().millisecondsSinceEpoch,
-            )
-          : null,
-    );
-    await sql.batch((batch) {
-      batch.update(
-        sql.projectBeneficiary,
-        updated.companion,
-        where: (table) => table.clientReferenceId.equals(
-          entity.clientReferenceId,
-        ),
+    return retryLocalCallOperation(() async {
+      final updated = entity.copyWith(
+        isDeleted: true,
+        rowVersion: entity.rowVersion,
+        clientAuditDetails: (entity.clientAuditDetails?.createdBy != null &&
+                entity.clientAuditDetails?.createdTime != null)
+            ? ClientAuditDetails(
+                createdBy: entity.clientAuditDetails!.createdBy,
+                createdTime: entity.clientAuditDetails!.createdTime,
+                lastModifiedBy: entity.clientAuditDetails!.lastModifiedBy,
+                lastModifiedTime: DateTime.now().millisecondsSinceEpoch,
+              )
+            : null,
       );
-    });
+      await sql.batch((batch) {
+        batch.update(
+          sql.projectBeneficiary,
+          updated.companion,
+          where: (table) => table.clientReferenceId.equals(
+            entity.clientReferenceId,
+          ),
+        );
+      });
 
-    return super.delete(updated);
+      return super.delete(updated);
+    });
   }
 }

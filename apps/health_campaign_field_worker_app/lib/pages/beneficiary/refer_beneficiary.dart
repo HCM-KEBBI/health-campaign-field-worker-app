@@ -72,23 +72,12 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
       },
       builder: (ctx, facilityState) {
         final facilities = facilityState.whenOrNull(
-              fetched: (_, facilities, __) {
+              fetched: (facilities, _, __) {
                 final projectFacilities = facilities
-                    .where((e) =>
-                        e.id != 'NA' &&
-                        e.id != 'DT' &&
-                        (context.loggedInUser.permanentCity == null ||
-                            e.name == context.loggedInUser.permanentCity))
+                    .where((e) => e.usage == Constants.healthFacility)
                     .toList();
-                final healthFacilities = [
-                  FacilityModel(
-                    id: 'APS',
-                    name: 'APS',
-                  ),
-                ];
-                healthFacilities.addAll(projectFacilities);
 
-                return healthFacilities;
+                return projectFacilities;
               },
             ) ??
             [];
