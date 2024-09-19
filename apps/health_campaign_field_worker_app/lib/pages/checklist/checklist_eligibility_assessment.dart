@@ -855,18 +855,23 @@ class _EligibilityChecklistViewPageState
       if (responses.containsKey(q3Key) && responses[q3Key]!.isNotEmpty) {
         isIneligible = responses[q3Key] == yes ? true : false;
         if (individualModel != null && isIneligible) {
-          final dateOfBirth =
-              DateFormat("dd/MM/yyyy").parse(individualModel.dateOfBirth ?? '');
-          final age = DigitDateUtils.calculateAge(dateOfBirth);
-          final ageInMonths = getAgeMonths(age);
-          isIneligible = !(ageInMonths < 60);
+          // todo : verify this if any error
+          try {
+            final dateOfBirth = DateFormat("dd/MM/yyyy")
+                .parse(individualModel.dateOfBirth ?? '');
+            final age = DigitDateUtils.calculateAge(dateOfBirth);
+            final ageInMonths = getAgeMonths(age);
+            isIneligible = !(ageInMonths < 60);
+          } catch (error) {
+            isIneligible = false;
+          }
         }
       }
       if (!isIneligible &&
           (responses.containsKey(q5Key) && responses[q5Key]!.isNotEmpty)) {
         isIneligible = responses[q5Key] == yes ? true : false;
       }
-
+      // passing all the reasons which have response as true
       if (isIneligible) {
         for (var entry in responses.entries) {
           if (entry.key == q3Key || entry.key == q5Key) {
