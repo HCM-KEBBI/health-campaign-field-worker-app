@@ -243,6 +243,14 @@ class BeneficiaryRegistrationBloc
               ),
             ),
           );
+          var cycleIndex = "";
+          if (household.additionalFields != null) {
+            final fields = household.additionalFields!.fields
+                .where((element) => element.key == "cycleIndex");
+            if (fields.isNotEmpty) {
+              cycleIndex = fields.first.value.toString();
+            }
+          }
 
           await householdMemberRepository.create(
             HouseholdMemberModel(
@@ -261,6 +269,13 @@ class BeneficiaryRegistrationBloc
               auditDetails: AuditDetails(
                 createdBy: event.userUuid,
                 createdTime: createdAt,
+              ),
+              additionalFields: HouseholdMemberAdditionalFields(
+                version: 1,
+                fields: [
+                  if (cycleIndex.isNotEmpty)
+                    AdditionalField("cycleIndex", cycleIndex),
+                ],
               ),
             ),
           );
@@ -459,6 +474,14 @@ class BeneficiaryRegistrationBloc
               ],
             ),
           );
+          var cycleIndex = "";
+          if (value.householdModel.additionalFields != null) {
+            final fields = value.householdModel.additionalFields!.fields
+                .where((element) => element.key == "cycleIndex");
+            if (fields.isNotEmpty) {
+              cycleIndex = fields.first.value.toString();
+            }
+          }
 
           if (event.beneficiaryType == BeneficiaryType.individual) {
             await projectBeneficiaryRepository.create(
@@ -503,6 +526,13 @@ class BeneficiaryRegistrationBloc
                 lastModifiedTime: initialModifiedAt,
                 lastModifiedBy: event.userUuid,
                 createdBy: event.userUuid,
+              ),
+              additionalFields: HouseholdMemberAdditionalFields(
+                version: 1,
+                fields: [
+                  if (cycleIndex.isNotEmpty)
+                    AdditionalField("cycleIndex", cycleIndex),
+                ],
               ),
             ),
           );
