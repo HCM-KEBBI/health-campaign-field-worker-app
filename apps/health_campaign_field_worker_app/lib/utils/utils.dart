@@ -565,15 +565,6 @@ DoseCriteriaModel? fetchProductVariant(
   return null;
 }
 
-List<TaskModel> sortTask(List<TaskModel> tasks) {
-  if (tasks.isEmpty) {
-    return tasks;
-  }
-
-  return tasks.sorted((a, b) => b.clientAuditDetails!.createdTime
-      .compareTo(a.clientAuditDetails!.createdTime));
-}
-
 Future<bool> getIsConnected() async {
   try {
     final result = await InternetAddress.lookup('example.com');
