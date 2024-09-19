@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:group_radio_button/group_radio_button.dart';
+import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
 
 import '../../blocs/delivery_intervention/deliver_intervention.dart';
@@ -69,6 +70,8 @@ class _EligibilityChecklistViewPageState
     var ifReferral = false;
     var ifDeliver = false;
     var ifIneligible = false;
+    var ifAdministration = false;
+
     var projectBeneficiaryClientReferenceId =
         widget.projectBeneficiaryClientReferenceId;
 
@@ -179,13 +182,21 @@ class _EligibilityChecklistViewPageState
 
                             List<String>? referralReasons = [];
                             List<String?> ineligibilityReasons = [];
+                            List<bool> checkIfIneligibleFlow = [];
 
                             ifReferral = isReferral(responses, referralReasons);
                             ifDeliver = isDelivery(responses);
-                            ifIneligible = isIneligible(
+                            checkIfIneligibleFlow = isIneligible(
                               responses,
                               ineligibilityReasons,
+                              ifAdministration,
                             );
+                            if (checkIfIneligibleFlow.isNotEmpty &&
+                                checkIfIneligibleFlow.length >= 2) {
+                              ifIneligible = checkIfIneligibleFlow[0];
+                              ifAdministration = checkIfIneligibleFlow[1];
+                            }
+
                             var descriptionText = ifIneligible
                                 ? localizations.translate(
                                     i18.deliverIntervention
@@ -311,7 +322,9 @@ class _EligibilityChecklistViewPageState
                             );
                             if (shouldSubmit ?? false) {
                               if (context.mounted &&
-                                  (ifDeliver || ifIneligible || ifReferral)) {
+                                  ((ifDeliver || ifAdministration) ||
+                                      ifIneligible ||
+                                      ifReferral)) {
                                 if (ifIneligible) {
                                   // todo add the deliversubmitevent here from ineligible reasons page
                                   final clientReferenceId = IdGen.i.identifier;
@@ -474,9 +487,10 @@ class _EligibilityChecklistViewPageState
                                       textInputType: TextInputType.number,
                                       inputFormatter: [
                                         FilteringTextInputFormatter.allow(
-                                            RegExp(
-                                          "[0-9]",
-                                        )),
+                                          RegExp(
+                                            "[0-9]",
+                                          ),
+                                        ),
                                       ],
                                       validator: (value) {
                                         if (((value == null || value == '') &&
@@ -837,9 +851,10 @@ class _EligibilityChecklistViewPageState
     }
   }
 
-  bool isIneligible(
+  List<bool> isIneligible(
     Map<String?, String> responses,
     List<String?> ineligibilityReasons,
+    bool ifAdministration,
   ) {
     var isIneligible = false;
     var q3Key = "KBEA3";
@@ -848,16 +863,33 @@ class _EligibilityChecklistViewPageState
       q3Key: "NOT_ADMINISTERED_IN_PREVIOUS_CYCLE",
       q5Key: "CHILD_ON_MEDICATION_1",
     };
+    final individualModel = widget.individual;
 
     if (responses.isNotEmpty) {
       if (responses.containsKey(q3Key) && responses[q3Key]!.isNotEmpty) {
         isIneligible = responses[q3Key] == yes ? true : false;
+        if (individualModel != null && isIneligible) {
+          // todo : verify this if any error
+          try {
+            final dateOfBirth = DateFormat("dd/MM/yyyy")
+                .parse(individualModel.dateOfBirth ?? '');
+            final age = DigitDateUtils.calculateAge(dateOfBirth);
+            final ageInMonths = getAgeMonths(age);
+            isIneligible = !(ageInMonths < 60);
+            if (!isIneligible) {
+              ifAdministration = true;
+            }
+          } catch (error) {
+            isIneligible = false;
+            ifAdministration = true;
+          }
+        }
       }
       if (!isIneligible &&
           (responses.containsKey(q5Key) && responses[q5Key]!.isNotEmpty)) {
         isIneligible = responses[q5Key] == yes ? true : false;
       }
-
+      // passing all the reasons which have response as true
       if (isIneligible) {
         for (var entry in responses.entries) {
           if (entry.key == q3Key || entry.key == q5Key) {
@@ -869,7 +901,7 @@ class _EligibilityChecklistViewPageState
       }
     }
 
-    return isIneligible;
+    return [isIneligible, ifAdministration];
   }
 
   bool isReferral(
