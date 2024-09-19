@@ -873,7 +873,7 @@ class _RecordReferralDetailsPageState
                                         ),
                                         form: form,
                                         isRequired: true,
-                                        enabled: !viewOnly,
+                                        enabled: false,
                                         menuItems: context.cycles,
                                         formControlName: _cycleKey,
                                         valueMapper: (value) {
@@ -895,9 +895,23 @@ class _RecordReferralDetailsPageState
                                         readOnly: viewOnly,
                                         isRequired: true,
                                         validationMessages: {
-                                          'required': (_) =>
+                                          'required': (object) =>
                                               localizations.translate(
                                                 i18.common.corecommonRequired,
+                                              ),
+                                          'minLength': (object) =>
+                                              localizations.translate(
+                                                i18.individualDetails
+                                                    .firstNameLengthError,
+                                              ),
+                                          'maxLength': (object) =>
+                                              localizations.translate(
+                                                i18.individualDetails
+                                                    .firstNameLengthError,
+                                              ),
+                                          "min3": (object) =>
+                                              localizations.translate(
+                                                i18.common.min3CharsRequired,
                                               ),
                                         },
                                       ),
@@ -1067,7 +1081,7 @@ class _RecordReferralDetailsPageState
                   .where((e) => e.key == AdditionalFieldsType.cycle.toValue())
                   .first
                   .value
-              : null,
+              : context.cycles.last, //TODO do this based on time
         ),
         disabled: referralState.mapOrNull(
               create: (value) => value.viewOnly,
@@ -1105,6 +1119,8 @@ class _RecordReferralDetailsPageState
             false,
         validators: [
           Validators.required,
+          CustomValidator.requiredMin3,
+          Validators.maxLength(200),
         ],
       ),
       _beneficiaryIdKey: FormControl<String>(
