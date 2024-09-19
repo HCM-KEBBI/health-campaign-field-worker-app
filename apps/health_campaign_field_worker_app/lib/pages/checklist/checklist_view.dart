@@ -404,14 +404,15 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                       .keys
                                       .contains(secDesc))
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 8.0),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(8, 12, 0, 0),
                                   child: Text(
                                     localizations.translate(
                                       '${selectedServiceDefinition?.code}.${e.additionalDetails?.entries.where((a) => a.key == secDesc).first.value}',
                                     ),
                                     style:
                                         theme.textTheme.headlineLarge?.copyWith(
-                                      fontWeight: FontWeight.w300,
+                                      fontWeight: FontWeight.w400,
                                       color: DigitTheme
                                           .instance.colorScheme.shadow,
                                     ),
