@@ -37,10 +37,6 @@ class _HouseholdLocationPageState
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final bloc = context.read<BeneficiaryRegistrationBloc>();
-    final searchHouseholBloc = context.read<SearchHouseholdsBloc>();
-    searchHouseholBloc.add(
-      const SearchHouseholdsClearEvent(),
-    );
     final router = context.router;
 
     return Scaffold(
@@ -70,9 +66,11 @@ class _HouseholdLocationPageState
             builder: (context, registrationState) {
               return ScrollableContent(
                 enableFixedButton: true,
-                header: const Column(
+                header: Column(
                   children: [
-                    BackNavigationHelpHeaderWidget(),
+                    BackNavigationHelpHeaderWidget(
+                      handleback: clearSearch(),
+                    ),
                   ],
                 ),
                 footer: DigitCard(
@@ -227,5 +225,12 @@ class _HouseholdLocationPageState
         value: addressModel?.locationAccuracy,
       ),
     });
+  }
+
+  clearSearch() {
+    final searchHouseholBloc = context.read<SearchHouseholdsBloc>();
+    searchHouseholBloc.add(
+      const SearchHouseholdsClearEvent(),
+    );
   }
 }
