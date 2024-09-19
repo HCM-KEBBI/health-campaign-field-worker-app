@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import '../../blocs/beneficiary_registration/beneficiary_registration.dart';
+import '../../blocs/search_households/search_households.dart';
 import '../../models/data_model.dart';
 import '../../router/app_router.dart';
 import '../../utils/environment_config.dart';
@@ -36,6 +37,10 @@ class _HouseholdLocationPageState
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final bloc = context.read<BeneficiaryRegistrationBloc>();
+    final searchHouseholBloc = context.read<SearchHouseholdsBloc>();
+    searchHouseholBloc.add(
+      const SearchHouseholdsClearEvent(),
+    );
     final router = context.router;
 
     return Scaffold(
