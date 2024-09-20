@@ -129,7 +129,13 @@ class TaskLocalRepository extends TaskLocalBaseRepository {
                   query.plannedStartDate!,
                   query.plannedEndDate!,
                 ),
-            ])))
+            ]))
+            ..orderBy([
+              OrderingTerm(
+                expression: sql.task.clientCreatedTime,
+                mode: OrderingMode.asc,
+              ),
+            ]))
           .get();
 
       final tasksMap = <String, TaskModel>{};
