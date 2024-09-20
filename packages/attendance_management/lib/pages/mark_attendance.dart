@@ -490,7 +490,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
                       i18.attendance.confirmationLabel,
                     ),
                     style: const TextStyle(
-                      fontSize: 23,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -571,7 +571,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
               color: Colors.white.withOpacity(0.25),
               child: Container(
                 width: MediaQuery.of(context).size.width / 1.25,
-                height: MediaQuery.of(context).size.height / 2.5,
+                height: MediaQuery.of(context).size.height / 2.0,
                 color: Colors.white.withOpacity(1),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
