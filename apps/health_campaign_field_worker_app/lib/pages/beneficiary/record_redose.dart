@@ -274,24 +274,11 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
 
                                                   if (shouldSubmit ?? false) {
                                                     if (context.mounted) {
-                                                      context.router
-                                                          .popUntilRouteWithName(
-                                                        BeneficiaryWrapperRoute
-                                                            .name,
-                                                      );
-
-                                                      context
-                                                          .read<
-                                                              DeliverInterventionBloc>()
-                                                          .add(
-                                                            DeliverInterventionSubmitEvent(
-                                                              [
-                                                                updatedTask,
-                                                              ],
-                                                              true,
-                                                              context.boundary,
-                                                            ),
-                                                          );
+                                                      // context.router
+                                                      //     .popUntilRouteWithName(
+                                                      //   BeneficiaryWrapperRoute
+                                                      //       .name,
+                                                      // );
 
                                                       int spaq1 = 0;
                                                       int spaq2 = 0;
@@ -359,22 +346,42 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                           context.read<
                                                               HouseholdOverviewBloc>();
 
-                                                      reloadState.add(
-                                                        HouseholdOverviewReloadEvent(
-                                                          projectId:
-                                                              context.projectId,
-                                                          projectBeneficiaryType:
-                                                              context
-                                                                  .beneficiaryType,
+                                                      Future.delayed(
+                                                        const Duration(
+                                                          milliseconds: 1000,
                                                         ),
-                                                      );
-
-                                                      context.router.push(
-                                                        HouseholdAcknowledgementRoute(
-                                                          enableViewHousehold:
-                                                              true,
-                                                        ),
-                                                      );
+                                                        () {
+                                                          context
+                                                              .read<
+                                                                  DeliverInterventionBloc>()
+                                                              .add(
+                                                                DeliverInterventionSubmitEvent(
+                                                                  [
+                                                                    updatedTask,
+                                                                  ],
+                                                                  true,
+                                                                  context
+                                                                      .boundary,
+                                                                ),
+                                                              );
+                                                        },
+                                                      ).then((value) => {
+                                                            reloadState.add(
+                                                              HouseholdOverviewReloadEvent(
+                                                                projectId: context
+                                                                    .projectId,
+                                                                projectBeneficiaryType:
+                                                                    context
+                                                                        .beneficiaryType,
+                                                              ),
+                                                            ),
+                                                            context.router.push(
+                                                              HouseholdAcknowledgementRoute(
+                                                                enableViewHousehold:
+                                                                    true,
+                                                              ),
+                                                            ),
+                                                          });
                                                     }
                                                   }
                                                 }
