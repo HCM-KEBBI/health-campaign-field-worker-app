@@ -325,8 +325,8 @@ class _DoseAdministeredVerificationPageState
                                       i18.deliverIntervention
                                           .doseGivenCareGiver,
                                     )}",
-                                    // todo: verify this
-                                    {'{}': "2"},
+                                    // hardcoded the value here as per the text requirement
+                                    {Constants.curlyBraces: Constants.intTwo},
                                     theme,
                                   ),
                                   _buildTextRow(
@@ -335,8 +335,8 @@ class _DoseAdministeredVerificationPageState
                                           .infoWrittenInChildCard,
                                     )}"),
                                     {
-                                      '()': beneficiaryName,
-                                      '{}': beneficiaryId,
+                                      Constants.smallBraces: beneficiaryName,
+                                      Constants.curlyBraces: beneficiaryId,
                                     },
                                     theme,
                                   ),
