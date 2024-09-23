@@ -345,36 +345,35 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                       final reloadState =
                                                           context.read<
                                                               HouseholdOverviewBloc>();
+                                                      context
+                                                          .read<
+                                                              DeliverInterventionBloc>()
+                                                          .add(
+                                                            DeliverInterventionSubmitEvent(
+                                                              [
+                                                                updatedTask,
+                                                              ],
+                                                              true,
+                                                              context.boundary,
+                                                            ),
+                                                          );
 
                                                       Future.delayed(
                                                         const Duration(
-                                                          milliseconds: 1000,
+                                                          milliseconds: 500,
                                                         ),
                                                         () {
-                                                          context
-                                                              .read<
-                                                                  DeliverInterventionBloc>()
-                                                              .add(
-                                                                DeliverInterventionSubmitEvent(
-                                                                  [
-                                                                    updatedTask,
-                                                                  ],
-                                                                  true,
+                                                          reloadState.add(
+                                                            HouseholdOverviewReloadEvent(
+                                                              projectId: context
+                                                                  .projectId,
+                                                              projectBeneficiaryType:
                                                                   context
-                                                                      .boundary,
-                                                                ),
-                                                              );
+                                                                      .beneficiaryType,
+                                                            ),
+                                                          );
                                                         },
                                                       ).then((value) => {
-                                                            reloadState.add(
-                                                              HouseholdOverviewReloadEvent(
-                                                                projectId: context
-                                                                    .projectId,
-                                                                projectBeneficiaryType:
-                                                                    context
-                                                                        .beneficiaryType,
-                                                              ),
-                                                            ),
                                                             context.router.push(
                                                               HouseholdAcknowledgementRoute(
                                                                 enableViewHousehold:
