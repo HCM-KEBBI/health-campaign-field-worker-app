@@ -52,12 +52,6 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
   List<ValidatorFunction> partialBlistersQuantityValidator = [];
   List<ValidatorFunction> batchNumberValidators = [Validators.required];
   List<ValidatorFunction> wastedBlistersQuantityValidator = [];
-  List<ValidatorFunction> transactionQuantityValidator = [
-    Validators.number,
-    Validators.required,
-    Validators.min(minQuantity),
-    Validators.max(maxQuantity),
-  ];
   List<GS1Barcode> scannedResources = [];
   static const _deliveryTeamKey = 'deliveryTeam';
   static const _supervisorKey = 'supervisor';
@@ -85,8 +79,18 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                 : null,
         validators: [Validators.required],
       ),
-      _transactionQuantityKey:
-          FormControl<int>(validators: transactionQuantityValidator),
+      _transactionQuantityKey: FormControl<int>(validators: [
+        Validators.number,
+        Validators.required,
+        Validators.min(
+          (entryType == StockRecordEntryType.returned &&
+                      isHealthFacilitySupervisor) ||
+                  (entryType == StockRecordEntryType.dispatch && isDistributor)
+              ? minQuantity
+              : 1,
+        ),
+        Validators.max(maxQuantity),
+      ]),
       _partialBlistersKey:
           FormControl<int>(validators: partialBlistersQuantityValidator),
       _wastedBlistersKey:
@@ -550,6 +554,34 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                       _wastedBlistersKey,
                                                     )
                                                     .value;
+
+                                                if ((entryType ==
+                                                            StockRecordEntryType
+                                                                .returned &&
+                                                        isHealthFacilitySupervisor &&
+                                                        quantity == 0 &&
+                                                        partialBlisters == 0) ||
+                                                    (entryType ==
+                                                            StockRecordEntryType
+                                                                .dispatch &&
+                                                        isDistributor &&
+                                                        quantity == 0 &&
+                                                        partialBlisters == 0 &&
+                                                        wastedBlisters == 0)) {
+                                                  DigitToast.show(
+                                                    context,
+                                                    options: DigitToastOptions(
+                                                      localizations.translate(
+                                                        i18.stockDetails
+                                                            .quantityMinError,
+                                                      ),
+                                                      true,
+                                                      theme,
+                                                    ),
+                                                  );
+
+                                                  return;
+                                                }
 
                                                 final lat =
                                                     locationState.latitude;
@@ -1370,9 +1402,11 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                             Validators.number,
                                                             Validators.required,
                                                             Validators.min(
-                                                                minQuantity),
+                                                              minQuantity,
+                                                            ),
                                                             Validators.max(
-                                                                maxQuantity),
+                                                              maxQuantity,
+                                                            ),
                                                           ],
                                                           updateParent: true,
                                                           autoValidate: true,
@@ -1656,7 +1690,16 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                               )
                                               .replaceAll(
                                                 '{}',
-                                                minQuantity.toString(),
+                                                (entryType ==
+                                                                StockRecordEntryType
+                                                                    .returned &&
+                                                            isHealthFacilitySupervisor) ||
+                                                        (entryType ==
+                                                                StockRecordEntryType
+                                                                    .dispatch &&
+                                                            isDistributor)
+                                                    ? minQuantity.toString()
+                                                    : "1",
                                               ),
                                         },
                                         label: localizations.translate(
