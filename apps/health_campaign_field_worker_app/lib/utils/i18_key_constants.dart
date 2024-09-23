@@ -890,6 +890,8 @@ class StockDetails {
   String get senderReceiverValidation =>
       'STOCK_DETAILS_SENDER_RECEIVER_ID_VALIDATION';
 
+  String get quantityMinError => 'STOCK_DETAILS_MIN_QUANTITY_ERROR';
+
   String get stockRecordDialogDynamicDescription =>
       'STOCK_RECORD_DIALOG_DYNAMIC_DESCRIPTION';
   String get stockRecordSuccessLabel =>
