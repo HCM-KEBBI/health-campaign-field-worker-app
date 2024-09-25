@@ -137,20 +137,11 @@ class _ProjectSelectionPageState extends LocalizedState<ProjectSelectionPage> {
               }
 
               final selectedProject = state.selectedProject;
-              if (selectedProject != null) {
+                 if (selectedProject != null) {
                 final boundary = selectedProject.address?.boundary;
 
                 if (boundary != null) {
-                  context.read<BoundaryBloc>().add(
-                        BoundarySearchEvent(
-                          code: boundary,
-                        ),
-                      );
-
-                  context.router.replaceAll([
-                    HomeRoute(),
-                    BoundarySelectionRoute(),
-                  ]);
+                  navigateToBoundary(boundary);
                 } else {
                   DigitToast.show(
                     context,
@@ -265,4 +256,19 @@ class _ProjectSelectionPageState extends LocalizedState<ProjectSelectionPage> {
       ),
     );
   }
+   void navigateToBoundary(String boundary) async {
+    BoundaryBloc boundaryBloc = context.read<BoundaryBloc>();
+    boundaryBloc.add(BoundaryFindEvent(code: boundary));
+    try {
+      await boundaryBloc.stream
+          .firstWhere((element) => element.boundaryList.isNotEmpty);
+      context.router.replaceAll([
+        HomeRoute(),
+        BoundarySelectionRoute(),
+      ]);
+    } catch (e) {
+      debugPrint('error $e');
+    }
+  }
+
 }

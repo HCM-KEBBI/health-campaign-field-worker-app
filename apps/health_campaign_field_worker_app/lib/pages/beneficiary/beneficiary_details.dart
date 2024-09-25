@@ -232,62 +232,62 @@ class _BeneficiaryDetailsPageState
                                                         )
                                                         .sku;
 
-                                                    if (value == null ||
-                                                        (value.contains(Constants
-                                                                .spaq1String) &&
-                                                            spaq1 >= 2) ||
-                                                        (!value.contains(Constants
-                                                                .spaq1String) &&
-                                                            spaq2 >= 2)) {
+                                                    // if (value == null ||
+                                                    //     (value.contains(Constants
+                                                    //             .spaq1String) &&
+                                                    //         spaq1 >= 2) ||
+                                                    //     (!value.contains(Constants
+                                                    //             .spaq1String) &&
+                                                    //         spaq2 >= 2)) {
                                                       router.push(
                                                         DeliverInterventionRoute(),
                                                       );
-                                                    } else {
-                                                      DigitDialog.show(
-                                                        context,
-                                                        options:
-                                                            DigitDialogOptions(
-                                                          titleText:
-                                                              localizations
-                                                                  .translate(
-                                                            i18.beneficiaryDetails
-                                                                .insufficientStockHeading,
-                                                          ),
-                                                          titleIcon: Icon(
-                                                            Icons.warning,
-                                                            color: DigitTheme
-                                                                .instance
-                                                                .colorScheme
-                                                                .error,
-                                                          ),
-                                                          contentText:
-                                                              localizations
-                                                                  .translate(
-                                                            i18.beneficiaryDetails
-                                                                .insufficientStockMessageDelivery,
-                                                          ),
-                                                          primaryAction:
-                                                              DigitDialogActions(
-                                                            label: localizations
-                                                                .translate(i18
-                                                                    .beneficiaryDetails
-                                                                    .backToHouseholdDetails),
-                                                            action: (ctx) {
-                                                              Navigator.of(
-                                                                context,
-                                                                rootNavigator:
-                                                                    true,
-                                                              ).pop();
-                                                              context.router
-                                                                  .popUntilRouteWithName(
-                                                                HouseholdOverviewRoute
-                                                                    .name,
-                                                              );
-                                                            },
-                                                          ),
-                                                        ),
-                                                      );
-                                                    }
+                                                    // } else {
+                                                    //   DigitDialog.show(
+                                                    //     context,
+                                                    //     options:
+                                                    //         DigitDialogOptions(
+                                                    //       titleText:
+                                                    //           localizations
+                                                    //               .translate(
+                                                    //         i18.beneficiaryDetails
+                                                    //             .insufficientStockHeading,
+                                                    //       ),
+                                                    //       titleIcon: Icon(
+                                                    //         Icons.warning,
+                                                    //         color: DigitTheme
+                                                    //             .instance
+                                                    //             .colorScheme
+                                                    //             .error,
+                                                    //       ),
+                                                    //       contentText:
+                                                    //           localizations
+                                                    //               .translate(
+                                                    //         i18.beneficiaryDetails
+                                                    //             .insufficientStockMessageDelivery,
+                                                    //       ),
+                                                    //       primaryAction:
+                                                    //           DigitDialogActions(
+                                                    //         label: localizations
+                                                    //             .translate(i18
+                                                    //                 .beneficiaryDetails
+                                                    //                 .backToHouseholdDetails),
+                                                    //         action: (ctx) {
+                                                    //           Navigator.of(
+                                                    //             context,
+                                                    //             rootNavigator:
+                                                    //                 true,
+                                                    //           ).pop();
+                                                    //           context.router
+                                                    //               .popUntilRouteWithName(
+                                                    //             HouseholdOverviewRoute
+                                                    //                 .name,
+                                                    //           );
+                                                    //         },
+                                                    //       ),
+                                                    //     ),
+                                                    //   );
+                                                    // }
                                                   },
                                                 ),
                                               ),

@@ -12,13 +12,17 @@ class BoundarySearchModel extends EntitySearchModel with BoundarySearchModelMapp
   final String? tenantId;
   @override
   final bool? isDeleted;
+  final bool? isSingle;
   final String? code;
+  final int? boundaryNum;
 
   BoundarySearchModel({
     this.boundaryType,
     this.tenantId,
     this.isDeleted,
+  this.boundaryNum,
     this.code,
+  this.isSingle,
     super.boundaryCode,
   }) : super();
 
@@ -27,6 +31,8 @@ class BoundarySearchModel extends EntitySearchModel with BoundarySearchModelMapp
     this.boundaryType,
     this.tenantId,
     this.code,
+    this.isSingle,
+    this.boundaryNum,
     super.boundaryCode,
     super.additionalFields,
     super.auditDetails,
