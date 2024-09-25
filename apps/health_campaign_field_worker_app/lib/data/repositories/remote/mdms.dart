@@ -317,9 +317,9 @@ class MdmsRepository {
       return reasonTypes;
     }).toList();
 
-    await isar.writeTxn(() async {
-      await isar.appConfigurations.put(appConfiguration);
-      await isar.rowVersionLists.putAll(rowVersionList);
+    isar.writeTxnSync(() {
+      isar.appConfigurations.putSync(appConfiguration);
+      isar.rowVersionLists.putAllSync(rowVersionList);
     });
   }
 

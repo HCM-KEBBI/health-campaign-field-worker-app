@@ -1,14 +1,11 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:stream_transform/stream_transform.dart';
 
 import '../../blocs/household_overview/household_overview.dart';
 import '../../blocs/localization/app_localization.dart';
-import '../../blocs/product_variant/product_variant.dart';
 import '../../models/data_model.dart';
 import '../../models/entities/identifier_types.dart';
-import '../../models/project_type/project_type_model.dart';
 import '../../router/app_router.dart';
 import '../../utils/i18_key_constants.dart' as i18;
 import '../../utils/utils.dart';
@@ -347,11 +344,11 @@ class MemberCard extends StatelessWidget {
                                           //           Constants.spaq1String,
                                           //         ) &&
                                           //         spaq2 >= 2)) {
-                                            context.router.push(
-                                              RecordRedoseRoute(
-                                                tasks: [successfulTask!],
-                                              ),
-                                            );
+                                          context.router.push(
+                                            RecordRedoseRoute(
+                                              tasks: [successfulTask!],
+                                            ),
+                                          );
                                           // } else {
                                           //   DigitDialog.show(
                                           //     context,

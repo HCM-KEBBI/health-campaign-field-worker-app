@@ -1,8 +1,5 @@
-import 'dart:math';
-
 import 'package:collection/collection.dart';
 import 'package:digit_components/digit_components.dart';
-import 'package:digit_components/widgets/atoms/digit_reactive_search_dropdown.dart';
 import 'package:digit_components/widgets/atoms/digit_stepper.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:flutter/material.dart';
@@ -15,12 +12,10 @@ import '../../blocs/delivery_intervention/deliver_intervention.dart';
 import '../../blocs/household_overview/household_overview.dart';
 import '../../blocs/product_variant/product_variant.dart';
 import '../../blocs/project/project.dart';
-import '../../blocs/search_households/search_households.dart';
 import '../../data/local_store/no_sql/schema/app_configuration.dart';
 import '../../models/data_model.dart';
 import '../../models/project_type/project_type_model.dart';
 import '../../router/app_router.dart';
-import '../../utils/environment_config.dart';
 import '../../utils/i18_key_constants.dart' as i18;
 import '../../utils/utils.dart';
 import '../../widgets/beneficiary/resource_beneficiary_card.dart';
@@ -657,8 +652,10 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
 
     // Add controllers for each product variant to the _controllers list.
 
-    _controllers
-        .addAll(productVariants!.map((e) => productVariants.indexOf(e)));
+    if (productVariants != null) {
+      _controllers
+          .addAll(productVariants!.map((e) => productVariants.indexOf(e)));
+    }
 
     return fb.group(<String, Object>{
       _doseAdministrationKey: FormControl<String>(
@@ -677,7 +674,7 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                     ? variants.firstWhereOrNull(
                         (element) =>
                             element.id ==
-                            productVariants
+                            productVariants!
                                 .elementAt(_controllers.indexOf(e))
                                 .productVariantId,
                       )

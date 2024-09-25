@@ -102,10 +102,7 @@ abstract class RemoteRepository<D extends EntityModel,
         },
       );
     } on DioError catch (error) {
-      if (error.response == null ||
-          error.response!.data['Errors'][0]['message']
-              .toString()
-              .contains(Constants.invalidAccessTokenKey)) {
+      if (error.response == null) {
         rethrow;
       } else {
         return [];
@@ -149,7 +146,9 @@ abstract class RemoteRepository<D extends EntityModel,
 
     final entityList = entityResponse.whereType<Map<String, dynamic>>();
 
-    return entityList.map((e) => MapperContainer.globals.fromMap<D>(e)).toList();
+    return entityList
+        .map((e) => MapperContainer.globals.fromMap<D>(e))
+        .toList();
   }
 
   FutureOr<Response> singleCreate(D entity) async {

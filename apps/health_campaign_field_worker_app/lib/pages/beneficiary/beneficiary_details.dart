@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:health_campaign_field_worker_app/pages/beneficiary/widgets/past_delivery.dart';
 import 'package:intl/intl.dart';
-import 'package:recase/recase.dart';
 
 import '../../blocs/delivery_intervention/deliver_intervention.dart';
 import '../../blocs/household_overview/household_overview.dart';
@@ -239,9 +238,9 @@ class _BeneficiaryDetailsPageState
                                                     //     (!value.contains(Constants
                                                     //             .spaq1String) &&
                                                     //         spaq2 >= 2)) {
-                                                      router.push(
-                                                        DeliverInterventionRoute(),
-                                                      );
+                                                    router.push(
+                                                      DeliverInterventionRoute(),
+                                                    );
                                                     // } else {
                                                     //   DigitDialog.show(
                                                     //     context,

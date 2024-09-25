@@ -376,17 +376,17 @@ class _HomePageState extends LocalizedState<HomePage> {
         onPressed: () => context.router.push(ChecklistWrapperRoute()),
       ),
       i18.home.fileComplaint: HomeItemCard(
-          icon: Icons.announcement,
-          label: i18.home.fileComplaint,
-          onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => DriftDbViewer(
-                    context.read<LocalSqlDataStore>(),
-                  ),
-                ),
-              ),
-          // context.router.push(const ComplaintsInboxWrapperRoute()),
+        icon: Icons.announcement,
+        label: i18.home.fileComplaint,
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => DriftDbViewer(
+              context.read<LocalSqlDataStore>(),
+            ),
           ),
+        ),
+        // context.router.push(const ComplaintsInboxWrapperRoute()),
+      ),
       i18.home.syncDataLabel: StreamBuilder<Map<String, dynamic>?>(
         stream: FlutterBackgroundService().on('serviceRunning'),
         builder: (context, snapshot) {
@@ -418,8 +418,12 @@ class _HomePageState extends LocalizedState<HomePage> {
         icon: Icons.announcement,
         label: i18.home.viewReportsLabel,
         onPressed: () {
-          context.router.push(
-            InventoryReportSelectionRoute(),
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => DriftDbViewer(
+                context.read<LocalSqlDataStore>(),
+              ),
+            ),
           );
         },
       ),
