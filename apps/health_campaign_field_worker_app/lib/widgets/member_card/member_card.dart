@@ -338,55 +338,55 @@ class MemberCard extends StatelessWidget {
                                               )
                                               .sku;
 
-                                          if (value == null ||
-                                              (value.contains(
-                                                    Constants.spaq1String,
-                                                  ) &&
-                                                  spaq1 >= 2) ||
-                                              (!value.contains(
-                                                    Constants.spaq1String,
-                                                  ) &&
-                                                  spaq2 >= 2)) {
+                                          // if (value == null ||
+                                          //     (value.contains(
+                                          //           Constants.spaq1String,
+                                          //         ) &&
+                                          //         spaq1 >= 2) ||
+                                          //     (!value.contains(
+                                          //           Constants.spaq1String,
+                                          //         ) &&
+                                          //         spaq2 >= 2)) {
                                             context.router.push(
                                               RecordRedoseRoute(
                                                 tasks: [successfulTask!],
                                               ),
                                             );
-                                          } else {
-                                            DigitDialog.show(
-                                              context,
-                                              options: DigitDialogOptions(
-                                                titleText:
-                                                    localizations.translate(
-                                                  i18.beneficiaryDetails
-                                                      .insufficientStockHeading,
-                                                ),
-                                                titleIcon: Icon(
-                                                  Icons.warning,
-                                                  color: DigitTheme.instance
-                                                      .colorScheme.error,
-                                                ),
-                                                contentText:
-                                                    localizations.translate(
-                                                  i18.beneficiaryDetails
-                                                      .insufficientStockMessageDelivery,
-                                                ),
-                                                primaryAction:
-                                                    DigitDialogActions(
-                                                  label: localizations
-                                                      .translate(i18
-                                                          .beneficiaryDetails
-                                                          .backToHouseholdDetails),
-                                                  action: (ctx) {
-                                                    Navigator.of(
-                                                      ctx,
-                                                      rootNavigator: true,
-                                                    ).pop();
-                                                  },
-                                                ),
-                                              ),
-                                            );
-                                          }
+                                          // } else {
+                                          //   DigitDialog.show(
+                                          //     context,
+                                          //     options: DigitDialogOptions(
+                                          //       titleText:
+                                          //           localizations.translate(
+                                          //         i18.beneficiaryDetails
+                                          //             .insufficientStockHeading,
+                                          //       ),
+                                          //       titleIcon: Icon(
+                                          //         Icons.warning,
+                                          //         color: DigitTheme.instance
+                                          //             .colorScheme.error,
+                                          //       ),
+                                          //       contentText:
+                                          //           localizations.translate(
+                                          //         i18.beneficiaryDetails
+                                          //             .insufficientStockMessageDelivery,
+                                          //       ),
+                                          //       primaryAction:
+                                          //           DigitDialogActions(
+                                          //         label: localizations
+                                          //             .translate(i18
+                                          //                 .beneficiaryDetails
+                                          //                 .backToHouseholdDetails),
+                                          //         action: (ctx) {
+                                          //           Navigator.of(
+                                          //             ctx,
+                                          //             rootNavigator: true,
+                                          //           ).pop();
+                                          //         },
+                                          //       ),
+                                          //     ),
+                                          //   );
+                                          // }
                                         } else {
                                           context.router.push(
                                             BeneficiaryDetailsRoute(),

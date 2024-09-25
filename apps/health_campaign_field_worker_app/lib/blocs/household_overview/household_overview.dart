@@ -160,11 +160,15 @@ class HouseholdOverviewBloc
       return;
     }
 
+
+print("----PROJECTBENEFICIARIES--- ${projectBeneficiaries.length}");
     // Search for tasks associated with project beneficiaries.
     final tasks = await taskDataRepository.search(TaskSearchModel(
       projectBeneficiaryClientReferenceId:
           projectBeneficiaries.map((e) => e.clientReferenceId).toList(),
     ));
+
+print("-----TASK----- ${tasks.length}");
 
     // Search for adverse events associated with tasks.
     final sideEffects =

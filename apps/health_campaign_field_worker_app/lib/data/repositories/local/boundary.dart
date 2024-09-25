@@ -50,19 +50,42 @@ class BoundaryLocalRepository extends BoundaryLocalBaseRepository {
   @override
   FutureOr<List<BoundaryModel>> search(BoundarySearchModel query) async {
     return retryLocalCallOperation<List<BoundaryModel>>(() async {
-      final selectQuery = sql.select(sql.boundary).join([]);
-      final results = await (selectQuery
-            ..where(buildAnd([
-              if (query.code != null)
-                sql.boundary.materializedPath.like('%${query.code}%'),
-              if (query.boundaryType != null && query.boundaryType!.isNotEmpty)
-                sql.boundary.label.equals(query.boundaryType!),
-              sql.boundary.materializedPath.isNotNull(),
-              sql.boundary.materializedPath.isNotIn(['']),
-              sql.boundary.code.isNotNull(),
-              sql.boundary.code.isNotIn(['']),
-            ])))
-          .get();
+      final selectQuery = sql
+          .select(
+        sql.boundary,
+        distinct: true,
+      )
+          .join([]);
+
+      final sQuery = sql.selectOnly(sql.boundary)
+        ..addColumns(
+            [sql.boundary.boundaryNum, sql.boundary.boundaryNum.max()],);
+
+      final result = await sQuery.getSingle();
+      final r = result.read(sql.boundary.boundaryNum);
+
+      if (query.isSingle == true) {
+        (selectQuery
+              ..where(buildAnd([
+                sql.boundary.boundaryNum.isSmallerOrEqualValue(r!),
+              ])))
+            .limit(r);
+      } else {
+        (selectQuery
+          ..where(buildAnd([
+            if (query.code != null)
+              sql.boundary.materializedPath.like('%${query.code}%'),
+            sql.boundary.materializedPath.isNotNull(),
+            if (query.boundaryType != null && query.boundaryType!.isNotEmpty)
+              sql.boundary.label.equals(query.boundaryType!),
+            if (query.boundaryNum != null)
+              sql.boundary.boundaryNum.equals(query.boundaryNum! + 1),
+            sql.boundary.materializedPath.isNotIn(['']),
+            sql.boundary.code.isNotNull(),
+            sql.boundary.code.isNotIn(['']),
+          ])));
+      }
+      final results = await selectQuery.get();
 
       final queriedBoundaries = results.map((e) {
         final data = e.readTable(sql.boundary);

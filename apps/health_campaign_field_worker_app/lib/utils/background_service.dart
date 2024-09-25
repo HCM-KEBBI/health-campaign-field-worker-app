@@ -108,7 +108,7 @@ void onStart(ServiceInstance service) async {
     if (interval != null) {
       int i = 0;
       makePeriodicTimer(
-        Duration(seconds: interval),
+        const Duration(seconds: 60),
         (timer) async {
           service.invoke('serviceRunning', {
             "enablesManualSync": false,

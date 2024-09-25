@@ -30,9 +30,15 @@ class BoundarySearchModelMapper
   static String? _$tenantId(BoundarySearchModel v) => v.tenantId;
   static const Field<BoundarySearchModel, String> _f$tenantId =
       Field('tenantId', _$tenantId, opt: true);
+       static int? _$boundaryNum(BoundarySearchModel v) => v.boundaryNum;
+  static const Field<BoundarySearchModel, int> _f$boundaryNum =
+      Field('boundaryNum', _$boundaryNum, opt: true);
   static String? _$code(BoundarySearchModel v) => v.code;
   static const Field<BoundarySearchModel, String> _f$code =
       Field('code', _$code, opt: true);
+        static bool? _$isSingle(BoundarySearchModel v) => v.isSingle;
+  static const Field<BoundarySearchModel, bool> _f$isSingle =
+      Field('isSingle', _$isSingle, opt: true);
   static String? _$boundaryCode(BoundarySearchModel v) => v.boundaryCode;
   static const Field<BoundarySearchModel, String> _f$boundaryCode =
       Field('boundaryCode', _$boundaryCode, opt: true);
@@ -51,9 +57,11 @@ class BoundarySearchModelMapper
     #boundaryType: _f$boundaryType,
     #tenantId: _f$tenantId,
     #code: _f$code,
+    #isSingle: _f$isSingle,
     #boundaryCode: _f$boundaryCode,
     #additionalFields: _f$additionalFields,
     #auditDetails: _f$auditDetails,
+    #boundaryNum: _f$boundaryNum,
   };
   @override
   final bool ignoreNull = true;

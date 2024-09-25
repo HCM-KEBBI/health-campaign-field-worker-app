@@ -364,41 +364,42 @@ class _SearchBeneficiaryPageState
                     onPressed = () {
                       FocusManager.instance.primaryFocus?.unfocus();
 
-                      if (spaq1 >= 2 && spaq2 >= 2) {
+                      // if (spaq1 >= 2 && spaq2 >= 2) {
                         searchController.clear();
                         router.push(BeneficiaryRegistrationWrapperRoute(
                           initialState: BeneficiaryRegistrationCreateState(
                             searchQuery: state.searchQuery,
                           ),
                         ));
-                      } else {
-                        DigitDialog.show(
-                          context,
-                          options: DigitDialogOptions(
-                            titleText: localizations.translate(
-                              i18.beneficiaryDetails.insufficientStockHeading,
-                            ),
-                            titleIcon: Icon(
-                              Icons.warning,
-                              color: DigitTheme.instance.colorScheme.error,
-                            ),
-                            contentText: localizations.translate(
-                              i18.beneficiaryDetails.insufficientStockMessage,
-                            ),
-                            primaryAction: DigitDialogActions(
-                              label: localizations
-                                  .translate(i18.beneficiaryDetails.backToHome),
-                              action: (ctx) {
-                                Navigator.of(context, rootNavigator: true)
-                                    .pop();
-                                context.router
-                                    .popUntilRouteWithName(HomeRoute.name);
-                              },
-                            ),
-                          ),
-                        );
-                      }
+                    //   } else {
+                    //     DigitDialog.show(
+                    //       context,
+                    //       options: DigitDialogOptions(
+                    //         titleText: localizations.translate(
+                    //           i18.beneficiaryDetails.insufficientStockHeading,
+                    //         ),
+                    //         titleIcon: Icon(
+                    //           Icons.warning,
+                    //           color: DigitTheme.instance.colorScheme.error,
+                    //         ),
+                    //         contentText: localizations.translate(
+                    //           i18.beneficiaryDetails.insufficientStockMessage,
+                    //         ),
+                    //         primaryAction: DigitDialogActions(
+                    //           label: localizations
+                    //               .translate(i18.beneficiaryDetails.backToHome),
+                    //           action: (ctx) {
+                    //             Navigator.of(context, rootNavigator: true)
+                    //                 .pop();
+                    //             context.router
+                    //                 .popUntilRouteWithName(HomeRoute.name);
+                    //           },
+                    //         ),
+                    //       ),
+                    //     );
+                    //   }
                     };
+
 
                     return DigitElevatedButton(
                       onPressed: onPressed,
