@@ -74,34 +74,9 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    List<StepsModel> generateSteps(int numberOfDoses) {
-      return List.generate(numberOfDoses, (index) {
-        return StepsModel(
-          title:
-              '${localizations.translate(i18.deliverIntervention.dose)}${index + 1}',
-          number: (index + 1).toString(),
-        );
-      });
-    }
-
     return ProductVariantBlocWrapper(
       child: BlocBuilder<HouseholdOverviewBloc, HouseholdOverviewState>(
         builder: (context, householdOverviewState) {
-          final householdMemberWrapper =
-              householdOverviewState.householdMemberWrapper;
-
-          final projectBeneficiary =
-              context.beneficiaryType != BeneficiaryType.individual
-                  ? [householdMemberWrapper.projectBeneficiaries.first]
-                  : householdMemberWrapper.projectBeneficiaries
-                      .where(
-                        (element) =>
-                            element.beneficiaryClientReferenceId ==
-                            householdOverviewState
-                                .selectedIndividual?.clientReferenceId,
-                      )
-                      .toList();
-
           final projectState = context.read<ProjectBloc>().state;
 
           return Scaffold(
@@ -278,12 +253,6 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
 
                                                   if (shouldSubmit ?? false) {
                                                     if (context.mounted) {
-                                                      // context.router
-                                                      //     .popUntilRouteWithName(
-                                                      //   BeneficiaryWrapperRoute
-                                                      //       .name,
-                                                      // );
-
                                                       int spaq1 = 0;
                                                       int spaq2 = 0;
 
