@@ -437,16 +437,20 @@ bool checkStatus(
 }
 
 bool redosePending(List<TaskModel>? tasks) {
+  var redosePending = true;
   if ((tasks ?? []).isEmpty) {
     return true;
   }
-  var successfulTask = tasks!
+
+  // get the fist task which was marked as visited as this is the one which was created in redose flow
+  var redoseTask = tasks!
       .where(
-        (element) => element.status == Status.administeredSuccess.toValue(),
+        (element) => element.status == Status.visited.toValue(),
       )
       .lastOrNull;
-  var redosePending = successfulTask != null &&
-      (successfulTask.additionalFields?.fields
+  redosePending = redoseTask == null
+      ? true
+      : (redoseTask.additionalFields?.fields
                   .where(
                     (element) => element.key == Constants.reAdministeredKey,
                   )
@@ -455,6 +459,17 @@ bool redosePending(List<TaskModel>? tasks) {
           .isEmpty;
 
   return redosePending;
+}
+
+bool assessmentPending(List<TaskModel>? tasks) {
+  // this task confirms eligibility and dose administrations is done
+  var successfulTask = tasks!
+      .where(
+        (element) => element.status == Status.administeredSuccess.toValue(),
+      )
+      .lastOrNull;
+
+  return successfulTask == null;
 }
 
 bool recordedSideEffect(

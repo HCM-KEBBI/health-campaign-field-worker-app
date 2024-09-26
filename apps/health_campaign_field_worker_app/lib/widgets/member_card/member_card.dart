@@ -64,7 +64,9 @@ class MemberCard extends StatelessWidget {
     final theme = Theme.of(context);
     final beneficiaryType = context.beneficiaryType;
     final doseStatus = checkStatus(tasks, context.selectedCycle);
-    final redosePendingStatus = redosePending(tasks);
+    final assessmentPendingStatus = assessmentPending(tasks);
+    final redosePendingStatus =
+        assessmentPendingStatus ? true : redosePending(tasks);
 
     return Container(
       decoration: BoxDecoration(
@@ -287,7 +289,7 @@ class MemberCard extends StatelessWidget {
                                                 i18.householdOverView
                                                     .viewDeliveryLabel,
                                               )
-                                            : (tasks ?? []).isEmpty
+                                            : assessmentPendingStatus
                                                 ? localizations.translate(
                                                     i18.householdOverView
                                                         .householdOverViewAssessmentActionText,

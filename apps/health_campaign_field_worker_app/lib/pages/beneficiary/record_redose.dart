@@ -226,6 +226,10 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                     quantityDistributedFormArray,
                                                     form,
                                                   );
+                                                  var newTask = getNewTask(
+                                                    context,
+                                                    updatedTask,
+                                                  );
 
                                                   final shouldSubmit =
                                                       await DigitDialog.show<
@@ -345,6 +349,8 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                       final reloadState =
                                                           context.read<
                                                               HouseholdOverviewBloc>();
+                                                      // submit the updated task
+
                                                       context
                                                           .read<
                                                               DeliverInterventionBloc>()
@@ -357,10 +363,23 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                               context.boundary,
                                                             ),
                                                           );
+                                                      // submit the newly created task
+                                                      context
+                                                          .read<
+                                                              DeliverInterventionBloc>()
+                                                          .add(
+                                                            DeliverInterventionSubmitEvent(
+                                                              [
+                                                                newTask,
+                                                              ],
+                                                              false,
+                                                              context.boundary,
+                                                            ),
+                                                          );
 
                                                       Future.delayed(
                                                         const Duration(
-                                                          milliseconds: 500,
+                                                          milliseconds: 300,
                                                         ),
                                                         () {
                                                           reloadState.add(
@@ -650,6 +669,68 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
     );
 
     return updatedTask;
+  }
+
+  TaskModel getNewTask(
+    BuildContext context,
+    TaskModel? oldTask,
+  ) {
+    // Initialize task with oldTask if available, or create a new one
+    var task = oldTask;
+    var clientReferenceId = IdGen.i.identifier;
+
+    // update the task with latest clientauditDetails and auditdetails
+
+    task = oldTask!.copyWith(
+      id: null,
+      clientReferenceId: clientReferenceId,
+      tenantId: envConfig.variables.tenantId,
+      rowVersion: 1,
+      auditDetails: AuditDetails(
+        createdBy: context.loggedInUserUuid,
+        createdTime: context.millisecondsSinceEpoch(),
+      ),
+      clientAuditDetails: ClientAuditDetails(
+        createdBy: context.loggedInUserUuid,
+        createdTime: context.millisecondsSinceEpoch(),
+      ),
+      // setting the status here as visited to separate this task from other successful task
+      status: Status.visited.toValue(),
+    );
+    // update the task resources with latest clientauditDetails and auditdetails
+
+    List<TaskResourceModel> newTaskResources = [];
+
+    for (var resource in task.resources!) {
+      newTaskResources.add(
+        TaskResourceModel(
+          taskclientReferenceId: clientReferenceId,
+          clientReferenceId: IdGen.i.identifier,
+          productVariantId: resource.productVariantId,
+          isDelivered: true,
+          taskId: task?.id,
+          tenantId: envConfig.variables.tenantId,
+          rowVersion: task?.rowVersion ?? 1,
+          quantity: resource.quantity,
+          additionalFields: resource.additionalFields,
+          deliveryComment: resource.deliveryComment,
+          clientAuditDetails: ClientAuditDetails(
+            createdBy: context.loggedInUserUuid,
+            createdTime: context.millisecondsSinceEpoch(),
+          ),
+          auditDetails: AuditDetails(
+            createdBy: context.loggedInUserUuid,
+            createdTime: context.millisecondsSinceEpoch(),
+          ),
+        ),
+      );
+    }
+
+    task = task.copyWith(
+      resources: newTaskResources,
+    );
+
+    return task;
   }
 
 // This method builds a form used for delivering interventions.
