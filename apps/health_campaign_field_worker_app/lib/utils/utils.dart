@@ -463,6 +463,9 @@ bool redosePending(List<TaskModel>? tasks) {
 
 bool assessmentPending(List<TaskModel>? tasks) {
   // this task confirms eligibility and dose administrations is done
+  if ((tasks ?? []).isEmpty) {
+    return true;
+  }
   var successfulTask = tasks!
       .where(
         (element) => element.status == Status.administeredSuccess.toValue(),
