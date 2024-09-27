@@ -59,13 +59,17 @@ class _ReferralFacilityPageState extends LocalizedState<ReferralFacilityPage> {
           orElse: () => const SizedBox.shrink(),
           fetched: (facilities, facilityMap) {
             final projectFacilities = facilities
-                .where((e) => e.id != 'N/A' && e.id != 'Delivery Team')
+                .where((e) =>
+                    e.id != 'N/A' &&
+                    e.id != 'Delivery Team' &&
+                    !(facilityMap[e.facilityId] ?? '')
+                        .contains(Constants.lgaBoundaryLevel))
                 .toList();
 
             projectFacility = projectFacilities.length >= 2
                 ? projectFacilities.firstWhereOrNull((element) =>
-                    ctx.loggedInUser.permanentCity ==
-                    facilityMap[element.facilityId])
+                    !(facilityMap[element.facilityId] ?? '')
+                        .contains(Constants.lgaBoundaryLevel))
                 : projectFacilities.firstOrNull;
 
             return Scaffold(
