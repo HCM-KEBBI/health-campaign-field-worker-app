@@ -26,9 +26,6 @@
    <application
         android:label="Nig Gov"
         android:name="${applicationName}"
-        android:allowBackup="false"
-        android:fullBackupOnly="false"
-        android:fullBackupContent="false"
         android:icon="@mipmap/kebbi_logo">
         <activity
             android:showWhenLocked="false"
