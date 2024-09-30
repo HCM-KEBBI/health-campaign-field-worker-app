@@ -48,12 +48,16 @@ class _BeneficiaryAcknowledgementPageState
         },
         secondaryAction: () {
           final bloc = context.read<SearchHouseholdsBloc>();
+          if (bloc.state.householdMembers.isEmpty) {
+            context.router.pop();
+          } else {
+            context.router.popAndPush(
+              BeneficiaryWrapperRoute(
+                wrapper: bloc.state.householdMembers.first,
+              ),
+            );
+          }
 
-          context.router.popAndPush(
-            BeneficiaryWrapperRoute(
-              wrapper: bloc.state.householdMembers.first,
-            ),
-          );
           // final wrapper = context
           //     .read<HouseholdOverviewBloc>()
           //     .state

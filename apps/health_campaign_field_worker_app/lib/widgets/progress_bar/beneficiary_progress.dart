@@ -75,12 +75,13 @@ class _BeneficiaryProgressBarState extends State<BeneficiaryProgressBar> {
           final groupedEntries = results.groupListsBy(
             (element) => element.projectBeneficiaryClientReferenceId,
           );
-
-          setState(() {
-            if (mounted) {
-              current = groupedEntries.entries.length;
-            }
-          });
+          if (mounted) {
+            setState(() {
+              if (mounted) {
+                current = groupedEntries.entries.length;
+              }
+            });
+          }
         }
       },
     );
