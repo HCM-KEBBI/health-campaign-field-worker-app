@@ -67,17 +67,25 @@ class _IndividualDetailsPageState
                 if (value.navigateToRoot) {
                   (router.parent() as StackRouter).pop();
                 } else {
-                  (router.parent() as StackRouter).pop();
-                  context.read<SearchHouseholdsBloc>().add(
-                        SearchHouseholdsByHouseholdsEvent(
-                          householdModel: value.householdModel,
-                          projectId: context.projectId,
-                          isProximityEnabled: false,
-                        ),
-                      );
-                  router.push(BeneficiaryAcknowledgementRoute(
-                    enableViewHousehold: true,
-                  ));
+                  Future.delayed(
+                    const Duration(
+                      milliseconds: 200,
+                    ),
+                    () {
+                      (router.parent() as StackRouter).pop();
+                      context.read<SearchHouseholdsBloc>().add(
+                            SearchHouseholdsByHouseholdsEvent(
+                              householdModel: value.householdModel,
+                              projectId: context.projectId,
+                              isProximityEnabled: false,
+                            ),
+                          );
+                    },
+                  ).then((value) => {
+                        router.push(BeneficiaryAcknowledgementRoute(
+                          enableViewHousehold: true,
+                        )),
+                      });
                 }
               },
             );

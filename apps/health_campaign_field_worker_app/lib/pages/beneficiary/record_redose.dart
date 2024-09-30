@@ -74,34 +74,9 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    List<StepsModel> generateSteps(int numberOfDoses) {
-      return List.generate(numberOfDoses, (index) {
-        return StepsModel(
-          title:
-              '${localizations.translate(i18.deliverIntervention.dose)}${index + 1}',
-          number: (index + 1).toString(),
-        );
-      });
-    }
-
     return ProductVariantBlocWrapper(
       child: BlocBuilder<HouseholdOverviewBloc, HouseholdOverviewState>(
         builder: (context, householdOverviewState) {
-          final householdMemberWrapper =
-              householdOverviewState.householdMemberWrapper;
-
-          final projectBeneficiary =
-              context.beneficiaryType != BeneficiaryType.individual
-                  ? [householdMemberWrapper.projectBeneficiaries.first]
-                  : householdMemberWrapper.projectBeneficiaries
-                      .where(
-                        (element) =>
-                            element.beneficiaryClientReferenceId ==
-                            householdOverviewState
-                                .selectedIndividual?.clientReferenceId,
-                      )
-                      .toList();
-
           final projectState = context.read<ProjectBloc>().state;
 
           return Scaffold(
@@ -226,6 +201,10 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                     quantityDistributedFormArray,
                                                     form,
                                                   );
+                                                  var newTask = getNewTask(
+                                                    context,
+                                                    updatedTask,
+                                                  );
 
                                                   final shouldSubmit =
                                                       await DigitDialog.show<
@@ -274,25 +253,6 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
 
                                                   if (shouldSubmit ?? false) {
                                                     if (context.mounted) {
-                                                      context.router
-                                                          .popUntilRouteWithName(
-                                                        BeneficiaryWrapperRoute
-                                                            .name,
-                                                      );
-
-                                                      context
-                                                          .read<
-                                                              DeliverInterventionBloc>()
-                                                          .add(
-                                                            DeliverInterventionSubmitEvent(
-                                                              [
-                                                                updatedTask,
-                                                              ],
-                                                              true,
-                                                              context.boundary,
-                                                            ),
-                                                          );
-
                                                       int spaq1 = 0;
                                                       int spaq2 = 0;
 
@@ -358,23 +318,57 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                       final reloadState =
                                                           context.read<
                                                               HouseholdOverviewBloc>();
+                                                      // submit the updated task
 
-                                                      reloadState.add(
-                                                        HouseholdOverviewReloadEvent(
-                                                          projectId:
-                                                              context.projectId,
-                                                          projectBeneficiaryType:
-                                                              context
-                                                                  .beneficiaryType,
-                                                        ),
-                                                      );
-
-                                                      context.router.push(
-                                                        HouseholdAcknowledgementRoute(
-                                                          enableViewHousehold:
+                                                      context
+                                                          .read<
+                                                              DeliverInterventionBloc>()
+                                                          .add(
+                                                            DeliverInterventionSubmitEvent(
+                                                              [
+                                                                updatedTask,
+                                                              ],
                                                               true,
+                                                              context.boundary,
+                                                            ),
+                                                          );
+                                                      // submit the newly created task
+                                                      context
+                                                          .read<
+                                                              DeliverInterventionBloc>()
+                                                          .add(
+                                                            DeliverInterventionSubmitEvent(
+                                                              [
+                                                                newTask,
+                                                              ],
+                                                              false,
+                                                              context.boundary,
+                                                            ),
+                                                          );
+
+                                                      Future.delayed(
+                                                        const Duration(
+                                                          milliseconds: 300,
                                                         ),
-                                                      );
+                                                        () {
+                                                          reloadState.add(
+                                                            HouseholdOverviewReloadEvent(
+                                                              projectId: context
+                                                                  .projectId,
+                                                              projectBeneficiaryType:
+                                                                  context
+                                                                      .beneficiaryType,
+                                                            ),
+                                                          );
+                                                        },
+                                                      ).then((value) => {
+                                                            context.router.push(
+                                                              HouseholdAcknowledgementRoute(
+                                                                enableViewHousehold:
+                                                                    true,
+                                                              ),
+                                                            ),
+                                                          });
                                                     }
                                                   }
                                                 }
@@ -644,6 +638,68 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
     );
 
     return updatedTask;
+  }
+
+  TaskModel getNewTask(
+    BuildContext context,
+    TaskModel? oldTask,
+  ) {
+    // Initialize task with oldTask if available, or create a new one
+    var task = oldTask;
+    var clientReferenceId = IdGen.i.identifier;
+
+    // update the task with latest clientauditDetails and auditdetails
+
+    task = oldTask!.copyWith(
+      id: null,
+      clientReferenceId: clientReferenceId,
+      tenantId: envConfig.variables.tenantId,
+      rowVersion: 1,
+      auditDetails: AuditDetails(
+        createdBy: context.loggedInUserUuid,
+        createdTime: context.millisecondsSinceEpoch(),
+      ),
+      clientAuditDetails: ClientAuditDetails(
+        createdBy: context.loggedInUserUuid,
+        createdTime: context.millisecondsSinceEpoch(),
+      ),
+      // setting the status here as visited to separate this task from other successful task
+      status: Status.visited.toValue(),
+    );
+    // update the task resources with latest clientauditDetails and auditdetails
+
+    List<TaskResourceModel> newTaskResources = [];
+
+    for (var resource in task.resources!) {
+      newTaskResources.add(
+        TaskResourceModel(
+          taskclientReferenceId: clientReferenceId,
+          clientReferenceId: IdGen.i.identifier,
+          productVariantId: resource.productVariantId,
+          isDelivered: true,
+          taskId: task?.id,
+          tenantId: envConfig.variables.tenantId,
+          rowVersion: task?.rowVersion ?? 1,
+          quantity: resource.quantity,
+          additionalFields: resource.additionalFields,
+          deliveryComment: resource.deliveryComment,
+          clientAuditDetails: ClientAuditDetails(
+            createdBy: context.loggedInUserUuid,
+            createdTime: context.millisecondsSinceEpoch(),
+          ),
+          auditDetails: AuditDetails(
+            createdBy: context.loggedInUserUuid,
+            createdTime: context.millisecondsSinceEpoch(),
+          ),
+        ),
+      );
+    }
+
+    task = task.copyWith(
+      resources: newTaskResources,
+    );
+
+    return task;
   }
 
 // This method builds a form used for delivering interventions.

@@ -131,7 +131,7 @@ class LocalSqlDataStore extends _$LocalSqlDataStore {
   static LocalSqlDataStore get instance => _instance!;
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 4;
   // Replace this method with your actual method to open the connection
   static DatabaseConnection _openConnection() {
     // Your logic to open the connection
@@ -250,4 +250,4 @@ void _startBackground(_IsolateStartRequest request) {
 }
 
 // used to bundle the SendPort and the target path, since isolate entry point
-// functions can only take one pa
+// functions can only take one parameter.

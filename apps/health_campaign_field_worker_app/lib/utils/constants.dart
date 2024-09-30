@@ -124,6 +124,9 @@ class Constants {
   static const String lgaBoundaryLevel = 'LGA';
   static const String lgaFacility = 'LGA Facility';
   static const String healthFacility = 'Health Facility';
+  static const String curlyBraces = '{}';
+  static const String smallBraces = '()';
+  static const String intTwo = '2';
 
   static List<LocalRepository> getLocalRepositories(
     LocalSqlDataStore sql,

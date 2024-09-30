@@ -326,7 +326,7 @@ class _EligibilityChecklistViewPageState
                                       ifIneligible ||
                                       ifReferral)) {
                                 if (ifIneligible) {
-                                  // todo add the deliversubmitevent here from ineligible reasons page
+                                  // added the deliversubmitevent here
                                   final clientReferenceId = IdGen.i.identifier;
                                   context.read<DeliverInterventionBloc>().add(
                                         DeliverInterventionSubmitEvent(
@@ -395,7 +395,6 @@ class _EligibilityChecklistViewPageState
                                     const SearchHouseholdsClearEvent(),
                                   );
 
-                                  // todo check the routing once like what the back button should have text
                                   router.popAndPushAll(
                                     [
                                       AcknowledgementRoute(),
@@ -869,7 +868,7 @@ class _EligibilityChecklistViewPageState
       if (responses.containsKey(q3Key) && responses[q3Key]!.isNotEmpty) {
         isIneligible = responses[q3Key] == yes ? true : false;
         if (individualModel != null && isIneligible) {
-          // todo : verify this if any error
+          // added a try catch as a fallback
           try {
             final dateOfBirth = DateFormat("dd/MM/yyyy")
                 .parse(individualModel.dateOfBirth ?? '');
@@ -880,6 +879,7 @@ class _EligibilityChecklistViewPageState
               ifAdministration = true;
             }
           } catch (error) {
+            // if any error in parsing , will use fallback case
             isIneligible = false;
             ifAdministration = true;
           }

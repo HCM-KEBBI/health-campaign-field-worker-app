@@ -41,11 +41,11 @@ class SyncBloc extends Bloc<SyncEvent, SyncState> {
     try {
       final isar = await isarState;
 
-      length ??= (await isar.opLogs
+      length ??= (isar.opLogs
                   .filter()
                   .createdByEqualTo(event.createdBy)
                   .syncedUpEqualTo(false)
-                  .findAll())
+                  .findAllSync())
               .where((element) {
             switch (element.entityType) {
               case DataModelType.household:
@@ -66,12 +66,12 @@ class SyncBloc extends Bloc<SyncEvent, SyncState> {
                 return false;
             }
           }).length +
-          (await isar.opLogs
+          (isar.opLogs
                   .filter()
                   .createdByEqualTo(event.createdBy)
                   .syncedUpEqualTo(true)
                   .syncedDownEqualTo(false)
-                  .findAll())
+                  .findAllSync())
               .where((element) {
             switch (element.entityType) {
               case DataModelType.household:
