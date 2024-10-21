@@ -395,6 +395,8 @@ class BeneficiaryDetails {
   String get backToHouseholdDetails => 'BACK_TO_HOUSEHOLD_DETAILS';
   String get insufficientStockMessageDelivery =>
       'INSUFFICIENT_STOCK_MESSAGE_DELIVERY';
+  String get insufficientStockMessageAddMember =>
+      'INSUFFICIENT_STOCK_MESSAGE_ADD_MEMBER';
 }
 
 class IndividualDetails {

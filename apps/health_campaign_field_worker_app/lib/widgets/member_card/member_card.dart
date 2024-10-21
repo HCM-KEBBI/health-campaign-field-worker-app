@@ -344,11 +344,11 @@ class MemberCard extends StatelessWidget {
                                               (value.contains(
                                                     Constants.spaq1String,
                                                   ) &&
-                                                  spaq1 >= 2) ||
+                                                  spaq1 > 0) ||
                                               (!value.contains(
                                                     Constants.spaq1String,
                                                   ) &&
-                                                  spaq2 >= 2)) {
+                                                  spaq2 > 0)) {
                                             context.router.push(
                                               RecordRedoseRoute(
                                                 tasks: [successfulTask!],
@@ -368,11 +368,13 @@ class MemberCard extends StatelessWidget {
                                                   color: DigitTheme.instance
                                                       .colorScheme.error,
                                                 ),
-                                                contentText:
-                                                    localizations.translate(
-                                                  i18.beneficiaryDetails
-                                                      .insufficientStockMessageDelivery,
-                                                ),
+                                                contentText: localizations
+                                                    .translate(
+                                                      i18.beneficiaryDetails
+                                                          .insufficientStockMessageDelivery,
+                                                    )
+                                                    .replaceAll('{0}', 'redose')
+                                                    .replaceAll('{1}', value),
                                                 primaryAction:
                                                     DigitDialogActions(
                                                   label: localizations

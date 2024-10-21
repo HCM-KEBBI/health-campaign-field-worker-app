@@ -235,10 +235,10 @@ class _BeneficiaryDetailsPageState
                                                     if (value == null ||
                                                         (value.contains(Constants
                                                                 .spaq1String) &&
-                                                            spaq1 >= 2) ||
+                                                            spaq1 > 0) ||
                                                         (!value.contains(Constants
                                                                 .spaq1String) &&
-                                                            spaq2 >= 2)) {
+                                                            spaq2 > 0)) {
                                                       router.push(
                                                         DeliverInterventionRoute(),
                                                       );
@@ -263,9 +263,17 @@ class _BeneficiaryDetailsPageState
                                                           contentText:
                                                               localizations
                                                                   .translate(
-                                                            i18.beneficiaryDetails
-                                                                .insufficientStockMessageDelivery,
-                                                          ),
+                                                                    i18.beneficiaryDetails
+                                                                        .insufficientStockMessageDelivery,
+                                                                  )
+                                                                  .replaceAll(
+                                                                    '{0}',
+                                                                    'administration',
+                                                                  )
+                                                                  .replaceAll(
+                                                                    '{1}',
+                                                                    value,
+                                                                  ),
                                                           primaryAction:
                                                               DigitDialogActions(
                                                             label: localizations
