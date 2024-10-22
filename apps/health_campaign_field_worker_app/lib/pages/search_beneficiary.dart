@@ -364,7 +364,7 @@ class _SearchBeneficiaryPageState
                     onPressed = () {
                       FocusManager.instance.primaryFocus?.unfocus();
 
-                      if (spaq1 > 0 && spaq2 > 0) {
+                      if (spaq1 > 0 || spaq2 > 0) {
                         searchController.clear();
                         router.push(BeneficiaryRegistrationWrapperRoute(
                           initialState: BeneficiaryRegistrationCreateState(

@@ -573,7 +573,7 @@ class _HouseholdOverviewPageState
                                           final spaq1 = context.spaq1;
                                           final spaq2 = context.spaq2;
 
-                                          if (spaq1 > 0 && spaq2 > 0) {
+                                          if (spaq1 > 0 || spaq2 > 0) {
                                             final bloc = context
                                                 .read<HouseholdOverviewBloc>();
                                             final searchBloc = context
