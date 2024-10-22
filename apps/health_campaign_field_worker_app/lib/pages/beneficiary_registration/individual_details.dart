@@ -65,7 +65,22 @@ class _IndividualDetailsPageState
             state.mapOrNull(
               persisted: (value) {
                 if (value.navigateToRoot) {
-                  (router.parent() as StackRouter).pop();
+                  Future.delayed(
+                    const Duration(
+                      milliseconds: 200,
+                    ),
+                    () {
+                      context.read<SearchHouseholdsBloc>().add(
+                            SearchHouseholdsByHouseholdsEvent(
+                              householdModel: value.householdModel,
+                              projectId: context.projectId,
+                              isProximityEnabled: false,
+                            ),
+                          );
+                    },
+                  ).then((value) => {
+                        (router.parent() as StackRouter).pop(),
+                      });
                 } else {
                   Future.delayed(
                     const Duration(
