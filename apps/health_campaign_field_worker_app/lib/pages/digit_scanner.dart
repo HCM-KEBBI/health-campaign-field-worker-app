@@ -153,59 +153,59 @@ class _DigitScannerPageState extends LocalizedState<DigitScannerPage> {
                             ),
                           ),
                         ),
-                        // if (widget.isGS1code)
-                        //   const SizedBox.shrink()
-                        // else
-                        //   Align(
-                        //     alignment: Alignment.center,
-                        //     widthFactor: 2,
-                        //     child: Column(
-                        //       crossAxisAlignment: CrossAxisAlignment.center,
-                        //       mainAxisAlignment: MainAxisAlignment.center,
-                        //       children: [
-                        //         Padding(
-                        //           padding: const EdgeInsets.only(top: kPadding),
-                        //           child: Text(
-                        //             localizations.translate(
-                        //               i18.scanner.manualScan,
-                        //             ),
-                        //             style: TextStyle(
-                        //               color: theme.colorScheme.onError,
-                        //               fontSize: 20,
-                        //             ),
-                        //           ),
-                        //         ),
-                        //         TextButton(
-                        //           onPressed: () {
-                        //             context.read<DigitScannerBloc>().add(
-                        //                   const DigitScannerEvent.handleScanner(
-                        //                     barCode: [],
-                        //                     qrCode: [],
-                        //                   ),
-                        //                 );
-                        //             setState(() {
-                        //               manualCode = true;
-                        //             });
-                        //           },
-                        //           child: Padding(
-                        //             padding:
-                        //                 const EdgeInsets.only(top: kPadding),
-                        //             child: Text(
-                        //               localizations.translate(
-                        //                 i18.scanner.enterManualCode,
-                        //               ),
-                        //               style: TextStyle(
-                        //                 color: theme.colorScheme.secondary,
-                        //                 fontSize: theme
-                        //                     .textTheme.headlineMedium?.fontSize,
-                        //                 decoration: TextDecoration.underline,
-                        //               ),
-                        //             ),
-                        //           ),
-                        //         ),
-                        //       ],
-                        //     ),
-                        //   ),
+                        if (widget.isGS1code)
+                          const SizedBox.shrink()
+                        else
+                          Align(
+                            alignment: Alignment.center,
+                            widthFactor: 2,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: kPadding),
+                                  child: Text(
+                                    localizations.translate(
+                                      i18.scanner.manualScan,
+                                    ),
+                                    style: TextStyle(
+                                      color: theme.colorScheme.onError,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    context.read<DigitScannerBloc>().add(
+                                          const DigitScannerEvent.handleScanner(
+                                            barCode: [],
+                                            qrCode: [],
+                                          ),
+                                        );
+                                    setState(() {
+                                      manualCode = true;
+                                    });
+                                  },
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.only(top: kPadding),
+                                    child: Text(
+                                      localizations.translate(
+                                        i18.scanner.enterManualCode,
+                                      ),
+                                      style: TextStyle(
+                                        color: theme.colorScheme.secondary,
+                                        fontSize: theme
+                                            .textTheme.headlineMedium?.fontSize,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         Positioned(
                           bottom: 0,
                           width: MediaQuery.of(context).size.width,

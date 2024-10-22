@@ -882,6 +882,11 @@ class StockDetails {
 
   String get countContent => 'STOCK_DETAILS_COUNT_DIALOG_CONTENT';
 
+  String get returnCountDialogTitle =>
+      'RETURN_STOCK_DETAILS_COUNT_DIALOG_TITLE';
+
+  String get returnCountContent => 'RETURN_STOCK_DETAILS_COUNT_DIALOG_CONTENT';
+
   String get countDialogSuccess =>
       'STOCK_DETAILS_COUNT_DIALOG_SUCCESS_ACTION_LABEL';
 

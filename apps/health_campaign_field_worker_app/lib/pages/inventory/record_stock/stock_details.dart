@@ -419,16 +419,6 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                     final stockState =
                                         context.read<RecordStockBloc>().state;
                                     clearQRCodes();
-                                    // if (stockState.primaryId != null) {
-                                    //   context.read<DigitScannerBloc>().add(
-                                    //         DigitScannerEvent.handleScanner(
-                                    //           barCode: [],
-                                    //           qrCode: [
-                                    //             stockState.primaryId.toString(),
-                                    //           ],
-                                    //         ),
-                                    //       );
-                                    // }
                                   },
                                 ),
                               ]),
@@ -721,6 +711,89 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                     }
                                                   }
                                                 }
+
+                                                if (isDistributor &&
+                                                    entryType ==
+                                                        StockRecordEntryType
+                                                            .dispatch) {
+                                                  int dispatchedQuantity =
+                                                      ((quantity != null
+                                                              ? int.parse(
+                                                                  quantity
+                                                                      .toString(),
+                                                                )
+                                                              : 0) +
+                                                          (wastedBlisters !=
+                                                                  null
+                                                              ? int.parse(
+                                                                  wastedBlisters
+                                                                      .toString(),
+                                                                )
+                                                              : 0));
+                                                  if (context.mounted) {
+                                                    int spaqLeft =
+                                                        context.spaq1;
+
+                                                    if (!isSpaq1) {
+                                                      spaqLeft = context.spaq2;
+                                                    }
+
+                                                    if (dispatchedQuantity >
+                                                        spaqLeft) {
+                                                      final alert =
+                                                          await DigitDialog
+                                                              .show<bool>(
+                                                        context,
+                                                        options:
+                                                            DigitDialogOptions(
+                                                          titleText:
+                                                              localizations
+                                                                  .translate(
+                                                            i18.stockDetails
+                                                                .returnCountDialogTitle,
+                                                          ),
+                                                          titleIcon: Icon(
+                                                            Icons.warning,
+                                                            color: DigitTheme
+                                                                .instance
+                                                                .colorScheme
+                                                                .error,
+                                                          ),
+                                                          contentText:
+                                                              localizations
+                                                                  .translate(
+                                                                    i18.stockDetails
+                                                                        .returnCountContent,
+                                                                  )
+                                                                  .replaceAll(
+                                                                    '{}',
+                                                                    spaqLeft
+                                                                        .toString(),
+                                                                  ),
+                                                          primaryAction:
+                                                              DigitDialogActions(
+                                                            label: localizations
+                                                                .translate(
+                                                              i18.common
+                                                                  .corecommonclose,
+                                                            ),
+                                                            action: (context) {
+                                                              Navigator.of(
+                                                                context,
+                                                                rootNavigator:
+                                                                    true,
+                                                              ).pop(false);
+                                                            },
+                                                          ),
+                                                        ),
+                                                      );
+
+                                                      if (!(alert ?? false)) {
+                                                        return;
+                                                      }
+                                                    }
+                                                  }
+                                                }
                                                 String? deliveryTeamName = form
                                                     .control(_deliveryTeamKey)
                                                     .value as String?;
@@ -781,246 +854,257 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                     break;
                                                 }
 
-                                                final stockModel = StockModel(
-                                                  clientReferenceId:
-                                                      IdGen.i.identifier,
-                                                  productVariantId:
-                                                      productVariant.id,
-                                                  transactingPartyId:
-                                                      transactingParty.id,
-                                                  senderType: senderType,
-                                                  senderId: senderId,
-                                                  receiverType: receiverType,
-                                                  receiverId: receiverId,
-                                                  transactingPartyType:
-                                                      transactingPartyType,
-                                                  transactionType:
-                                                      transactionType,
-                                                  transactionReason:
-                                                      transactionReason,
-                                                  referenceId:
-                                                      stockState.projectId,
-                                                  referenceIdType: 'PROJECT',
-                                                  quantity: quantity.toString(),
-                                                  waybillNumber: waybillNumber,
-                                                  auditDetails: AuditDetails(
-                                                    createdBy: context
-                                                        .loggedInUserUuid,
-                                                    createdTime: context
-                                                        .millisecondsSinceEpoch(),
-                                                  ),
-                                                  clientAuditDetails:
-                                                      ClientAuditDetails(
-                                                    createdBy: context
-                                                        .loggedInUserUuid,
-                                                    createdTime: context
-                                                        .millisecondsSinceEpoch(),
-                                                    lastModifiedBy: context
-                                                        .loggedInUserUuid,
-                                                    lastModifiedTime: context
-                                                        .millisecondsSinceEpoch(),
-                                                  ),
-                                                  additionalFields: [
-                                                            comments,
-                                                            partialBlisters,
-                                                            wastedBlisters,
-                                                            waybillQuantity,
-                                                            batchNumber,
-                                                            vehicleNumber,
-                                                            transportType,
-                                                            supervisorCode,
-                                                          ].any((element) =>
-                                                              element !=
-                                                              null) ||
-                                                          hasLocationData
-                                                      ? StockAdditionalFields(
-                                                          version: 1,
-                                                          fields: [
-                                                            if (partialBlisters !=
-                                                                null)
-                                                              AdditionalField(
-                                                                _partialBlistersKey,
-                                                                partialBlisters,
-                                                              ),
-                                                            if (wastedBlisters !=
-                                                                null)
-                                                              AdditionalField(
-                                                                _wastedBlistersKey,
-                                                                wastedBlisters,
-                                                              ),
-                                                            if (waybillQuantity !=
-                                                                null)
-                                                              AdditionalField(
-                                                                'waybill_quantity',
-                                                                waybillQuantity
-                                                                    .toString(),
-                                                              ),
-                                                            if (comments !=
-                                                                    null &&
-                                                                comments
-                                                                    .trim()
-                                                                    .isNotEmpty)
-                                                              AdditionalField(
-                                                                'comments',
-                                                                comments,
-                                                              ),
-                                                            if (batchNumber !=
-                                                                    null &&
-                                                                batchNumber
-                                                                    .trim()
-                                                                    .isNotEmpty)
-                                                              AdditionalField(
-                                                                _batchNumberKey,
-                                                                batchNumber,
-                                                              ),
-                                                            if (vehicleNumber !=
-                                                                    null &&
-                                                                vehicleNumber
-                                                                    .trim()
-                                                                    .isNotEmpty)
-                                                              AdditionalField(
-                                                                _vehicleNumberKey,
-                                                                vehicleNumber,
-                                                              ),
-                                                            if (transportType !=
-                                                                    null &&
-                                                                transportType
-                                                                    .trim()
-                                                                    .isNotEmpty)
-                                                              AdditionalField(
-                                                                _typeOfTransportKey,
-                                                                transportType,
-                                                              ),
-                                                            if (supervisorCode !=
-                                                                    null &&
-                                                                supervisorCode
-                                                                    .trim()
-                                                                    .isNotEmpty)
-                                                              AdditionalField(
-                                                                _supervisorKey,
-                                                                supervisorCode,
-                                                              ),
-                                                            if (hasLocationData) ...[
-                                                              AdditionalField(
-                                                                'lat',
-                                                                lat,
-                                                              ),
-                                                              AdditionalField(
-                                                                'lng',
-                                                                lng,
-                                                              ),
+                                                if (context.mounted) {
+                                                  final stockModel = StockModel(
+                                                    clientReferenceId:
+                                                        IdGen.i.identifier,
+                                                    productVariantId:
+                                                        productVariant.id,
+                                                    transactingPartyId:
+                                                        transactingParty.id,
+                                                    senderType: senderType,
+                                                    senderId: senderId,
+                                                    receiverType: receiverType,
+                                                    receiverId: receiverId,
+                                                    transactingPartyType:
+                                                        transactingPartyType,
+                                                    transactionType:
+                                                        transactionType,
+                                                    transactionReason:
+                                                        transactionReason,
+                                                    referenceId:
+                                                        stockState.projectId,
+                                                    referenceIdType: 'PROJECT',
+                                                    quantity:
+                                                        quantity.toString(),
+                                                    waybillNumber:
+                                                        waybillNumber,
+                                                    auditDetails: AuditDetails(
+                                                      createdBy: context
+                                                          .loggedInUserUuid,
+                                                      createdTime: context
+                                                          .millisecondsSinceEpoch(),
+                                                    ),
+                                                    clientAuditDetails:
+                                                        ClientAuditDetails(
+                                                      createdBy: context
+                                                          .loggedInUserUuid,
+                                                      createdTime: context
+                                                          .millisecondsSinceEpoch(),
+                                                      lastModifiedBy: context
+                                                          .loggedInUserUuid,
+                                                      lastModifiedTime: context
+                                                          .millisecondsSinceEpoch(),
+                                                    ),
+                                                    additionalFields: [
+                                                              comments,
+                                                              partialBlisters,
+                                                              wastedBlisters,
+                                                              waybillQuantity,
+                                                              batchNumber,
+                                                              vehicleNumber,
+                                                              transportType,
+                                                              supervisorCode,
+                                                            ].any((element) =>
+                                                                element !=
+                                                                null) ||
+                                                            hasLocationData
+                                                        ? StockAdditionalFields(
+                                                            version: 1,
+                                                            fields: [
+                                                              if (partialBlisters !=
+                                                                  null)
+                                                                AdditionalField(
+                                                                  _partialBlistersKey,
+                                                                  partialBlisters,
+                                                                ),
+                                                              if (wastedBlisters !=
+                                                                  null)
+                                                                AdditionalField(
+                                                                  _wastedBlistersKey,
+                                                                  wastedBlisters,
+                                                                ),
+                                                              if (waybillQuantity !=
+                                                                  null)
+                                                                AdditionalField(
+                                                                  'waybill_quantity',
+                                                                  waybillQuantity
+                                                                      .toString(),
+                                                                ),
+                                                              if (comments !=
+                                                                      null &&
+                                                                  comments
+                                                                      .trim()
+                                                                      .isNotEmpty)
+                                                                AdditionalField(
+                                                                  'comments',
+                                                                  comments,
+                                                                ),
+                                                              if (batchNumber !=
+                                                                      null &&
+                                                                  batchNumber
+                                                                      .trim()
+                                                                      .isNotEmpty)
+                                                                AdditionalField(
+                                                                  _batchNumberKey,
+                                                                  batchNumber,
+                                                                ),
+                                                              if (vehicleNumber !=
+                                                                      null &&
+                                                                  vehicleNumber
+                                                                      .trim()
+                                                                      .isNotEmpty)
+                                                                AdditionalField(
+                                                                  _vehicleNumberKey,
+                                                                  vehicleNumber,
+                                                                ),
+                                                              if (transportType !=
+                                                                      null &&
+                                                                  transportType
+                                                                      .trim()
+                                                                      .isNotEmpty)
+                                                                AdditionalField(
+                                                                  _typeOfTransportKey,
+                                                                  transportType,
+                                                                ),
+                                                              if (supervisorCode !=
+                                                                      null &&
+                                                                  supervisorCode
+                                                                      .trim()
+                                                                      .isNotEmpty)
+                                                                AdditionalField(
+                                                                  _supervisorKey,
+                                                                  supervisorCode,
+                                                                ),
+                                                              if (hasLocationData) ...[
+                                                                AdditionalField(
+                                                                  'lat',
+                                                                  lat,
+                                                                ),
+                                                                AdditionalField(
+                                                                  'lng',
+                                                                  lng,
+                                                                ),
+                                                              ],
+                                                              if (scannerState
+                                                                  .barCodes
+                                                                  .isNotEmpty)
+                                                                addBarCodesToFields(
+                                                                  scannerState
+                                                                      .barCodes,
+                                                                ),
                                                             ],
-                                                            if (scannerState
-                                                                .barCodes
-                                                                .isNotEmpty)
-                                                              addBarCodesToFields(
-                                                                scannerState
-                                                                    .barCodes,
-                                                              ),
-                                                          ],
-                                                        )
-                                                      : null,
-                                                );
-
-                                                bloc.add(
-                                                  RecordStockSaveStockDetailsEvent(
-                                                    stockModel: stockModel,
-                                                  ),
-                                                );
-
-                                                final submit = await DigitDialog
-                                                    .show<bool>(
-                                                  context,
-                                                  options: DigitDialogOptions(
-                                                    titleText:
-                                                        localizations.translate(
-                                                      i18.stockDetails
-                                                          .dialogTitle,
-                                                    ),
-                                                    contentText:
-                                                        localizations.translate(
-                                                      i18.stockDetails
-                                                          .dialogContent,
-                                                    ),
-                                                    primaryAction:
-                                                        DigitDialogActions(
-                                                      label: localizations
-                                                          .translate(
-                                                        i18.common
-                                                            .coreCommonSubmit,
-                                                      ),
-                                                      action: (context) {
-                                                        Navigator.of(
-                                                          context,
-                                                          rootNavigator: true,
-                                                        ).pop(true);
-                                                      },
-                                                    ),
-                                                    secondaryAction:
-                                                        DigitDialogActions(
-                                                      label: localizations
-                                                          .translate(
-                                                        i18.common
-                                                            .coreCommonCancel,
-                                                      ),
-                                                      action: (context) =>
-                                                          Navigator.of(
-                                                        context,
-                                                        rootNavigator: true,
-                                                      ).pop(false),
-                                                    ),
-                                                  ),
-                                                );
-
-                                                if (submit ?? false) {
-                                                  bloc.add(
-                                                    const RecordStockCreateStockEntryEvent(),
+                                                          )
+                                                        : null,
                                                   );
 
-                                                  if (isDistributor) {
-                                                    int spaq1 = 0;
-                                                    int spaq2 = 0;
+                                                  bloc.add(
+                                                    RecordStockSaveStockDetailsEvent(
+                                                      stockModel: stockModel,
+                                                    ),
+                                                  );
 
-                                                    int totalQuantity = 0;
+                                                  final submit =
+                                                      await DigitDialog.show<
+                                                          bool>(
+                                                    context,
+                                                    options: DigitDialogOptions(
+                                                      titleText: localizations
+                                                          .translate(
+                                                        i18.stockDetails
+                                                            .dialogTitle,
+                                                      ),
+                                                      contentText: localizations
+                                                          .translate(
+                                                        i18.stockDetails
+                                                            .dialogContent,
+                                                      ),
+                                                      primaryAction:
+                                                          DigitDialogActions(
+                                                        label: localizations
+                                                            .translate(
+                                                          i18.common
+                                                              .coreCommonSubmit,
+                                                        ),
+                                                        action: (context) {
+                                                          Navigator.of(
+                                                            context,
+                                                            rootNavigator: true,
+                                                          ).pop(true);
+                                                        },
+                                                      ),
+                                                      secondaryAction:
+                                                          DigitDialogActions(
+                                                        label: localizations
+                                                            .translate(
+                                                          i18.common
+                                                              .coreCommonCancel,
+                                                        ),
+                                                        action: (context) =>
+                                                            Navigator.of(
+                                                          context,
+                                                          rootNavigator: true,
+                                                        ).pop(false),
+                                                      ),
+                                                    ),
+                                                  );
 
-                                                    totalQuantity = entryType ==
-                                                            StockRecordEntryType
-                                                                .dispatch
-                                                        ? ((quantity != null
-                                                                    ? int.parse(
-                                                                        quantity
-                                                                            .toString(),
-                                                                      )
-                                                                    : 0) +
-                                                                (wastedBlisters !=
-                                                                        null
-                                                                    ? int.parse(
-                                                                        wastedBlisters
-                                                                            .toString(),
-                                                                      )
-                                                                    : 0)) *
-                                                            -1
-                                                        : quantity != null
-                                                            ? int.parse(
-                                                                quantity
-                                                                    .toString(),
-                                                              )
-                                                            : 0;
+                                                  if (submit ?? false) {
+                                                    bloc.add(
+                                                      const RecordStockCreateStockEntryEvent(),
+                                                    );
 
-                                                    if (isSpaq1) {
-                                                      spaq1 = totalQuantity;
-                                                    } else {
-                                                      spaq2 = totalQuantity;
+                                                    if (isDistributor) {
+                                                      int spaq1 = 0;
+                                                      int spaq2 = 0;
+
+                                                      int totalQuantity = 0;
+
+                                                      totalQuantity = entryType ==
+                                                              StockRecordEntryType
+                                                                  .dispatch
+                                                          ? ((quantity != null
+                                                                      ? int
+                                                                          .parse(
+                                                                          quantity
+                                                                              .toString(),
+                                                                        )
+                                                                      : 0) +
+                                                                  (wastedBlisters !=
+                                                                          null
+                                                                      ? int
+                                                                          .parse(
+                                                                          wastedBlisters
+                                                                              .toString(),
+                                                                        )
+                                                                      : 0)) *
+                                                              -1
+                                                          : quantity != null
+                                                              ? int.parse(
+                                                                  quantity
+                                                                      .toString(),
+                                                                )
+                                                              : 0;
+
+                                                      if (isSpaq1) {
+                                                        spaq1 = totalQuantity;
+                                                      } else {
+                                                        spaq2 = totalQuantity;
+                                                      }
+
+                                                      if (context.mounted) {
+                                                        context
+                                                            .read<AuthBloc>()
+                                                            .add(
+                                                              AuthAddSpaqCountsEvent(
+                                                                spaq1Count:
+                                                                    spaq1,
+                                                                spaq2Count:
+                                                                    spaq2,
+                                                              ),
+                                                            );
+                                                      }
                                                     }
-
-                                                    context
-                                                        .read<AuthBloc>()
-                                                        .add(
-                                                          AuthAddSpaqCountsEvent(
-                                                            spaq1Count: spaq1,
-                                                            spaq2Count: spaq2,
-                                                          ),
-                                                        );
                                                   }
                                                 }
                                               },
