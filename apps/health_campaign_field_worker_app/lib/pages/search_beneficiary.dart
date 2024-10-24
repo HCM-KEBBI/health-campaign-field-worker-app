@@ -364,7 +364,7 @@ class _SearchBeneficiaryPageState
                     onPressed = () {
                       FocusManager.instance.primaryFocus?.unfocus();
 
-                      if (spaq1 > 0 || spaq2 > 0) {
+                      if (spaq1 > 0 && spaq2 > 0) {
                         searchController.clear();
                         router.push(BeneficiaryRegistrationWrapperRoute(
                           initialState: BeneficiaryRegistrationCreateState(
@@ -382,9 +382,19 @@ class _SearchBeneficiaryPageState
                               Icons.warning,
                               color: DigitTheme.instance.colorScheme.error,
                             ),
-                            contentText: localizations.translate(
-                              i18.beneficiaryDetails.insufficientStockMessage,
-                            ),
+                            contentText: localizations
+                                .translate(
+                                  i18.beneficiaryDetails
+                                      .insufficientStockMessage,
+                                )
+                                .replaceAll(
+                                  '{1}',
+                                  spaq1.toString(),
+                                )
+                                .replaceAll(
+                                  '{2}',
+                                  spaq2.toString(),
+                                ),
                             primaryAction: DigitDialogActions(
                               label: localizations
                                   .translate(i18.beneficiaryDetails.backToHome),

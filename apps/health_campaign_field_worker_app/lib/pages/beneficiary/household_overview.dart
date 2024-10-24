@@ -570,91 +570,48 @@ class _HouseholdOverviewPageState
                                     Center(
                                       child: DigitIconButton(
                                         onPressed: () async {
-                                          final spaq1 = context.spaq1;
-                                          final spaq2 = context.spaq2;
+                                          final bloc = context
+                                              .read<HouseholdOverviewBloc>();
+                                          final searchBloc = context
+                                              .read<SearchHouseholdsBloc>();
 
-                                          if (spaq1 > 0 || spaq2 > 0) {
-                                            final bloc = context
-                                                .read<HouseholdOverviewBloc>();
-                                            final searchBloc = context
-                                                .read<SearchHouseholdsBloc>();
+                                          final wrapper =
+                                              state.householdMemberWrapper;
+                                          final address =
+                                              wrapper.household.address;
 
-                                            final wrapper =
-                                                state.householdMemberWrapper;
-                                            final address =
-                                                wrapper.household.address;
+                                          if (address == null) return;
 
-                                            if (address == null) return;
+                                          final projectId = context.projectId;
 
-                                            final projectId = context.projectId;
-
-                                            await context.router.push(
-                                              BeneficiaryRegistrationWrapperRoute(
-                                                initialState:
-                                                    BeneficiaryRegistrationAddMemberState(
-                                                  addressModel: address,
-                                                  householdModel:
-                                                      wrapper.household,
-                                                ),
-                                                children: [
-                                                  IndividualDetailsRoute(),
-                                                ],
-                                              ),
-                                            );
-                                            bloc.add(
-                                              HouseholdOverviewReloadEvent(
-                                                projectId: projectId,
-                                                projectBeneficiaryType:
-                                                    beneficiaryType,
-                                              ),
-                                            );
-
-                                            searchBloc.add(
-                                              SearchHouseholdsByHouseholdsEvent(
+                                          await context.router.push(
+                                            BeneficiaryRegistrationWrapperRoute(
+                                              initialState:
+                                                  BeneficiaryRegistrationAddMemberState(
+                                                addressModel: address,
                                                 householdModel:
                                                     wrapper.household,
-                                                projectId: projectId,
-                                                isProximityEnabled: false,
                                               ),
-                                            );
-                                          } else {
-                                            DigitDialog.show(
-                                              context,
-                                              options: DigitDialogOptions(
-                                                titleText:
-                                                    localizations.translate(
-                                                  i18.beneficiaryDetails
-                                                      .insufficientStockHeading,
-                                                ),
-                                                titleIcon: Icon(
-                                                  Icons.warning,
-                                                  color: DigitTheme.instance
-                                                      .colorScheme.error,
-                                                ),
-                                                contentText:
-                                                    localizations.translate(
-                                                  i18.beneficiaryDetails
-                                                      .insufficientStockMessageAddMember,
-                                                ),
-                                                primaryAction:
-                                                    DigitDialogActions(
-                                                  label: localizations
-                                                      .translate(i18
-                                                          .beneficiaryDetails
-                                                          .backToHome),
-                                                  action: (ctx) {
-                                                    Navigator.of(
-                                                      ctx,
-                                                      rootNavigator: true,
-                                                    ).pop();
-                                                    context.router.replaceAll([
-                                                      HomeRoute(),
-                                                    ]);
-                                                  },
-                                                ),
-                                              ),
-                                            );
-                                          }
+                                              children: [
+                                                IndividualDetailsRoute(),
+                                              ],
+                                            ),
+                                          );
+                                          bloc.add(
+                                            HouseholdOverviewReloadEvent(
+                                              projectId: projectId,
+                                              projectBeneficiaryType:
+                                                  beneficiaryType,
+                                            ),
+                                          );
+
+                                          searchBloc.add(
+                                            SearchHouseholdsByHouseholdsEvent(
+                                              householdModel: wrapper.household,
+                                              projectId: projectId,
+                                              isProximityEnabled: false,
+                                            ),
+                                          );
                                         },
                                         iconText: localizations.translate(
                                           i18.householdOverView

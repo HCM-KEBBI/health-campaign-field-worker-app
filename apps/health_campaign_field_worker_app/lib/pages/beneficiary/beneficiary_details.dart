@@ -222,23 +222,8 @@ class _BeneficiaryDetailsPageState
                                                       state.selectedIndividual,
                                                     )?.productVariants;
 
-                                                    final value = variant!
-                                                        .firstWhere(
-                                                          (element) =>
-                                                              element.id ==
-                                                              productVariants!
-                                                                  .first
-                                                                  .productVariantId,
-                                                        )
-                                                        .sku;
-
-                                                    if (value == null ||
-                                                        (value.contains(Constants
-                                                                .spaq1String) &&
-                                                            spaq1 > 0) ||
-                                                        (!value.contains(Constants
-                                                                .spaq1String) &&
-                                                            spaq2 > 0)) {
+                                                    if (spaq1 > 0 &&
+                                                        spaq2 > 0) {
                                                       router.push(
                                                         DeliverInterventionRoute(),
                                                       );
@@ -272,7 +257,13 @@ class _BeneficiaryDetailsPageState
                                                                   )
                                                                   .replaceAll(
                                                                     '{1}',
-                                                                    value,
+                                                                    spaq1
+                                                                        .toString(),
+                                                                  )
+                                                                  .replaceAll(
+                                                                    '{2}',
+                                                                    spaq2
+                                                                        .toString(),
                                                                   ),
                                                           primaryAction:
                                                               DigitDialogActions(

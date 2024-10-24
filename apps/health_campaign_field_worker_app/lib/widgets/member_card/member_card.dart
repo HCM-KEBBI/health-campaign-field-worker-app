@@ -331,24 +331,7 @@ class MemberCard extends StatelessWidget {
                                           final spaq1 = context.spaq1;
                                           final spaq2 = context.spaq2;
 
-                                          final value = variant
-                                              .firstWhere(
-                                                (element) =>
-                                                    element.id ==
-                                                    successfulTask!.resources!
-                                                        .first.productVariantId,
-                                              )
-                                              .sku;
-
-                                          if (value == null ||
-                                              (value.contains(
-                                                    Constants.spaq1String,
-                                                  ) &&
-                                                  spaq1 > 0) ||
-                                              (!value.contains(
-                                                    Constants.spaq1String,
-                                                  ) &&
-                                                  spaq2 > 0)) {
+                                          if (spaq1 > 0 && spaq2 > 0) {
                                             context.router.push(
                                               RecordRedoseRoute(
                                                 tasks: [successfulTask!],
@@ -374,7 +357,14 @@ class MemberCard extends StatelessWidget {
                                                           .insufficientStockMessageDelivery,
                                                     )
                                                     .replaceAll('{0}', 'redose')
-                                                    .replaceAll('{1}', value),
+                                                    .replaceAll(
+                                                      '{1}',
+                                                      spaq1.toString(),
+                                                    )
+                                                    .replaceAll(
+                                                      '{2}',
+                                                      spaq2.toString(),
+                                                    ),
                                                 primaryAction:
                                                     DigitDialogActions(
                                                   label: localizations
