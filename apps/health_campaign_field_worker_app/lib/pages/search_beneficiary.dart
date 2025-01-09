@@ -357,14 +357,13 @@ class _SearchBeneficiaryPageState
                   builder: (context, state) {
                     final router = context.router;
                     final spaq1 = context.spaq1;
-                    final spaq2 = context.spaq2;
 
                     VoidCallback? onPressed;
 
                     onPressed = () {
                       FocusManager.instance.primaryFocus?.unfocus();
 
-                      if (spaq1 >= 2 && spaq2 >= 2) {
+                      if (spaq1 >= 0) {
                         searchController.clear();
                         router.push(BeneficiaryRegistrationWrapperRoute(
                           initialState: BeneficiaryRegistrationCreateState(

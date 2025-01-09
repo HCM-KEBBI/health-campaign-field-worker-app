@@ -56,7 +56,6 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
   static const _deliveryTeamKey = 'deliveryTeam';
   static const _supervisorKey = 'supervisor';
   bool deliveryTeamSelected = false;
-  bool isSpaq1 = true;
 
   FormGroup _form(
     List<FacilityModel> facilities,
@@ -156,14 +155,6 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
       onPopInvoked: (didPop) {
         final stockState = context.read<RecordStockBloc>().state;
         clearQRCodes();
-        // if (stockState.primaryId != null) {
-        //   context.read<DigitScannerBloc>().add(
-        //         DigitScannerEvent.handleScanner(
-        //           barCode: [],
-        //           qrCode: [stockState.primaryId.toString()],
-        //         ),
-        //       );
-        // }
       },
       child: Scaffold(
         body: BlocBuilder<LocationBloc, LocationState>(
@@ -1007,11 +998,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                               )
                                                             : 0;
 
-                                                    if (isSpaq1) {
-                                                      spaq1 = totalQuantity;
-                                                    } else {
-                                                      spaq2 = totalQuantity;
-                                                    }
+                                                    spaq1 = totalQuantity;
 
                                                     context
                                                         .read<AuthBloc>()
@@ -1073,12 +1060,6 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                       localizations.translate(
                                                         '${module.selectProductLabel}_IS_REQUIRED',
                                                       ),
-                                                },
-                                                onChanged: (value) {
-                                                  isSpaq1 = value.sku != null &&
-                                                      value.sku!.contains(
-                                                        Constants.spaq1String,
-                                                      );
                                                 },
                                               );
                                             },
