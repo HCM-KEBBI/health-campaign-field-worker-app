@@ -127,6 +127,7 @@ class Constants {
   static const String curlyBraces = '{}';
   static const String smallBraces = '()';
   static const String intTwo = '2';
+  static const String assessmentChecklist = 'ELIGIBLITY_ASSESSMENT';
 
   static List<LocalRepository> getLocalRepositories(
     LocalSqlDataStore sql,

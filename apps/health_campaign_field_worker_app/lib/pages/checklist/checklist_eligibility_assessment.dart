@@ -89,7 +89,8 @@ class _EligibilityChecklistViewPageState
                   serviceDefinitionFetch: (value) {
                     selectedServiceDefinition = value.serviceDefinitionList
                         .where((element) => element.code.toString().contains(
-                              'SMCKebbi.ELIGIBLITY_ASSESSMENT.COMMUNITY_DISTRIBUTOR',
+                              '${context.selectedProject.name}.${Constants.assessmentChecklist}.' +
+                                  RolesType.communityDistributor.toValue(),
                             ))
                         .toList()
                         .first;
@@ -186,11 +187,7 @@ class _EligibilityChecklistViewPageState
 
                             ifReferral = isReferral(responses, referralReasons);
                             ifDeliver = isDelivery(responses);
-                            checkIfIneligibleFlow = isIneligible(
-                              responses,
-                              ineligibilityReasons,
-                              ifAdministration,
-                            );
+
                             if (checkIfIneligibleFlow.isNotEmpty &&
                                 checkIfIneligibleFlow.length >= 2) {
                               ifIneligible = checkIfIneligibleFlow[0];
@@ -909,13 +906,15 @@ class _EligibilityChecklistViewPageState
     List<String?> referralReasons,
   ) {
     var isReferral = false;
-    var q1Key = "KBEA1";
-    var q2Key = "KBEA2";
-    var q4Key = "KBEA3.NO.ADT1";
+    var q1Key = "A1";
+    var q2Key = "A2";
+    var q3Key = "A3";
+    var q4Key = "A4";
     Map<String, String> referralKeysVsCode = {
-      q1Key: "SICK",
-      q2Key: "FEVER",
-      q4Key: "DRUG_SE_PC",
+      q1Key: "DRUG_SE_PC",
+      q2Key: "SICK",
+      q3Key: "SICK",
+      q4Key: "SICK",
     };
     // TODO Configure the reasons ,verify hardcoded strings
 
@@ -926,6 +925,10 @@ class _EligibilityChecklistViewPageState
       if (!isReferral &&
           (responses.containsKey(q2Key) && responses[q2Key]!.isNotEmpty)) {
         isReferral = responses[q2Key] == yes ? true : false;
+      }
+      if (!isReferral &&
+          (responses.containsKey(q3Key) && responses[q3Key]!.isNotEmpty)) {
+        isReferral = responses[q3Key] == yes ? true : false;
       }
       if (!isReferral &&
           (responses.containsKey(q4Key) && responses[q4Key]!.isNotEmpty)) {
