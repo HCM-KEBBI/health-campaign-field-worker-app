@@ -400,6 +400,12 @@ class BeneficiaryDetails {
 class IndividualDetails {
   const IndividualDetails();
 
+  String get heightHeadLabelText => 'CHILD_LABEL_HEIGHT_TEXT';
+
+  String get weightHeadLabelText => 'CHILD_LABEL_WEIGHT_TEXT';
+  String get weightErrorValidationText => 'WEIGHT_ERROR_VALIDATION_TEXT';
+  String get heightErrorValidationText => 'HEIGHT_ERROR_VALIDATION_TEXT';
+
   String get individualsDetailsLabelText => 'INDIVIDUAL_LABEL_TEXT';
 
   String get headHouseholdDetailsLabelText => 'HOUSEHOLD_HEAD_LABEL_TEXT';

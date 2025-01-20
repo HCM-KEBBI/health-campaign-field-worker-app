@@ -22,6 +22,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formula_parser/formula_parser.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:gs1_barcode_parser/gs1_barcode_parser.dart';
 import 'package:isar/isar.dart';
@@ -557,21 +558,57 @@ DoseCriteriaModel? fetchProductVariant(
     );
     final individualAgeInMonths =
         individualAge.years * 12 + individualAge.months;
+        final height = int.parse(individualModel.additionalFields != null &&
+            individualModel.additionalFields!.fields
+                .where((element) => element.key == "height")
+                .isNotEmpty
+        ? individualModel.additionalFields?.fields
+            .where((element) => element.key == "height")
+            .firstOrNull!
+            .value
+        : '0');
+        
+    // final filteredCriteria = currentDelivery.doseCriteria?.where((criteria) {
+    //   final condition = criteria.condition;
+    //   if (condition != null) {
+    //     //{TODO: Expression package need to be parsed
+    //     final ageRange = condition.split("<=age<");
+    //     final minAge = int.parse(ageRange.first);
+    //     final maxAge = int.parse(ageRange.last);
+
+    //     // temp change for SMC specific use case
+    //     if (maxAge == 59 && individualAgeInMonths > 59) {
+    //       return true;
+    //     }
+
+    //     return individualAgeInMonths >= minAge &&
+    //         individualAgeInMonths <= maxAge;
+    //   }
+
+    //   return false;
+    // }).toList();
     final filteredCriteria = currentDelivery.doseCriteria?.where((criteria) {
       final condition = criteria.condition;
       if (condition != null) {
-        //{TODO: Expression package need to be parsed
-        final ageRange = condition.split("<=age<");
-        final minAge = int.parse(ageRange.first);
-        final maxAge = int.parse(ageRange.last);
+        final conditions = condition.split('and');
 
-        // temp change for SMC specific use case
-        if (maxAge == 59 && individualAgeInMonths > 59) {
-          return true;
+        List expressionParser = [];
+        for (var element in conditions) {
+          final expression = FormulaParser(
+            element,
+            {
+              'height': height,
+              'age': individualAgeInMonths,
+            },
+          );
+          expressionParser.add(expression.parse.toString().split(':').last);
         }
 
-        return individualAgeInMonths >= minAge &&
-            individualAgeInMonths <= maxAge;
+        return expressionParser
+                .map((e) => e.toString().trim())
+                .where((element) => element == 'true')
+                .length ==
+            expressionParser.length;
       }
 
       return false;
@@ -599,6 +636,17 @@ Future<bool> getIsConnected() async {
 int getAgeMonths(DigitDOBAge age) {
   return (age.years * 12) + age.months;
 }
+
+String getCategory(int number) {
+  if (number >= 0 && number <= 11) {
+    return Constants.height;
+  } else if (number >= 12 && number <= 59) {
+    return Constants.weight;
+  } else {
+    return "Invalid number";
+  }
+}
+
 
 void showDownloadDialog(
   BuildContext context, {
@@ -1076,3 +1124,5 @@ class DigitScannerUtils {
     await Future.delayed(const Duration(seconds: 5));
   }
 }
+
+

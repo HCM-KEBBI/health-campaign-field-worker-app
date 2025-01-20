@@ -299,6 +299,8 @@ class Constants {
     KeyValue('CORE_COMMON_YES', true),
     KeyValue('CORE_COMMON_NO', false),
   ];
+  static const String height = "height";
+  static const String weight = "weight";
 }
 
 /// By using this key, we can push pages without context

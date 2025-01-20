@@ -7,6 +7,9 @@ import 'package:digit_components/widgets/digit_dob_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:health_campaign_field_worker_app/blocs/delivery_intervention/deliver_intervention.dart';
+import 'package:health_campaign_field_worker_app/blocs/project/project.dart';
+import 'package:health_campaign_field_worker_app/models/project_type/project_type_model.dart';
 import 'package:intl/intl.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
@@ -44,10 +47,13 @@ class _IndividualDetailsPageState
   static const _individualLastNameKey = 'individualLastName';
   static const _dobKey = 'dob';
   static const _genderKey = 'gender';
+  static const _weight = 'weight';
+  static const _height = 'height';
   static const _mobileNumberKey = 'mobileNumber';
   DateTime now = DateTime.now();
 
   bool isHeadAgeValid = true;
+  String height_weight = "";
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +61,12 @@ class _IndividualDetailsPageState
     final router = context.router;
     final theme = Theme.of(context);
     DateTime before150Years = DateTime(now.year - 150, now.month, now.day);
+
+    final individual = bloc.state.mapOrNull<IndividualModel>(
+      editIndividual: (value) {
+        return value.individualModel;
+      },
+    );
 
     return Scaffold(
       body: ReactiveFormBuilder(
@@ -123,6 +135,52 @@ class _IndividualDetailsPageState
 
                       return;
                     }
+
+                    final String checkCategory = getCategory(getAgeMonths(
+                      DigitDateUtils.calculateAge(
+                        form.control(_dobKey).value,
+                      ),
+                    ));
+
+                    switch (checkCategory) {
+                      case Constants.height:
+                        final value = form.control(_height).value;
+                        if (value == null || value == "") {
+                          await DigitToast.show(
+                            context,
+                            options: DigitToastOptions(
+                              localizations.translate(
+                                i18.individualDetails.heightErrorValidationText,
+                              ),
+                              true,
+                              theme,
+                            ),
+                          );
+
+                          return;
+                        }
+                        break;
+                      case Constants.weight:
+                        final value = form.control(_weight).value;
+                        if (value == null || value == "") {
+                          await DigitToast.show(
+                            context,
+                            options: DigitToastOptions(
+                              localizations.translate(
+                                i18.individualDetails.weightErrorValidationText,
+                              ),
+                              true,
+                              theme,
+                            ),
+                          );
+
+                          return;
+                        }
+                        break;
+
+                      default:
+                    }
+
                     final userId = context.loggedInUserUuid;
                     final projectId = context.projectId;
                     form.markAllAsTouched();
@@ -421,6 +479,18 @@ class _IndividualDetailsPageState
                               } else {
                                 DigitDOBAge age =
                                     DigitDateUtils.calculateAge(value);
+                                final cat = getCategory(getAgeMonths(age));
+
+                                if (cat == Constants.height ||
+                                    cat == Constants.weight) {
+                                  setState(() {
+                                    height_weight = cat;
+                                  });
+                                } else {
+                                  setState(() {
+                                    height_weight = "";
+                                  });
+                                }
                                 if ((age.years == 0 && age.months == 0) ||
                                     age.months > 11 ||
                                     (age.years > 150 ||
@@ -465,6 +535,67 @@ class _IndividualDetailsPageState
                               },
                             ),
                           ),
+
+                          // weight
+                          if (height_weight == Constants.weight ||
+                              (individual != null &&
+                                  getCategory(getAgeMonths(
+                                        DigitDateUtils.calculateAge(
+                                          DateFormat('dd/MM/yyyy').parse(
+                                            individual.dateOfBirth!,
+                                          ),
+                                        ),
+                                      )) ==
+                                      Constants.weight))
+                            DigitTextFormField(
+                              formControlName: _weight,
+                              label: localizations.translate(
+                                  i18.individualDetails.weightHeadLabelText),
+                              isRequired: (height_weight == Constants.weight ||
+                                      (individual != null &&
+                                          getCategory(getAgeMonths(
+                                                DigitDateUtils.calculateAge(
+                                                  DateFormat('dd/MM/yyyy')
+                                                      .parse(
+                                                    individual.dateOfBirth!,
+                                                  ),
+                                                ),
+                                              )) ==
+                                              Constants.weight))
+                                  ? true
+                                  : false,
+                            ),
+                          // height
+                          if (height_weight == Constants.height ||
+                              (individual != null &&
+                                  getCategory(getAgeMonths(
+                                        DigitDateUtils.calculateAge(
+                                          DateFormat('dd/MM/yyyy').parse(
+                                            individual.dateOfBirth!,
+                                          ),
+                                        ),
+                                      )) ==
+                                      Constants.height))
+                            DigitTextFormField(
+                              formControlName: _height,
+                              label: localizations.translate(
+                                i18.individualDetails.heightHeadLabelText,
+                              ),
+                              isRequired: (height_weight == Constants.height ||
+                                      (individual != null &&
+                                          getCategory(getAgeMonths(
+                                                DigitDateUtils.calculateAge(
+                                                  DateFormat('dd/MM/yyyy')
+                                                      .parse(
+                                                    individual.dateOfBirth!,
+                                                  ),
+                                                ),
+                                              )) ==
+                                              Constants.weight))
+                                  ? true
+                                  : false,
+                            ),
+
                           Offstage(
                             offstage: !widget.isHeadOfHousehold,
                             child: DigitTextFormField(
@@ -617,6 +748,30 @@ class _IndividualDetailsPageState
                     "projectTypeId",
                     projectTypeId,
                   ),
+                if (getCategory(getAgeMonths(
+                      DigitDateUtils.calculateAge(
+                        DateFormat('dd/MM/yyyy').parse(
+                          dobString!,
+                        ),
+                      ),
+                    )) ==
+                    Constants.height)
+                  AdditionalField(
+                    Constants.height,
+                    form.control(_height).value,
+                  ),
+                if (getCategory(getAgeMonths(
+                      DigitDateUtils.calculateAge(
+                        DateFormat('dd/MM/yyyy').parse(
+                          dobString,
+                        ),
+                      ),
+                    )) ==
+                    Constants.weight)
+                  AdditionalField(
+                    Constants.weight,
+                    form.control(_weight).value,
+                  ),
               ],
             )
           : individual.additionalFields!.copyWith(
@@ -635,6 +790,30 @@ class _IndividualDetailsPageState
                   AdditionalField(
                     "projectTypeId",
                     projectTypeId,
+                  ),
+                if (getCategory(getAgeMonths(
+                      DigitDateUtils.calculateAge(
+                        DateFormat('dd/MM/yyyy').parse(
+                          dobString!,
+                        ),
+                      ),
+                    )) ==
+                    Constants.height)
+                  AdditionalField(
+                    Constants.height,
+                    form.control(_height).value,
+                  ),
+                if (getCategory(getAgeMonths(
+                      DigitDateUtils.calculateAge(
+                        DateFormat('dd/MM/yyyy').parse(
+                          dobString,
+                        ),
+                      ),
+                    )) ==
+                    Constants.weight)
+                  AdditionalField(
+                    Constants.weight,
+                    form.control(_weight).value,
                   ),
               ],
             ),
@@ -672,6 +851,24 @@ class _IndividualDetailsPageState
           Validators.maxLength(validation.individual.nameMaxLength),
         ],
         value: individual?.name?.familyName ?? '',
+      ),
+      _weight: FormControl<String>(
+        validators: [
+          // Validators.required,
+          // CustomValidator.requiredMin3,
+          // Validators.maxLength(validation.individual.nameMaxLength),
+        ],
+        //value: individual?.name?.familyName ?? '',
+        value: "",
+      ),
+      _height: FormControl<String>(
+        validators: [
+          // Validators.required,
+          // CustomValidator.requiredMin3,
+          // Validators.maxLength(validation.individual.nameMaxLength),
+        ],
+        //value: individual?.name?.familyName ?? '',
+        value: "",
       ),
       _dobKey: FormControl<DateTime>(
         value: individual?.dateOfBirth != null
