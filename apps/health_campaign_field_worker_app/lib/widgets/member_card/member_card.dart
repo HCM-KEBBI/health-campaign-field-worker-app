@@ -35,6 +35,7 @@ class MemberCard extends StatelessWidget {
   final bool isBeneficiaryIneligible;
   final bool isBeneficiaryReferred;
   final String? projectBeneficiaryClientReferenceId;
+  final bool isDoseAvailable;
 
   const MemberCard({
     super.key,
@@ -57,6 +58,7 @@ class MemberCard extends StatelessWidget {
     this.isBeneficiaryIneligible = false,
     this.isBeneficiaryReferred = false,
     this.sideEffects,
+    required this.isDoseAvailable,
   });
 
   @override
@@ -266,10 +268,11 @@ class MemberCard extends StatelessWidget {
                     )
                   : Column(
                       children: [
-                        (isNotEligible ||
-                                    isBeneficiaryIneligible ||
-                                    isBeneficiaryReferred) &&
-                                !doseStatus
+                        isDoseAvailable ||
+                                ((isNotEligible ||
+                                        isBeneficiaryIneligible ||
+                                        isBeneficiaryReferred) &&
+                                    !doseStatus)
                             ? const Offstage()
                             : !isNotEligible && redosePendingStatus
                                 ? DigitElevatedButton(

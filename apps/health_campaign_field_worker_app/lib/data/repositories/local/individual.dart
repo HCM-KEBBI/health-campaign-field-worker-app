@@ -264,6 +264,11 @@ class IndividualLocalRepository extends IndividualLocalBaseRepository {
                           : null,
                     ),
                   ],
+                   additionalFields: individual.additionalFields == null
+                ? null
+                : IndividualAdditionalFieldsMapper.fromJson(
+                    individual.additionalFields!,
+                  ),
           );
         }
       }

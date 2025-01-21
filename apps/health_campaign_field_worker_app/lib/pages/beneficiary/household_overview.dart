@@ -321,7 +321,30 @@ class _HouseholdOverviewPageState
                                                         taskdata,
                                                       );
 
+                                                      final deliverBloc = context
+                                                          .read<
+                                                              DeliverInterventionBloc>()
+                                                          .state;
+                                                      final we =
+                                                          fetchProductVariant(
+                                                        projectState
+                                                                .projectType!
+                                                                .cycles![deliverBloc
+                                                                        .cycle -
+                                                                    1]
+                                                                .deliveries?[
+                                                            deliverBloc.dose -
+                                                                1],
+                                                        e,
+                                                      );
+
+                                                      print("we $we");
+
                                                       return MemberCard(
+                                                        isDoseAvailable:
+                                                            we != null
+                                                                ? false
+                                                                : true,
                                                         variant: variant ?? [],
                                                         isHead: isHead,
                                                         individual: e,

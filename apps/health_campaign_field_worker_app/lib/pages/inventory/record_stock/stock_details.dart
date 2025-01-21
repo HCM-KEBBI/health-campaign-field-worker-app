@@ -532,7 +532,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                     .control(
                                                       _transactionQuantityKey,
                                                     )
-                                                    .value;
+                                                    .value * 30 ;
 
                                                 final partialBlisters = form
                                                     .control(
