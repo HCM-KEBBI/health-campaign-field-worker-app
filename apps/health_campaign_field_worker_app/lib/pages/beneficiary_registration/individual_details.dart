@@ -156,7 +156,10 @@ class _IndividualDetailsPageState
 
                     switch (checkCategory) {
                       case Constants.height:
-                        final value = form.control(_height).value;
+                        dynamic value = form.control(_height).value;
+                        form.control(_height).value =
+                            value == "" ? form.control(_weight).value : value;
+                        value = form.control(_height).value;
                         if (value == null || value == "") {
                           await DigitToast.show(
                             context,
@@ -173,7 +176,10 @@ class _IndividualDetailsPageState
                         }
                         break;
                       case Constants.weight:
-                        final value = form.control(_weight).value;
+                        dynamic value = form.control(_weight).value;
+                        form.control(_weight).value =
+                            value == "" ? form.control(_height).value : value;
+                        value = form.control(_weight).value;
                         if (value == null || value == "") {
                           await DigitToast.show(
                             context,
@@ -542,7 +548,6 @@ class _IndividualDetailsPageState
                             builder: (context, isVisible, child) {
                               // weight
                               if (isVisible == Constants.weight) {
-                                
                                 return DigitTextFormField(
                                   formControlName: _weight,
                                   label: localizations.translate(
@@ -571,7 +576,6 @@ class _IndividualDetailsPageState
                                         ),
                                       )) ==
                                       Constants.weight)) {
-
                                 return DigitTextFormField(
                                   formControlName: _weight,
                                   label: localizations.translate(
@@ -825,26 +829,16 @@ class _IndividualDetailsPageState
             )
           : individual.additionalFields!.copyWith(
               fields: [
-                ...individual.additionalFields!.fields,
-                AdditionalField(
-                  "projectId",
-                  context.projectId,
+                // Filter out any existing `Constants.weight` or `Constants.height` fields
+                ...individual.additionalFields!.fields.where(
+                  (field) =>
+                      field.key != Constants.weight &&
+                      field.key != Constants.height,
                 ),
-                if (cycleIndex.isNotEmpty)
-                  AdditionalField(
-                    "cycleIndex",
-                    cycleIndex,
-                  ),
-                if (projectTypeId.isNotEmpty)
-                  AdditionalField(
-                    "projectTypeId",
-                    projectTypeId,
-                  ),
+                // Add new `Constants.height` field if the condition matches
                 if (getCategory(getAgeMonths(
                       DigitDateUtils.calculateAge(
-                        DateFormat('dd/MM/yyyy').parse(
-                          dobString!,
-                        ),
+                        DateFormat('dd/MM/yyyy').parse(dobString!),
                       ),
                     )) ==
                     Constants.height)
@@ -854,9 +848,7 @@ class _IndividualDetailsPageState
                   ),
                 if (getCategory(getAgeMonths(
                       DigitDateUtils.calculateAge(
-                        DateFormat('dd/MM/yyyy').parse(
-                          dobString,
-                        ),
+                        DateFormat('dd/MM/yyyy').parse(dobString!),
                       ),
                     )) ==
                     Constants.weight)
@@ -864,6 +856,21 @@ class _IndividualDetailsPageState
                     Constants.weight,
                     form.control(_weight).value,
                   ),
+                // // Add other fields like projectId, cycleIndex, and projectTypeId
+                // AdditionalField(
+                //   "projectId",
+                //   context.projectId,
+                // ),
+                // if (cycleIndex.isNotEmpty)
+                //   AdditionalField(
+                //     "cycleIndex",
+                //     cycleIndex,
+                //   ),
+                // if (projectTypeId.isNotEmpty)
+                //   AdditionalField(
+                //     "projectTypeId",
+                //     projectTypeId,
+                //   ),
               ],
             ),
     );
