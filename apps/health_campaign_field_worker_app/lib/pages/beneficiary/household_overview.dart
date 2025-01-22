@@ -325,7 +325,7 @@ class _HouseholdOverviewPageState
                                                           .read<
                                                               DeliverInterventionBloc>()
                                                           .state;
-                                                      final we =
+                                                      final dosageCriteriaDrug =
                                                           fetchProductVariant(
                                                         projectState
                                                                 .projectType!
@@ -338,11 +338,10 @@ class _HouseholdOverviewPageState
                                                         e,
                                                       );
 
-                                                      print("we $we");
 
                                                       return MemberCard(
                                                         isDoseAvailable:
-                                                            we != null
+                                                            dosageCriteriaDrug != null
                                                                 ? false
                                                                 : true,
                                                         variant: variant ?? [],

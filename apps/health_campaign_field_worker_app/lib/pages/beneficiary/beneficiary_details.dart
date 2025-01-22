@@ -235,10 +235,7 @@ class _BeneficiaryDetailsPageState
                                                     if (value == null ||
                                                         (value.contains(Constants
                                                                 .spaq1String) &&
-                                                            spaq1 >= 2) ||
-                                                        (!value.contains(Constants
-                                                                .spaq1String) &&
-                                                            spaq2 >= 2)) {
+                                                            spaq1 >= 2) ) {
                                                       router.push(
                                                         DeliverInterventionRoute(),
                                                       );
