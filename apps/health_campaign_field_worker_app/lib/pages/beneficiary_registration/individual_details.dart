@@ -53,7 +53,7 @@ class _IndividualDetailsPageState
   DateTime now = DateTime.now();
 
   bool isHeadAgeValid = true;
-  //String heightWeight = "";
+
   final ValueNotifier<String> heightWeight = ValueNotifier("");
 
   void updateStatus(dynamic age) {
@@ -595,8 +595,7 @@ class _IndividualDetailsPageState
                                       ? true
                                       : false,
                                 );
-                              } else if (isVisible == Constants.height)
-                                // ignore: curly_braces_in_flow_control_structures
+                              } else if (isVisible == Constants.height) {
                                 return DigitTextFormField(
                                   formControlName: _height,
                                   label: localizations.translate(
@@ -616,7 +615,7 @@ class _IndividualDetailsPageState
                                       ? true
                                       : false,
                                 );
-                              else if ((individual != null &&
+                              } else if ((individual != null &&
                                   getCategory(getAgeMonths(
                                         DigitDateUtils.calculateAge(
                                           DateFormat('dd/MM/yyyy').parse(
@@ -644,9 +643,9 @@ class _IndividualDetailsPageState
                                       ? true
                                       : false,
                                 );
-                              } else
-                                // ignore: curly_braces_in_flow_control_structures
+                              } else {
                                 return const SizedBox();
+                              }
                             },
                           ),
                           Offstage(
@@ -856,21 +855,6 @@ class _IndividualDetailsPageState
                     Constants.weight,
                     form.control(_weight).value,
                   ),
-                // // Add other fields like projectId, cycleIndex, and projectTypeId
-                // AdditionalField(
-                //   "projectId",
-                //   context.projectId,
-                // ),
-                // if (cycleIndex.isNotEmpty)
-                //   AdditionalField(
-                //     "cycleIndex",
-                //     cycleIndex,
-                //   ),
-                // if (projectTypeId.isNotEmpty)
-                //   AdditionalField(
-                //     "projectTypeId",
-                //     projectTypeId,
-                //   ),
               ],
             ),
     );
@@ -909,12 +893,7 @@ class _IndividualDetailsPageState
         value: individual?.name?.familyName ?? '',
       ),
       _weight: FormControl<String>(
-        validators: [
-          // Validators.required,
-          // CustomValidator.requiredMin3,
-          // Validators.maxLength(validation.individual.nameMaxLength),
-        ],
-        //value: individual?.name?.familyName ?? '',
+        validators: [],
         value: (individual != null &&
                 getCategory(getAgeMonths(
                       DigitDateUtils.calculateAge(
@@ -931,12 +910,7 @@ class _IndividualDetailsPageState
             : "",
       ),
       _height: FormControl<String>(
-        validators: [
-          // Validators.required,
-          // CustomValidator.requiredMin3,
-          // Validators.maxLength(validation.individual.nameMaxLength),
-        ],
-        //value: individual?.name?.familyName ?? '',
+        validators: [],
         value: (individual != null &&
                 getCategory(getAgeMonths(
                       DigitDateUtils.calculateAge(

@@ -35,7 +35,6 @@ class MemberCard extends StatelessWidget {
   final bool isBeneficiaryIneligible;
   final bool isBeneficiaryReferred;
   final String? projectBeneficiaryClientReferenceId;
-  final bool isDoseAvailable;
 
   const MemberCard({
     super.key,
@@ -58,7 +57,6 @@ class MemberCard extends StatelessWidget {
     this.isBeneficiaryIneligible = false,
     this.isBeneficiaryReferred = false,
     this.sideEffects,
-    required this.isDoseAvailable,
   });
 
   @override
@@ -268,11 +266,10 @@ class MemberCard extends StatelessWidget {
                     )
                   : Column(
                       children: [
-                        isDoseAvailable ||
-                                ((isNotEligible ||
-                                        isBeneficiaryIneligible ||
-                                        isBeneficiaryReferred) &&
-                                    !doseStatus)
+                        ((isNotEligible ||
+                                    isBeneficiaryIneligible ||
+                                    isBeneficiaryReferred) &&
+                                !doseStatus)
                             ? const Offstage()
                             : !isNotEligible && redosePendingStatus
                                 ? DigitElevatedButton(
@@ -343,15 +340,12 @@ class MemberCard extends StatelessWidget {
                                               )
                                               .sku;
 
-                                          if (value == null ||
-                                              (value.contains(
-                                                    Constants.spaq1String,
-                                                  ) &&
-                                                  spaq1 >= 2) ||
-                                              (!value.contains(
-                                                    Constants.spaq1String,
-                                                  ) &&
-                                                  spaq2 >= 2)) {
+                                          int doseCount = int.parse(
+                                            successfulTask!
+                                                .resources!.first.quantity!,
+                                          );
+
+                                          if (spaq1 >= doseCount) {
                                             context.router.push(
                                               RecordRedoseRoute(
                                                 tasks: [successfulTask!],
@@ -374,7 +368,7 @@ class MemberCard extends StatelessWidget {
                                                 contentText:
                                                     localizations.translate(
                                                   i18.beneficiaryDetails
-                                                      .insufficientStockMessageDelivery,
+                                                      .insufficientAZTStockMessageDelivery,
                                                 ),
                                                 primaryAction:
                                                     DigitDialogActions(

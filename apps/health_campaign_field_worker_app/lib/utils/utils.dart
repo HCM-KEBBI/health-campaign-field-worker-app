@@ -328,8 +328,9 @@ bool checkEligibilityForAgeAndSideEffect(
   DigitDOBAge age,
   ProjectType? projectType,
   TaskModel? tasks,
-  List<SideEffectModel>? sideEffects,
-) {
+  List<SideEffectModel>? sideEffects, [
+  IndividualModel? individual,
+]) {
   int totalAgeMonths = age.years * 12 + age.months;
   bool skipAge = false;
   final currentCycle = projectType?.cycles?.firstWhereOrNull(
@@ -362,6 +363,16 @@ bool checkEligibilityForAgeAndSideEffect(
               : false
           : false;
     } else {
+      if (individual != null) {
+        return (fetchProductVariant(
+                  currentCycle.deliveries!.firstOrNull,
+                  individual,
+                ) !=
+                null)
+            ? true
+            : false;
+      }
+
       return skipAge ||
               (totalAgeMonths >= projectType!.validMinAge! &&
                   totalAgeMonths <= projectType.validMaxAge!)
@@ -545,93 +556,6 @@ bool allDosesDelivered(
   }
 }
 
-//temp
-// DoseCriteriaModel? fetchProductVariant(
-//   DeliveryModel? currentDelivery,
-//   IndividualModel? individualModel,
-// ) {
-//   if (currentDelivery != null && individualModel != null) {
-//     final individualAge = DigitDateUtils.calculateAge(
-//       DigitDateUtils.getFormattedDateToDateTime(
-//             individualModel.dateOfBirth!,
-//           ) ??
-//           DateTime.now(),
-//     );
-//     final individualAgeInMonths =
-//         individualAge.years * 12 + individualAge.months;
-//     final height = int.parse(individualModel.additionalFields != null &&
-//             individualModel.additionalFields!.fields
-//                 .where((element) => element.key == Constants.height)
-//                 .isNotEmpty
-//         ? individualModel.additionalFields?.fields
-//             .where((element) => element.key == Constants.height)
-//             .firstOrNull!
-//             .value
-//         : '0');
-
-//     final weight = int.parse(individualModel.additionalFields != null &&
-//             individualModel.additionalFields!.fields
-//                 .where((element) => element.key == Constants.weight)
-//                 .isNotEmpty
-//         ? individualModel.additionalFields?.fields
-//             .where((element) => element.key == Constants.weight)
-//             .firstOrNull!
-//             .value
-//         : '0');
-
-//     final filteredCriteria = currentDelivery.doseCriteria?.where((criteria) {
-//       final condition = criteria.condition;
-//       if (condition != null) {
-//         // Split the conditions using 'and'
-//         final conditionsp = condition.split('and');
-
-//         List<String> conditions = [];
-//         for (var element in conditionsp) {
-//           conditions.addAll(splitCondition(element));
-//         }
-
-//         List<String> expressionResults = [];
-//         for (var element in conditions) {
-//           // final parsedConditions = splitCondition(element);
-
-// // Determine the variables map based on the condition
-//           final variables = individualModel.additionalFields != null &&
-//                   individualModel.additionalFields!.fields
-//                           ?.any((field) => field.key == Constants.weight) ==
-//                       true
-//               ? {
-//                   'weight': weight ?? 0, // Provide default values if null
-//                   'age': individualAgeInMonths ?? 0,
-//                 }
-//               : {
-//                   'height': height ?? 0, // Provide default values if null
-//                   'age': individualAgeInMonths ?? 0,
-//                 };
-
-//           final FormulaParser expression = FormulaParser(
-//             element,
-//             variables,
-//           );
-//           expressionResults.add((expression.parse['value']).toString());
-//         }
-
-//         // Check if all conditions are true
-//         return expressionResults
-//                 .map((e) => e.trim())
-//                 .where((result) => result == 'true')
-//                 .length ==
-//             expressionResults.length;
-//       }
-
-//       return false;
-//     }).toList();
-
-//     return (filteredCriteria ?? []).isNotEmpty ? filteredCriteria?.first : null;
-//   }
-
-//   return null;
-// }
-
 DoseCriteriaModel? fetchProductVariant(
   DeliveryModel? currentDelivery,
   IndividualModel? individualModel,
@@ -712,67 +636,30 @@ DoseCriteriaModel? fetchProductVariant(
   return null;
 }
 
-List<String> splitCondition(String condition) {
-  // Updated regex to handle both numbers and variables correctly
-  final regex = RegExp(r'(\d+(\.\d+)?)\s*<\s*(\w+)\s*<\s*(\d+(\.\d+)?)');
-  final match = regex.firstMatch(condition);
-
-  if (match != null) {
-    // Extract the bounds and variable
-    final lowerBound = match.group(1); // First number (e.g., 0 or 2.9)
-    final variable = match.group(3); // Variable (e.g., age)
-    final upperBound = match.group(4); // Second number (e.g., 12 or 4.1)
-
-    // Create the split conditions
-    final condition1 = '$lowerBound < $variable';
-    final condition2 = '$variable < $upperBound';
-
-    // Return the conditions as a list of strings
-    return [condition1, condition2];
-  }
-
-  // Regex to handle cases where the number is missing on one side
-  final singleSideRegex =
-      RegExp(r'(\d+(\.\d+)?)\s*<\s*(\w+)|(\w+)\s*<\s*(\d+(\.\d+)?)');
-  final matchSingleSide = singleSideRegex.firstMatch(condition);
-
-  if (matchSingleSide != null) {
-    if (matchSingleSide.group(1) != null && matchSingleSide.group(3) != null) {
-      // Case for number < variable
-      final lowerBound = matchSingleSide.group(1);
-      final variable = matchSingleSide.group(3);
-      return ['$lowerBound < $variable'];
-    } else if (matchSingleSide.group(4) != null &&
-        matchSingleSide.group(5) != null) {
-      // Case for variable < number
-      final variable = matchSingleSide.group(4);
-      final upperBound = matchSingleSide.group(5);
-      return ['$variable < $upperBound'];
+String convertToRange(String? condition1, String? condition2) {
+  // Function to extract the number from a condition
+  int extractNumber(String? condition, int defaultValue) {
+    if (condition == null || condition.isEmpty) {
+      return defaultValue; // Return default if condition is null or empty
     }
+    final RegExp regExp = RegExp(r'\d+');
+    final match = regExp.firstMatch(condition);
+
+    return match != null ? int.parse(match.group(0)!) : defaultValue;
   }
 
-  throw Exception('Invalid condition format');
-}
-
-String convertToRange(String? condition) {
-  if (condition == null || condition == "") {
-    return "";
+  // Handle default values for condition1 and condition2
+  int num1 = extractNumber(condition1, 0); // Default to 0 for condition1
+  if (condition2 == null || condition2.isEmpty) {
+    return ""; // Return empty string if condition2 is null or empty
   }
-  // Regex to match "X < variable < Y" pattern, including decimals
-  final regex = RegExp(r'(\d+(\.\d+)?)\s*<\s*(\w+)\s*<\s*(\d+(\.\d+)?)');
-  final match = regex.firstMatch(condition);
+  int num2 = extractNumber(condition2, 0);
 
-  if (match != null) {
-    // Extract the lower and upper bounds
-    final lowerBound = match.group(1); // First number (e.g., 3.6)
-    final upperBound = match.group(4); // Second number (e.g., 6.9)
+  // Sort the numbers to ensure the smaller number is on the left
+  List<int> numbers = [num1, num2]..sort();
 
-    // Create the range representation
-    return '$lowerBound-$upperBound';
-  }
-
-  // If the pattern doesn't match, return the original condition
-  return condition;
+  // Return the range in "small-big" format
+  return "${numbers[0]}-${numbers[1]}";
 }
 
 Future<bool> getIsConnected() async {
@@ -793,7 +680,7 @@ int getAgeMonths(DigitDOBAge age) {
 }
 
 String getCategory(int number) {
-  if (number >= 0 && number <= 11) {
+  if (number >= 1 && number <= 11) {
     return Constants.weight;
   } else if (number >= 12 && number <= 59) {
     return Constants.height;

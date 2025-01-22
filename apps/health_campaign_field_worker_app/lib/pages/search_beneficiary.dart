@@ -382,7 +382,8 @@ class _SearchBeneficiaryPageState
                               color: DigitTheme.instance.colorScheme.error,
                             ),
                             contentText: localizations.translate(
-                              i18.beneficiaryDetails.insufficientStockMessage,
+                              i18.beneficiaryDetails
+                                  .insufficientAZTStockMessage,
                             ),
                             primaryAction: DigitDialogActions(
                               label: localizations

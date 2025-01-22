@@ -222,20 +222,18 @@ class _BeneficiaryDetailsPageState
                                                       state.selectedIndividual,
                                                     )?.productVariants;
 
-                                                    final value = variant!
-                                                        .firstWhere(
-                                                          (element) =>
-                                                              element.id ==
-                                                              productVariants!
-                                                                  .first
-                                                                  .productVariantId,
-                                                        )
-                                                        .sku;
+                                                    //temp
+                                                    // final value =
+                                                    //     variant!.firstWhere(
+                                                    //   (element) =>
+                                                    //       element.id ==
+                                                    //       productVariants!.first
+                                                    //           .productVariantId,
+                                                    // );
 
-                                                    if (value == null ||
-                                                        (value.contains(Constants
-                                                                .spaq1String) &&
-                                                            spaq1 >= 2) ) {
+                                                    if ((spaq1 >=
+                                                        productVariants!
+                                                            .first.quantity!)) {
                                                       router.push(
                                                         DeliverInterventionRoute(),
                                                       );
@@ -261,7 +259,7 @@ class _BeneficiaryDetailsPageState
                                                               localizations
                                                                   .translate(
                                                             i18.beneficiaryDetails
-                                                                .insufficientStockMessageDelivery,
+                                                                .insufficientAZTStockMessageDelivery,
                                                           ),
                                                           primaryAction:
                                                               DigitDialogActions(

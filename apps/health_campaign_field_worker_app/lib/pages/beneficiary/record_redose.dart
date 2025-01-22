@@ -296,16 +296,7 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                                     .toString()) *
                                                                 -1
                                                             : 0;
-                                                      } else {
-                                                        spaq2 = quantity !=
-                                                                    null &&
-                                                                quantity !=
-                                                                    'null'
-                                                            ? int.parse(quantity
-                                                                    .toString()) *
-                                                                -1
-                                                            : 0;
-                                                      }
+                                                      } 
 
                                                       context
                                                           .read<AuthBloc>()

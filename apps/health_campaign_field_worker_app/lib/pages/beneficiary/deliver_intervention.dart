@@ -361,24 +361,7 @@ class _DeliverInterventionPageState
                                                                       .quantity!) *
                                                                   -1
                                                               : 0;
-                                                        } else {
-                                                          spaq2 = task
-                                                                          .resources!
-                                                                          .first
-                                                                          .quantity !=
-                                                                      null &&
-                                                                  task
-                                                                          .resources!
-                                                                          .first
-                                                                          .quantity !=
-                                                                      'null'
-                                                              ? int.parse(task
-                                                                      .resources!
-                                                                      .first
-                                                                      .quantity!) *
-                                                                  -1
-                                                              : 0;
-                                                        }
+                                                        } 
 
                                                         context
                                                             .read<AuthBloc>()
@@ -410,7 +393,7 @@ class _DeliverInterventionPageState
                                                         } else {
                                                           context.router.push(
                                                             SplashAcknowledgementRoute(
-                                                              enableBackToSearch:
+                                                              doseAdministrationVerification:
                                                                   true,
                                                             ),
                                                           );
