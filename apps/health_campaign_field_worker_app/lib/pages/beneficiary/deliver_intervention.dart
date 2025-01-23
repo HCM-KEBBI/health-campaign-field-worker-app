@@ -361,7 +361,7 @@ class _DeliverInterventionPageState
                                                                       .quantity!) *
                                                                   -1
                                                               : 0;
-                                                        } 
+                                                        }
 
                                                         context
                                                             .read<AuthBloc>()

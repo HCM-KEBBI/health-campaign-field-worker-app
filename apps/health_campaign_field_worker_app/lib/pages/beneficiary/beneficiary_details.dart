@@ -256,11 +256,11 @@ class _BeneficiaryDetailsPageState
                                                                 .error,
                                                           ),
                                                           contentText:
-                                                              localizations
+                                                              "${localizations
                                                                   .translate(
                                                             i18.beneficiaryDetails
                                                                 .insufficientAZTStockMessageDelivery,
-                                                          ),
+                                                          )}=$spaq1",
                                                           primaryAction:
                                                               DigitDialogActions(
                                                             label: localizations

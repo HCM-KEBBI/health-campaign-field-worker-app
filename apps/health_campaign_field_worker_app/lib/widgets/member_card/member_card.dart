@@ -366,10 +366,10 @@ class MemberCard extends StatelessWidget {
                                                       .colorScheme.error,
                                                 ),
                                                 contentText:
-                                                    localizations.translate(
+                                                    "${localizations.translate(
                                                   i18.beneficiaryDetails
                                                       .insufficientAZTStockMessageDelivery,
-                                                ),
+                                                )}=$spaq1",
                                                 primaryAction:
                                                     DigitDialogActions(
                                                   label: localizations

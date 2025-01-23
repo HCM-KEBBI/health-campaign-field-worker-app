@@ -363,7 +363,7 @@ class _SearchBeneficiaryPageState
                     onPressed = () {
                       FocusManager.instance.primaryFocus?.unfocus();
 
-                      if (spaq1 > 0) {
+                      if ((spaq1 > 0)) {
                         searchController.clear();
                         router.push(BeneficiaryRegistrationWrapperRoute(
                           initialState: BeneficiaryRegistrationCreateState(
@@ -381,10 +381,10 @@ class _SearchBeneficiaryPageState
                               Icons.warning,
                               color: DigitTheme.instance.colorScheme.error,
                             ),
-                            contentText: localizations.translate(
+                            contentText: "${localizations.translate(
                               i18.beneficiaryDetails
                                   .insufficientAZTStockMessage,
-                            ),
+                            )}=$spaq1",
                             primaryAction: DigitDialogActions(
                               label: localizations
                                   .translate(i18.beneficiaryDetails.backToHome),

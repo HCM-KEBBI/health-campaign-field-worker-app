@@ -631,10 +631,10 @@ class _HouseholdOverviewPageState
                                                       .colorScheme.error,
                                                 ),
                                                 contentText:
-                                                    localizations.translate(
+                                                    "${localizations.translate(
                                                   i18.beneficiaryDetails
                                                       .insufficientAddMemberAZTStockMessage,
-                                                ),
+                                                )}=$spaq1",
                                                 primaryAction:
                                                     DigitDialogActions(
                                                   label: localizations

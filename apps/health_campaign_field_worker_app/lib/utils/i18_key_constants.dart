@@ -310,11 +310,12 @@ class SearchBeneficiary {
 class BeneficiaryDetails {
   const BeneficiaryDetails();
 
-String get beneficiaryWeight => 'BENEFICIARY_WEIGHT';
-String get beneficiaryHeight => 'BENEFICIARY_HEIGHT';
-String get beneficiaryKGUnit => 'BENEFICIARY_KG_UNIT';
-String get beneficiaryCMUnit => 'BENEFICIARY_CM_UNIT';
-String get beneficiaryMonthUnit => 'BENEFICIARY_MONTH_UNIT';
+  String get beneficiaryWeight => 'BENEFICIARY_WEIGHT';
+  String get beneficiaryHeight => 'BENEFICIARY_HEIGHT';
+  String get beneficiaryKGUnit => 'BENEFICIARY_KG_UNIT';
+  String get beneficiaryCMUnit => 'BENEFICIARY_CM_UNIT';
+  String get beneficiaryMonthUnit => 'BENEFICIARY_MONTH_UNIT';
+  String get beneficiaryDoseUnit => 'BENEFICIARY_DOSE_UNIT';
 
   String get beneficiarysDetailsLabelText => 'BENEFICIARY_DETAILS_LABEL_TEXT';
   String get beneficiarysDetailsEditIconLabelText =>
@@ -404,7 +405,8 @@ String get beneficiaryMonthUnit => 'BENEFICIARY_MONTH_UNIT';
   String get insufficientAZTStockMessage => 'INSUFFICIENT_AZT_STOCK_MESSAGE';
   String get insufficientAZTStockMessageDelivery =>
       'INSUFFICIENT_AZT_STOCK_MESSAGE_DELIVERY';
-      String get insufficientAddMemberAZTStockMessage => 'INSUFFICIENT_ADD_MEMBER_AZT_STOCK_MESSAGE';
+  String get insufficientAddMemberAZTStockMessage =>
+      'INSUFFICIENT_ADD_MEMBER_AZT_STOCK_MESSAGE';
 }
 
 class IndividualDetails {

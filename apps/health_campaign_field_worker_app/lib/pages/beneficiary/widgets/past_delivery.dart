@@ -132,7 +132,7 @@ Widget buildTableContent(
                       // Display the SKU value in the second column.
 
                       TableData(
-                        '$quantity - ${localizations.translate(value.toString())}',
+                        '$quantity ${localizations.translate(i18.beneficiaryDetails.beneficiaryDoseUnit)} - ${localizations.translate(value.toString())}',
                         cellKey: 'resources',
                       ),
                     ]);
