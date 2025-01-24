@@ -75,6 +75,11 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
               serviceDefinitionFetch: (value) {
                 selectedServiceDefinition = value.selectedServiceDefinition;
                 initialAttributes = value.selectedServiceDefinition?.attributes;
+                if (initialAttributes != null) {
+                  initialAttributes!
+                      .sort((a, b) => (a.order ?? 0).compareTo(b.order ?? 0));
+                }
+
                 if (!isControllersInitialized) {
                   initialAttributes?.forEach((e) {
                     controller.add(TextEditingController());
