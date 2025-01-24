@@ -227,15 +227,6 @@ class _BeneficiaryDetailsPageState
                                                       state.selectedIndividual,
                                                     )?.productVariants;
 
-                                                    //temp
-                                                    // final value =
-                                                    //     variant!.firstWhere(
-                                                    //   (element) =>
-                                                    //       element.id ==
-                                                    //       productVariants!.first
-                                                    //           .productVariantId,
-                                                    // );
-
                                                     if ((spaq1 >=
                                                         productVariants!
                                                             .first.quantity!)) {
