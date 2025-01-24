@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../router/app_router.dart';
 import '../../../utils/i18_key_constants.dart' as i18;
 import '../../../widgets/localized.dart';
-import '../../blocs/household_overview/household_overview.dart';
 import '../../blocs/search_households/search_households.dart';
 import '../../models/entities/identifier_types.dart';
 
@@ -30,9 +29,9 @@ class _BeneficiaryAcknowledgementPageState
 
   @override
   void initState() {
-    super.initState();
     final bloc = context.read<SearchHouseholdsBloc>();
     wrapper = bloc.state.householdMembers.lastOrNull;
+    super.initState();
   }
 
   @override

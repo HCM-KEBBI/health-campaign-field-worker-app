@@ -310,6 +310,13 @@ class SearchBeneficiary {
 class BeneficiaryDetails {
   const BeneficiaryDetails();
 
+  String get beneficiaryWeight => 'BENEFICIARY_WEIGHT';
+  String get beneficiaryHeight => 'BENEFICIARY_HEIGHT';
+  String get beneficiaryKGUnit => 'BENEFICIARY_KG_UNIT';
+  String get beneficiaryCMUnit => 'BENEFICIARY_CM_UNIT';
+  String get beneficiaryMonthUnit => 'BENEFICIARY_MONTH_UNIT';
+  String get beneficiaryDoseUnit => 'BENEFICIARY_DOSE_UNIT';
+
   String get beneficiarysDetailsLabelText => 'BENEFICIARY_DETAILS_LABEL_TEXT';
   String get beneficiarysDetailsEditIconLabelText =>
       'BENEFICIARY_DETAILS_EDIT_ICON_LABEL_TEXT';
@@ -395,10 +402,21 @@ class BeneficiaryDetails {
   String get backToHouseholdDetails => 'BACK_TO_HOUSEHOLD_DETAILS';
   String get insufficientStockMessageDelivery =>
       'INSUFFICIENT_STOCK_MESSAGE_DELIVERY';
+  String get insufficientAZTStockMessage => 'INSUFFICIENT_AZT_STOCK_MESSAGE';
+  String get insufficientAZTStockMessageDelivery =>
+      'INSUFFICIENT_AZT_STOCK_MESSAGE_DELIVERY';
+  String get insufficientAddMemberAZTStockMessage =>
+      'INSUFFICIENT_ADD_MEMBER_AZT_STOCK_MESSAGE';
 }
 
 class IndividualDetails {
   const IndividualDetails();
+
+  String get heightHeadLabelText => 'CHILD_LABEL_HEIGHT_TEXT';
+
+  String get weightHeadLabelText => 'CHILD_LABEL_WEIGHT_TEXT';
+  String get weightErrorValidationText => 'WEIGHT_ERROR_VALIDATION_TEXT';
+  String get heightErrorValidationText => 'HEIGHT_ERROR_VALIDATION_TEXT';
 
   String get individualsDetailsLabelText => 'INDIVIDUAL_LABEL_TEXT';
 

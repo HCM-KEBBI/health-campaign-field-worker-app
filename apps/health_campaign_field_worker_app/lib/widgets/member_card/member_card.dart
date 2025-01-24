@@ -266,10 +266,10 @@ class MemberCard extends StatelessWidget {
                     )
                   : Column(
                       children: [
-                        (isNotEligible ||
+                        ((isNotEligible ||
                                     isBeneficiaryIneligible ||
                                     isBeneficiaryReferred) &&
-                                !doseStatus
+                                !doseStatus)
                             ? const Offstage()
                             : !isNotEligible && redosePendingStatus
                                 ? DigitElevatedButton(
@@ -340,15 +340,12 @@ class MemberCard extends StatelessWidget {
                                               )
                                               .sku;
 
-                                          if (value == null ||
-                                              (value.contains(
-                                                    Constants.spaq1String,
-                                                  ) &&
-                                                  spaq1 >= 2) ||
-                                              (!value.contains(
-                                                    Constants.spaq1String,
-                                                  ) &&
-                                                  spaq2 >= 2)) {
+                                          int doseCount = int.parse(
+                                            successfulTask!
+                                                .resources!.first.quantity!,
+                                          );
+
+                                          if (spaq1 >= doseCount) {
                                             context.router.push(
                                               RecordRedoseRoute(
                                                 tasks: [successfulTask!],
@@ -369,10 +366,10 @@ class MemberCard extends StatelessWidget {
                                                       .colorScheme.error,
                                                 ),
                                                 contentText:
-                                                    localizations.translate(
+                                                    "${localizations.translate(
                                                   i18.beneficiaryDetails
-                                                      .insufficientStockMessageDelivery,
-                                                ),
+                                                      .insufficientAZTStockMessageDelivery,
+                                                )}=$spaq1",
                                                 primaryAction:
                                                     DigitDialogActions(
                                                   label: localizations

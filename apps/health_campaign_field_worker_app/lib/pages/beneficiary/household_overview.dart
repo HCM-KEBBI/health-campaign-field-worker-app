@@ -497,6 +497,7 @@ class _HouseholdOverviewPageState
                                                                         ?.last
                                                                     : null,
                                                                 sideEffectData,
+                                                                e,
                                                               )
                                                             : false,
                                                         name:
@@ -570,48 +571,86 @@ class _HouseholdOverviewPageState
                                     Center(
                                       child: DigitIconButton(
                                         onPressed: () async {
-                                          final bloc = context
-                                              .read<HouseholdOverviewBloc>();
-                                          final searchBloc = context
-                                              .read<SearchHouseholdsBloc>();
+                                          final spaq1 = context.spaq1;
+                                          if (spaq1 > 0) {
+                                            final bloc = context
+                                                .read<HouseholdOverviewBloc>();
+                                            final searchBloc = context
+                                                .read<SearchHouseholdsBloc>();
 
-                                          final wrapper =
-                                              state.householdMemberWrapper;
-                                          final address =
-                                              wrapper.household.address;
+                                            final wrapper =
+                                                state.householdMemberWrapper;
+                                            final address =
+                                                wrapper.household.address;
 
-                                          if (address == null) return;
+                                            if (address == null) return;
 
-                                          final projectId = context.projectId;
+                                            final projectId = context.projectId;
 
-                                          await context.router.push(
-                                            BeneficiaryRegistrationWrapperRoute(
-                                              initialState:
-                                                  BeneficiaryRegistrationAddMemberState(
-                                                addressModel: address,
+                                            await context.router.push(
+                                              BeneficiaryRegistrationWrapperRoute(
+                                                initialState:
+                                                    BeneficiaryRegistrationAddMemberState(
+                                                  addressModel: address,
+                                                  householdModel:
+                                                      wrapper.household,
+                                                ),
+                                                children: [
+                                                  IndividualDetailsRoute(),
+                                                ],
+                                              ),
+                                            );
+                                            bloc.add(
+                                              HouseholdOverviewReloadEvent(
+                                                projectId: projectId,
+                                                projectBeneficiaryType:
+                                                    beneficiaryType,
+                                              ),
+                                            );
+
+                                            searchBloc.add(
+                                              SearchHouseholdsByHouseholdsEvent(
                                                 householdModel:
                                                     wrapper.household,
+                                                projectId: projectId,
+                                                isProximityEnabled: false,
                                               ),
-                                              children: [
-                                                IndividualDetailsRoute(),
-                                              ],
-                                            ),
-                                          );
-                                          bloc.add(
-                                            HouseholdOverviewReloadEvent(
-                                              projectId: projectId,
-                                              projectBeneficiaryType:
-                                                  beneficiaryType,
-                                            ),
-                                          );
-
-                                          searchBloc.add(
-                                            SearchHouseholdsByHouseholdsEvent(
-                                              householdModel: wrapper.household,
-                                              projectId: projectId,
-                                              isProximityEnabled: false,
-                                            ),
-                                          );
+                                            );
+                                          } else {
+                                            DigitDialog.show(
+                                              context,
+                                              options: DigitDialogOptions(
+                                                titleText:
+                                                    localizations.translate(
+                                                  i18.beneficiaryDetails
+                                                      .insufficientStockHeading,
+                                                ),
+                                                titleIcon: Icon(
+                                                  Icons.warning,
+                                                  color: DigitTheme.instance
+                                                      .colorScheme.error,
+                                                ),
+                                                contentText:
+                                                    "${localizations.translate(
+                                                  i18.beneficiaryDetails
+                                                      .insufficientAddMemberAZTStockMessage,
+                                                )}=$spaq1",
+                                                primaryAction:
+                                                    DigitDialogActions(
+                                                  label: localizations
+                                                      .translate(i18
+                                                          .beneficiaryDetails
+                                                          .backToHome),
+                                                  action: (ctx) {
+                                                    Navigator.of(
+                                                      context,
+                                                      rootNavigator: true,
+                                                    ).pop();
+                                                  },
+                                                ),
+                                              ),
+                                            );
+                                          }
                                         },
                                         iconText: localizations.translate(
                                           i18.householdOverView

@@ -22,6 +22,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formula_parser/formula_parser.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:gs1_barcode_parser/gs1_barcode_parser.dart';
 import 'package:isar/isar.dart';
@@ -327,8 +328,9 @@ bool checkEligibilityForAgeAndSideEffect(
   DigitDOBAge age,
   ProjectType? projectType,
   TaskModel? tasks,
-  List<SideEffectModel>? sideEffects,
-) {
+  List<SideEffectModel>? sideEffects, [
+  IndividualModel? individual,
+]) {
   int totalAgeMonths = age.years * 12 + age.months;
   bool skipAge = false;
   final currentCycle = projectType?.cycles?.firstWhereOrNull(
@@ -361,6 +363,16 @@ bool checkEligibilityForAgeAndSideEffect(
               : false
           : false;
     } else {
+      if (individual != null) {
+        return (fetchProductVariant(
+                  currentCycle.deliveries!.firstOrNull,
+                  individual,
+                ) !=
+                null)
+            ? true
+            : false;
+      }
+
       return skipAge ||
               (totalAgeMonths >= projectType!.validMinAge! &&
                   totalAgeMonths <= projectType.validMaxAge!)
@@ -557,21 +569,62 @@ DoseCriteriaModel? fetchProductVariant(
     );
     final individualAgeInMonths =
         individualAge.years * 12 + individualAge.months;
+
+    final height = int.parse(individualModel.additionalFields != null &&
+            individualModel.additionalFields!.fields
+                .where((element) => element.key == Constants.height)
+                .isNotEmpty
+        ? individualModel.additionalFields?.fields
+            .where((element) => element.key == Constants.height)
+            .firstOrNull!
+            .value
+        : '0');
+
+    final weight = double.parse(individualModel.additionalFields != null &&
+            individualModel.additionalFields!.fields
+                .where((element) => element.key == Constants.weight)
+                .isNotEmpty
+        ? individualModel.additionalFields?.fields
+            .where((element) => element.key == Constants.weight)
+            .firstOrNull!
+            .value
+        : '0');
+
     final filteredCriteria = currentDelivery.doseCriteria?.where((criteria) {
       final condition = criteria.condition;
       if (condition != null) {
-        //{TODO: Expression package need to be parsed
-        final ageRange = condition.split("<=age<");
-        final minAge = int.parse(ageRange.first);
-        final maxAge = int.parse(ageRange.last);
+        final conditions = condition.split('and');
 
-        // temp change for SMC specific use case
-        if (maxAge == 59 && individualAgeInMonths > 59) {
-          return true;
+        List expressionParser = [];
+        for (var element in conditions) {
+          final variables = individualModel.additionalFields != null &&
+                  individualModel.additionalFields!.fields
+                          ?.any((field) => field.key == Constants.weight) ==
+                      true
+              ? {
+                  'weight': weight, // Provide default values if null
+                  'age': individualAgeInMonths,
+                }
+              : {
+                  'height': height, // Provide default values if null
+                  'age': individualAgeInMonths,
+                };
+
+          final expression = FormulaParser(
+            element,
+            variables,
+          );
+          final Map<String, dynamic> p =
+              expression.parse as Map<String, dynamic>;
+
+          expressionParser.add(p['value'].toString());
         }
 
-        return individualAgeInMonths >= minAge &&
-            individualAgeInMonths <= maxAge;
+        return expressionParser
+                .map((e) => e.toString().trim())
+                .where((element) => element == 'true')
+                .length ==
+            expressionParser.length;
       }
 
       return false;
@@ -581,6 +634,32 @@ DoseCriteriaModel? fetchProductVariant(
   }
 
   return null;
+}
+
+String convertToRange(String? condition1, String? condition2) {
+  // Function to extract the number from a condition
+  int extractNumber(String? condition, int defaultValue) {
+    if (condition == null || condition.isEmpty) {
+      return defaultValue; // Return default if condition is null or empty
+    }
+    final RegExp regExp = RegExp(r'\d+');
+    final match = regExp.firstMatch(condition);
+
+    return match != null ? int.parse(match.group(0)!) : defaultValue;
+  }
+
+  // Handle default values for condition1 and condition2
+  int num1 = extractNumber(condition1, 0); // Default to 0 for condition1
+  if (condition2 == null || condition2.isEmpty) {
+    return ""; // Return empty string if condition2 is null or empty
+  }
+  int num2 = extractNumber(condition2, 0);
+
+  // Sort the numbers to ensure the smaller number is on the left
+  List<int> numbers = [num1, num2]..sort();
+
+  // Return the range in "small-big" format
+  return "${numbers[0]}-${numbers[1]}";
 }
 
 Future<bool> getIsConnected() async {
@@ -598,6 +677,16 @@ Future<bool> getIsConnected() async {
 
 int getAgeMonths(DigitDOBAge age) {
   return (age.years * 12) + age.months;
+}
+
+String getCategory(int number) {
+  if (number >= 1 && number <= 11) {
+    return Constants.weight;
+  } else if (number >= 12 && number <= 59) {
+    return Constants.height;
+  } else {
+    return "Invalid number";
+  }
 }
 
 void showDownloadDialog(

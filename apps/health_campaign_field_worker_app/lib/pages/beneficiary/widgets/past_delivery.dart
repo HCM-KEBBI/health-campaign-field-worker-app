@@ -48,7 +48,7 @@ Widget buildTableContent(
   final numRows = productVariants?.length ?? 0;
   const rowHeight = 82;
   const paddingHeight = kPadding * 2;
-  final containerHeight = (numRows + 1) * rowHeight + paddingHeight;
+  final containerHeight = (numRows + 1) * rowHeight + paddingHeight + 32;
 
   return Container(
     padding: const EdgeInsets.only(
@@ -66,6 +66,9 @@ Widget buildTableContent(
         final item = projectState.projectType!.cycles![currentCycle - 1]
             .deliveries![currentDose - 1];
 
+        final condtions =
+            fetchProductVariant(item, individualModel)?.condition?.split('and');
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           // mainAxisSize: MainAxisSize.min,
@@ -78,7 +81,19 @@ Widget buildTableContent(
                 localizations.translate(
                   i18.beneficiaryDetails.beneficiaryAge,
                   //[TODO: Condition need to be handled in generic way,]
-                ): '${fetchProductVariant(item, individualModel)?.condition?.split('<=age<').first} - ${fetchProductVariant(item, individualModel)?.condition?.split('<=age<').last} months',
+                ): '${convertToRange(condtions?[0], condtions?[1])} ${localizations.translate(
+                  i18.beneficiaryDetails.beneficiaryMonthUnit,
+                )}',
+                localizations.translate(
+                  condtions![3].contains(Constants.height)
+                      ? i18.beneficiaryDetails.beneficiaryHeight
+                      : i18.beneficiaryDetails.beneficiaryWeight,
+                  //[TODO: Condition need to be handled in generic way,]
+                ): '${convertToRange(condtions[2], condtions[3])}  ${localizations.translate(
+                  condtions[3].contains(Constants.height)
+                      ? i18.beneficiaryDetails.beneficiaryCMUnit
+                      : i18.beneficiaryDetails.beneficiaryKGUnit,
+                )}',
               },
             ),
             const Divider(
@@ -117,7 +132,7 @@ Widget buildTableContent(
                       // Display the SKU value in the second column.
 
                       TableData(
-                        '$quantity - ${localizations.translate(value.toString())}',
+                        '$quantity ${localizations.translate(i18.beneficiaryDetails.beneficiaryDoseUnit)} - ${localizations.translate(value.toString())}',
                         cellKey: 'resources',
                       ),
                     ]);

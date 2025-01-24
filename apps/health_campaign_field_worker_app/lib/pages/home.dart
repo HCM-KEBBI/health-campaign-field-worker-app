@@ -495,7 +495,7 @@ class _HomePageState extends LocalizedState<HomePage> {
             .toList()
             .contains(element))
         .toList();
-
+    //filteredLabels.add("DB");
     final List<Widget> widgetList =
         filteredLabels.map((label) => homeItemsMap[label]!).toList();
 
