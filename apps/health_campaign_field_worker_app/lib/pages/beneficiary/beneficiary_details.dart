@@ -49,6 +49,11 @@ class _BeneficiaryDetailsPageState
     return ProductVariantBlocWrapper(
       child: BlocBuilder<HouseholdOverviewBloc, HouseholdOverviewState>(
         builder: (context, state) {
+          final AdditionalField? individualAdditionalField = state
+              .selectedIndividual?.additionalFields?.fields
+              .firstWhereOrNull((element) =>
+                  element.key == Constants.height ||
+                  element.key == Constants.weight);
           final householdMemberWrapper = state.householdMemberWrapper;
           // Filtering project beneficiaries based on the selected individual
           final projectBeneficiary =
@@ -256,8 +261,7 @@ class _BeneficiaryDetailsPageState
                                                                 .error,
                                                           ),
                                                           contentText:
-                                                              "${localizations
-                                                                  .translate(
+                                                              "${localizations.translate(
                                                             i18.beneficiaryDetails
                                                                 .insufficientAZTStockMessageDelivery,
                                                           )}=$spaq1",
@@ -426,6 +430,20 @@ class _BeneficiaryDetailsPageState
                                               .selectedIndividual?.gender?.name
                                               .toUpperCase() ??
                                           '--'),
+                                  if (individualAdditionalField != null &&
+                                      ((individualAdditionalField.key
+                                              .contains(Constants.height)) ||
+                                          (individualAdditionalField.key
+                                              .contains(Constants.weight))))
+                                    individualAdditionalField.key:
+                                        "${individualAdditionalField.value ?? '0'} ${localizations.translate(
+                                      individualAdditionalField.key
+                                              .contains(Constants.weight)
+                                          ? i18.beneficiaryDetails
+                                              .beneficiaryKGUnit
+                                          : i18.beneficiaryDetails
+                                              .beneficiaryCMUnit,
+                                    )}",
                                   localizations.translate(i18
                                       .deliverIntervention
                                       .dateOfRegistrationLabel): () {

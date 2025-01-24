@@ -580,7 +580,7 @@ DoseCriteriaModel? fetchProductVariant(
             .value
         : '0');
 
-    final weight = int.parse(individualModel.additionalFields != null &&
+    final weight = double.parse(individualModel.additionalFields != null &&
             individualModel.additionalFields!.fields
                 .where((element) => element.key == Constants.weight)
                 .isNotEmpty
