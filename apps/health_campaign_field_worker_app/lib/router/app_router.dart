@@ -59,6 +59,7 @@ import '../pages/inventory/project_facility_selection.dart';
 import '../pages/inventory/record_stock/record_stock_wrapper.dart';
 import '../pages/inventory/record_stock/stock_details.dart';
 import '../pages/inventory/record_stock/warehouse_details.dart';
+import '../pages/inventory/reports/performance_summary_report_details.dart';
 import '../pages/inventory/reports/report_details.dart';
 import '../pages/inventory/reports/report_selection.dart';
 import '../pages/inventory/stock_reconciliation/stock_reconciliation.dart';
@@ -182,6 +183,10 @@ part 'app_router.gr.dart';
             ),
             AutoRoute(page: ChecklistViewPage, path: 'view'),
           ],
+        ),
+         AutoRoute(
+          page: PerformamnceSummaryReportDetailsPage,
+          path: 'performance-summary-report-details',
         ),
 
         AutoRoute(page: ChecklistWrapperPage, path: 'checklist', children: [

@@ -276,6 +276,8 @@ class Home {
   String get db => 'HOME_DB_LABEL';
   String get beneficiaryReferralLabel => 'HOME_BENEFICIARY_REFERRAL_LABEL';
   String get manageAttendanceLabel => 'HOME_MANAGE_ATTENDANCE_LABEL';
+  String get viewSummaryReportsPerformanceLabel =>
+      "HOME_VIEW_PERFORMANCE_SUMMARY_REPORTS_LABEL";
 }
 
 class SearchBeneficiary {

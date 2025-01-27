@@ -39,6 +39,8 @@ class BeneficiaryTypeMapper extends EnumMapper<BeneficiaryType> {
         return BeneficiaryType.spaq1;
       case "SPAQ2":
         return BeneficiaryType.spaq2;
+      case "AZT":
+        return BeneficiaryType.azt;
       default:
         throw MapperException.unknownEnumValue(value);
     }
@@ -61,6 +63,8 @@ class BeneficiaryTypeMapper extends EnumMapper<BeneficiaryType> {
         return "SPAQ1";
       case BeneficiaryType.spaq2:
         return "SPAQ2";
+      case BeneficiaryType.azt:
+        return "AZT";
     }
   }
 }
