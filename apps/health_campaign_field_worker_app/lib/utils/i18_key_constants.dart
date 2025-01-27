@@ -29,6 +29,19 @@ const referBeneficiary = ReferBeneficiary();
 const ineligibilityReasons = IneligibilityReasons();
 const scanner = Scanner();
 
+const summaryReport= SummaryReport();
+
+class SummaryReport{
+  const SummaryReport();
+
+String get houseHoldRegistered => 'SUMMARY_REPORT_COLUMN_HOUSEHOLD_REGISTERED';
+String get childrenTreated => 'SUMMARY_REPORT_COLUMN_CHILDREN_TREATED';
+String get childrenTreatedPercentage => 'SUMMARY_REPORT_COLUMN_CHILDREN_TREATED_PERCENTAGE';
+String get aztReceived => 'SUMMARY_REPORT_COLUMN_AZT_RECEIVED';
+String get aztConsumed => 'SUMMARY_REPORT_COLUMN_AZT_CONSUMED';
+
+}
+
 class Common {
   const Common();
 
@@ -494,6 +507,7 @@ class HouseholdLocation {
   String get householdLocationLabelText => 'HOUSEHOLD_LOCATION_LABEL_TEXT';
 
   String get administrationAreaFormLabel => 'ADMINISTRATION_AREA_FORM_LABEL';
+
 
   String get administrationAreaRequiredValidation =>
       'HOUSEHOLD_LOCATION_ADMINISTRATION_AREA_REQUIRED_VALIDATION';

@@ -27,11 +27,16 @@ class PerformannceSummaryReportBloc
 
   final ProductVariantDataRepository productVariantRepository;
 
+  final StockDataRepository stockDataRepository;
+  final StockReconciliationDataRepository stockReconciliationDataRepository;
+
   PerformannceSummaryReportBloc({
     required this.individualRepository,
     required this.householdRepository,
     required this.taskRepository,
     required this.productVariantRepository,
+    required this.stockDataRepository,
+    required this.stockReconciliationDataRepository,
   }) : super(const PerformanceSummaryReportEmptyState()) {
     on(_handleLoadDataEvent);
     on(_handleLoadingEvent);
@@ -52,11 +57,40 @@ class PerformannceSummaryReportBloc
       HouseholdSearchModel(tenantId: envConfig.variables.tenantId),
       userId,
     );
-    // final individualList =
-    //     await (individualRepository as IndividualLocalRepository).search(
-    //   IndividualSearchModel(tenantId: envConfig.variables.tenantId),
-    //   userId,
-    // );
+
+    // demo
+
+// Fetching the stock reconciliation details
+    final receivedStocks = (await stockDataRepository.search(
+      StockSearchModel(
+        transactionType: [TransactionType.received],
+      ),
+    ))
+        .where(
+          (element) =>
+              element.auditDetails != null &&
+              element.auditDetails?.createdBy == userId,
+        )
+        .toList();
+
+    // Assuming each element has 'date' (String or DateTime) and 'quantity' (int or double)
+    final Map<String, double> stockReceivedVsDate = {};
+
+    for (var stock in receivedStocks) {
+      //final dateKey = stock.dateOfEntry;
+      var dateKey = DigitDateUtils.getDateFromTimestamp(
+        stock.dateOfEntry ?? DateTime.now().millisecondsSinceEpoch,
+      ); // Replace 'date' with the actual field name in your data model.
+      final quantity = double.parse(stock.quantity ??
+          '0'); // Replace 'quantity' with the actual field name.
+
+      // Accumulate the quantity for the same date
+      stockReceivedVsDate[dateKey] =
+          (stockReceivedVsDate[dateKey] ?? 0) + quantity;
+    }
+
+    //
+
     final productVariantList =
         await (productVariantRepository as ProductVariantLocalRepository)
             .search(
@@ -161,14 +195,12 @@ class PerformannceSummaryReportBloc
           dayVsDrugsQuantityMap[date]!.containsKey(
             albendazoleResourceId,
           )) {
-        drugOne = dayVsDrugsQuantityMap[date]![albendazoleResourceId] ?? 0;
+        drugTwo = dayVsDrugsQuantityMap[date]![albendazoleResourceId] ?? 0;
       }
-      if (dayVsDrugsQuantityMap.containsKey(date) &&
-          dayVsDrugsQuantityMap[date] != null &&
-          dayVsDrugsQuantityMap[date]!.containsKey(
-            ivermectinResourceId,
-          )) {
-        drugTwo = dayVsDrugsQuantityMap[date]![ivermectinResourceId] ?? 0;
+
+      if (stockReceivedVsDate.containsKey(date) &&
+          stockReceivedVsDate[date] != null) {
+        drugOne = stockReceivedVsDate[date] ?? 0;
       }
 
       final treatedPercentage = (totalTaskForADay / 75) * 100;

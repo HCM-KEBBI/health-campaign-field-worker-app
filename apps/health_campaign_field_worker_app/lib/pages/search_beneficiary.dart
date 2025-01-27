@@ -384,7 +384,9 @@ class _SearchBeneficiaryPageState
                             contentText: "${localizations.translate(
                               i18.beneficiaryDetails
                                   .insufficientAZTStockMessage,
-                            )}=$spaq1",
+                            )}=$spaq1${localizations.translate(
+                              i18.beneficiaryDetails.beneficiaryDoseUnit,
+                            )}",
                             primaryAction: DigitDialogActions(
                               label: localizations
                                   .translate(i18.beneficiaryDetails.backToHome),

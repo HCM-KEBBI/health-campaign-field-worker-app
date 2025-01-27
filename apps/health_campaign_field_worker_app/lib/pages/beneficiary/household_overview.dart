@@ -634,7 +634,10 @@ class _HouseholdOverviewPageState
                                                     "${localizations.translate(
                                                   i18.beneficiaryDetails
                                                       .insufficientAddMemberAZTStockMessage,
-                                                )}=$spaq1",
+                                                )}=$spaq1${localizations.translate(
+                                                  i18.beneficiaryDetails
+                                                      .beneficiaryDoseUnit,
+                                                )}",
                                                 primaryAction:
                                                     DigitDialogActions(
                                                   label: localizations

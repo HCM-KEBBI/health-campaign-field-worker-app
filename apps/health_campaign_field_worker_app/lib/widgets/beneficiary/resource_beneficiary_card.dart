@@ -61,35 +61,42 @@ class _ResourceBeneficiaryCardState
               return productState.maybeWhen(
                 orElse: () => const Offstage(),
                 fetched: (productVariants) {
-                  return DigitReactiveDropdown(
-                    label: '${localizations.translate(
-                      i18.deliverIntervention.resourceDeliveredLabel,
-                    )}*',
-                    readOnly: true,
-                    menuItems: productVariants,
-                    formControlName: 'resourceDelivered.${widget.cardIndex}',
-                    valueMapper: (value) {
-                      return localizations.translate(
-                        value.sku ?? value.id,
-                      );
-                    },
+                  return Column(
+                    children: [
+                      DigitReactiveDropdown(
+                        label: '${localizations.translate(
+                          i18.deliverIntervention.resourceDeliveredLabel,
+                        )}*',
+                        readOnly: true,
+                        menuItems: productVariants,
+                        formControlName:
+                            'resourceDelivered.${widget.cardIndex}',
+                        valueMapper: (value) {
+                          return localizations.translate(
+                            value.sku ?? value.id,
+                          );
+                        },
+                      ),
+                      DigitTextFormField(
+                        readOnly: true,
+                        formControlName:
+                            'quantityDistributed.${widget.cardIndex}',
+                       // form: widget.form,
+                        label: '${localizations.translate(
+                          widget.isAdministered
+                              ? i18.deliverIntervention.redoseQuantityLabel
+                              : i18
+                                  .deliverIntervention.quantityDistributedLabel,
+                        )}*',
+                        // minimum: 0,
+                        // maximum: 1,
+                        // buttonWidth: 50,
+                      ),
+                    ],
                   );
                 },
               );
             },
-          ),
-          DigitIntegerFormPicker(
-            incrementer: true,
-            formControlName: 'quantityDistributed.${widget.cardIndex}',
-            form: widget.form,
-            label: '${localizations.translate(
-              widget.isAdministered
-                  ? i18.deliverIntervention.redoseQuantityLabel
-                  : i18.deliverIntervention.quantityDistributedLabel,
-            )}*',
-            minimum: 0,
-            maximum: 1,
-            buttonWidth: 50,
           ),
         ],
       ),

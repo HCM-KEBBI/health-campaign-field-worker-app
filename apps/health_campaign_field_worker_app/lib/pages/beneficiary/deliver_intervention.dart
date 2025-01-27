@@ -448,20 +448,7 @@ class _DeliverInterventionPageState
                                                               .deliverIntervention
                                                               .currentCycle),
                                                     ),
-                                                    DigitStepper(
-                                                      activeStep:
-                                                          deliveryInterventionstate
-                                                                  .dose -
-                                                              1,
-                                                      stepRadius: 12.5,
-                                                      steps: steps,
-                                                      maxStepReached: 3,
-                                                      lineLength:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width /
-                                                              steps.length,
-                                                    ),
+                                                    
                                                     DigitDateFormPicker(
                                                       isEnabled: false,
                                                       formControlName:
@@ -652,7 +639,7 @@ class _DeliverInterventionPageState
                 tenantId: envConfig.variables.tenantId,
                 rowVersion: oldTask?.rowVersion ?? 1,
                 quantity: (((form.control(_quantityDistributedKey) as FormArray)
-                        .value)?[productvariantList.indexOf(e)])
+                        .value)?[productvariantList.indexOf(e)]).toString().split(" ")[0]
                     .toString(),
                 clientAuditDetails: ClientAuditDetails(
                   createdBy: context.loggedInUserUuid,
@@ -762,15 +749,15 @@ class _DeliverInterventionPageState
               )),
         ],
       ),
-      _quantityDistributedKey: FormArray<int>([
+      _quantityDistributedKey: FormArray<String>([
         ..._controllers.map(
-          (e) => FormControl<int>(
+          (e) => FormControl<String>(
             validators: [
               Validators.required,
-              Validators.min(0),
-              Validators.max(1),
+              // Validators.min(1),
+              // Validators.max(1),
             ],
-            value: 0,
+            value: "${productVariants[0].quantity??0} ${localizations.translate(i18.beneficiaryDetails.beneficiaryDoseUnit)}",
           ),
         ),
       ]),

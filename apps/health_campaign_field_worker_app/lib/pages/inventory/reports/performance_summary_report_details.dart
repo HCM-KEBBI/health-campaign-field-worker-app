@@ -2,10 +2,11 @@ import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../models/entities/household.dart';
+import '../../../models/entities/stock.dart';
+import '../../../models/entities/stock_reconciliation.dart';
 import '../../../router/app_router.dart';
 import '../../../widgets/localized.dart';
 import 'package:reactive_forms/reactive_forms.dart';
-
 
 import '../../../blocs/performanceSummaryReport/performance_summary_report.dart';
 import '../../../models/entities/individual.dart';
@@ -15,7 +16,6 @@ import '../../../utils/i18_key_constants.dart' as i18;
 import '../../../utils/utils.dart';
 import '../../../widgets/header/back_navigation_help_header.dart';
 import '../../../widgets/reports/readonly_pluto_grid.dart';
-
 
 class PerformamnceSummaryReportDetailsPage extends LocalizedStatefulWidget
     with AutoRouteWrapper {
@@ -42,6 +42,10 @@ and attached the event to load the data*/
           taskRepository: context.repository<TaskModel, TaskSearchModel>(),
           productVariantRepository: context
               .repository<ProductVariantModel, ProductVariantSearchModel>(),
+          stockDataRepository:
+              context.repository<StockModel, StockSearchModel>(),
+          stockReconciliationDataRepository: context.repository<
+              StockReconciliationModel, StockReconciliationSearchModel>(),
         );
       },
       child: this,
@@ -68,7 +72,7 @@ class _PerformamnceSummaryReportDetailsPageState
     ));
   }
 
-static const _schoolKey = 'schoolKey';
+  static const _schoolKey = 'schoolKey';
   static const _householdKey = 'householdKey';
   static const _treatedPercentageKey = 'treatedPercentageKey';
   static const _treatedKey = 'treatedKey';
@@ -120,42 +124,43 @@ static const _schoolKey = 'schoolKey';
                               key: _dateKey,
                               width: 90,
                             ),
-                            
+
                             //
                             DigitGridColumn(
                               label: localizations.translate(
-                               "Household Registered",
+                                i18.summaryReport.houseHoldRegistered,
                               ),
                               key: _householdKey,
                               width: 170,
                             ),
+
                             DigitGridColumn(
                               label: localizations.translate(
-                               "Children treated(%)",
-                              ),
-                              key: _treatedPercentageKey,
-                              width: 140,
-                            ),
-                            DigitGridColumn(
-                              label: localizations.translate(
-                                "Children treated",
+                                i18.summaryReport.childrenTreated,
                               ),
                               key: _treatedKey,
                               width: 120,
                             ),
                             DigitGridColumn(
                               label: localizations.translate(
-                                'AZT Received(ml)',
+                                i18.summaryReport.childrenTreatedPercentage,
                               ),
-                              key: _drugOneKey,
-                              width: 130,
+                              key: _treatedPercentageKey,
+                              width: 140,
                             ),
                             DigitGridColumn(
                               label: localizations.translate(
-                                'AZT Used(ml)',
+                                i18.summaryReport.aztReceived,
+                              ),
+                              key: _drugOneKey,
+                              width: 160,
+                            ),
+                            DigitGridColumn(
+                              label: localizations.translate(
+                                i18.summaryReport.aztConsumed,
                               ),
                               key: _drugTwoKey,
-                              width: 130,
+                              width: 160,
                             ),
                           ],
                           rows: [
@@ -167,7 +172,6 @@ static const _schoolKey = 'schoolKey';
                                     key: _dateKey,
                                     value: entry.key,
                                   ),
-                                  
                                   DigitGridCell(
                                     key: _householdKey,
                                     value:

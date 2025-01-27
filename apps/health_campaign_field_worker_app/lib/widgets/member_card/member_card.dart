@@ -369,7 +369,10 @@ class MemberCard extends StatelessWidget {
                                                     "${localizations.translate(
                                                   i18.beneficiaryDetails
                                                       .insufficientAZTStockMessageDelivery,
-                                                )}=$spaq1",
+                                                )}=$spaq1${localizations.translate(
+                                                  i18.beneficiaryDetails
+                                                      .beneficiaryDoseUnit,
+                                                )}",
                                                 primaryAction:
                                                     DigitDialogActions(
                                                   label: localizations
