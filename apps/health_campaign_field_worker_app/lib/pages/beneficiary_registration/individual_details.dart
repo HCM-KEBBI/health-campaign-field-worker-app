@@ -56,8 +56,9 @@ class _IndividualDetailsPageState
 
   final ValueNotifier<String> heightWeight = ValueNotifier("");
 
-  void updateStatus(dynamic age) {
+  void updateStatus(FormGroup form, dynamic age) {
     // Updating the ValueNotifier
+
     if (age == null) {
       if (heightWeight.value != "") {
         heightWeight.value = ""; // Only update if necessary
@@ -66,6 +67,12 @@ class _IndividualDetailsPageState
       final cat = getCategory(getAgeMonths(age));
       final newValue =
           (cat == Constants.height || cat == Constants.weight) ? cat : "";
+
+      if (newValue == Constants.height) {
+        form.control(_weight).value = "";
+      } else if (newValue == Constants.weight) {
+        form.control(_height).value = "";
+      }
 
       if (heightWeight.value != newValue) {
         heightWeight.value = newValue; // Update only if changed
@@ -499,12 +506,13 @@ class _IndividualDetailsPageState
                               // Handle changes to the control's value here
                               final value = formControl.value;
                               if (value == null) {
-                                updateStatus(null);
+                                updateStatus(form, null);
                                 formControl.setErrors({'': true});
                               } else {
                                 DigitDOBAge age =
                                     DigitDateUtils.calculateAge(value);
-                                updateStatus(age);
+
+                                updateStatus(form, age);
                                 if ((age.years == 0 && age.months == 0) ||
                                     age.months > 11 ||
                                     (age.years > 150 ||
@@ -557,17 +565,25 @@ class _IndividualDetailsPageState
                                 // weight
                                 if (isVisible == Constants.weight) {
                                   return DigitTextFormField(
+                                    inputFormatters: [
+                                      //FilteringTextInputFormatter.digitsOnly,
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'^\d*\.?\d{0,2}'),),
+                                    ],
                                     formControlName: _weight,
                                     label: localizations.translate(
                                       i18.individualDetails.weightHeadLabelText,
                                     ),
-                                    isRequired: (isVisible == Constants.weight ||
+                                    isRequired: (isVisible ==
+                                                Constants.weight ||
                                             (individual != null &&
                                                 getCategory(getAgeMonths(
-                                                      DigitDateUtils.calculateAge(
+                                                      DigitDateUtils
+                                                          .calculateAge(
                                                         DateFormat('dd/MM/yyyy')
                                                             .parse(
-                                                          individual.dateOfBirth!,
+                                                          individual
+                                                              .dateOfBirth!,
                                                         ),
                                                       ),
                                                     )) ==
@@ -577,17 +593,23 @@ class _IndividualDetailsPageState
                                   );
                                 } else if (isVisible == Constants.height) {
                                   return DigitTextFormField(
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                    ],
                                     formControlName: _height,
                                     label: localizations.translate(
                                       i18.individualDetails.heightHeadLabelText,
                                     ),
-                                    isRequired: (isVisible == Constants.height ||
+                                    isRequired: (isVisible ==
+                                                Constants.height ||
                                             (individual != null &&
                                                 getCategory(getAgeMonths(
-                                                      DigitDateUtils.calculateAge(
+                                                      DigitDateUtils
+                                                          .calculateAge(
                                                         DateFormat('dd/MM/yyyy')
                                                             .parse(
-                                                          individual.dateOfBirth!,
+                                                          individual
+                                                              .dateOfBirth!,
                                                         ),
                                                       ),
                                                     )) ==
@@ -605,17 +627,25 @@ class _IndividualDetailsPageState
                                         )) ==
                                         Constants.weight)) {
                                   return DigitTextFormField(
+                                    inputFormatters: [
+                                      // FilteringTextInputFormatter.digitsOnly,
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'^\d*\.?\d{0,2}'),),
+                                    ],
                                     formControlName: _weight,
                                     label: localizations.translate(
                                       i18.individualDetails.weightHeadLabelText,
                                     ),
-                                    isRequired: (isVisible == Constants.weight ||
+                                    isRequired: (isVisible ==
+                                                Constants.weight ||
                                             (individual != null &&
                                                 getCategory(getAgeMonths(
-                                                      DigitDateUtils.calculateAge(
+                                                      DigitDateUtils
+                                                          .calculateAge(
                                                         DateFormat('dd/MM/yyyy')
                                                             .parse(
-                                                          individual.dateOfBirth!,
+                                                          individual
+                                                              .dateOfBirth!,
                                                         ),
                                                       ),
                                                     )) ==
@@ -633,17 +663,23 @@ class _IndividualDetailsPageState
                                         )) ==
                                         Constants.height)) {
                                   return DigitTextFormField(
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                    ],
                                     formControlName: _height,
                                     label: localizations.translate(
                                       i18.individualDetails.heightHeadLabelText,
                                     ),
-                                    isRequired: (isVisible == Constants.height ||
+                                    isRequired: (isVisible ==
+                                                Constants.height ||
                                             (individual != null &&
                                                 getCategory(getAgeMonths(
-                                                      DigitDateUtils.calculateAge(
+                                                      DigitDateUtils
+                                                          .calculateAge(
                                                         DateFormat('dd/MM/yyyy')
                                                             .parse(
-                                                          individual.dateOfBirth!,
+                                                          individual
+                                                              .dateOfBirth!,
                                                         ),
                                                       ),
                                                     )) ==

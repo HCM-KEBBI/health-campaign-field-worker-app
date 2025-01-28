@@ -638,28 +638,64 @@ DoseCriteriaModel? fetchProductVariant(
 
 String convertToRange(String? condition1, String? condition2) {
   // Function to extract the number from a condition
-  int extractNumber(String? condition, int defaultValue) {
+  double extractNumber(String? condition, double defaultValue) {
     if (condition == null || condition.isEmpty) {
       return defaultValue; // Return default if condition is null or empty
     }
-    final RegExp regExp = RegExp(r'\d+');
+    final RegExp regExp =
+        RegExp(r'\d+(\.\d+)?'); // Support integers and decimals
     final match = regExp.firstMatch(condition);
 
-    return match != null ? int.parse(match.group(0)!) : defaultValue;
+    return match != null ? double.parse(match.group(0)!) : defaultValue;
   }
 
-  // Handle default values for condition1 and condition2
-  int num1 = extractNumber(condition1, 0); // Default to 0 for condition1
-  if (condition2 == null || condition2.isEmpty) {
-    return ""; // Return empty string if condition2 is null or empty
+  // Determine the adjustment factors based on the condition type
+  double adjustNumber(String condition, double number, bool isNum1) {
+    if (condition.contains("age") || condition.contains("height")) {
+      return isNum1 ? number + 1 : number - 1; // Adjust for age and height
+    } else if (condition.contains("weight")) {
+      return isNum1 ? number + 0.1 : number - 0.1; // Adjust decimals for weight
+    }
+
+    return number; // No adjustment for other conditions
   }
-  int num2 = extractNumber(condition2, 0);
+
+  // Format the number for weight to preserve `.0`
+  String formatNumberForWeight(double number) {
+    return number.toStringAsFixed(1); // Keep one decimal place for weight
+  }
+
+  // Format the number for other conditions
+  String formatNumber(double number) {
+    if (number == number.toInt()) {
+      return number.toInt().toString(); // Return as integer if no decimal part
+    }
+
+    return number.toString(); // Return as is for decimals
+  }
+
+  // Extract numbers from conditions
+  double num1 = extractNumber(condition1, 0);
+  double num2 = extractNumber(condition2, 0);
+
+  // Apply adjustments based on the condition type
+  if (condition1 != null) {
+    num1 = adjustNumber(condition1, num1, true);
+  }
+  if (condition2 != null) {
+    num2 = adjustNumber(condition2, num2, false);
+  }
 
   // Sort the numbers to ensure the smaller number is on the left
-  List<int> numbers = [num1, num2]..sort();
+  List<double> numbers = [num1, num2]..sort();
 
-  // Return the range in "small-big" format
-  return "${numbers[0]}-${numbers[1]}";
+  // Format the output based on the condition type
+  if ((condition1?.contains("weight") ?? false) ||
+      (condition2?.contains("weight") ?? false)) {
+    return "${formatNumberForWeight(numbers[0])}-${formatNumberForWeight(numbers[1])}";
+  }
+
+  return "${formatNumber(numbers[0])}-${formatNumber(numbers[1])}";
 }
 
 Future<bool> getIsConnected() async {
