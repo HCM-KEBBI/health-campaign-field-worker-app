@@ -439,6 +439,8 @@ class _InventoryReportDetailsPageState
                                               'partialBlistersReturned';
                                           const wastedBlisterKey =
                                               'wastedBlistersReturned';
+                                          const emptyBottlesReturned =
+                                              'emptyBottlesReturned';
 
                                           return _ReportDetailsContent(
                                             title: title,
@@ -479,8 +481,8 @@ class _InventoryReportDetailsPageState
                                                   DigitGridColumn(
                                                     label: localizations.translate(i18
                                                         .inventoryReportDetails
-                                                        .wastedReturnedQuantityLabel),
-                                                    key: wastedBlisterKey,
+                                                        .emptyReturnedQuantityLabel),
+                                                    key: emptyBottlesReturned,
                                                     width: 150,
                                                   ),
                                                 DigitGridColumn(
@@ -529,11 +531,11 @@ class _InventoryReportDetailsPageState
                                                                     .dispatch)
                                                           DigitGridCell(
                                                             key:
-                                                                wastedBlisterKey,
+                                                                emptyBottlesReturned,
                                                             value:
                                                                 _getPartialCountFromAdditionalDetails(
                                                               model,
-                                                              wastedBlisterKey,
+                                                              emptyBottlesReturned,
                                                             ),
                                                           ),
                                                         DigitGridCell(

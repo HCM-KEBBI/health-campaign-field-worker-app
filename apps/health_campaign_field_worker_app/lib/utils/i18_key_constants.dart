@@ -29,17 +29,18 @@ const referBeneficiary = ReferBeneficiary();
 const ineligibilityReasons = IneligibilityReasons();
 const scanner = Scanner();
 
-const summaryReport= SummaryReport();
+const summaryReport = SummaryReport();
 
-class SummaryReport{
+class SummaryReport {
   const SummaryReport();
 
-String get houseHoldRegistered => 'SUMMARY_REPORT_COLUMN_HOUSEHOLD_REGISTERED';
-String get childrenTreated => 'SUMMARY_REPORT_COLUMN_CHILDREN_TREATED';
-String get childrenTreatedPercentage => 'SUMMARY_REPORT_COLUMN_CHILDREN_TREATED_PERCENTAGE';
-String get aztReceived => 'SUMMARY_REPORT_COLUMN_AZT_RECEIVED';
-String get aztConsumed => 'SUMMARY_REPORT_COLUMN_AZT_CONSUMED';
-
+  String get houseHoldRegistered =>
+      'SUMMARY_REPORT_COLUMN_HOUSEHOLD_REGISTERED';
+  String get childrenTreated => 'SUMMARY_REPORT_COLUMN_CHILDREN_TREATED';
+  String get childrenTreatedPercentage =>
+      'SUMMARY_REPORT_COLUMN_CHILDREN_TREATED_PERCENTAGE';
+  String get aztReceived => 'SUMMARY_REPORT_COLUMN_AZT_RECEIVED';
+  String get aztConsumed => 'SUMMARY_REPORT_COLUMN_AZT_CONSUMED';
 }
 
 class Common {
@@ -508,7 +509,6 @@ class HouseholdLocation {
 
   String get administrationAreaFormLabel => 'ADMINISTRATION_AREA_FORM_LABEL';
 
-
   String get administrationAreaRequiredValidation =>
       'HOUSEHOLD_LOCATION_ADMINISTRATION_AREA_REQUIRED_VALIDATION';
 
@@ -868,11 +868,20 @@ class StockDetails {
 
   String get quantityReturnedLabel => 'STOCK_DETAILS_QUANTITY_RETURNED_SPAQ';
 
+  String get aztQuantityReceivedLabel => 'STOCK_DETAILS_QUANTITY_RECEIVED_AZT';
+
+  String get aztQuantitySentLabel => 'STOCK_DETAILS_QUANTITY_SENT_AZT';
+
+  String get aztQuantityReturnedLabel => 'STOCK_DETAILS_QUANTITY_RETURNED_AZT';
+
   String get quantityPartialReturnedLabel =>
       'STOCK_DETAILS_PARTIAL_QUANTITY_RETURNED_SPAQ';
 
   String get quantityWastedReturnedLabel =>
       'STOCK_DETAILS_WASTED_QUANTITY_RETURNED_SPAQ';
+
+  String get quantityEmptyReturnedLabel =>
+      'STOCK_DETAILS_EMPTY_QUANTITY_RETURNED_AZT';
 
   String get quantityLostLabel => 'STOCK_DETAILS_QUANTITY_LOST';
 
@@ -884,6 +893,10 @@ class StockDetails {
   /// Number of product indicated on waybill title
   String get quantityOfProductIndicatedOnWaybillLabel {
     return 'STOCK_DETAILS_WAYBILL_QUANTITY_SPAQ';
+  }
+
+  String get aztQuantityOfProductIndicatedOnWaybillLabel {
+    return 'STOCK_DETAILS_WAYBILL_QUANTITY_AZT';
   }
 
   /// Lost/Damaged during label
@@ -925,6 +938,9 @@ class StockDetails {
       'STOCK_DETAILS_SENDER_RECEIVER_ID_VALIDATION';
 
   String get quantityMinError => 'STOCK_DETAILS_MIN_QUANTITY_ERROR';
+
+  String get quantityReturnedMaxError =>
+      'STOCK_DETAILS_RETURNED_MAX_QUANTITY_ERROR';
 
   String get stockRecordDialogDynamicDescription =>
       'STOCK_RECORD_DIALOG_DYNAMIC_DESCRIPTION';
@@ -1294,6 +1310,10 @@ class InventoryReportDetails {
 
   String get wastedReturnedQuantityLabel {
     return 'INVENTORY_REPORT_DETAILS_WASTED_RETURNED_QUANTITY_LABEL';
+  }
+
+  String get emptyReturnedQuantityLabel {
+    return 'INVENTORY_REPORT_DETAILS_EMPTY_RETURNED_QUANTITY_LABEL';
   }
 
   String get damagedQuantityLabel {

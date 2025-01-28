@@ -39,6 +39,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
   static const _transactionQuantityKey = 'quantity';
   static const _partialBlistersKey = 'partialBlistersReturned';
   static const _wastedBlistersKey = 'wastedBlistersReturned';
+  static const _emptyBottlesKey = 'emptyBottlesReturned';
   static const _commentsKey = 'comments';
   static const _transactionReasonKey = 'transactionReason';
   static const _waybillNumberKey = 'waybillNumber';
@@ -51,7 +52,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
 
   List<ValidatorFunction> partialBlistersQuantityValidator = [];
   List<ValidatorFunction> batchNumberValidators = [Validators.required];
-  List<ValidatorFunction> wastedBlistersQuantityValidator = [];
+  List<ValidatorFunction> emptyBottlesQuantityValidator = [];
   List<GS1Barcode> scannedResources = [];
   static const _deliveryTeamKey = 'deliveryTeam';
   static const _supervisorKey = 'supervisor';
@@ -92,8 +93,8 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
       ]),
       _partialBlistersKey:
           FormControl<int>(validators: partialBlistersQuantityValidator),
-      _wastedBlistersKey:
-          FormControl<int>(validators: wastedBlistersQuantityValidator),
+      _emptyBottlesKey:
+          FormControl<int>(validators: emptyBottlesQuantityValidator),
       _commentsKey: FormControl<String>(),
       _deliveryTeamKey: FormControl<String>(
         validators: (!isDistributor &&
@@ -214,7 +215,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                     pageTitle = module.receivedPageTitle;
                     transactionPartyLabel =
                         module.selectTransactingPartyReceived;
-                    quantityCountLabel = module.quantityReceivedLabel;
+                    quantityCountLabel = module.aztQuantityReceivedLabel;
                     transactionType = TransactionType.received;
                     break;
                   case StockRecordEntryType.dispatch:
@@ -225,11 +226,11 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                         ? module.selectTransactingPartyReturned
                         : module.selectTransactingPartyIssued;
                     quantityCountLabel = isDistributor
-                        ? module.quantityReturnedLabel
-                        : module.quantitySentLabel;
+                        ? module.aztQuantityReturnedLabel
+                        : module.aztQuantitySentLabel;
                     transactionType = TransactionType.dispatched;
                     if (context.isDistributor) {
-                      wastedBlistersQuantityValidator = [
+                      emptyBottlesQuantityValidator = [
                         Validators.number,
                         Validators.required,
                         Validators.min(minQuantity),
@@ -251,7 +252,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                     pageTitle = module.returnedPageTitle;
                     transactionPartyLabel =
                         module.selectTransactingPartyReturned;
-                    quantityCountLabel = module.quantityReturnedLabel;
+                    quantityCountLabel = module.aztQuantityReturnedLabel;
                     transactionType = TransactionType.received;
                     partialBlistersQuantityValidator = [
                       Validators.number,
@@ -532,7 +533,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                     .control(
                                                       _transactionQuantityKey,
                                                     )
-                                                    .value * 30 ;
+                                                    .value;
 
                                                 final partialBlisters = form
                                                     .control(
@@ -540,11 +541,75 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                     )
                                                     .value;
 
-                                                final wastedBlisters = form
+                                                final emptyBottles = form
                                                     .control(
-                                                      _wastedBlistersKey,
+                                                      _emptyBottlesKey,
                                                     )
                                                     .value;
+
+                                                int? wastedQuantity;
+
+                                                int spaq1 = 0;
+                                                int spaq2 = 0;
+
+                                                int totalQuantity = 0;
+                                                int totalRemainingQuantityInMl =
+                                                    context.spaq1;
+
+                                                int totalExpectedUnusedBottles =
+                                                    totalRemainingQuantityInMl ~/
+                                                        30;
+
+                                                int totalExpectedPartialQuantityInMl =
+                                                    totalRemainingQuantityInMl %
+                                                        30;
+
+                                                int totalExpectedPartialBottles =
+                                                    totalRemainingQuantityInMl %
+                                                                30 !=
+                                                            0
+                                                        ? 1
+                                                        : 0;
+
+                                                totalQuantity = quantity != null
+                                                    ? int.parse(
+                                                        quantity.toString(),
+                                                      )
+                                                    : 0;
+
+                                                spaq1 = totalQuantity * 30;
+
+                                                if (spaq1 >
+                                                        totalRemainingQuantityInMl &&
+                                                    isDistributor &&
+                                                    entryType ==
+                                                        StockRecordEntryType
+                                                            .dispatch) {
+                                                  DigitToast.show(
+                                                    context,
+                                                    options: DigitToastOptions(
+                                                      localizations
+                                                          .translate(
+                                                            i18.stockDetails
+                                                                .quantityReturnedMaxError,
+                                                          )
+                                                          .replaceAll(
+                                                            "{1}",
+                                                            totalRemainingQuantityInMl
+                                                                .toString(),
+                                                          )
+                                                          .replaceAll(
+                                                            "{2}",
+                                                            totalExpectedUnusedBottles
+                                                                .toString(),
+                                                          ),
+                                                      true,
+                                                      theme,
+                                                    ),
+                                                  );
+
+                                                  return;
+                                                }
 
                                                 if ((entryType ==
                                                             StockRecordEntryType
@@ -558,7 +623,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                         isDistributor &&
                                                         quantity == 0 &&
                                                         partialBlisters == 0 &&
-                                                        wastedBlisters == 0)) {
+                                                        emptyBottles == 0)) {
                                                   DigitToast.show(
                                                     context,
                                                     options: DigitToastOptions(
@@ -572,6 +637,25 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   );
 
                                                   return;
+                                                }
+
+                                                if (isDistributor &&
+                                                    entryType ==
+                                                        StockRecordEntryType
+                                                            .dispatch) {
+                                                  wastedQuantity = ((totalExpectedUnusedBottles -
+                                                              totalQuantity) *
+                                                          30) +
+                                                      ((totalExpectedPartialBottles >
+                                                              (partialBlisters !=
+                                                                      null
+                                                                  ? int.parse(
+                                                                      partialBlisters
+                                                                          .toString(),
+                                                                    )
+                                                                  : 0))
+                                                          ? totalExpectedPartialQuantityInMl
+                                                          : 0);
                                                 }
 
                                                 final lat =
@@ -814,7 +898,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   additionalFields: [
                                                             comments,
                                                             partialBlisters,
-                                                            wastedBlisters,
+                                                            emptyBottles,
                                                             waybillQuantity,
                                                             batchNumber,
                                                             vehicleNumber,
@@ -833,11 +917,17 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                                 _partialBlistersKey,
                                                                 partialBlisters,
                                                               ),
-                                                            if (wastedBlisters !=
+                                                            if (wastedQuantity !=
                                                                 null)
                                                               AdditionalField(
                                                                 _wastedBlistersKey,
-                                                                wastedBlisters,
+                                                                wastedQuantity,
+                                                              ),
+                                                            if (emptyBottles !=
+                                                                null)
+                                                              AdditionalField(
+                                                                _emptyBottlesKey,
+                                                                emptyBottles,
                                                               ),
                                                             if (waybillQuantity !=
                                                                 null)
@@ -969,34 +1059,13 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   );
 
                                                   if (isDistributor) {
-                                                    int spaq1 = 0;
-                                                    int spaq2 = 0;
-
-                                                    int totalQuantity = 0;
-
                                                     totalQuantity = entryType ==
                                                             StockRecordEntryType
                                                                 .dispatch
-                                                        ? ((quantity != null
-                                                                    ? int.parse(
-                                                                        quantity
-                                                                            .toString(),
-                                                                      )
-                                                                    : 0) +
-                                                                (wastedBlisters !=
-                                                                        null
-                                                                    ? int.parse(
-                                                                        wastedBlisters
-                                                                            .toString(),
-                                                                      )
-                                                                    : 0)) *
-                                                            -1
-                                                        : quantity != null
-                                                            ? int.parse(
-                                                                quantity
-                                                                    .toString(),
-                                                              )
-                                                            : 0;
+                                                        ? totalQuantity * -30 -
+                                                            (wastedQuantity ??
+                                                                0)
+                                                        : totalQuantity * 30;
 
                                                     spaq1 = totalQuantity;
 
@@ -1781,7 +1850,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                           ].contains(entryType) &&
                                           context.isDistributor)
                                         DigitTextFormField(
-                                          formControlName: _wastedBlistersKey,
+                                          formControlName: _emptyBottlesKey,
                                           inputFormatters: [
                                             FilteringTextInputFormatter.allow(
                                               RegExp(r'[0-9]'),
@@ -1817,7 +1886,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                           },
                                           label: localizations.translate(
                                             i18.stockDetails
-                                                .quantityWastedReturnedLabel,
+                                                .quantityEmptyReturnedLabel,
                                           ),
                                         ),
                                       isWarehouseMgr && !deliveryTeamSelected
@@ -1842,7 +1911,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                           ? DigitTextFormField(
                                               label: localizations.translate(
                                                 i18.stockDetails
-                                                    .quantityOfProductIndicatedOnWaybillLabel,
+                                                    .aztQuantityOfProductIndicatedOnWaybillLabel,
                                               ),
                                               inputFormatters: [
                                                 FilteringTextInputFormatter
@@ -1862,7 +1931,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                               validationMessages: {
                                                 "number": (object) =>
                                                     localizations.translate(
-                                                      '${i18.stockDetails.quantityOfProductIndicatedOnWaybillLabel}_ERROR',
+                                                      '${i18.stockDetails.aztQuantityOfProductIndicatedOnWaybillLabel}_ERROR',
                                                     ),
                                                 "max": (object) => localizations
                                                     .translate(
