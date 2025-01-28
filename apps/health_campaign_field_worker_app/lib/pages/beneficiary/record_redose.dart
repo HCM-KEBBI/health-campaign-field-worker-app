@@ -737,10 +737,10 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
           (e) => FormControl<int>(
             validators: [
               Validators.required,
-              Validators.min(0),
-              Validators.max(1),
+             
             ],
-            value: 0,
+           // value: "${productVariants[0].quantity??0} ${localizations.translate(i18.beneficiaryDetails.beneficiaryDoseUnit)}",
+           value: productVariants[0].quantity??0,
           ),
         ),
       ]),

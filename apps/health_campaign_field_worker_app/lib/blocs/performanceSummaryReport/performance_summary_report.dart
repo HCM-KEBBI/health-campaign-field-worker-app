@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:digit_components/utils/date_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,7 +29,6 @@ class PerformannceSummaryReportBloc
   final ProductVariantDataRepository productVariantRepository;
 
   final StockDataRepository stockDataRepository;
-  final StockReconciliationDataRepository stockReconciliationDataRepository;
 
   PerformannceSummaryReportBloc({
     required this.individualRepository,
@@ -36,7 +36,6 @@ class PerformannceSummaryReportBloc
     required this.taskRepository,
     required this.productVariantRepository,
     required this.stockDataRepository,
-    required this.stockReconciliationDataRepository,
   }) : super(const PerformanceSummaryReportEmptyState()) {
     on(_handleLoadDataEvent);
     on(_handleLoadingEvent);
@@ -129,17 +128,7 @@ class PerformannceSummaryReportBloc
 
       dayVsHouseholdListMap.putIfAbsent(dateKey, () => []).add(element);
     }
-    // for (var element in individualList) {
-    //   var dateKey = DigitDateUtils.getDateFromTimestamp(
-    //     element.auditDetails!.createdTime,
-    //   );
-    //   if (dayVsIndividualListMap.containsKey(dateKey) &&
-    //       dayVsIndividualListMap[dateKey] != null) {
-    //     dayVsIndividualListMap[dateKey]!.add(element);
-    //   } else {
-    //     dayVsIndividualListMap[dateKey] = [element];
-    //   }
-    // }
+
     for (var element in taskList) {
       var dateKey = DigitDateUtils.getDateFromTimestamp(
         element.auditDetails!.createdTime,
@@ -148,7 +137,7 @@ class PerformannceSummaryReportBloc
       dayVsTaskListMap.putIfAbsent(dateKey, () => []).add(element);
     }
     availableDates.addAll(dayVsHouseholdListMap.keys.toSet());
-    // availableDates.addAll(dayVsIndividualListMap.keys.toSet());
+
     availableDates.addAll(dayVsTaskListMap.keys.toSet());
 
     Map<String, PerformanceSummary> dayVsDataCount = {};
@@ -166,15 +155,10 @@ class PerformannceSummaryReportBloc
     }
 
     for (var date in availableDates) {
-      // int totatlIndividualForADay = 0;
       int totatlHouseholdForADay = 0;
       int totatlSchoolForADay = 0;
       int totalTaskForADay = 0;
 
-      // if (dayVsIndividualListMap.containsKey(date) &&
-      //     dayVsIndividualListMap[date] != null) {
-      //   totatlIndividualForADay += dayVsIndividualListMap[date]!.length;
-      // }
       if (dayVsHouseholdListMap.containsKey(date) &&
           dayVsHouseholdListMap[date] != null) {
         for (var entry in dayVsHouseholdListMap[date]!.toList()) {
@@ -218,7 +202,10 @@ class PerformannceSummaryReportBloc
     }
 
     emit(PerformanceSummaryReportSummaryDataState(
-      summaryData: dayVsDataCount,
+      summaryData: SplayTreeMap<String, PerformanceSummary>.from(
+        dayVsDataCount,
+        (a, b) => b.compareTo(a),
+      ),
     ));
   }
 

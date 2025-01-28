@@ -44,8 +44,6 @@ and attached the event to load the data*/
               .repository<ProductVariantModel, ProductVariantSearchModel>(),
           stockDataRepository:
               context.repository<StockModel, StockSearchModel>(),
-          stockReconciliationDataRepository: context.repository<
-              StockReconciliationModel, StockReconciliationSearchModel>(),
         );
       },
       child: this,
