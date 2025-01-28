@@ -448,7 +448,6 @@ class _DeliverInterventionPageState
                                                               .deliverIntervention
                                                               .currentCycle),
                                                     ),
-                                                    
                                                     DigitDateFormPicker(
                                                       isEnabled: false,
                                                       formControlName:
@@ -639,7 +638,9 @@ class _DeliverInterventionPageState
                 tenantId: envConfig.variables.tenantId,
                 rowVersion: oldTask?.rowVersion ?? 1,
                 quantity: (((form.control(_quantityDistributedKey) as FormArray)
-                        .value)?[productvariantList.indexOf(e)]).toString().split(" ")[0]
+                        .value)?[productvariantList.indexOf(e)])
+                    .toString()
+                    .split(" ")[0]
                     .toString(),
                 clientAuditDetails: ClientAuditDetails(
                   createdBy: context.loggedInUserUuid,
@@ -754,10 +755,9 @@ class _DeliverInterventionPageState
           (e) => FormControl<String>(
             validators: [
               Validators.required,
-              // Validators.min(1),
-              // Validators.max(1),
             ],
-            value: "${productVariants[0].quantity??0} ${localizations.translate(i18.beneficiaryDetails.beneficiaryDoseUnit)}",
+            value:
+                "${productVariants[0].quantity ?? 0} ${localizations.translate(i18.beneficiaryDetails.beneficiaryDoseUnit)}",
           ),
         ),
       ]),

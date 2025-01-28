@@ -46,7 +46,7 @@ class PerformannceSummaryReportBloc
     PerformanceSummaryReportEmitter emit,
   ) async {
     var userId = event.userId;
-    // Map<String, List<IndividualModel>> dayVsIndividualListMap = {};
+
     Map<String, List<HouseholdModel>> dayVsHouseholdListMap = {};
     Map<String, List<TaskModel>> dayVsTaskListMap = {};
     Map<String?, String> variantIdVsProduct = {};
@@ -56,8 +56,6 @@ class PerformannceSummaryReportBloc
       HouseholdSearchModel(tenantId: envConfig.variables.tenantId),
       userId,
     );
-
-    // demo
 
 // Fetching the stock reconciliation details
     final receivedStocks = (await stockDataRepository.search(
@@ -76,7 +74,6 @@ class PerformannceSummaryReportBloc
     final Map<String, double> stockReceivedVsDate = {};
 
     for (var stock in receivedStocks) {
-      //final dateKey = stock.dateOfEntry;
       var dateKey = DigitDateUtils.getDateFromTimestamp(
         stock.dateOfEntry ?? DateTime.now().millisecondsSinceEpoch,
       ); // Replace 'date' with the actual field name in your data model.
@@ -87,8 +84,6 @@ class PerformannceSummaryReportBloc
       stockReceivedVsDate[dateKey] =
           (stockReceivedVsDate[dateKey] ?? 0) + quantity;
     }
-
-    //
 
     final productVariantList =
         await (productVariantRepository as ProductVariantLocalRepository)
@@ -113,13 +108,6 @@ class PerformannceSummaryReportBloc
             .contains(BeneficiaryType.azt.name.toUpperCase()))
         .first;
     var albendazoleResourceId = variantIdVsProduct[albendazoleResourceKey];
-
-    var ivermectinResourceKey = variantIdVsProduct.keys
-        .where((element) => element!
-            .toUpperCase()
-            .contains(BeneficiaryType.azt.name.toUpperCase()))
-        .first;
-    var ivermectinResourceId = variantIdVsProduct[ivermectinResourceKey];
 
     for (var element in householdList) {
       var dateKey = DigitDateUtils.getDateFromTimestamp(
@@ -156,7 +144,6 @@ class PerformannceSummaryReportBloc
 
     for (var date in availableDates) {
       int totatlHouseholdForADay = 0;
-      int totatlSchoolForADay = 0;
       int totalTaskForADay = 0;
 
       if (dayVsHouseholdListMap.containsKey(date) &&
@@ -171,20 +158,20 @@ class PerformannceSummaryReportBloc
       }
 
       // denominator is fixed here
-      // assumption here is drugOne Albendazole and drugTwo is Ivermectin
-      double drugOne = 0;
-      double drugTwo = 0;
+      // assumption here is aztUsed  AZT used
+      double aztReceived = 0;
+      double aztUsed = 0;
       if (dayVsDrugsQuantityMap.containsKey(date) &&
           dayVsDrugsQuantityMap[date] != null &&
           dayVsDrugsQuantityMap[date]!.containsKey(
             albendazoleResourceId,
           )) {
-        drugTwo = dayVsDrugsQuantityMap[date]![albendazoleResourceId] ?? 0;
+        aztUsed = dayVsDrugsQuantityMap[date]![albendazoleResourceId] ?? 0;
       }
 
       if (stockReceivedVsDate.containsKey(date) &&
           stockReceivedVsDate[date] != null) {
-        drugOne = stockReceivedVsDate[date] ?? 0;
+        aztReceived = stockReceivedVsDate[date] ?? 0;
       }
 
       final treatedPercentage = (totalTaskForADay / 75) * 100;
@@ -193,10 +180,9 @@ class PerformannceSummaryReportBloc
       PerformanceSummary summary = PerformanceSummary(
         treatedPercentage: double.parse(treatedPercentage.toStringAsFixed(2)),
         householdCount: totatlHouseholdForADay,
-        schoolCount: totatlSchoolForADay,
         taskCount: totalTaskForADay,
-        drugOne: drugOne,
-        drugTwo: drugTwo,
+        aztReceived: aztReceived,
+        aztUsed: aztUsed,
       );
       dayVsDataCount[date] = summary;
     }

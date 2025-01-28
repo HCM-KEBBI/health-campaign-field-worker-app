@@ -70,13 +70,12 @@ class _PerformamnceSummaryReportDetailsPageState
     ));
   }
 
-  static const _schoolKey = 'schoolKey';
   static const _householdKey = 'householdKey';
   static const _treatedPercentageKey = 'treatedPercentageKey';
   static const _treatedKey = 'treatedKey';
   static const _dateKey = 'dateKey';
-  static const _drugOneKey = 'drugOneKey';
-  static const _drugTwoKey = 'drugTwoKey';
+  static const _aztReceived = 'aztReceived';
+  static const _aztUsed = 'aztUsed';
   static const _title = "Summary Report";
 
   FormGroup _form() {
@@ -122,8 +121,6 @@ class _PerformamnceSummaryReportDetailsPageState
                               key: _dateKey,
                               width: 90,
                             ),
-
-                            //
                             DigitGridColumn(
                               label: localizations.translate(
                                 i18.summaryReport.houseHoldRegistered,
@@ -131,7 +128,6 @@ class _PerformamnceSummaryReportDetailsPageState
                               key: _householdKey,
                               width: 170,
                             ),
-
                             DigitGridColumn(
                               label: localizations.translate(
                                 i18.summaryReport.childrenTreated,
@@ -144,20 +140,20 @@ class _PerformamnceSummaryReportDetailsPageState
                                 i18.summaryReport.childrenTreatedPercentage,
                               ),
                               key: _treatedPercentageKey,
-                              width: 140,
+                              width: 150,
                             ),
                             DigitGridColumn(
                               label: localizations.translate(
                                 i18.summaryReport.aztReceived,
                               ),
-                              key: _drugOneKey,
+                              key: _aztReceived,
                               width: 160,
                             ),
                             DigitGridColumn(
                               label: localizations.translate(
                                 i18.summaryReport.aztConsumed,
                               ),
-                              key: _drugTwoKey,
+                              key: _aztUsed,
                               width: 160,
                             ),
                           ],
@@ -185,12 +181,12 @@ class _PerformamnceSummaryReportDetailsPageState
                                         .toString(),
                                   ),
                                   DigitGridCell(
-                                    key: _drugOneKey,
-                                    value: entry.value.drugOne.toString(),
+                                    key: _aztReceived,
+                                    value: entry.value.aztReceived.toString(),
                                   ),
                                   DigitGridCell(
-                                    key: _drugTwoKey,
-                                    value: entry.value.drugTwo.toString(),
+                                    key: _aztUsed,
+                                    value: entry.value.aztUsed.toString(),
                                   ),
                                 ],
                               ),
