@@ -181,7 +181,7 @@ class PerformannceSummaryReportBloc
         treatedPercentage: double.parse(treatedPercentage.toStringAsFixed(2)),
         householdCount: totatlHouseholdForADay,
         taskCount: totalTaskForADay,
-        aztReceived: aztReceived,
+        aztReceived: aztReceived * 30,
         aztUsed: aztUsed,
       );
       dayVsDataCount[date] = summary;
