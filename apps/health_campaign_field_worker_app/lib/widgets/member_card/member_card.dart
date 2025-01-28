@@ -66,7 +66,7 @@ class MemberCard extends StatelessWidget {
     final doseStatus = checkStatus(tasks, context.selectedCycle);
     final assessmentPendingStatus = assessmentPending(tasks);
     final redosePendingStatus =
-        assessmentPendingStatus ? true : redosePending(tasks);
+        assessmentPendingStatus ? true : !redosePending(tasks);
 
     return Container(
       decoration: BoxDecoration(
@@ -369,7 +369,10 @@ class MemberCard extends StatelessWidget {
                                                     "${localizations.translate(
                                                   i18.beneficiaryDetails
                                                       .insufficientAZTStockMessageDelivery,
-                                                )}=$spaq1",
+                                                )}=$spaq1${localizations.translate(
+                                                  i18.beneficiaryDetails
+                                                      .beneficiaryDoseUnit,
+                                                )}",
                                                 primaryAction:
                                                     DigitDialogActions(
                                                   label: localizations

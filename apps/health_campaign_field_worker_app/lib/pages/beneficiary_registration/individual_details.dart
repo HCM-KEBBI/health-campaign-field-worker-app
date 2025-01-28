@@ -57,13 +57,19 @@ class _IndividualDetailsPageState
   final ValueNotifier<String> heightWeight = ValueNotifier("");
 
   void updateStatus(dynamic age) {
+    // Updating the ValueNotifier
     if (age == null) {
-      heightWeight.value = "";
+      if (heightWeight.value != "") {
+        heightWeight.value = ""; // Only update if necessary
+      }
     } else {
       final cat = getCategory(getAgeMonths(age));
+      final newValue =
+          (cat == Constants.height || cat == Constants.weight) ? cat : "";
 
-      heightWeight.value =
-          cat == Constants.height || cat == Constants.weight ? cat : "";
+      if (heightWeight.value != newValue) {
+        heightWeight.value = newValue; // Update only if changed
+      }
     }
   }
 
@@ -543,110 +549,113 @@ class _IndividualDetailsPageState
                               },
                             ),
                           ),
-                          ValueListenableBuilder(
-                            valueListenable: heightWeight,
-                            builder: (context, isVisible, child) {
-                              // weight
-                              if (isVisible == Constants.weight) {
-                                return DigitTextFormField(
-                                  formControlName: _weight,
-                                  label: localizations.translate(
-                                    i18.individualDetails.weightHeadLabelText,
-                                  ),
-                                  isRequired: (isVisible == Constants.weight ||
-                                          (individual != null &&
-                                              getCategory(getAgeMonths(
-                                                    DigitDateUtils.calculateAge(
-                                                      DateFormat('dd/MM/yyyy')
-                                                          .parse(
-                                                        individual.dateOfBirth!,
+                          Offstage(
+                            offstage: widget.isHeadOfHousehold,
+                            child: ValueListenableBuilder(
+                              valueListenable: heightWeight,
+                              builder: (context, isVisible, child) {
+                                // weight
+                                if (isVisible == Constants.weight) {
+                                  return DigitTextFormField(
+                                    formControlName: _weight,
+                                    label: localizations.translate(
+                                      i18.individualDetails.weightHeadLabelText,
+                                    ),
+                                    isRequired: (isVisible == Constants.weight ||
+                                            (individual != null &&
+                                                getCategory(getAgeMonths(
+                                                      DigitDateUtils.calculateAge(
+                                                        DateFormat('dd/MM/yyyy')
+                                                            .parse(
+                                                          individual.dateOfBirth!,
+                                                        ),
                                                       ),
-                                                    ),
-                                                  )) ==
-                                                  Constants.weight))
-                                      ? true
-                                      : false,
-                                );
-                              } else if ((individual != null &&
-                                  getCategory(getAgeMonths(
-                                        DigitDateUtils.calculateAge(
-                                          DateFormat('dd/MM/yyyy').parse(
-                                            individual.dateOfBirth!,
+                                                    )) ==
+                                                    Constants.weight))
+                                        ? true
+                                        : false,
+                                  );
+                                } else if (isVisible == Constants.height) {
+                                  return DigitTextFormField(
+                                    formControlName: _height,
+                                    label: localizations.translate(
+                                      i18.individualDetails.heightHeadLabelText,
+                                    ),
+                                    isRequired: (isVisible == Constants.height ||
+                                            (individual != null &&
+                                                getCategory(getAgeMonths(
+                                                      DigitDateUtils.calculateAge(
+                                                        DateFormat('dd/MM/yyyy')
+                                                            .parse(
+                                                          individual.dateOfBirth!,
+                                                        ),
+                                                      ),
+                                                    )) ==
+                                                    Constants.weight))
+                                        ? true
+                                        : false,
+                                  );
+                                } else if ((individual != null &&
+                                    getCategory(getAgeMonths(
+                                          DigitDateUtils.calculateAge(
+                                            DateFormat('dd/MM/yyyy').parse(
+                                              individual.dateOfBirth!,
+                                            ),
                                           ),
-                                        ),
-                                      )) ==
-                                      Constants.weight)) {
-                                return DigitTextFormField(
-                                  formControlName: _weight,
-                                  label: localizations.translate(
-                                    i18.individualDetails.weightHeadLabelText,
-                                  ),
-                                  isRequired: (isVisible == Constants.weight ||
-                                          (individual != null &&
-                                              getCategory(getAgeMonths(
-                                                    DigitDateUtils.calculateAge(
-                                                      DateFormat('dd/MM/yyyy')
-                                                          .parse(
-                                                        individual.dateOfBirth!,
+                                        )) ==
+                                        Constants.weight)) {
+                                  return DigitTextFormField(
+                                    formControlName: _weight,
+                                    label: localizations.translate(
+                                      i18.individualDetails.weightHeadLabelText,
+                                    ),
+                                    isRequired: (isVisible == Constants.weight ||
+                                            (individual != null &&
+                                                getCategory(getAgeMonths(
+                                                      DigitDateUtils.calculateAge(
+                                                        DateFormat('dd/MM/yyyy')
+                                                            .parse(
+                                                          individual.dateOfBirth!,
+                                                        ),
                                                       ),
-                                                    ),
-                                                  )) ==
-                                                  Constants.weight))
-                                      ? true
-                                      : false,
-                                );
-                              } else if (isVisible == Constants.height) {
-                                return DigitTextFormField(
-                                  formControlName: _height,
-                                  label: localizations.translate(
-                                    i18.individualDetails.heightHeadLabelText,
-                                  ),
-                                  isRequired: (isVisible == Constants.height ||
-                                          (individual != null &&
-                                              getCategory(getAgeMonths(
-                                                    DigitDateUtils.calculateAge(
-                                                      DateFormat('dd/MM/yyyy')
-                                                          .parse(
-                                                        individual.dateOfBirth!,
-                                                      ),
-                                                    ),
-                                                  )) ==
-                                                  Constants.weight))
-                                      ? true
-                                      : false,
-                                );
-                              } else if ((individual != null &&
-                                  getCategory(getAgeMonths(
-                                        DigitDateUtils.calculateAge(
-                                          DateFormat('dd/MM/yyyy').parse(
-                                            individual.dateOfBirth!,
+                                                    )) ==
+                                                    Constants.weight))
+                                        ? true
+                                        : false,
+                                  );
+                                } else if ((individual != null &&
+                                    getCategory(getAgeMonths(
+                                          DigitDateUtils.calculateAge(
+                                            DateFormat('dd/MM/yyyy').parse(
+                                              individual.dateOfBirth!,
+                                            ),
                                           ),
-                                        ),
-                                      )) ==
-                                      Constants.height)) {
-                                return DigitTextFormField(
-                                  formControlName: _height,
-                                  label: localizations.translate(
-                                    i18.individualDetails.heightHeadLabelText,
-                                  ),
-                                  isRequired: (isVisible == Constants.height ||
-                                          (individual != null &&
-                                              getCategory(getAgeMonths(
-                                                    DigitDateUtils.calculateAge(
-                                                      DateFormat('dd/MM/yyyy')
-                                                          .parse(
-                                                        individual.dateOfBirth!,
+                                        )) ==
+                                        Constants.height)) {
+                                  return DigitTextFormField(
+                                    formControlName: _height,
+                                    label: localizations.translate(
+                                      i18.individualDetails.heightHeadLabelText,
+                                    ),
+                                    isRequired: (isVisible == Constants.height ||
+                                            (individual != null &&
+                                                getCategory(getAgeMonths(
+                                                      DigitDateUtils.calculateAge(
+                                                        DateFormat('dd/MM/yyyy')
+                                                            .parse(
+                                                          individual.dateOfBirth!,
+                                                        ),
                                                       ),
-                                                    ),
-                                                  )) ==
-                                                  Constants.weight))
-                                      ? true
-                                      : false,
-                                );
-                              } else {
-                                return const SizedBox();
-                              }
-                            },
+                                                    )) ==
+                                                    Constants.weight))
+                                        ? true
+                                        : false,
+                                  );
+                                } else {
+                                  return const SizedBox();
+                                }
+                              },
+                            ),
                           ),
                           Offstage(
                             offstage: !widget.isHeadOfHousehold,

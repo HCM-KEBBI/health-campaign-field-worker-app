@@ -459,6 +459,15 @@ class _HomePageState extends LocalizedState<HomePage> {
           );
         },
       ),
+      i18.home.viewSummaryReportsPerformanceLabel: HomeItemCard(
+        icon: Icons.announcement,
+        label: i18.home.viewSummaryReportsPerformanceLabel,
+        onPressed: () {
+          context.router.push(
+            PerformamnceSummaryReportDetailsRoute(),
+          );
+        },
+      ),
       'DB': HomeItemCard(
         icon: Icons.table_chart,
         label: 'DB',
@@ -486,6 +495,7 @@ class _HomePageState extends LocalizedState<HomePage> {
       i18.home.viewReportsLabel,
       i18.home.beneficiaryReferralLabel,
       i18.home.manageAttendanceLabel,
+      i18.home.viewSummaryReportsPerformanceLabel,
       'DB',
     ];
 
@@ -495,6 +505,7 @@ class _HomePageState extends LocalizedState<HomePage> {
             .toList()
             .contains(element))
         .toList();
+
     //filteredLabels.add("DB");
     final List<Widget> widgetList =
         filteredLabels.map((label) => homeItemsMap[label]!).toList();

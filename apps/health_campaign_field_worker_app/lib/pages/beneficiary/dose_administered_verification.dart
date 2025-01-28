@@ -320,17 +320,9 @@ class _DoseAdministeredVerificationPageState
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
+                                  
                                   _buildTextRow(
-                                    "1. ${localizations.translate(
-                                      i18.deliverIntervention
-                                          .doseGivenCareGiver,
-                                    )}",
-                                    // hardcoded the value here as per the text requirement
-                                    {Constants.curlyBraces: Constants.intTwo},
-                                    theme,
-                                  ),
-                                  _buildTextRow(
-                                    ("2. ${localizations.translate(
+                                    ("1. ${localizations.translate(
                                       i18.deliverIntervention
                                           .infoWrittenInChildCard,
                                     )}"),
@@ -340,14 +332,7 @@ class _DoseAdministeredVerificationPageState
                                     },
                                     theme,
                                   ),
-                                  _buildTextRow(
-                                    "3. ${localizations.translate(
-                                      i18.deliverIntervention
-                                          .healthTalkGivenOnSPAQ,
-                                    )}",
-                                    {},
-                                    theme,
-                                  ),
+                                  
                                 ],
                               ),
                             ],
