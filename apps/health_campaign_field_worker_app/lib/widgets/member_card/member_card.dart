@@ -66,7 +66,7 @@ class MemberCard extends StatelessWidget {
     final doseStatus = checkStatus(tasks, context.selectedCycle);
     final assessmentPendingStatus = assessmentPending(tasks);
     final redosePendingStatus =
-        assessmentPendingStatus ? true : redosePending(tasks);
+        assessmentPendingStatus ? true : !redosePending(tasks);
 
     return Container(
       decoration: BoxDecoration(
