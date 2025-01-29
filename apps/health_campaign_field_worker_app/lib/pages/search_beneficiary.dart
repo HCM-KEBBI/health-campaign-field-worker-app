@@ -276,7 +276,7 @@ class _SearchBeneficiaryPageState
                                 DigitInfoCard(
                                   description: localizations.translate(
                                     i18.searchBeneficiary
-                                        .beneficiaryInfoDescription,
+                                        .beneficiaryHouseHoldInfoDescription,
                                   ),
                                   title: localizations.translate(
                                     i18.searchBeneficiary.beneficiaryInfoTitle,

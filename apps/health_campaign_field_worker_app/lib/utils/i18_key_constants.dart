@@ -310,6 +310,9 @@ class SearchBeneficiary {
 
   String get beneficiaryInfoDescription => 'BENEFICIARY_INFO_DESCRIPTION';
 
+  String get beneficiaryHouseHoldInfoDescription =>
+      'BENEFICIARY_HOUSEHOLD_INFO_DESCRIPTION';
+
   String get beneficiaryInfoTitle => 'BENEFICIARY_INFO_TITLE';
 
   String get beneficiaryAddActionLabel => 'BENEFICIARY_ADD_ACTION_LABEL';
@@ -427,6 +430,14 @@ class BeneficiaryDetails {
 
 class IndividualDetails {
   const IndividualDetails();
+
+  String get maxWeightLengthError => "MAX_WEIGHT_LENGTH_ERROR";
+
+  String get minWeightLengthError => "MIN_WEIGHT_LENGTH_ERROR";
+
+  String get minHeightLengthError => "MIN_HEIGHT_LENGTH_ERROR";
+
+  String get maxHeightLengthError => "MAX_HEIGHT_LENGTH_ERROR";
 
   String get heightHeadLabelText => 'CHILD_LABEL_HEIGHT_TEXT';
 

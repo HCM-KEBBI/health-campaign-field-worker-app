@@ -57,7 +57,7 @@ class _IndividualDetailsPageState
   final ValueNotifier<String> heightWeight = ValueNotifier("");
 
   void updateStatus(FormGroup form, dynamic age) {
-    // Updating the ValueNotifier
+    // Updating the Value updateStatuseNotifier
 
     if (age == null) {
       if (heightWeight.value != "") {
@@ -565,10 +565,12 @@ class _IndividualDetailsPageState
                                 // weight
                                 if (isVisible == Constants.weight) {
                                   return DigitTextFormField(
+                                    maxLength: 4,
                                     inputFormatters: [
                                       //FilteringTextInputFormatter.digitsOnly,
                                       FilteringTextInputFormatter.allow(
-                                          RegExp(r'^\d*\.?\d{0,2}'),),
+                                        RegExp(r'^\d*\.?\d{0,2}'),
+                                      ),
                                     ],
                                     formControlName: _weight,
                                     label: localizations.translate(
@@ -590,9 +592,22 @@ class _IndividualDetailsPageState
                                                     Constants.weight))
                                         ? true
                                         : false,
+                                    validationMessages: {
+                                      'minAllowed': (object) =>
+                                          localizations.translate(
+                                            i18.individualDetails
+                                                .minWeightLengthError,
+                                          ),
+                                      'maxAllowed': (object) =>
+                                          localizations.translate(
+                                            i18.individualDetails
+                                                .maxWeightLengthError,
+                                          ),
+                                    },
                                   );
                                 } else if (isVisible == Constants.height) {
                                   return DigitTextFormField(
+                                    maxLength: 3,
                                     inputFormatters: [
                                       FilteringTextInputFormatter.digitsOnly,
                                     ],
@@ -616,6 +631,18 @@ class _IndividualDetailsPageState
                                                     Constants.weight))
                                         ? true
                                         : false,
+                                    validationMessages: {
+                                      'minAllowed': (object) =>
+                                          localizations.translate(
+                                            i18.individualDetails
+                                                .minHeightLengthError,
+                                          ),
+                                      'maxAllowed': (object) =>
+                                          localizations.translate(
+                                            i18.individualDetails
+                                                .maxHeightLengthError,
+                                          ),
+                                    },
                                   );
                                 } else if ((individual != null &&
                                     getCategory(getAgeMonths(
@@ -627,10 +654,12 @@ class _IndividualDetailsPageState
                                         )) ==
                                         Constants.weight)) {
                                   return DigitTextFormField(
+                                    maxLength: 4,
                                     inputFormatters: [
                                       // FilteringTextInputFormatter.digitsOnly,
                                       FilteringTextInputFormatter.allow(
-                                          RegExp(r'^\d*\.?\d{0,2}'),),
+                                        RegExp(r'^\d*\.?\d{0,2}'),
+                                      ),
                                     ],
                                     formControlName: _weight,
                                     label: localizations.translate(
@@ -652,6 +681,18 @@ class _IndividualDetailsPageState
                                                     Constants.weight))
                                         ? true
                                         : false,
+                                    validationMessages: {
+                                      'minAllowed': (object) =>
+                                          localizations.translate(
+                                            i18.individualDetails
+                                                .minWeightLengthError,
+                                          ),
+                                      'maxAllowed': (object) =>
+                                          localizations.translate(
+                                            i18.individualDetails
+                                                .maxWeightLengthError,
+                                          ),
+                                    },
                                   );
                                 } else if ((individual != null &&
                                     getCategory(getAgeMonths(
@@ -663,6 +704,7 @@ class _IndividualDetailsPageState
                                         )) ==
                                         Constants.height)) {
                                   return DigitTextFormField(
+                                    maxLength: 3,
                                     inputFormatters: [
                                       FilteringTextInputFormatter.digitsOnly,
                                     ],
@@ -686,6 +728,18 @@ class _IndividualDetailsPageState
                                                     Constants.weight))
                                         ? true
                                         : false,
+                                    validationMessages: {
+                                      'minAllowed': (object) =>
+                                          localizations.translate(
+                                            i18.individualDetails
+                                                .minHeightLengthError,
+                                          ),
+                                      'maxAllowed': (object) =>
+                                          localizations.translate(
+                                            i18.individualDetails
+                                                .maxHeightLengthError,
+                                          ),
+                                    },
                                   );
                                 } else {
                                   return const SizedBox();
@@ -855,7 +909,9 @@ class _IndividualDetailsPageState
                     Constants.height)
                   AdditionalField(
                     Constants.height,
-                    form.control(_height).value,
+                    (form.control(_height).value).toString().length == 1
+                        ? '0${(form.control(_height).value)}'
+                        : (form.control(_height).value),
                   ),
                 if (getCategory(getAgeMonths(
                       DigitDateUtils.calculateAge(
@@ -867,7 +923,9 @@ class _IndividualDetailsPageState
                     Constants.weight)
                   AdditionalField(
                     Constants.weight,
-                    form.control(_weight).value,
+                    (form.control(_weight).value).toString().length == 1
+                        ? '0${(form.control(_weight).value)}'
+                        : (form.control(_weight).value),
                   ),
               ],
             )
@@ -888,7 +946,9 @@ class _IndividualDetailsPageState
                     Constants.height)
                   AdditionalField(
                     Constants.height,
-                    form.control(_height).value,
+                    (form.control(_height).value).toString().length == 1
+                        ? '0${(form.control(_height).value)}'
+                        : (form.control(_height).value),
                   ),
                 if (getCategory(getAgeMonths(
                       DigitDateUtils.calculateAge(
@@ -898,7 +958,9 @@ class _IndividualDetailsPageState
                     Constants.weight)
                   AdditionalField(
                     Constants.weight,
-                    form.control(_weight).value,
+                    (form.control(_weight).value).toString().length == 1
+                        ? '0${(form.control(_weight).value)}'
+                        : (form.control(_weight).value),
                   ),
               ],
             ),
@@ -938,7 +1000,21 @@ class _IndividualDetailsPageState
         value: individual?.name?.familyName ?? '',
       ),
       _weight: FormControl<String>(
-        validators: [],
+        validators: [
+          (control) {
+            final value = double.tryParse(control.value ?? '');
+            if (value != null) {
+              if (value <= 3.0) {
+                return {'minAllowed': 'Value must be less than 3'};
+              }
+              if (value > 15.0) {
+                return {'maxAllowed': 'Value must be 15 or less'};
+              }
+            }
+
+            return null; // Valid input
+          },
+        ],
         value: (individual != null &&
                 getCategory(getAgeMonths(
                       DigitDateUtils.calculateAge(
@@ -955,7 +1031,21 @@ class _IndividualDetailsPageState
             : "",
       ),
       _height: FormControl<String>(
-        validators: [],
+        validators: [
+          (control) {
+            final value = double.tryParse(control.value ?? '');
+            if (value != null) {
+              if (value <= 50) {
+                return {'minAllowed': 'Value must be less than 3'};
+              }
+              if (value > 138) {
+                return {'maxAllowed': 'Value must be 15 or less'};
+              }
+            }
+
+            return null; // Valid input
+          },
+        ],
         value: (individual != null &&
                 getCategory(getAgeMonths(
                       DigitDateUtils.calculateAge(

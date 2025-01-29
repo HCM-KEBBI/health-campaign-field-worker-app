@@ -166,14 +166,31 @@ class DobValueAccessor extends ControlValueAccessor<DateTime, DigitDOBAge> {
 
   @override
   DateTime? viewToModelValue(DigitDOBAge? viewValue) {
-    if (viewValue == null || (viewValue.years == 0 && viewValue.months == 0)) {
-      return null;
-    } else {
-      return (viewValue.years == 0 && viewValue.months == 0) ||
-              viewValue.months > 11
-          ? null
-          : DigitDateUtils.calculateDob(viewValue);
-    }
+    // if (viewValue == null || (viewValue.years == 0 && viewValue.months == 0)) {
+    //   return null;
+    // } else {
+    //   return (viewValue.years == 0 && viewValue.months == 0) ||
+    //           viewValue.months > 11
+    //       ? null
+    //       : DigitDateUtils.calculateDob(viewValue);
+    // }
+      if (viewValue == null || (viewValue.years == 0 && viewValue.months == 0)) {
+    return null;
+  } else {
+    final months = viewValue.months;
+    final days = DigitDateUtils.yearsMonthsDaysToDays(
+        viewValue.years, viewValue.months, viewValue.days);
+
+    final calculatedDate = DateTime.now().subtract(Duration(days: days));
+
+    return (viewValue.years == 0 && months == 0) || months > 11
+        ? null
+        : DateTime(
+            calculatedDate.year,
+            calculatedDate.month,
+            1,
+          );
+  }
   }
 }
 
