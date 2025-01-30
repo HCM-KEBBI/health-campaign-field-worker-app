@@ -235,8 +235,12 @@ class MemberCard extends StatelessWidget {
                                           ? Status.beneficiaryRefused.toValue()
                                           : Status.notVisited.toValue(),
                         ),
-                        iconTextColor: theme.colorScheme.error,
-                        iconColor: theme.colorScheme.error,
+                        iconTextColor: isHead
+                            ? theme.colorScheme.surfaceTint
+                            : theme.colorScheme.error,
+                        iconColor: isHead
+                            ? theme.colorScheme.surfaceTint
+                            : theme.colorScheme.error,
                       ),
                     )
                   : Align(
