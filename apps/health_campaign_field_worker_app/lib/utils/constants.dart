@@ -301,6 +301,14 @@ class Constants {
   ];
   static const String height = "height";
   static const String weight = "weight";
+
+  // min and max consideration for both weight and height
+
+  static const int minHeight = 50;
+  static const int maxHeight = 138;
+
+  static const double minWeight = 3.0;
+  static const double maxWeight = 15.0;
 }
 
 /// By using this key, we can push pages without context

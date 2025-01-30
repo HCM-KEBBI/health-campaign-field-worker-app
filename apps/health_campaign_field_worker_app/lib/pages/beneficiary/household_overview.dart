@@ -643,7 +643,7 @@ class _HouseholdOverviewPageState
                                                   label: localizations
                                                       .translate(i18
                                                           .beneficiaryDetails
-                                                          .backToHome),
+                                                          .backToHouseholdDetails),
                                                   action: (ctx) {
                                                     Navigator.of(
                                                       context,
