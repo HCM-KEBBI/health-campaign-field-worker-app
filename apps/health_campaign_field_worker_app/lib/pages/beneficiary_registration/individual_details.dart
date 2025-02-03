@@ -54,7 +54,7 @@ class _IndividualDetailsPageState
 
   bool isHeadAgeValid = true;
 
-  final ValueNotifier<String> heightWeight = ValueNotifier("");
+  final ValueNotifier<dynamic> heightWeight = ValueNotifier(null);
 
   void updateStatus(FormGroup form, dynamic age) {
     // Updating the Value updateStatuseNotifier
@@ -62,17 +62,16 @@ class _IndividualDetailsPageState
     if (age == null) {
       if (heightWeight.value != "") {
         heightWeight.value = ""; // Only update if necessary
+        form.control(_weight).value = "";
+        form.control(_height).value = "";
       }
     } else {
       final cat = getCategory(getAgeMonths(age));
       final newValue =
           (cat == Constants.height || cat == Constants.weight) ? cat : "";
 
-      if (newValue == Constants.height) {
-        form.control(_weight).value = "";
-      } else if (newValue == Constants.weight) {
-        form.control(_height).value = "";
-      }
+      form.control(_weight).value = "";
+      form.control(_height).value = "";
 
       if (heightWeight.value != newValue) {
         heightWeight.value = newValue; // Update only if changed
@@ -128,6 +127,16 @@ class _IndividualDetailsPageState
             );
           },
           builder: (context, state) {
+            form.control(_dobKey).valueChanges.listen((value) {
+              if (value == null) {
+                updateStatus(form, null);
+              } else {
+                DigitDOBAge age = DigitDateUtils.calculateAge(value);
+
+                updateStatus(form, age);
+              }
+            });
+
             return ScrollableContent(
               enableFixedButton: true,
               header: const Column(children: [
@@ -559,91 +568,22 @@ class _IndividualDetailsPageState
                           ),
                           Offstage(
                             offstage: widget.isHeadOfHousehold,
-                            child: ValueListenableBuilder(
+                            child: ValueListenableBuilder<dynamic>(
                               valueListenable: heightWeight,
                               builder: (context, isVisible, child) {
-                                // weight
+                                String? formControlKey;
+
+                                bool isIndividual = false;
+                                if (isVisible != null) {
+                                  isIndividual = true;
+                                }
+
                                 if (isVisible == Constants.weight) {
-                                  return DigitTextFormField(
-                                    maxLength: 4,
-                                    inputFormatters: [
-                                      //FilteringTextInputFormatter.digitsOnly,
-                                      FilteringTextInputFormatter.allow(
-                                        RegExp(r'^\d*\.?\d{0,2}'),
-                                      ),
-                                    ],
-                                    formControlName: _weight,
-                                    label: localizations.translate(
-                                      i18.individualDetails.weightHeadLabelText,
-                                    ),
-                                    isRequired: (isVisible ==
-                                                Constants.weight ||
-                                            (individual != null &&
-                                                getCategory(getAgeMonths(
-                                                      DigitDateUtils
-                                                          .calculateAge(
-                                                        DateFormat('dd/MM/yyyy')
-                                                            .parse(
-                                                          individual
-                                                              .dateOfBirth!,
-                                                        ),
-                                                      ),
-                                                    )) ==
-                                                    Constants.weight))
-                                        ? true
-                                        : false,
-                                    validationMessages: {
-                                      'minAllowed': (object) =>
-                                          localizations.translate(
-                                            i18.individualDetails
-                                                .minWeightLengthError,
-                                          ),
-                                      'maxAllowed': (object) =>
-                                          localizations.translate(
-                                            i18.individualDetails
-                                                .maxWeightLengthError,
-                                          ),
-                                    },
-                                  );
+                                  formControlKey = _weight;
                                 } else if (isVisible == Constants.height) {
-                                  return DigitTextFormField(
-                                    maxLength: 3,
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.digitsOnly,
-                                    ],
-                                    formControlName: _height,
-                                    label: localizations.translate(
-                                      i18.individualDetails.heightHeadLabelText,
-                                    ),
-                                    isRequired: (isVisible ==
-                                                Constants.height ||
-                                            (individual != null &&
-                                                getCategory(getAgeMonths(
-                                                      DigitDateUtils
-                                                          .calculateAge(
-                                                        DateFormat('dd/MM/yyyy')
-                                                            .parse(
-                                                          individual
-                                                              .dateOfBirth!,
-                                                        ),
-                                                      ),
-                                                    )) ==
-                                                    Constants.weight))
-                                        ? true
-                                        : false,
-                                    validationMessages: {
-                                      'minAllowed': (object) =>
-                                          localizations.translate(
-                                            i18.individualDetails
-                                                .minHeightLengthError,
-                                          ),
-                                      'maxAllowed': (object) =>
-                                          localizations.translate(
-                                            i18.individualDetails
-                                                .maxHeightLengthError,
-                                          ),
-                                    },
-                                  );
+                                  formControlKey = _height;
+                                } else if (isVisible == "" && isIndividual) {
+                                  formControlKey = isVisible;
                                 } else if ((individual != null &&
                                     getCategory(getAgeMonths(
                                           DigitDateUtils.calculateAge(
@@ -653,47 +593,7 @@ class _IndividualDetailsPageState
                                           ),
                                         )) ==
                                         Constants.weight)) {
-                                  return DigitTextFormField(
-                                    maxLength: 4,
-                                    inputFormatters: [
-                                      // FilteringTextInputFormatter.digitsOnly,
-                                      FilteringTextInputFormatter.allow(
-                                        RegExp(r'^\d*\.?\d{0,2}'),
-                                      ),
-                                    ],
-                                    formControlName: _weight,
-                                    label: localizations.translate(
-                                      i18.individualDetails.weightHeadLabelText,
-                                    ),
-                                    isRequired: (isVisible ==
-                                                Constants.weight ||
-                                            (individual != null &&
-                                                getCategory(getAgeMonths(
-                                                      DigitDateUtils
-                                                          .calculateAge(
-                                                        DateFormat('dd/MM/yyyy')
-                                                            .parse(
-                                                          individual
-                                                              .dateOfBirth!,
-                                                        ),
-                                                      ),
-                                                    )) ==
-                                                    Constants.weight))
-                                        ? true
-                                        : false,
-                                    validationMessages: {
-                                      'minAllowed': (object) =>
-                                          localizations.translate(
-                                            i18.individualDetails
-                                                .minWeightLengthError,
-                                          ),
-                                      'maxAllowed': (object) =>
-                                          localizations.translate(
-                                            i18.individualDetails
-                                                .maxWeightLengthError,
-                                          ),
-                                    },
-                                  );
+                                  formControlKey = _weight;
                                 } else if ((individual != null &&
                                     getCategory(getAgeMonths(
                                           DigitDateUtils.calculateAge(
@@ -703,47 +603,58 @@ class _IndividualDetailsPageState
                                           ),
                                         )) ==
                                         Constants.height)) {
-                                  return DigitTextFormField(
-                                    maxLength: 3,
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.digitsOnly,
-                                    ],
-                                    formControlName: _height,
-                                    label: localizations.translate(
-                                      i18.individualDetails.heightHeadLabelText,
-                                    ),
-                                    isRequired: (isVisible ==
-                                                Constants.height ||
-                                            (individual != null &&
-                                                getCategory(getAgeMonths(
-                                                      DigitDateUtils
-                                                          .calculateAge(
-                                                        DateFormat('dd/MM/yyyy')
-                                                            .parse(
-                                                          individual
-                                                              .dateOfBirth!,
-                                                        ),
-                                                      ),
-                                                    )) ==
-                                                    Constants.weight))
-                                        ? true
-                                        : false,
-                                    validationMessages: {
-                                      'minAllowed': (object) =>
-                                          localizations.translate(
-                                            i18.individualDetails
-                                                .minHeightLengthError,
-                                          ),
-                                      'maxAllowed': (object) =>
-                                          localizations.translate(
-                                            i18.individualDetails
-                                                .maxHeightLengthError,
-                                          ),
-                                    },
-                                  );
-                                } else {
-                                  return const SizedBox();
+                                  formControlKey = _height;
                                 }
+
+                                if (formControlKey == null ||
+                                    formControlKey == "") {
+                                  return const SizedBox(); // Return empty widget if no valid key
+                                }
+
+                                return DigitTextFormField(
+                                  key: ValueKey(
+                                    formControlKey,
+                                  ), // Ensure new key when control changes
+                                  maxLength: formControlKey == _weight ? 4 : 3,
+                                  inputFormatters: formControlKey == _weight
+                                      ? [
+                                          FilteringTextInputFormatter.allow(
+                                            RegExp(r'^\d*\.?\d{0,2}'),
+                                          ),
+                                        ]
+                                      : [
+                                          FilteringTextInputFormatter
+                                              .digitsOnly,
+                                        ],
+                                  formControlName: formControlKey,
+                                  label: localizations.translate(
+                                    formControlKey == _weight
+                                        ? i18.individualDetails
+                                            .weightHeadLabelText
+                                        : i18.individualDetails
+                                            .heightHeadLabelText,
+                                  ),
+                                  isRequired:
+                                      true, // If it's being rendered, it's required
+                                  validationMessages: {
+                                    'minAllowed': (object) =>
+                                        localizations.translate(
+                                          formControlKey == _weight
+                                              ? i18.individualDetails
+                                                  .minWeightLengthError
+                                              : i18.individualDetails
+                                                  .minHeightLengthError,
+                                        ),
+                                    'maxAllowed': (object) =>
+                                        localizations.translate(
+                                          formControlKey == _weight
+                                              ? i18.individualDetails
+                                                  .maxWeightLengthError
+                                              : i18.individualDetails
+                                                  .maxHeightLengthError,
+                                        ),
+                                  },
+                                );
                               },
                             ),
                           ),

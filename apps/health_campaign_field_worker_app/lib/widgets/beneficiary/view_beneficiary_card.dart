@@ -213,15 +213,17 @@ class _ViewBeneficiaryCardState extends LocalizedState<ViewBeneficiaryCard> {
                   ),
             cellKey: 'delivery',
             style: TextStyle(
-              color: getTableCellTextColor(
-                isNotEligible: isNotEligible,
-                taskdata: taskdata,
-                isBeneficiaryRefused:
-                    isBeneficiaryRefused || isBeneficiaryReferred,
-                isBeneficiaryIneligible: isBeneficiaryIneligible,
-                isStatusReset: isStatusReset,
-                theme: theme,
-              ),
+              color: isHead
+                  ? theme.colorScheme.surfaceTint
+                  : getTableCellTextColor(
+                      isNotEligible: isNotEligible,
+                      taskdata: taskdata,
+                      isBeneficiaryRefused:
+                          isBeneficiaryRefused || isBeneficiaryReferred,
+                      isBeneficiaryIneligible: isBeneficiaryIneligible,
+                      isStatusReset: isStatusReset,
+                      theme: theme,
+                    ),
             ),
           ),
           TableData(

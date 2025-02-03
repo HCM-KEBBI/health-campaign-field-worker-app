@@ -172,7 +172,7 @@ class _HouseHoldConsentPageState extends LocalizedState<HouseHoldConsentPage> {
                       ),
                       DigitRadioButtonList<KeyValue>(
                         labelText: localizations
-                            .translate(i18.householdDetails.cardTitle),
+                            .translate(i18.householdDetails.cardAztTitle),
                         labelStyle: DigitTheme
                             .instance.mobileTheme.textTheme.headlineSmall
                             ?.copyWith(
