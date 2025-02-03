@@ -946,7 +946,6 @@ class _IndividualDetailsPageState
           (control) {
             final value = int.tryParse(control.value ?? '');
             if (value != null) {
-              print(value);
               if (value < Constants.minHeight) {
                 return {'minAllowed': 'Value must be less than 50'};
               }
