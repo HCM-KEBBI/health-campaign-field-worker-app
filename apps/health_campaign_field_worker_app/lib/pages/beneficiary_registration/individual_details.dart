@@ -70,11 +70,6 @@ class _IndividualDetailsPageState
       final newValue =
           (cat == Constants.height || cat == Constants.weight) ? cat : "";
 
-      // if (newValue == Constants.height) {
-      //   form.control(_weight).value = "";
-      // } else if (newValue == Constants.weight) {
-      //   form.control(_height).value = "";
-      // }
       form.control(_weight).value = "";
       form.control(_height).value = "";
 
