@@ -114,8 +114,8 @@ class _RecordReferralDetailsPageState
                                             );
                                             final ageInMonths =
                                                 getAgeMonths(age);
-                                            if (ageInMonths < 3 ||
-                                                ageInMonths > 62) {
+                                            if (ageInMonths < 1 ||
+                                                ageInMonths > 59) {
                                               await DigitToast.show(
                                                 context,
                                                 options: DigitToastOptions(
@@ -457,8 +457,8 @@ class _RecordReferralDetailsPageState
                                                       );
                                                       final ageInMonths =
                                                           getAgeMonths(age);
-                                                      if (ageInMonths < 3 ||
-                                                          ageInMonths > 62) {
+                                                      if (ageInMonths < 1 ||
+                                                          ageInMonths > 59) {
                                                         await DigitToast.show(
                                                           context,
                                                           options:
