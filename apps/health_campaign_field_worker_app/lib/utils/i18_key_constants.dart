@@ -886,6 +886,9 @@ class StockDetails {
 
   String get aztQuantityReturnedLabel => 'STOCK_DETAILS_QUANTITY_RETURNED_AZT';
 
+  String get aztQuantityPartialReturnedLabel =>
+      'STOCK_DETAILS_PARTIAL_QUANTITY_RETURNED_AZT';
+
   String get quantityPartialReturnedLabel =>
       'STOCK_DETAILS_PARTIAL_QUANTITY_RETURNED_SPAQ';
 
