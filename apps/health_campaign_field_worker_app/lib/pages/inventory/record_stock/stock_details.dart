@@ -1819,7 +1819,8 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                 ),
                                           },
                                           label: localizations.translate(
-                                            module.quantityPartialReturnedLabel,
+                                            module
+                                                .aztQuantityPartialReturnedLabel,
                                           ),
                                         ),
                                       if ([
