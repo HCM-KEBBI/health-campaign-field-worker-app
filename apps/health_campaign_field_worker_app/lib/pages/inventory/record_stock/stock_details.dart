@@ -411,16 +411,6 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                     final stockState =
                                         context.read<RecordStockBloc>().state;
                                     clearQRCodes();
-                                    // if (stockState.primaryId != null) {
-                                    //   context.read<DigitScannerBloc>().add(
-                                    //         DigitScannerEvent.handleScanner(
-                                    //           barCode: [],
-                                    //           qrCode: [
-                                    //             stockState.primaryId.toString(),
-                                    //           ],
-                                    //         ),
-                                    //       );
-                                    // }
                                   },
                                 ),
                               ]),
@@ -603,34 +593,6 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                             totalExpectedUnusedBottles
                                                                 .toString(),
                                                           ),
-                                                      true,
-                                                      theme,
-                                                    ),
-                                                  );
-
-                                                  return;
-                                                }
-
-                                                if ((entryType ==
-                                                            StockRecordEntryType
-                                                                .returned &&
-                                                        isHealthFacilitySupervisor &&
-                                                        quantity == 0 &&
-                                                        partialBlisters == 0) ||
-                                                    (entryType ==
-                                                            StockRecordEntryType
-                                                                .dispatch &&
-                                                        isDistributor &&
-                                                        quantity == 0 &&
-                                                        partialBlisters == 0 &&
-                                                        emptyBottles == 0)) {
-                                                  DigitToast.show(
-                                                    context,
-                                                    options: DigitToastOptions(
-                                                      localizations.translate(
-                                                        i18.stockDetails
-                                                            .quantityMinError,
-                                                      ),
                                                       true,
                                                       theme,
                                                     ),
@@ -923,6 +885,22 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                                 _wastedBlistersKey,
                                                                 wastedQuantity,
                                                               ),
+                                                            if (isDistributor &&
+                                                                entryType ==
+                                                                    StockRecordEntryType
+                                                                        .dispatch)
+                                                              AdditionalField(
+                                                                'partialQuantityReturned',
+                                                                (totalExpectedPartialBottles >
+                                                                        (partialBlisters !=
+                                                                                null
+                                                                            ? int.parse(
+                                                                                partialBlisters.toString(),
+                                                                              )
+                                                                            : 0))
+                                                                    ? 0
+                                                                    : totalExpectedPartialQuantityInMl,
+                                                              ),
                                                             if (emptyBottles !=
                                                                 null)
                                                               AdditionalField(
@@ -1062,9 +1040,8 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                     totalQuantity = entryType ==
                                                             StockRecordEntryType
                                                                 .dispatch
-                                                        ? totalQuantity * -30 -
-                                                            (wastedQuantity ??
-                                                                0)
+                                                        ? totalRemainingQuantityInMl *
+                                                            -1
                                                         : totalQuantity * 30;
 
                                                     spaq1 = totalQuantity;
