@@ -81,6 +81,14 @@ class _HouseHoldConsentPageState extends LocalizedState<HouseHoldConsentPage> {
                                 locationAccuracy: locationState.accuracy ??
                                     addressModel.locationAccuracy,
                               );
+                              final projectTypeId =
+                                  context.selectedProjectType == null
+                                      ? ""
+                                      : context.selectedProjectType!.id;
+                              final cycleIndex = context.selectedCycle.id == 0
+                                  ? ""
+                                  : "0${context.selectedCycle.id}";
+
                               var household = householdModel;
                               household ??= HouseholdModel(
                                 tenantId: envConfig.variables.tenantId,
@@ -107,6 +115,20 @@ class _HouseHoldConsentPageState extends LocalizedState<HouseHoldConsentPage> {
                                   version: 1,
                                   fields: [
                                     AdditionalField("isConsent", isConsent),
+                                    if (cycleIndex.isNotEmpty)
+                                      AdditionalField(
+                                        'cycleIndex',
+                                        cycleIndex,
+                                      ),
+                                    if (projectTypeId.isNotEmpty)
+                                      AdditionalField(
+                                        'projectTypeId',
+                                        projectTypeId,
+                                      ),
+                                    AdditionalField(
+                                      'projectId',
+                                      context.projectId,
+                                    ),
                                   ],
                                 ),
                               );
