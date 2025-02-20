@@ -128,6 +128,7 @@ class Constants {
   static const String smallBraces = '()';
   static const String intTwo = '2';
   static const String assessmentChecklist = 'ELIGIBLITY_ASSESSMENT';
+  static const int mlPerBottle = 30;
 
   static List<LocalRepository> getLocalRepositories(
     LocalSqlDataStore sql,
@@ -307,7 +308,7 @@ class Constants {
   static const int minHeight = 50;
   static const int maxHeight = 138;
 
-  static const double minWeight = 3.0;
+  static const double minWeight = 0.01;
   static const double maxWeight = 15.0;
 }
 

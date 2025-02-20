@@ -548,15 +548,16 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
 
                                                 int totalExpectedUnusedBottles =
                                                     totalRemainingQuantityInMl ~/
-                                                        30;
+                                                        Constants.mlPerBottle;
 
                                                 int totalExpectedPartialQuantityInMl =
                                                     totalRemainingQuantityInMl %
-                                                        30;
+                                                        Constants.mlPerBottle;
 
                                                 int totalExpectedPartialBottles =
                                                     totalRemainingQuantityInMl %
-                                                                30 !=
+                                                                Constants
+                                                                    .mlPerBottle !=
                                                             0
                                                         ? 1
                                                         : 0;
@@ -567,7 +568,8 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                       )
                                                     : 0;
 
-                                                spaq1 = totalQuantity * 30;
+                                                spaq1 = totalQuantity *
+                                                    Constants.mlPerBottle;
 
                                                 if (spaq1 >
                                                         totalRemainingQuantityInMl &&
@@ -607,7 +609,8 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                             .dispatch) {
                                                   wastedQuantity = ((totalExpectedUnusedBottles -
                                                               totalQuantity) *
-                                                          30) +
+                                                          Constants
+                                                              .mlPerBottle) +
                                                       ((totalExpectedPartialBottles >
                                                               (partialBlisters !=
                                                                       null
@@ -1042,7 +1045,9 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                                 .dispatch
                                                         ? totalRemainingQuantityInMl *
                                                             -1
-                                                        : totalQuantity * 30;
+                                                        : totalQuantity *
+                                                            Constants
+                                                                .mlPerBottle;
 
                                                     spaq1 = totalQuantity;
 

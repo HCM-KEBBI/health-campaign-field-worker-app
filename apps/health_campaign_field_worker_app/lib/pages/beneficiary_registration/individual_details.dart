@@ -56,7 +56,7 @@ class _IndividualDetailsPageState
 
   final ValueNotifier<dynamic> heightWeight = ValueNotifier(null);
 
-  void updateStatus(FormGroup form, dynamic age) {
+  void updateStatus(FormGroup form, dynamic age, BuildContext context) {
     // Updating the Value updateStatuseNotifier
 
     if (age == null) {
@@ -66,7 +66,7 @@ class _IndividualDetailsPageState
         form.control(_height).value = "";
       }
     } else {
-      final cat = getCategory(getAgeMonths(age));
+      final cat = getCategory(getAgeMonths(age), context);
       final newValue =
           (cat == Constants.height || cat == Constants.weight) ? cat : "";
 
@@ -129,11 +129,11 @@ class _IndividualDetailsPageState
           builder: (context, state) {
             form.control(_dobKey).valueChanges.listen((value) {
               if (value == null) {
-                updateStatus(form, null);
+                updateStatus(form, null, context);
               } else {
                 DigitDOBAge age = DigitDateUtils.calculateAge(value);
 
-                updateStatus(form, age);
+                updateStatus(form, age, context);
               }
             });
 
@@ -170,11 +170,13 @@ class _IndividualDetailsPageState
                       return;
                     }
 
-                    final String checkCategory = getCategory(getAgeMonths(
-                      DigitDateUtils.calculateAge(
-                        form.control(_dobKey).value,
-                      ),
-                    ));
+                    final String checkCategory = getCategory(
+                        getAgeMonths(
+                          DigitDateUtils.calculateAge(
+                            form.control(_dobKey).value,
+                          ),
+                        ),
+                        context);
 
                     switch (checkCategory) {
                       case Constants.height:
@@ -515,13 +517,13 @@ class _IndividualDetailsPageState
                               // Handle changes to the control's value here
                               final value = formControl.value;
                               if (value == null) {
-                                updateStatus(form, null);
+                                updateStatus(form, null, context);
                                 formControl.setErrors({'': true});
                               } else {
                                 DigitDOBAge age =
                                     DigitDateUtils.calculateAge(value);
 
-                                updateStatus(form, age);
+                                updateStatus(form, age, context);
                                 if ((age.years == 0 && age.months == 0) ||
                                     age.months > 11 ||
                                     (age.years > 150 ||
@@ -585,23 +587,27 @@ class _IndividualDetailsPageState
                                 } else if (isVisible == "" && isIndividual) {
                                   formControlKey = isVisible;
                                 } else if ((individual != null &&
-                                    getCategory(getAgeMonths(
-                                          DigitDateUtils.calculateAge(
-                                            DateFormat('dd/MM/yyyy').parse(
-                                              individual.dateOfBirth!,
+                                    getCategory(
+                                            getAgeMonths(
+                                              DigitDateUtils.calculateAge(
+                                                DateFormat('dd/MM/yyyy').parse(
+                                                  individual.dateOfBirth!,
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        )) ==
+                                            context) ==
                                         Constants.weight)) {
                                   formControlKey = _weight;
                                 } else if ((individual != null &&
-                                    getCategory(getAgeMonths(
-                                          DigitDateUtils.calculateAge(
-                                            DateFormat('dd/MM/yyyy').parse(
-                                              individual.dateOfBirth!,
+                                    getCategory(
+                                            getAgeMonths(
+                                              DigitDateUtils.calculateAge(
+                                                DateFormat('dd/MM/yyyy').parse(
+                                                  individual.dateOfBirth!,
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        )) ==
+                                            context) ==
                                         Constants.height)) {
                                   formControlKey = _height;
                                 }
@@ -810,13 +816,15 @@ class _IndividualDetailsPageState
                     "projectTypeId",
                     projectTypeId,
                   ),
-                if (getCategory(getAgeMonths(
-                      DigitDateUtils.calculateAge(
-                        DateFormat('dd/MM/yyyy').parse(
-                          dobString!,
+                if (getCategory(
+                        getAgeMonths(
+                          DigitDateUtils.calculateAge(
+                            DateFormat('dd/MM/yyyy').parse(
+                              dobString!,
+                            ),
+                          ),
                         ),
-                      ),
-                    )) ==
+                        context) ==
                     Constants.height)
                   AdditionalField(
                     Constants.height,
@@ -824,13 +832,15 @@ class _IndividualDetailsPageState
                         ? '0${(form.control(_height).value)}'
                         : (form.control(_height).value),
                   ),
-                if (getCategory(getAgeMonths(
-                      DigitDateUtils.calculateAge(
-                        DateFormat('dd/MM/yyyy').parse(
-                          dobString,
+                if (getCategory(
+                        getAgeMonths(
+                          DigitDateUtils.calculateAge(
+                            DateFormat('dd/MM/yyyy').parse(
+                              dobString,
+                            ),
+                          ),
                         ),
-                      ),
-                    )) ==
+                        context) ==
                     Constants.weight)
                   AdditionalField(
                     Constants.weight,
@@ -849,11 +859,13 @@ class _IndividualDetailsPageState
                       field.key != Constants.height,
                 ),
                 // Add new `Constants.height` field if the condition matches
-                if (getCategory(getAgeMonths(
-                      DigitDateUtils.calculateAge(
-                        DateFormat('dd/MM/yyyy').parse(dobString!),
-                      ),
-                    )) ==
+                if (getCategory(
+                        getAgeMonths(
+                          DigitDateUtils.calculateAge(
+                            DateFormat('dd/MM/yyyy').parse(dobString!),
+                          ),
+                        ),
+                        context) ==
                     Constants.height)
                   AdditionalField(
                     Constants.height,
@@ -861,11 +873,13 @@ class _IndividualDetailsPageState
                         ? '0${(form.control(_height).value)}'
                         : (form.control(_height).value),
                   ),
-                if (getCategory(getAgeMonths(
-                      DigitDateUtils.calculateAge(
-                        DateFormat('dd/MM/yyyy').parse(dobString!),
-                      ),
-                    )) ==
+                if (getCategory(
+                        getAgeMonths(
+                          DigitDateUtils.calculateAge(
+                            DateFormat('dd/MM/yyyy').parse(dobString!),
+                          ),
+                        ),
+                        context) ==
                     Constants.weight)
                   AdditionalField(
                     Constants.weight,
@@ -918,22 +932,21 @@ class _IndividualDetailsPageState
               if (value < Constants.minWeight) {
                 return {'minAllowed': 'Value must be less than 3'};
               }
-              if (value > Constants.maxWeight) {
-                return {'maxAllowed': 'Value must be 15 or less'};
-              }
             }
 
             return null; // Valid input
           },
         ],
         value: (individual != null &&
-                getCategory(getAgeMonths(
-                      DigitDateUtils.calculateAge(
-                        DateFormat('dd/MM/yyyy').parse(
-                          individual.dateOfBirth!,
+                getCategory(
+                        getAgeMonths(
+                          DigitDateUtils.calculateAge(
+                            DateFormat('dd/MM/yyyy').parse(
+                              individual.dateOfBirth!,
+                            ),
+                          ),
                         ),
-                      ),
-                    )) ==
+                        context) ==
                     Constants.weight)
             ? individual.additionalFields?.fields
                     .firstWhere((element) => element.key == Constants.weight)
@@ -958,13 +971,15 @@ class _IndividualDetailsPageState
           },
         ],
         value: (individual != null &&
-                getCategory(getAgeMonths(
-                      DigitDateUtils.calculateAge(
-                        DateFormat('dd/MM/yyyy').parse(
-                          individual.dateOfBirth!,
+                getCategory(
+                        getAgeMonths(
+                          DigitDateUtils.calculateAge(
+                            DateFormat('dd/MM/yyyy').parse(
+                              individual.dateOfBirth!,
+                            ),
+                          ),
                         ),
-                      ),
-                    )) ==
+                        context) ==
                     Constants.height)
             ? individual.additionalFields?.fields
                     .firstWhere((element) => element.key == Constants.height)

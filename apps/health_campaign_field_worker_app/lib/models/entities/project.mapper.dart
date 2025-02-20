@@ -319,6 +319,11 @@ class ProjectModelMapper extends SubClassMapperBase<ProjectModel> {
   static List<DocumentModel>? _$documents(ProjectModel v) => v.documents;
   static const Field<ProjectModel, List<DocumentModel>> _f$documents =
       Field('documents', _$documents, opt: true);
+  static ProjectAdditionalDetails? _$additionalDetails(ProjectModel v) =>
+      v.additionalDetails;
+  static const Field<ProjectModel, ProjectAdditionalDetails>
+      _f$additionalDetails =
+      Field('additionalDetails', _$additionalDetails, opt: true);
   static int? _$startDate(ProjectModel v) => v.startDate;
   static const Field<ProjectModel, int> _f$startDate =
       Field('startDate', _$startDate, opt: true);
@@ -362,6 +367,7 @@ class ProjectModelMapper extends SubClassMapperBase<ProjectModel> {
     #address: _f$address,
     #targets: _f$targets,
     #documents: _f$documents,
+    #additionalDetails: _f$additionalDetails,
     #startDate: _f$startDate,
     #endDate: _f$endDate,
     #auditDetails: _f$auditDetails,
@@ -401,6 +407,7 @@ class ProjectModelMapper extends SubClassMapperBase<ProjectModel> {
         address: data.dec(_f$address),
         targets: data.dec(_f$targets),
         documents: data.dec(_f$documents),
+        additionalDetails: data.dec(_f$additionalDetails),
         startDate: data.dec(_f$startDate),
         endDate: data.dec(_f$endDate),
         auditDetails: data.dec(_f$auditDetails),
@@ -469,6 +476,8 @@ abstract class ProjectModelCopyWith<$R, $In extends ProjectModel, $Out>
       TargetModelCopyWith<$R, TargetModel, TargetModel>>? get targets;
   ListCopyWith<$R, DocumentModel,
       DocumentModelCopyWith<$R, DocumentModel, DocumentModel>>? get documents;
+  ProjectAdditionalDetailsCopyWith<$R, ProjectAdditionalDetails,
+      ProjectAdditionalDetails>? get additionalDetails;
   @override
   AuditDetailsCopyWith<$R, AuditDetails, AuditDetails>? get auditDetails;
   @override
@@ -494,6 +503,7 @@ abstract class ProjectModelCopyWith<$R, $In extends ProjectModel, $Out>
       AddressModel? address,
       List<TargetModel>? targets,
       List<DocumentModel>? documents,
+      ProjectAdditionalDetails? additionalDetails,
       int? startDate,
       int? endDate,
       AuditDetails? auditDetails,
@@ -533,6 +543,11 @@ class _ProjectModelCopyWithImpl<$R, $Out>
               (v) => call(documents: v))
           : null;
   @override
+  ProjectAdditionalDetailsCopyWith<$R, ProjectAdditionalDetails,
+          ProjectAdditionalDetails>?
+      get additionalDetails => $value.additionalDetails?.copyWith
+          .$chain((v) => call(additionalDetails: v));
+  @override
   AuditDetailsCopyWith<$R, AuditDetails, AuditDetails>? get auditDetails =>
       $value.auditDetails?.copyWith.$chain((v) => call(auditDetails: v));
   @override
@@ -559,6 +574,7 @@ class _ProjectModelCopyWithImpl<$R, $Out>
           Object? address = $none,
           Object? targets = $none,
           Object? documents = $none,
+          Object? additionalDetails = $none,
           Object? startDate = $none,
           Object? endDate = $none,
           Object? auditDetails = $none,
@@ -584,6 +600,7 @@ class _ProjectModelCopyWithImpl<$R, $Out>
         if (address != $none) #address: address,
         if (targets != $none) #targets: targets,
         if (documents != $none) #documents: documents,
+        if (additionalDetails != $none) #additionalDetails: additionalDetails,
         if (startDate != $none) #startDate: startDate,
         if (endDate != $none) #endDate: endDate,
         if (auditDetails != $none) #auditDetails: auditDetails,
@@ -615,6 +632,8 @@ class _ProjectModelCopyWithImpl<$R, $Out>
       address: data.get(#address, or: $value.address),
       targets: data.get(#targets, or: $value.targets),
       documents: data.get(#documents, or: $value.documents),
+      additionalDetails:
+          data.get(#additionalDetails, or: $value.additionalDetails),
       startDate: data.get(#startDate, or: $value.startDate),
       endDate: data.get(#endDate, or: $value.endDate),
       auditDetails: data.get(#auditDetails, or: $value.auditDetails),
@@ -777,4 +796,121 @@ class _ProjectAdditionalFieldsCopyWithImpl<$R, $Out>
   ProjectAdditionalFieldsCopyWith<$R2, ProjectAdditionalFields, $Out2>
       $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
           _ProjectAdditionalFieldsCopyWithImpl($value, $cast, t);
+}
+
+class ProjectAdditionalDetailsMapper
+    extends ClassMapperBase<ProjectAdditionalDetails> {
+  ProjectAdditionalDetailsMapper._();
+
+  static ProjectAdditionalDetailsMapper? _instance;
+  static ProjectAdditionalDetailsMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals
+          .use(_instance = ProjectAdditionalDetailsMapper._());
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'ProjectAdditionalDetails';
+
+  static String? _$projectTypeId(ProjectAdditionalDetails v) => v.projectTypeId;
+  static const Field<ProjectAdditionalDetails, String> _f$projectTypeId =
+      Field('projectTypeId', _$projectTypeId, opt: true);
+
+  @override
+  final MappableFields<ProjectAdditionalDetails> fields = const {
+    #projectTypeId: _f$projectTypeId,
+  };
+  @override
+  final bool ignoreNull = true;
+
+  static ProjectAdditionalDetails _instantiate(DecodingData data) {
+    return ProjectAdditionalDetails(projectTypeId: data.dec(_f$projectTypeId));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static ProjectAdditionalDetails fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<ProjectAdditionalDetails>(map);
+  }
+
+  static ProjectAdditionalDetails fromJson(String json) {
+    return ensureInitialized().decodeJson<ProjectAdditionalDetails>(json);
+  }
+}
+
+mixin ProjectAdditionalDetailsMappable {
+  String toJson() {
+    return ProjectAdditionalDetailsMapper.ensureInitialized()
+        .encodeJson<ProjectAdditionalDetails>(this as ProjectAdditionalDetails);
+  }
+
+  Map<String, dynamic> toMap() {
+    return ProjectAdditionalDetailsMapper.ensureInitialized()
+        .encodeMap<ProjectAdditionalDetails>(this as ProjectAdditionalDetails);
+  }
+
+  ProjectAdditionalDetailsCopyWith<ProjectAdditionalDetails,
+          ProjectAdditionalDetails, ProjectAdditionalDetails>
+      get copyWith => _ProjectAdditionalDetailsCopyWithImpl(
+          this as ProjectAdditionalDetails, $identity, $identity);
+  @override
+  String toString() {
+    return ProjectAdditionalDetailsMapper.ensureInitialized()
+        .stringifyValue(this as ProjectAdditionalDetails);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (runtimeType == other.runtimeType &&
+            ProjectAdditionalDetailsMapper.ensureInitialized()
+                .isValueEqual(this as ProjectAdditionalDetails, other));
+  }
+
+  @override
+  int get hashCode {
+    return ProjectAdditionalDetailsMapper.ensureInitialized()
+        .hashValue(this as ProjectAdditionalDetails);
+  }
+}
+
+extension ProjectAdditionalDetailsValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, ProjectAdditionalDetails, $Out> {
+  ProjectAdditionalDetailsCopyWith<$R, ProjectAdditionalDetails, $Out>
+      get $asProjectAdditionalDetails => $base
+          .as((v, t, t2) => _ProjectAdditionalDetailsCopyWithImpl(v, t, t2));
+}
+
+abstract class ProjectAdditionalDetailsCopyWith<
+    $R,
+    $In extends ProjectAdditionalDetails,
+    $Out> implements ClassCopyWith<$R, $In, $Out> {
+  $R call({String? projectTypeId});
+  ProjectAdditionalDetailsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
+}
+
+class _ProjectAdditionalDetailsCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, ProjectAdditionalDetails, $Out>
+    implements
+        ProjectAdditionalDetailsCopyWith<$R, ProjectAdditionalDetails, $Out> {
+  _ProjectAdditionalDetailsCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<ProjectAdditionalDetails> $mapper =
+      ProjectAdditionalDetailsMapper.ensureInitialized();
+  @override
+  $R call({Object? projectTypeId = $none}) => $apply(FieldCopyWithData(
+      {if (projectTypeId != $none) #projectTypeId: projectTypeId}));
+  @override
+  ProjectAdditionalDetails $make(CopyWithData data) => ProjectAdditionalDetails(
+      projectTypeId: data.get(#projectTypeId, or: $value.projectTypeId));
+
+  @override
+  ProjectAdditionalDetailsCopyWith<$R2, ProjectAdditionalDetails, $Out2>
+      $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
+          _ProjectAdditionalDetailsCopyWithImpl($value, $cast, t);
 }

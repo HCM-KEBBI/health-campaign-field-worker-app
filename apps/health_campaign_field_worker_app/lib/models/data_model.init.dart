@@ -126,6 +126,7 @@ void initializeMappers() {
   p25.ProjectSearchModelMapper.ensureInitialized();
   p25.ProjectModelMapper.ensureInitialized();
   p25.ProjectAdditionalFieldsMapper.ensureInitialized();
+  p25.ProjectAdditionalDetailsMapper.ensureInitialized();
   p26.ProjectBeneficiarySearchModelMapper.ensureInitialized();
   p26.ProjectBeneficiaryModelMapper.ensureInitialized();
   p26.ProjectBeneficiaryAdditionalFieldsMapper.ensureInitialized();
