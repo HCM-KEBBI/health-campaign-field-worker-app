@@ -66,6 +66,12 @@ class _HouseHoldConsentPageState extends LocalizedState<HouseHoldConsentPage> {
                             loading,
                             isHeadOfHousehold,
                           ) {
+                            if (form.control(_consent).value == null) {
+                              form.control(_consent).setErrors({'': true});
+
+                              return;
+                            }
+
                             final isConsent =
                                 (form.control(_consent).value as KeyValue)
                                             .key ==
