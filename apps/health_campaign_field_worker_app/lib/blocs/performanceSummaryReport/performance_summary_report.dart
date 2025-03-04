@@ -98,16 +98,7 @@ class PerformannceSummaryReportBloc
       userId,
     );
 
-    for (var productVariant in productVariantList) {
-      variantIdVsProduct[productVariant.sku] = productVariant.id;
-    }
-
-    var albendazoleResourceKey = variantIdVsProduct.keys
-        .where((element) => element!
-            .toUpperCase()
-            .contains(BeneficiaryType.azt.name.toUpperCase()))
-        .first;
-    var albendazoleResourceId = variantIdVsProduct[albendazoleResourceKey];
+    var albendazoleResourceId = productVariantList.first.id;
 
     for (var element in householdList) {
       var dateKey = DigitDateUtils.getDateFromTimestamp(

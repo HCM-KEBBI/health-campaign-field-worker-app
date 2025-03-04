@@ -22,6 +22,6 @@ enum BeneficiaryType {
   @MappableValue("SPAQ2")
   spaq2,
   @MappableValue("AZM")
-  azt,
+  azm,
   ;
 }
