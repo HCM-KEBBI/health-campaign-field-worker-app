@@ -120,7 +120,8 @@ class _HouseHoldConsentPageState extends LocalizedState<HouseHoldConsentPage> {
                                 additionalFields: HouseholdAdditionalFields(
                                   version: 1,
                                   fields: [
-                                    AdditionalField("isConsent", isConsent),
+                                    AdditionalField(
+                                        Constants.isConsentKey, isConsent),
                                     if (cycleIndex.isNotEmpty)
                                       AdditionalField(
                                         'cycleIndex',

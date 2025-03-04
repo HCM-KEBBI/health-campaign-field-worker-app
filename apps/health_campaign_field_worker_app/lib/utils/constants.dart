@@ -310,6 +310,9 @@ class Constants {
 
   static const double minWeight = 0.01;
   static const double maxWeight = 15.0;
+
+  static const int dailyTarget = 70;
+  static const String isConsentKey = "isConsent";
 }
 
 /// By using this key, we can push pages without context

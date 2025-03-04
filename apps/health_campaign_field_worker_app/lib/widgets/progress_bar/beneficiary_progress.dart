@@ -90,7 +90,7 @@ class _BeneficiaryProgressBarState extends State<BeneficiaryProgressBar> {
 
   @override
   Widget build(BuildContext context) {
-    final target = 75;
+    const target = Constants.dailyTarget;
 
     return DigitCard(
       child: ProgressIndicatorContainer(

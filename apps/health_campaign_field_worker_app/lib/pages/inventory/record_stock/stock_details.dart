@@ -384,7 +384,13 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                       builder: (context, form, child) {
                         return BlocBuilder<DigitScannerBloc, DigitScannerState>(
                           builder: (context, scannerState) {
-                            if (isDistributor) {
+                            if ((isDistributor ||
+                                (isLgaWarehouseManager &&
+                                    entryType ==
+                                        StockRecordEntryType.dispatch) ||
+                                (isHealthFacilitySupervisor &&
+                                    entryType ==
+                                        StockRecordEntryType.receipt))) {
                               if (form
                                       .control(_supervisorKey)
                                       .value
