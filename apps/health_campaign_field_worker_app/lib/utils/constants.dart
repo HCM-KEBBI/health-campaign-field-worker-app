@@ -305,7 +305,7 @@ class Constants {
 
   // min and max consideration for both weight and height
 
-  static const int minHeight = 50;
+  static const int minHeight = 01;
   static const int maxHeight = 138;
 
   static const double minWeight = 0.01;

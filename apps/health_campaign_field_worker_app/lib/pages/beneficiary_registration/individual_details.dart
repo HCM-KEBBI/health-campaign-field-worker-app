@@ -925,18 +925,6 @@ class _IndividualDetailsPageState
         value: individual?.name?.familyName ?? '',
       ),
       _weight: FormControl<String>(
-        validators: [
-          (control) {
-            final value = double.tryParse(control.value ?? '');
-            if (value != null) {
-              if (value < Constants.minWeight) {
-                return {'minAllowed': 'Value must be less than 3'};
-              }
-            }
-
-            return null; // Valid input
-          },
-        ],
         value: (individual != null &&
                 getCategory(
                         getAgeMonths(
@@ -955,21 +943,6 @@ class _IndividualDetailsPageState
             : "",
       ),
       _height: FormControl<String>(
-        validators: [
-          (control) {
-            final value = int.tryParse(control.value ?? '');
-            if (value != null) {
-              if (value < Constants.minHeight) {
-                return {'minAllowed': 'Value must be less than 50'};
-              }
-              if (value > Constants.maxHeight) {
-                return {'maxAllowed': 'Value must be 138 or less'};
-              }
-            }
-
-            return null; // Valid input
-          },
-        ],
         value: (individual != null &&
                 getCategory(
                         getAgeMonths(
