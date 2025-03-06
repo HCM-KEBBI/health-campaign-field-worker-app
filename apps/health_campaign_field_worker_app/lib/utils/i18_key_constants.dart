@@ -766,8 +766,18 @@ class DeliverIntervention {
   String get doseGivenCareGiver => 'DELIVER_INTERVENTION_DOSE_GIVEN_CARE_GIVER';
   String get infoWrittenInChildCard =>
       'DELIVER_INTERVENTION_DOSE_INFO_IN_CHILD_CARD_ADDED';
+  String get remindedTheCareGiver =>
+      'DELIVER_INTERVENTION_DOSE_REMIND_CARE_GIVER';
+  String get informTheCareGiver =>
+      'DELIVER_INTERVENTION_DOSE_INFORM_CARE_GIVER';
   String get healthTalkGivenOnSPAQ =>
       'DELIVER_INTERVENTION_DOSE_HEALTH_TALK_GIVEN_SPAQ';
+  String get informationBulletOne => 'INFORMATION_BULLET_ONE';
+  String get informationBulletTwo => 'INFORMATION_BULLET_TWO';
+  String get informationBulletThree => 'INFORMATION_BULLET_THREE';
+  String get informationBulletFour => 'INFORMATION_BULLET_FOUR';
+  String get informationBulletFive => 'INFORMATION_BULLET_FIVE';
+  String get informationBulletSix => 'INFORMATION_BULLET_SIX';
 
   //[todo] need to change the 24
   String get wasDosePastRecordDeliveryDetails =>
