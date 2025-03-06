@@ -59,7 +59,8 @@ class _DoseAdministeredVerificationPageState
   void initState() {
     super.initState();
     // Initialize all checkboxes as unchecked
-    checkboxStates = List<bool>.filled(4, false);
+    // count is number of information bullet points
+    checkboxStates = List<bool>.filled(6, false);
   }
 
   @override
