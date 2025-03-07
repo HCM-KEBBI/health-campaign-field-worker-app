@@ -411,12 +411,17 @@ class _DoseAdministeredVerificationPageState
   ) {
     List<TextSpan> textSpans = _createTextSpans(text, replacements, theme);
 
+    double screenWidth = MediaQuery.of(context).size.width;
+    double padding = screenWidth > 600 ? kPadding * 2 : kPadding;
+
+    double fontSize = screenWidth > 600 ? 18 : 16; //
+
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
+      padding: EdgeInsets.fromLTRB(
         kPadding,
-        kPadding * 2,
+        padding,
         kPadding,
-        kPadding * 2,
+        padding,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -431,7 +436,7 @@ class _DoseAdministeredVerificationPageState
                       fontStyle: theme.textTheme.bodyLarge!.fontStyle,
                       fontWeight: theme.textTheme.bodyLarge!.fontWeight,
                       letterSpacing: theme.textTheme.bodyLarge!.letterSpacing,
-                      fontSize: 18,
+                      fontSize: fontSize,
                       color: theme.textTheme.bodyLarge!.color,
                     ),
                     children: textSpans,
@@ -495,27 +500,27 @@ class _DoseAdministeredVerificationPageState
   // Info : return information bullet points
   List<Widget> getbulletPoints(
       List<String> informationBullets, ThemeData theme) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double padding = screenWidth > 600 ? kPadding * 2.5 : kPadding;
+
     return informationBullets
         .asMap()
         .map((index, bullet) {
           return MapEntry(
             index,
             Padding(
-              padding: const EdgeInsets.fromLTRB(kPadding * 2.5, 0, 0, 0),
+              padding: EdgeInsets.fromLTRB(padding, 0, 0, 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                    child: Expanded(
-                      flex: 1,
-                      child: DigitCheckbox(
-                        label: "",
-                        value: checkboxStates[index],
-                        onChanged: (bool? value) {
-                          handleCheckboxChange(index, value);
-                        },
-                      ),
+                    child: DigitCheckbox(
+                      label: "",
+                      value: checkboxStates[index],
+                      onChanged: (bool? value) {
+                        handleCheckboxChange(index, value);
+                      },
                     ),
                   ),
                   Expanded(
