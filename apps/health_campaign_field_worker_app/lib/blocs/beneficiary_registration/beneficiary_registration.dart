@@ -145,7 +145,7 @@ class BeneficiaryRegistrationBloc
         throw const InvalidRegistrationStateException();
       },
       create: (value) async {
-        final individual = value.individualModel;
+        IndividualModel? individual = value.individualModel;
         final household = value.householdModel;
         final address = value.addressModel;
         final dateOfRegistration = value.registrationDate;
@@ -206,18 +206,19 @@ class BeneficiaryRegistrationBloc
             ),
           );
           final initialModifiedAt = DateTime.now().millisecondsSinceEpoch;
+          individual = individual.copyWith(
+            identifiers: identifiers,
+            address: [
+              address.copyWith(
+                relatedClientReferenceId: individual.clientReferenceId,
+                auditDetails: individual.auditDetails,
+                clientAuditDetails: individual.clientAuditDetails,
+                locality: locality,
+              ),
+            ],
+          );
           await individualRepository.create(
-            individual.copyWith(
-              identifiers: identifiers,
-              address: [
-                address.copyWith(
-                  relatedClientReferenceId: individual.clientReferenceId,
-                  auditDetails: individual.auditDetails,
-                  clientAuditDetails: individual.clientAuditDetails,
-                  locality: locality,
-                ),
-              ],
-            ),
+            individual,
           );
 
           await projectBeneficiaryRepository.create(
@@ -287,6 +288,7 @@ class BeneficiaryRegistrationBloc
             BeneficiaryRegistrationPersistedState(
               navigateToRoot: false,
               householdModel: household,
+              individualModel: individual,
             ),
           );
         }
@@ -632,6 +634,7 @@ class BeneficiaryRegistrationState with _$BeneficiaryRegistrationState {
   const factory BeneficiaryRegistrationState.persisted({
     @Default(true) bool navigateToRoot,
     required HouseholdModel householdModel,
+    IndividualModel? individualModel,
   }) = BeneficiaryRegistrationPersistedState;
 }
 
