@@ -8,14 +8,17 @@ import '../../../utils/i18_key_constants.dart' as i18;
 import '../../../widgets/localized.dart';
 import '../../blocs/search_households/search_households.dart';
 import '../../models/entities/identifier_types.dart';
+import '../../models/entities/individual.dart';
 
 class BeneficiaryAcknowledgementPage extends LocalizedStatefulWidget {
   final bool? enableViewHousehold;
+  final IndividualModel? individual;
 
   const BeneficiaryAcknowledgementPage({
     super.key,
     super.appLocalizations,
     this.enableViewHousehold,
+    this.individual,
   });
 
   @override
@@ -56,15 +59,6 @@ class _BeneficiaryAcknowledgementPageState
               ),
             );
           }
-
-          // final wrapper = context
-          //     .read<HouseholdOverviewBloc>()
-          //     .state
-          //     .householdMemberWrapper;
-          //
-          // context.router.popAndPush(
-          //   BeneficiaryWrapperRoute(wrapper: wrapper),
-          // );
         },
         enableViewHousehold: widget.enableViewHousehold ?? false,
         secondaryLabel: localizations.translate(
@@ -75,18 +69,18 @@ class _BeneficiaryAcknowledgementPageState
         description: localizations.translate(
           i18.acknowledgementSuccess.acknowledgementDescriptionText,
         ),
-        subLabel: getSubText(wrapper),
+        subLabel: getSubText(widget.individual),
         label: localizations
             .translate(i18.acknowledgementSuccess.acknowledgementLabelText),
       ),
     );
   }
 
-  getSubText(HouseholdMemberWrapper? wrapper) {
-    return wrapper != null
+  getSubText(IndividualModel? individual) {
+    return individual != null
         ? '${localizations.translate(i18.beneficiaryDetails.beneficiaryId)}\n'
-            '${wrapper.members.lastOrNull!.name!.givenName} - '
-            '${wrapper.members.lastOrNull!.identifiers!.lastWhereOrNull(
+            '${individual.name!.givenName} - '
+            '${individual.identifiers!.lastWhereOrNull(
                   (e) =>
                       e.identifierType ==
                       IdentifierTypes.uniqueBeneficiaryID.toValue(),

@@ -117,9 +117,10 @@ class _IndividualDetailsPageState
                             ),
                           );
                     },
-                  ).then((value) => {
+                  ).then((value1) => {
                         router.push(BeneficiaryAcknowledgementRoute(
                           enableViewHousehold: true,
+                          individual: value.individualModel,
                         )),
                       });
                 }
@@ -901,12 +902,6 @@ class _IndividualDetailsPageState
       },
     );
 
-    final searchQuery = state.mapOrNull<String>(
-      create: (value) {
-        return value.searchQuery;
-      },
-    );
-
     return fb.group(<String, Object>{
       _individualNameKey: FormControl<String>(
         validators: [
@@ -914,7 +909,7 @@ class _IndividualDetailsPageState
           CustomValidator.requiredMin3,
           Validators.maxLength(validation.individual.nameMaxLength),
         ],
-        value: individual?.name?.givenName ?? searchQuery?.trim(),
+        value: individual?.name?.givenName,
       ),
       _individualLastNameKey: FormControl<String>(
         validators: [
