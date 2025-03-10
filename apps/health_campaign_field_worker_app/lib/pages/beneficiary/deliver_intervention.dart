@@ -326,42 +326,22 @@ class _DeliverInterventionPageState
                                                         int spaq1 = 0;
                                                         int spaq2 = 0;
 
-                                                        final productvariantList =
-                                                            ((form.control(_resourceDeliveredKey)
-                                                                        as FormArray)
-                                                                    .value
-                                                                as List<
-                                                                    ProductVariantModel?>);
-
-                                                        if (productvariantList
-                                                                .isEmpty ||
-                                                            productvariantList
-                                                                    .first!
-                                                                    .sku ==
-                                                                null ||
-                                                            productvariantList
-                                                                .first!.sku!
-                                                                .contains(
-                                                              Constants
-                                                                  .spaq1String,
-                                                            )) {
-                                                          spaq1 = task
-                                                                          .resources!
-                                                                          .first
-                                                                          .quantity !=
-                                                                      null &&
-                                                                  task
-                                                                          .resources!
-                                                                          .first
-                                                                          .quantity !=
-                                                                      'null'
-                                                              ? int.parse(task
-                                                                      .resources!
-                                                                      .first
-                                                                      .quantity!) *
-                                                                  -1
-                                                              : 0;
-                                                        }
+                                                        spaq1 = task
+                                                                        .resources!
+                                                                        .first
+                                                                        .quantity !=
+                                                                    null &&
+                                                                task
+                                                                        .resources!
+                                                                        .first
+                                                                        .quantity !=
+                                                                    'null'
+                                                            ? int.parse(task
+                                                                    .resources!
+                                                                    .first
+                                                                    .quantity!) *
+                                                                -1
+                                                            : 0;
 
                                                         context
                                                             .read<AuthBloc>()
@@ -374,30 +354,12 @@ class _DeliverInterventionPageState
                                                               ),
                                                             );
 
-                                                        if (state.futureDeliveries !=
-                                                                null &&
-                                                            state
-                                                                .futureDeliveries!
-                                                                .isNotEmpty &&
-                                                            projectState
-                                                                    .projectType
-                                                                    ?.cycles
-                                                                    ?.isNotEmpty ==
-                                                                true) {
-                                                          context.router.push(
-                                                            SplashAcknowledgementRoute(
-                                                              doseAdministrationVerification:
-                                                                  true,
-                                                            ),
-                                                          );
-                                                        } else {
-                                                          context.router.push(
-                                                            SplashAcknowledgementRoute(
-                                                              doseAdministrationVerification:
-                                                                  true,
-                                                            ),
-                                                          );
-                                                        }
+                                                        context.router.push(
+                                                          SplashAcknowledgementRoute(
+                                                            doseAdministrationVerification:
+                                                                true,
+                                                          ),
+                                                        );
                                                       }
                                                     }
                                                   }

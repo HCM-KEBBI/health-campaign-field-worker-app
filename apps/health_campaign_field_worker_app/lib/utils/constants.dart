@@ -117,7 +117,7 @@ class Constants {
   static const String checklistViewDateFormat = 'dd/MM/yyyy hh:mm a';
   static const String reAdministeredKey = "reAdministered";
   static const String pipeSeparator = ' || ';
-  static const String spaq1String = 'AZT';
+  static const String spaq1String = 'AZM';
   static const String centralFacility = 'Central Facility';
   static const String stateBoundaryLevel = 'State';
   static const String stateFacility = 'State Facility';
