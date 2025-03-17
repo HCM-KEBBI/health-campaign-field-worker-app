@@ -65,8 +65,9 @@ class MemberCard extends StatelessWidget {
     final beneficiaryType = context.beneficiaryType;
     final doseStatus = checkStatus(tasks, context.selectedCycle);
     final assessmentPendingStatus = assessmentPending(tasks);
-    final redosePendingStatus =
-        assessmentPendingStatus ? true : !redosePending(tasks);
+    final redosePendingStatus = assessmentPendingStatus
+        ? true
+        : redosePending(tasks, context.selectedCycle);
 
     return Container(
       decoration: BoxDecoration(
@@ -279,29 +280,15 @@ class MemberCard extends StatelessWidget {
                                 ? DigitElevatedButton(
                                     child: Center(
                                       child: Text(
-                                        allDosesDelivered(
-                                                  tasks,
-                                                  context.selectedCycle,
-                                                  sideEffects,
-                                                  individual,
-                                                ) &&
-                                                !checkStatus(
-                                                  tasks,
-                                                  context.selectedCycle,
-                                                )
+                                        assessmentPendingStatus
                                             ? localizations.translate(
                                                 i18.householdOverView
-                                                    .viewDeliveryLabel,
+                                                    .householdOverViewAssessmentActionText,
                                               )
-                                            : assessmentPendingStatus
-                                                ? localizations.translate(
-                                                    i18.householdOverView
-                                                        .householdOverViewAssessmentActionText,
-                                                  )
-                                                : localizations.translate(
-                                                    i18.householdOverView
-                                                        .householdOverViewRedoseActionText,
-                                                  ),
+                                            : localizations.translate(
+                                                i18.householdOverView
+                                                    .householdOverViewRedoseActionText,
+                                              ),
                                       ),
                                     ),
                                     onPressed: () async {
@@ -333,21 +320,11 @@ class MemberCard extends StatelessWidget {
                                             .lastOrNull;
                                         if (redosePendingStatus) {
                                           final spaq1 = context.spaq1;
-                                          final spaq2 = context.spaq2;
 
-                                          final value = variant
-                                              .firstWhere(
-                                                (element) =>
-                                                    element.id ==
-                                                    successfulTask!.resources!
-                                                        .first.productVariantId,
-                                              )
-                                              .sku;
-
-                                          int doseCount = int.parse(
+                                          int doseCount = double.parse(
                                             successfulTask!
                                                 .resources!.first.quantity!,
-                                          );
+                                          ).round();
 
                                           if (spaq1 >= doseCount) {
                                             context.router.push(

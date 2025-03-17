@@ -177,6 +177,11 @@ class TaskLocalRepository extends TaskLocalBaseRepository {
                           lastModifiedTime: task.clientModifiedTime,
                         )
                       : null,
+                  additionalFields: resources.additionalFields == null
+                      ? null
+                      : TaskResourceAdditionalFieldsMapper.fromJson(
+                          resources.additionalFields!,
+                        ),
                 ),
               );
         } else {
@@ -279,6 +284,20 @@ class TaskLocalRepository extends TaskLocalBaseRepository {
                         lastModifiedBy: resources.auditModifiedBy,
                         lastModifiedTime: resources.auditModifiedTime,
                       ),
+                      clientAuditDetails: (task.clientCreatedBy != null &&
+                              task.clientCreatedTime != null)
+                          ? ClientAuditDetails(
+                              createdBy: task.clientCreatedBy!,
+                              createdTime: task.clientCreatedTime!,
+                              lastModifiedBy: task.clientModifiedBy,
+                              lastModifiedTime: task.clientModifiedTime,
+                            )
+                          : null,
+                      additionalFields: resources.additionalFields == null
+                          ? null
+                          : TaskResourceAdditionalFieldsMapper.fromJson(
+                              resources.additionalFields!,
+                            ),
                     ),
                   ],
           );

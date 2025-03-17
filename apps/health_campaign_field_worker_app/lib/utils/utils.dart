@@ -448,18 +448,26 @@ bool checkStatus(
   }
 }
 
-bool redosePending(List<TaskModel>? tasks) {
+bool redosePending(List<TaskModel>? tasks, Cycle selectedCycle) {
   var redosePending = true;
   if ((tasks ?? []).isEmpty) {
     return true;
   }
 
   // get the fist task which was marked as visited as this is the one which was created in redose flow
-  var redoseTask = tasks!
+  TaskModel? redoseTask = tasks!
       .where(
         (element) => element.status == Status.visited.toValue(),
       )
       .lastOrNull;
+  TaskModel? successfullTask = tasks
+      .where(
+        (element) => element.status == Status.administeredSuccess.toValue(),
+      )
+      .lastOrNull;
+  int diff = DateTime.now().millisecondsSinceEpoch -
+      (successfullTask?.clientAuditDetails?.createdTime ??
+          DateTime.now().millisecondsSinceEpoch);
   redosePending = redoseTask == null
       ? true
       : (redoseTask.additionalFields?.fields
@@ -470,7 +478,13 @@ bool redosePending(List<TaskModel>? tasks) {
               [])
           .isEmpty;
 
-  return redosePending;
+  return redosePending &&
+      (selectedCycle.mandatoryWaitSinceLastCycleInDays == null ||
+          diff <=
+              (int.tryParse(selectedCycle.mandatoryWaitSinceLastCycleInDays!) ??
+                      0) *
+                  60 *
+                  1000);
 }
 
 bool assessmentPending(List<TaskModel>? tasks) {

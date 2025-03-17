@@ -470,7 +470,7 @@ class _InventoryReportDetailsPageState
                                                   DigitGridColumn(
                                                     label: localizations.translate(i18
                                                         .inventoryReportDetails
-                                                        .partialReturnedQuantityLabel),
+                                                        .azmPartialReturnedQuantityLabel),
                                                     key: partialBlisterKey,
                                                     width: 150,
                                                   ),
@@ -774,7 +774,7 @@ class _InventoryReportDetailsPageState
         break;
       case InventoryReportType.dispatch:
         value = context.isDistributor
-            ? i18.inventoryReportDetails.returnedQuantityLabel
+            ? i18.inventoryReportDetails.azmReturnedQuantityLabel
             : i18.inventoryReportDetails.dispatchQuantityLabel;
         break;
       case InventoryReportType.returned:
