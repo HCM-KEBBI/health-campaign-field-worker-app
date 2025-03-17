@@ -117,7 +117,7 @@ class Constants {
   static const String checklistViewDateFormat = 'dd/MM/yyyy hh:mm a';
   static const String reAdministeredKey = "reAdministered";
   static const String pipeSeparator = ' || ';
-  static const String spaq1String = 'AZT';
+  static const String spaq1String = 'AZM';
   static const String centralFacility = 'Central Facility';
   static const String stateBoundaryLevel = 'State';
   static const String stateFacility = 'State Facility';
@@ -128,6 +128,7 @@ class Constants {
   static const String smallBraces = '()';
   static const String intTwo = '2';
   static const String assessmentChecklist = 'ELIGIBLITY_ASSESSMENT';
+  static const int mlPerBottle = 30;
 
   static List<LocalRepository> getLocalRepositories(
     LocalSqlDataStore sql,
@@ -304,11 +305,14 @@ class Constants {
 
   // min and max consideration for both weight and height
 
-  static const int minHeight = 50;
+  static const int minHeight = 01;
   static const int maxHeight = 138;
 
-  static const double minWeight = 3.0;
+  static const double minWeight = 0.01;
   static const double maxWeight = 15.0;
+
+  static const int dailyTarget = 70;
+  static const String isConsentKey = "isConsent";
 }
 
 /// By using this key, we can push pages without context

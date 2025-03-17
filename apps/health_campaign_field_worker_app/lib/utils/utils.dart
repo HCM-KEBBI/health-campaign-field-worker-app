@@ -599,16 +599,21 @@ DoseCriteriaModel? fetchProductVariant(
         for (var element in conditions) {
           final variables = individualModel.additionalFields != null &&
                   individualModel.additionalFields!.fields
-                          ?.any((field) => field.key == Constants.weight) ==
-                      true
+                      .any((field) => field.key == Constants.weight)
               ? {
                   'weight': weight, // Provide default values if null
                   'age': individualAgeInMonths,
                 }
-              : {
-                  'height': height, // Provide default values if null
-                  'age': individualAgeInMonths,
-                };
+              : individualModel.additionalFields != null &&
+                      individualModel.additionalFields!.fields
+                          .any((field) => field.key == Constants.height)
+                  ? {
+                      'height': height, // Provide default values if null
+                      'age': individualAgeInMonths,
+                    }
+                  : {
+                      'age': individualAgeInMonths,
+                    };
 
           final expression = FormulaParser(
             element,
@@ -715,8 +720,8 @@ int getAgeMonths(DigitDOBAge age) {
   return (age.years * 12) + age.months;
 }
 
-String getCategory(int number) {
-  if (number >= 1 && number <= 11) {
+String getCategory(int number, BuildContext context) {
+  if (number >= 1 && number <= 11 && context.hasAdditionalProjectTypeId) {
     return Constants.weight;
   } else if (number >= 12 && number <= 59) {
     return Constants.height;

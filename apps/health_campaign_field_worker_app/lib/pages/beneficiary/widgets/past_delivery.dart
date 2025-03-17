@@ -84,16 +84,17 @@ Widget buildTableContent(
                 ): '${convertToRange(condtions?[0], condtions?[1])} ${localizations.translate(
                   i18.beneficiaryDetails.beneficiaryMonthUnit,
                 )}',
-                localizations.translate(
-                  condtions![3].contains(Constants.height)
-                      ? i18.beneficiaryDetails.beneficiaryHeight
-                      : i18.beneficiaryDetails.beneficiaryWeight,
-                  //[TODO: Condition need to be handled in generic way,]
-                ): '${convertToRange(condtions[2], condtions[3])}  ${localizations.translate(
-                  condtions[3].contains(Constants.height)
-                      ? i18.beneficiaryDetails.beneficiaryCMUnit
-                      : i18.beneficiaryDetails.beneficiaryKGUnit,
-                )}',
+                if ((condtions?.length ?? 0) > 2)
+                  localizations.translate(
+                    condtions![condtions.length - 1].contains(Constants.height)
+                        ? i18.beneficiaryDetails.beneficiaryHeight
+                        : i18.beneficiaryDetails.beneficiaryWeight,
+                    //[TODO: Condition need to be handled in generic way,]
+                  ): '${condtions.length > 3 ? convertToRange(condtions[2], condtions[3]) : condtions[2].replaceAll(Constants.height, "").replaceAll(Constants.weight, "")}  ${localizations.translate(
+                    condtions[condtions.length - 1].contains(Constants.height)
+                        ? i18.beneficiaryDetails.beneficiaryCMUnit
+                        : i18.beneficiaryDetails.beneficiaryKGUnit,
+                  )}',
               },
             ),
             const Divider(

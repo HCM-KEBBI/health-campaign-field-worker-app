@@ -136,6 +136,7 @@ class _$AppRouter extends RootStackRouter {
           key: args.key,
           appLocalizations: args.appLocalizations,
           enableViewHousehold: args.enableViewHousehold,
+          individual: args.individual,
         ),
       );
     },
@@ -1510,6 +1511,7 @@ class BeneficiaryAcknowledgementRoute
     Key? key,
     AppLocalizations? appLocalizations,
     bool? enableViewHousehold,
+    IndividualModel? individual,
   }) : super(
           BeneficiaryAcknowledgementRoute.name,
           path: 'beneficiary-acknowledgement',
@@ -1517,6 +1519,7 @@ class BeneficiaryAcknowledgementRoute
             key: key,
             appLocalizations: appLocalizations,
             enableViewHousehold: enableViewHousehold,
+            individual: individual,
           ),
         );
 
@@ -1528,6 +1531,7 @@ class BeneficiaryAcknowledgementRouteArgs {
     this.key,
     this.appLocalizations,
     this.enableViewHousehold,
+    this.individual,
   });
 
   final Key? key;
@@ -1536,9 +1540,11 @@ class BeneficiaryAcknowledgementRouteArgs {
 
   final bool? enableViewHousehold;
 
+  final IndividualModel? individual;
+
   @override
   String toString() {
-    return 'BeneficiaryAcknowledgementRouteArgs{key: $key, appLocalizations: $appLocalizations, enableViewHousehold: $enableViewHousehold}';
+    return 'BeneficiaryAcknowledgementRouteArgs{key: $key, appLocalizations: $appLocalizations, enableViewHousehold: $enableViewHousehold, individual: $individual}';
   }
 }
 

@@ -35,12 +35,14 @@ class BeneficiaryTypeMapper extends EnumMapper<BeneficiaryType> {
         return BeneficiaryType.individual1;
       case "12-59MONTH":
         return BeneficiaryType.individual2;
+      case "1-11MONTH":
+        return BeneficiaryType.individual3;
       case "SPAQ1":
         return BeneficiaryType.spaq1;
       case "SPAQ2":
         return BeneficiaryType.spaq2;
-      case "AZT":
-        return BeneficiaryType.azt;
+      case "AZM":
+        return BeneficiaryType.azm;
       default:
         throw MapperException.unknownEnumValue(value);
     }
@@ -59,12 +61,14 @@ class BeneficiaryTypeMapper extends EnumMapper<BeneficiaryType> {
         return "3-11MONTH";
       case BeneficiaryType.individual2:
         return "12-59MONTH";
+      case BeneficiaryType.individual3:
+        return "1-11MONTH";
       case BeneficiaryType.spaq1:
         return "SPAQ1";
       case BeneficiaryType.spaq2:
         return "SPAQ2";
-      case BeneficiaryType.azt:
-        return "AZT";
+      case BeneficiaryType.azm:
+        return "AZM";
     }
   }
 }

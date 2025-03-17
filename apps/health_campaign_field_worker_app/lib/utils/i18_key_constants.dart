@@ -766,8 +766,18 @@ class DeliverIntervention {
   String get doseGivenCareGiver => 'DELIVER_INTERVENTION_DOSE_GIVEN_CARE_GIVER';
   String get infoWrittenInChildCard =>
       'DELIVER_INTERVENTION_DOSE_INFO_IN_CHILD_CARD_ADDED';
+  String get remindedTheCareGiver =>
+      'DELIVER_INTERVENTION_DOSE_REMIND_CARE_GIVER';
+  String get informTheCareGiver =>
+      'DELIVER_INTERVENTION_DOSE_INFORM_CARE_GIVER';
   String get healthTalkGivenOnSPAQ =>
       'DELIVER_INTERVENTION_DOSE_HEALTH_TALK_GIVEN_SPAQ';
+  String get informationBulletOne => 'INFORMATION_BULLET_ONE';
+  String get informationBulletTwo => 'INFORMATION_BULLET_TWO';
+  String get informationBulletThree => 'INFORMATION_BULLET_THREE';
+  String get informationBulletFour => 'INFORMATION_BULLET_FOUR';
+  String get informationBulletFive => 'INFORMATION_BULLET_FIVE';
+  String get informationBulletSix => 'INFORMATION_BULLET_SIX';
 
   //[todo] need to change the 24
   String get wasDosePastRecordDeliveryDetails =>
@@ -898,6 +908,8 @@ class StockDetails {
   String get quantityEmptyReturnedLabel =>
       'STOCK_DETAILS_EMPTY_QUANTITY_RETURNED_AZT';
 
+  String get wastedQuantityInMlLabel => 'STOCK_DETAILS_WSTED_QUANTITY_IN_ML';
+
   String get quantityLostLabel => 'STOCK_DETAILS_QUANTITY_LOST';
 
   String get quantityDamagedLabel => 'STOCK_DETAILS_QUANTITY_DAMAGED';
@@ -937,6 +949,15 @@ class StockDetails {
   String get quantityDamagedCountLabel => 'STOCK_DAMAGED_QUANTITY_LABEL';
 
   String get batchNumberLabel => 'STOCK_DETAILS_BATCH_NUMBER';
+
+  String get stockReceivedMaxErrorTitle =>
+      'STOCK_RECEIVED_MAX_ERROR_DIALOG_TITLE';
+
+  String get stockReceivedMaxErrorContent =>
+      'STOCK_RECEIVED_MAX_ERROR_DIALOG_CONTENT';
+
+  String get stockReceivedMaxErrorSuccess =>
+      'STOCK_RECEIVED_MAX_ERROR_DIALOG_SUCCESS_ACTION_LABEL';
 
   String get countDialogTitle => 'STOCK_DETAILS_COUNT_DIALOG_TITLE';
 
@@ -1089,6 +1110,9 @@ class ManageStock {
   String get recordListOfSpaqDamaged => 'RECORD_LIST_OF_SPAQ_DAMAGED';
   String get cddTeamCodeLabel => 'STOCK_CDD_TEAM_CODE_LABEL';
   String get cddSupervisorCodeLabel => 'STOCK_SUPERVISOR_CODE_LABEL';
+  String get hfSupCodeLabel => 'STOCK_HF_SUP_CODE_LABEL';
+  String get lgaWarehouseManerCodeLabel =>
+      'STOCK_LGA_WAREHOUSE_MANAGER_CODE_LABEL';
   String get facilityRequired => 'STOCK_DETAILS_FACILITY_IS_REQUIRED';
   String get teamCodeRequired => 'STOCK_DETAILS_TEAM_CODE_IS_REQUIRED';
 }

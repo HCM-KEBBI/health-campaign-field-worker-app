@@ -347,9 +347,14 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
           isar,
         );
 
+        String? additionalProjectTypeId =
+            projects.first.additionalDetails?.projectTypeId;
+
         emit(state.copyWith(
           projectType: projectTypes.projectTypeWrapper?.projectTypes
-              .where((element) => element.id == projects.first.projectTypeId)
+              .where((element) =>
+                  element.id ==
+                  (additionalProjectTypeId ?? projects.first.projectTypeId))
               .toList()
               .firstOrNull,
         ));
@@ -547,9 +552,14 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
         isar,
       );
 
+      String? additionalProjectTypeId =
+          event.model.additionalDetails?.projectTypeId;
+
       final selectedProjectType = projectType.projectTypeWrapper?.projectTypes
           .where(
-            (element) => element.id == event.model.projectTypeId,
+            (element) =>
+                element.id ==
+                (additionalProjectTypeId ?? event.model.projectTypeId),
           )
           .toList()
           .firstOrNull;

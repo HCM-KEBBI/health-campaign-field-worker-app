@@ -47,6 +47,8 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
   static const _vehicleNumberKey = 'vehicleNumber';
   static const _typeOfTransportKey = 'typeOfTransport';
   static const _batchNumberKey = 'batchNumber';
+  static const _lgaUserKey = 'lgaUser';
+  static const _hfUserKey = 'hfUser';
   static int maxQuantity = 100000000;
   static int minQuantity = 0;
 
@@ -63,6 +65,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
     bool isDistributor,
     bool isHealthFacilitySupervisor,
     StockRecordEntryType entryType,
+    bool isLgaWarehouseManager,
   ) {
     deliveryTeamSelected = context.isHealthFacilitySupervisor &&
         entryType != StockRecordEntryType.receipt;
@@ -95,6 +98,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
           FormControl<int>(validators: partialBlistersQuantityValidator),
       _emptyBottlesKey:
           FormControl<int>(validators: emptyBottlesQuantityValidator),
+      _wastedBlistersKey: FormControl<String>(),
       _commentsKey: FormControl<String>(),
       _deliveryTeamKey: FormControl<String>(
         validators: (!isDistributor &&
@@ -105,7 +109,13 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
         value: '',
       ),
       _supervisorKey: FormControl<String>(
-        validators: isDistributor ? [Validators.required] : [],
+        validators: (isDistributor ||
+                (isLgaWarehouseManager &&
+                    entryType == StockRecordEntryType.dispatch) ||
+                (isHealthFacilitySupervisor &&
+                    entryType == StockRecordEntryType.receipt))
+            ? [Validators.required]
+            : [],
         value: '',
       ),
       _transactionReasonKey: FormControl<TransactionReason>(),
@@ -151,6 +161,10 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
     final theme = Theme.of(context);
     final isDistributor = context.isDistributor;
     final isHealthFacilitySupervisor = context.isHealthFacilitySupervisor;
+    final isLgaWarehouseManager = !context.isHealthFacilitySupervisor &&
+        context.isWarehouseMgr &&
+        context.selectedProject.address?.boundaryType ==
+            Constants.lgaBoundaryLevel;
 
     return PopScope(
       onPopInvoked: (didPop) {
@@ -365,11 +379,18 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                         isDistributor,
                         isHealthFacilitySupervisor,
                         entryType,
+                        isLgaWarehouseManager,
                       ),
                       builder: (context, form, child) {
                         return BlocBuilder<DigitScannerBloc, DigitScannerState>(
                           builder: (context, scannerState) {
-                            if (isDistributor) {
+                            if ((isDistributor ||
+                                (isLgaWarehouseManager &&
+                                    entryType ==
+                                        StockRecordEntryType.dispatch) ||
+                                (isHealthFacilitySupervisor &&
+                                    entryType ==
+                                        StockRecordEntryType.receipt))) {
                               if (form
                                       .control(_supervisorKey)
                                       .value
@@ -537,7 +558,11 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                     )
                                                     .value;
 
-                                                int? wastedQuantity;
+                                                final wastedQuantity = form
+                                                    .control(
+                                                      _wastedBlistersKey,
+                                                    )
+                                                    .value;
 
                                                 int spaq1 = 0;
                                                 int spaq2 = 0;
@@ -548,15 +573,16 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
 
                                                 int totalExpectedUnusedBottles =
                                                     totalRemainingQuantityInMl ~/
-                                                        30;
+                                                        Constants.mlPerBottle;
 
                                                 int totalExpectedPartialQuantityInMl =
                                                     totalRemainingQuantityInMl %
-                                                        30;
+                                                        Constants.mlPerBottle;
 
                                                 int totalExpectedPartialBottles =
                                                     totalRemainingQuantityInMl %
-                                                                30 !=
+                                                                Constants
+                                                                    .mlPerBottle !=
                                                             0
                                                         ? 1
                                                         : 0;
@@ -567,7 +593,8 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                       )
                                                     : 0;
 
-                                                spaq1 = totalQuantity * 30;
+                                                spaq1 = totalQuantity *
+                                                    Constants.mlPerBottle;
 
                                                 if (spaq1 >
                                                         totalRemainingQuantityInMl &&
@@ -599,25 +626,6 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                   );
 
                                                   return;
-                                                }
-
-                                                if (isDistributor &&
-                                                    entryType ==
-                                                        StockRecordEntryType
-                                                            .dispatch) {
-                                                  wastedQuantity = ((totalExpectedUnusedBottles -
-                                                              totalQuantity) *
-                                                          30) +
-                                                      ((totalExpectedPartialBottles >
-                                                              (partialBlisters !=
-                                                                      null
-                                                                  ? int.parse(
-                                                                      partialBlisters
-                                                                          .toString(),
-                                                                    )
-                                                                  : 0))
-                                                          ? totalExpectedPartialQuantityInMl
-                                                          : 0);
                                                 }
 
                                                 final lat =
@@ -655,6 +663,93 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
 
                                                 transactingPartyType ??=
                                                     'WAREHOUSE';
+
+                                                if (entryType ==
+                                                        StockRecordEntryType
+                                                            .receipt &&
+                                                    isDistributor) {
+                                                  List<StockModel>
+                                                      stocksByProductVAriant =
+                                                      stockState.existingStocks
+                                                          .where((element) =>
+                                                              element
+                                                                  .productVariantId ==
+                                                              productVariant.id)
+                                                          .toList();
+
+                                                  List<StockModel>
+                                                      stocksByDate =
+                                                      stocksByProductVAriant
+                                                          .where(
+                                                            (e) =>
+                                                                e.dateOfEntryTime!.year == stockState.dateOfRecord?.year &&
+                                                                e.dateOfEntryTime!
+                                                                        .month ==
+                                                                    stockState
+                                                                        .dateOfRecord
+                                                                        ?.month &&
+                                                                e.dateOfEntryTime!
+                                                                        .day ==
+                                                                    stockState
+                                                                        .dateOfRecord
+                                                                        ?.day,
+                                                          )
+                                                          .toList();
+
+                                                  num stockReceived =
+                                                      _getQuantityCount(
+                                                    stocksByDate.where((e) =>
+                                                        e.transactionType ==
+                                                            TransactionType
+                                                                .received &&
+                                                        e.transactionReason ==
+                                                            TransactionReason
+                                                                .received),
+                                                  );
+
+                                                  if (stockReceived +
+                                                          totalQuantity >
+                                                      20) {
+                                                    final alert =
+                                                        await DigitDialog.show<
+                                                            bool>(
+                                                      context,
+                                                      options:
+                                                          DigitDialogOptions(
+                                                        titleText: localizations
+                                                            .translate(
+                                                          i18.stockDetails
+                                                              .stockReceivedMaxErrorTitle,
+                                                        ),
+                                                        contentText:
+                                                            localizations
+                                                                .translate(
+                                                          i18.stockDetails
+                                                              .stockReceivedMaxErrorContent,
+                                                        ),
+                                                        primaryAction:
+                                                            DigitDialogActions(
+                                                          label: localizations
+                                                              .translate(
+                                                            i18.stockDetails
+                                                                .stockReceivedMaxErrorSuccess,
+                                                          ),
+                                                          action: (context) {
+                                                            Navigator.of(
+                                                              context,
+                                                              rootNavigator:
+                                                                  true,
+                                                            ).pop(false);
+                                                          },
+                                                        ),
+                                                      ),
+                                                    );
+
+                                                    if (!(alert ?? false)) {
+                                                      return;
+                                                    }
+                                                  }
+                                                }
 
                                                 if (entryType ==
                                                         StockRecordEntryType
@@ -956,7 +1051,13 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                                     .trim()
                                                                     .isNotEmpty)
                                                               AdditionalField(
-                                                                _supervisorKey,
+                                                                isDistributor
+                                                                    ? _supervisorKey
+                                                                    : (isLgaWarehouseManager &&
+                                                                            entryType ==
+                                                                                StockRecordEntryType.dispatch)
+                                                                        ? _hfUserKey
+                                                                        : _lgaUserKey,
                                                                 supervisorCode,
                                                               ),
                                                             if (hasLocationData) ...[
@@ -1042,7 +1143,9 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                                                 .dispatch
                                                         ? totalRemainingQuantityInMl *
                                                             -1
-                                                        : totalQuantity * 30;
+                                                        : totalQuantity *
+                                                            Constants
+                                                                .mlPerBottle;
 
                                                     spaq1 = totalQuantity;
 
@@ -1602,7 +1705,15 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                             ),
                                           ),
                                         ),
-                                      if (isDistributor)
+                                      if ((isDistributor ||
+                                          (isLgaWarehouseManager &&
+                                              entryType ==
+                                                  StockRecordEntryType
+                                                      .dispatch) ||
+                                          (isHealthFacilitySupervisor &&
+                                              entryType ==
+                                                  StockRecordEntryType
+                                                      .receipt)))
                                         InkWell(
                                           onTap: () async {
                                             Navigator.of(context).push(
@@ -1623,8 +1734,17 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                           child: IgnorePointer(
                                             child: DigitTextFormField(
                                               label: localizations.translate(
-                                                i18.manageStock
-                                                    .cddSupervisorCodeLabel,
+                                                isDistributor
+                                                    ? i18.manageStock
+                                                        .cddSupervisorCodeLabel
+                                                    : (isLgaWarehouseManager &&
+                                                            entryType ==
+                                                                StockRecordEntryType
+                                                                    .dispatch)
+                                                        ? i18.manageStock
+                                                            .hfSupCodeLabel
+                                                        : i18.manageStock
+                                                            .lgaWarehouseManerCodeLabel,
                                               ),
                                               // readOnly: true,
                                               onChanged: (val) {
@@ -1774,6 +1894,15 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                               });
                                             }
                                           }
+                                          if ([
+                                                StockRecordEntryType.dispatch,
+                                              ].contains(entryType) &&
+                                              context.isDistributor) {
+                                            form
+                                                    .control(_wastedBlistersKey)
+                                                    .value =
+                                                wastageQuantity(form, context);
+                                          }
                                         },
                                       ),
                                       if ([
@@ -1787,9 +1916,13 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                           formControlName: _partialBlistersKey,
                                           inputFormatters: [
                                             FilteringTextInputFormatter.allow(
-                                              RegExp(r'[0-9]'),
+                                              isDistributor
+                                                  ? RegExp("[0-1]")
+                                                  : RegExp("[0-9]"),
                                             ),
-                                            LengthLimitingTextInputFormatter(9),
+                                            LengthLimitingTextInputFormatter(
+                                              isDistributor ? 1 : 9,
+                                            ),
                                           ],
                                           keyboardType: const TextInputType
                                               .numberWithOptions(
@@ -1822,6 +1955,18 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                             module
                                                 .aztQuantityPartialReturnedLabel,
                                           ),
+                                          onChanged: (control) {
+                                            if ([
+                                                  StockRecordEntryType.dispatch,
+                                                ].contains(entryType) &&
+                                                context.isDistributor) {
+                                              form
+                                                      .control(_wastedBlistersKey)
+                                                      .value =
+                                                  wastageQuantity(
+                                                      form, context);
+                                            }
+                                          },
                                         ),
                                       if ([
                                             StockRecordEntryType.dispatch,
@@ -1865,6 +2010,19 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                           label: localizations.translate(
                                             i18.stockDetails
                                                 .quantityEmptyReturnedLabel,
+                                          ),
+                                        ),
+                                      if ([
+                                            StockRecordEntryType.dispatch,
+                                          ].contains(entryType) &&
+                                          context.isDistributor)
+                                        DigitTextFormField(
+                                          formControlName: _wastedBlistersKey,
+                                          readOnly: true,
+                                          isRequired: true,
+                                          label: localizations.translate(
+                                            i18.stockDetails
+                                                .wastedQuantityInMlLabel,
                                           ),
                                         ),
                                       isWarehouseMgr && !deliveryTeamSelected
@@ -2101,6 +2259,57 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
         ),
       ),
     );
+  }
+
+  String? wastageQuantity(
+    FormGroup form,
+    BuildContext context,
+  ) {
+    final quantity = form
+        .control(
+          _transactionQuantityKey,
+        )
+        .value;
+
+    final partialBlisters = form
+        .control(
+          _partialBlistersKey,
+        )
+        .value;
+
+    if (quantity == null || partialBlisters == null) {
+      return null;
+    }
+
+    int totalQuantity = 0;
+    int totalRemainingQuantityInMl = context.spaq1;
+
+    int totalExpectedUnusedBottles =
+        totalRemainingQuantityInMl ~/ Constants.mlPerBottle;
+
+    int totalExpectedPartialQuantityInMl =
+        totalRemainingQuantityInMl % Constants.mlPerBottle;
+
+    int totalExpectedPartialBottles =
+        totalRemainingQuantityInMl % Constants.mlPerBottle != 0 ? 1 : 0;
+
+    totalQuantity = quantity != null
+        ? int.parse(
+            quantity.toString(),
+          )
+        : 0;
+
+    return (((totalExpectedUnusedBottles - totalQuantity) *
+                Constants.mlPerBottle) +
+            ((totalExpectedPartialBottles >
+                    (partialBlisters != null
+                        ? int.parse(
+                            partialBlisters.toString(),
+                          )
+                        : 0))
+                ? totalExpectedPartialQuantityInMl
+                : 0))
+        .toString();
   }
 
   num _getQuantityCount(Iterable<StockModel> stocks) {

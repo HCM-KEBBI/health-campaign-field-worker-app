@@ -73,6 +73,10 @@ extension ContextUtilityExtensions on BuildContext {
     }
   }
 
+  bool get hasAdditionalProjectTypeId {
+    return selectedProject.additionalDetails?.projectTypeId != null;
+  }
+
   BoundaryModel get boundary {
     final boundaryBloc = _get<BoundaryBloc>();
     final boundaryState = boundaryBloc.state;

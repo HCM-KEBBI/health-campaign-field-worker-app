@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:collection/collection.dart';
 import 'package:digit_components/utils/date_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -10,6 +11,7 @@ import '../../data/repositories/local/product_variant.dart';
 import '../../data/repositories/local/task.dart';
 import '../../models/data_model.dart';
 import '../../models/performance_summary.dart';
+import '../../utils/constants.dart';
 import '../../utils/environment_config.dart';
 import '../../utils/typedefs.dart';
 
@@ -65,8 +67,8 @@ class PerformannceSummaryReportBloc
     ))
         .where(
           (element) =>
-              element.auditDetails != null &&
-              element.auditDetails?.createdBy == userId,
+              element.clientAuditDetails != null &&
+              element.clientAuditDetails?.createdBy == userId,
         )
         .toList();
 
@@ -98,28 +100,24 @@ class PerformannceSummaryReportBloc
       userId,
     );
 
-    for (var productVariant in productVariantList) {
-      variantIdVsProduct[productVariant.sku] = productVariant.id;
-    }
-
-    var albendazoleResourceKey = variantIdVsProduct.keys
-        .where((element) => element!
-            .toUpperCase()
-            .contains(BeneficiaryType.azt.name.toUpperCase()))
-        .first;
-    var albendazoleResourceId = variantIdVsProduct[albendazoleResourceKey];
+    var albendazoleResourceId = productVariantList.first.id;
 
     for (var element in householdList) {
-      var dateKey = DigitDateUtils.getDateFromTimestamp(
-        element.auditDetails!.createdTime,
-      );
+      if (element.additionalFields?.fields
+              .firstWhereOrNull((h) => h.key == Constants.isConsentKey)
+              ?.value ??
+          true) {
+        var dateKey = DigitDateUtils.getDateFromTimestamp(
+          element.clientAuditDetails!.createdTime,
+        );
 
-      dayVsHouseholdListMap.putIfAbsent(dateKey, () => []).add(element);
+        dayVsHouseholdListMap.putIfAbsent(dateKey, () => []).add(element);
+      }
     }
 
     for (var element in taskList) {
       var dateKey = DigitDateUtils.getDateFromTimestamp(
-        element.auditDetails!.createdTime,
+        element.clientAuditDetails!.createdTime,
       );
 
       dayVsTaskListMap.putIfAbsent(dateKey, () => []).add(element);
@@ -174,7 +172,8 @@ class PerformannceSummaryReportBloc
         aztReceived = stockReceivedVsDate[date] ?? 0;
       }
 
-      final treatedPercentage = (totalTaskForADay / 75) * 100;
+      final treatedPercentage =
+          (totalTaskForADay / Constants.dailyTarget) * 100;
 
       //Rounded treatedPercentage to 2 degree
       PerformanceSummary summary = PerformanceSummary(
