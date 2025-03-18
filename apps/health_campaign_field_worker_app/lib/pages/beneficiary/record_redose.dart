@@ -52,7 +52,7 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
   static const _doseAdministeredByKey = 'doseAdministeredBy';
   static const _deliveryCommentKey = 'deliveryComment';
   //static key for recording redose
-  static const _reDoseQuantityKey = 'reDoseQuantity';
+  static const _reDoseQuantityKey = Constants.reDoseQuantityKey;
 
   // Variable to track dose administration status
   bool doseAdministered = true;
@@ -276,27 +276,16 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
 
                                                       final quantity =
                                                           quantityDistributedFormArray
-                                                                  .value![
-                                                              quantityIndex];
+                                                              .value![
+                                                                  quantityIndex]
+                                                              .toString()
+                                                              .split(" ")[0];
 
-                                                      if (productVariant ==
-                                                              null ||
-                                                          productVariant.sku ==
-                                                              null ||
-                                                          productVariant.sku!
-                                                              .contains(
-                                                            Constants
-                                                                .spaq1String,
-                                                          )) {
-                                                        spaq1 = quantity !=
-                                                                    null &&
-                                                                quantity !=
-                                                                    'null'
-                                                            ? int.parse(quantity
-                                                                    .toString()) *
-                                                                -1
-                                                            : 0;
-                                                      } 
+                                                      spaq1 = quantity != 'null'
+                                                          ? int.parse(quantity
+                                                                  .toString()) *
+                                                              -1
+                                                          : 0;
 
                                                       context
                                                           .read<AuthBloc>()
@@ -561,7 +550,7 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
         var productVariant = productvariantList
             .where((element) => element?.id == productVariantId)
             .firstOrNull;
-        var quantity = 0;
+        String quantity = "0";
 
         if (productVariant == null) {
           updatedTaskResources.add(resource);
@@ -571,7 +560,9 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
         TaskResourceModel updatedResource;
 
         if (resource.additionalFields == null) {
-          quantity = quantityDistributedFormArray.value![quantityIndex];
+          quantity = quantityDistributedFormArray.value![quantityIndex]
+              .toString()
+              .split(" ")[0];
           updatedResource = resource.copyWith(
             additionalFields: TaskResourceAdditionalFields(
               version: 1,
@@ -732,15 +723,15 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
               )),
         ],
       ),
-      _quantityDistributedKey: FormArray<int>([
+      _quantityDistributedKey: FormArray<String>([
         ..._controllers.map(
-          (e) => FormControl<int>(
+          (e) => FormControl<String>(
             validators: [
               Validators.required,
-             
             ],
-           // value: "${productVariants[0].quantity??0} ${localizations.translate(i18.beneficiaryDetails.beneficiaryDoseUnit)}",
-           value: productVariants[0].quantity??0,
+            value:
+                "${productVariants[0].quantity ?? 0} ${localizations.translate(i18.beneficiaryDetails.beneficiaryDoseUnit)}",
+            // value: productVariants[0].quantity ?? 0,
           ),
         ),
       ]),

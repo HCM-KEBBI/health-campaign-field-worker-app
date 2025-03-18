@@ -129,6 +129,7 @@ class Constants {
   static const String intTwo = '2';
   static const String assessmentChecklist = 'ELIGIBLITY_ASSESSMENT';
   static const int mlPerBottle = 30;
+  static const String reDoseQuantityKey = 'reDoseQuantity';
 
   static List<LocalRepository> getLocalRepositories(
     LocalSqlDataStore sql,

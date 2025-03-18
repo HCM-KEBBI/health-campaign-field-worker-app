@@ -408,7 +408,7 @@ class _DeliverInterventionPageState
                                                       label: localizations
                                                           .translate(i18
                                                               .deliverIntervention
-                                                              .currentCycle),
+                                                              .currentRound),
                                                     ),
                                                     DigitDateFormPicker(
                                                       isEnabled: false,
@@ -687,7 +687,7 @@ class _DeliverInterventionPageState
     return fb.group(<String, Object>{
       _doseAdministrationKey: FormControl<String>(
         value:
-            '${localizations.translate(i18.deliverIntervention.cycle)} ${bloc.cycle == 0 ? (bloc.cycle + 1) : bloc.cycle}'
+            '${localizations.translate(i18.deliverIntervention.round)} ${bloc.cycle == 0 ? (bloc.cycle + 1) : bloc.cycle}'
                 .toString(),
         validators: [],
       ),

@@ -360,7 +360,9 @@ class BeneficiaryDetails {
   String get beneficiaryDeliveryStrategy =>
       'BENEFICIARY_DETAILS_DELIVERY_STRATEGY';
   String get beneficiaryCycle => 'BENEFICIARY_DETAILS_CYCLE';
+  String get beneficiaryRound => 'BENEFICIARY_DETAILS_ROUND';
   String get currentCycleLabel => 'BENEFICIARY_DETAILS_CURRENT_CYCLE_LABEL';
+  String get currentRoundLabel => 'BENEFICIARY_DETAILS_CURRENT_ROUND_LABEL';
   String get fromCurrentLocation => 'FROM_CURRENT_LOCATION';
   String get beneficiary => 'BENEFICIARY';
   String get unableToScan => 'UNABLE_TO_SCAN';
@@ -756,8 +758,11 @@ class DeliverIntervention {
   String get hidePastCycles => 'DELIVER_INTERVENTION_HIDE_PAST_CYCLES';
   String get viewPastCycles => 'DELIVER_INTERVENTION_VIEW_PAST_CYCLES';
   String get currentCycle => 'DELIVER_INTERVENTION_CURRENT_CYCLE';
+  String get currentRound => 'DELIVER_INTERVENTION_CURRENT_ROUND';
   String get cycle => 'DELIVERY_CYCLE';
+  String get round => 'DELIVERY_ROUND';
   String get recordCycle => 'RECORD_CYCLE';
+  String get recordRound => 'RECORD_ROUND';
   String get recordPastDeliveryDeatils =>
       'DELIVER_INTERVENTION_PAST_DELIVERY_DETAILS';
   String get wasDosePastDeliveryDetails =>
@@ -1343,8 +1348,16 @@ class InventoryReportDetails {
     return 'INVENTORY_REPORT_DETAILS_RETURNED_QUANTITY_LABEL';
   }
 
+  String get azmReturnedQuantityLabel {
+    return 'INVENTORY_REPORT_DETAILS_AZM_RETURNED_QUANTITY_LABEL';
+  }
+
   String get partialReturnedQuantityLabel {
     return 'INVENTORY_REPORT_DETAILS_PARTIAL_RETURNED_QUANTITY_LABEL';
+  }
+
+  String get azmPartialReturnedQuantityLabel {
+    return 'INVENTORY_REPORT_DETAILS_AZM_PARTIAL_RETURNED_QUANTITY_LABEL';
   }
 
   String get wastedReturnedQuantityLabel {
@@ -1470,6 +1483,7 @@ class ReferBeneficiary {
   String get searchReferralsHeader => 'SEARCH_REFERRALS_HEADER';
   String get referredByTeamCodeLabel => 'REFERRED_BY_TEAM_CODE_LABEL';
   String get selectCycle => 'REFERRAL_SELECT_CYCLE';
+  String get selectRound => 'REFERRAL_SELECT_ROUND';
   String get createReferralLabel => 'CREATE_REFERRAL_LABEL';
   String get noChecklistFound => 'NO_CHECKLISTS_FOUND';
   String get dialogTitle => 'REFERRAL_CONFIRMATION_DIALOG_TITLE';

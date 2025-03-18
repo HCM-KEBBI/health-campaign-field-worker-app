@@ -869,7 +869,7 @@ class _RecordReferralDetailsPageState
                                     Column(children: [
                                       DigitReactiveSearchDropdown<String>(
                                         label: localizations.translate(
-                                          i18.referBeneficiary.selectCycle,
+                                          i18.referBeneficiary.selectRound,
                                         ),
                                         form: form,
                                         isRequired: true,

@@ -289,7 +289,7 @@ class _BeneficiaryDetailsPageState
                                         },
                                         child: Center(
                                           child: Text(
-                                            '${localizations.translate(i18.deliverIntervention.recordCycle)} ${(deliverState.cycle == 0 ? (deliverState.cycle + 1) : deliverState.cycle).toString()} ${localizations.translate(i18.beneficiaryDetails.beneficiaryDeliveryText)} ${(deliverState.dose).toString()}',
+                                            '${localizations.translate(i18.deliverIntervention.recordRound)} ${(deliverState.cycle == 0 ? (deliverState.cycle + 1) : deliverState.cycle).toString()} ${localizations.translate(i18.beneficiaryDetails.beneficiaryDeliveryText)} ${(deliverState.dose).toString()}',
                                           ),
                                         ),
                                       ),

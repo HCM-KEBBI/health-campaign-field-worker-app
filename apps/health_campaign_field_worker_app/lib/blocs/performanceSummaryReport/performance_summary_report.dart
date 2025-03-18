@@ -200,7 +200,6 @@ class PerformannceSummaryReportBloc
     String date,
     Map<String, Map<String?, dynamic>> dayVsDrugsQuantityMap,
   ) {
-    const quantityWastedKey = 'quantityWasted';
     Map<String?, double> resourceVsQuantity = {};
     List<TaskResourceModel> taskResourceList = [];
 
@@ -212,26 +211,28 @@ class PerformannceSummaryReportBloc
     }
     for (var resource in taskResourceList) {
       double quantityDistributed = 0;
-      double quantityWasted = 0;
+      double quantityRedosed = 0;
 
       //todo remove the double and int checks once , data type is finalized
       var resourceId = resource.productVariantId;
       quantityDistributed = quantityDistributed +
-          (resource.quantity!.contains(".")
-              ? double.parse(resource.quantity ?? "0.0").toInt()
-              : int.parse(resource.quantity ?? "0"));
+          (resource.quantity!.toString().contains(".")
+              ? double.parse((resource.quantity ?? "0.0").toString()).toInt()
+              : int.parse((resource.quantity ?? "0").toString()));
       if (resource.additionalFields != null) {
         var value = resource.additionalFields!.fields
-            .firstWhere((element) => element.key == quantityWastedKey)
-            .value;
-        quantityWasted = quantityWasted +
+            .firstWhereOrNull(
+              (element) => element.key == Constants.reDoseQuantityKey,
+            )
+            ?.value;
+        quantityRedosed = quantityRedosed +
             (value == null || value == "null"
                 ? 0
                 : (value.toString().contains(".")
                     ? double.parse(value.toString()).toInt()
                     : int.parse(value.toString())));
       }
-      final quantityUsed = quantityDistributed + quantityWasted;
+      final quantityUsed = quantityDistributed + quantityRedosed;
 
       resourceVsQuantity.update(
         resourceId,
