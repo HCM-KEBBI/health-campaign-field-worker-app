@@ -103,10 +103,11 @@ class PerformannceSummaryReportBloc
     var albendazoleResourceId = productVariantList.first.id;
 
     for (var element in householdList) {
-      if (element.additionalFields?.fields
+      final isConsentGiven = element.additionalFields?.fields
               .firstWhereOrNull((h) => h.key == Constants.isConsentKey)
               ?.value ??
-          true) {
+          "true";
+      if (isConsentGiven.toString() == "true") {
         var dateKey = DigitDateUtils.getDateFromTimestamp(
           element.clientAuditDetails!.createdTime,
         );
