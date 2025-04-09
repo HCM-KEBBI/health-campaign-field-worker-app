@@ -61,3 +61,6 @@ apps/health_campaign_field_worker_app/.env-uat
 apps/health_campaign_field_worker_app/.env-training
 apps/health_campaign_field_worker_app/.env-prod
 apps/health_campaign_field_worker_app/libisar.dylib
+
+# fvm
+.fvm
