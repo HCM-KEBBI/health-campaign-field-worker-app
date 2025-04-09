@@ -149,12 +149,12 @@ class _ViewBeneficiaryCardState extends LocalizedState<ViewBeneficiaryCard> {
         ).months;
 
         final beneficiaryId = e.identifiers
-                ?.lastWhere(
+                ?.lastWhereOrNull(
                   (e) =>
                       e.identifierType ==
                       IdentifierTypes.uniqueBeneficiaryID.toValue(),
                 )
-                .identifierId ??
+                ?.identifierId ??
             localizations.translate(
               i18.common.noResultsFound,
             );
