@@ -327,10 +327,7 @@ class SearchHouseholdsBloc
           .toList();
 
       // Find the head of household from the individuals.
-      final head = (beneficiaryType == BeneficiaryType.individual
-              ? beneficiaryIndividuals
-              : individualMemebrs)
-          .firstWhereOrNull(
+      final head = individualMemebrs.firstWhereOrNull(
         (element) =>
             element.clientReferenceId ==
             entry.value
@@ -340,15 +337,13 @@ class SearchHouseholdsBloc
                 ?.individualClientReferenceId,
       );
 
-      if (head == null || beneficiaries.isEmpty) continue;
+      if (head == null) continue;
       // Create a container for household members and associated data.
       containers.add(
         HouseholdMemberWrapper(
           household: householdresult,
           headOfHousehold: head,
-          members: beneficiaryType == BeneficiaryType.individual
-              ? beneficiaryIndividuals
-              : individualMemebrs,
+          members: individualMemebrs,
           projectBeneficiaries: beneficiaries,
           tasks: filteredTasks.isEmpty ? null : filteredTasks,
           sideEffects: filteredSideEffects.isEmpty ? null : filteredSideEffects,
@@ -566,10 +561,7 @@ class SearchHouseholdsBloc
           .toList();
 
       // Find the head of household from the individuals.
-      final head = ((beneficiaryType == BeneficiaryType.individual
-              ? beneficiaryIndividuals
-              : individualMemebrs))
-          .firstWhereOrNull(
+      final head = individualMemebrs.firstWhereOrNull(
         (element) =>
             element.clientReferenceId ==
             entry.value
@@ -579,16 +571,14 @@ class SearchHouseholdsBloc
                 ?.individualClientReferenceId,
       );
 
-      if (head == null || beneficiaries.isEmpty) continue;
+      if (head == null) continue;
 
       // Search for project beneficiaries based on client reference ID and project.
       containers.add(
         HouseholdMemberWrapper(
           household: householdresult,
           headOfHousehold: head,
-          members: beneficiaryType == BeneficiaryType.individual
-              ? beneficiaryIndividuals
-              : individualMemebrs,
+          members: individualMemebrs,
           projectBeneficiaries: beneficiaries,
           tasks: filteredTasks.isEmpty ? null : filteredTasks,
           sideEffects: filteredSideEffects.isEmpty ? null : filteredSideEffects,

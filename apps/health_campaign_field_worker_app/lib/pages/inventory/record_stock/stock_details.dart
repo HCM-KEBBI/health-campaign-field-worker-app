@@ -116,7 +116,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                     entryType == StockRecordEntryType.receipt))
             ? [Validators.required]
             : [],
-        value: '',
+        value: 'test',
       ),
       _transactionReasonKey: FormControl<TransactionReason>(),
       _waybillNumberKey: FormControl<String>(
