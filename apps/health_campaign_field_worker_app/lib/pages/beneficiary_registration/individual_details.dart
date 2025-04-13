@@ -30,11 +30,13 @@ import '../../widgets/localized.dart';
 
 class IndividualDetailsPage extends LocalizedStatefulWidget {
   final bool isHeadOfHousehold;
+  final bool isEditMode;
 
   const IndividualDetailsPage({
     super.key,
     super.appLocalizations,
     this.isHeadOfHousehold = false,
+    this.isEditMode = false,
   });
 
   @override
@@ -788,7 +790,9 @@ class _IndividualDetailsPageState
       identifiers: [
         identifier.copyWith(
           identifierId: context.loggedInUserUuid,
-          identifierType: IdentifierTypes.defaultID.toValue(),
+          identifierType: widget.isEditMode
+              ? IdentifierTypes.uniqueBeneficiaryID.toValue()
+              : IdentifierTypes.defaultID.toValue(),
         ),
       ],
     );
