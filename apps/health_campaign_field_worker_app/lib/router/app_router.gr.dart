@@ -327,6 +327,7 @@ class _$AppRouter extends RootStackRouter {
           key: args.key,
           appLocalizations: args.appLocalizations,
           isHeadOfHousehold: args.isHeadOfHousehold,
+          isEditMode: args.isEditMode,
         ),
       );
     },
@@ -2132,6 +2133,7 @@ class IndividualDetailsRoute extends PageRouteInfo<IndividualDetailsRouteArgs> {
     Key? key,
     AppLocalizations? appLocalizations,
     bool isHeadOfHousehold = false,
+    bool isEditMode = false,
   }) : super(
           IndividualDetailsRoute.name,
           path: 'individual-details',
@@ -2139,6 +2141,7 @@ class IndividualDetailsRoute extends PageRouteInfo<IndividualDetailsRouteArgs> {
             key: key,
             appLocalizations: appLocalizations,
             isHeadOfHousehold: isHeadOfHousehold,
+            isEditMode: isEditMode,
           ),
         );
 
@@ -2150,6 +2153,7 @@ class IndividualDetailsRouteArgs {
     this.key,
     this.appLocalizations,
     this.isHeadOfHousehold = false,
+    this.isEditMode = false,
   });
 
   final Key? key;
@@ -2158,9 +2162,11 @@ class IndividualDetailsRouteArgs {
 
   final bool isHeadOfHousehold;
 
+  final bool isEditMode;
+
   @override
   String toString() {
-    return 'IndividualDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations, isHeadOfHousehold: $isHeadOfHousehold}';
+    return 'IndividualDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations, isHeadOfHousehold: $isHeadOfHousehold, isEditMode: $isEditMode}';
   }
 }
 

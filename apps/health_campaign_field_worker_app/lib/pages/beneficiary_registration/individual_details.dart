@@ -7,6 +7,7 @@ import 'package:digit_components/widgets/digit_dob_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:health_campaign_field_worker_app/blocs/boundary/boundary.dart';
 import 'package:health_campaign_field_worker_app/blocs/delivery_intervention/deliver_intervention.dart';
 import 'package:health_campaign_field_worker_app/blocs/project/project.dart';
 import 'package:health_campaign_field_worker_app/models/project_type/project_type_model.dart';
@@ -245,7 +246,7 @@ class _IndividualDetailsPageState
                         loading,
                         isHeadOfHousehold,
                       ) async {
-                        final individual = _getIndividualModel(
+                        final individual = await _getIndividualModel(
                           context,
                           form: form,
                           oldIndividual: null,
@@ -330,33 +331,34 @@ class _IndividualDetailsPageState
                         individualModel,
                         addressModel,
                         loading,
-                      ) {
-                        final individual = _getIndividualModel(
-                          context,
+                      ) async {
+                        BuildContext currentContext = context;
+                        final individual = await _getIndividualModel(
+                          currentContext,
                           form: form,
                           oldIndividual: individualModel,
                         );
-
                         bloc.add(
                           BeneficiaryRegistrationUpdateIndividualDetailsEvent(
                             addressModel: addressModel,
                             model: individual.copyWith(
-                              clientAuditDetails: (individual
-                                              .clientAuditDetails?.createdBy !=
-                                          null &&
-                                      individual.clientAuditDetails
-                                              ?.createdTime !=
-                                          null)
-                                  ? ClientAuditDetails(
-                                      createdBy: individual
-                                          .clientAuditDetails!.createdBy,
-                                      createdTime: individual
-                                          .clientAuditDetails!.createdTime,
-                                      lastModifiedBy: context.loggedInUserUuid,
-                                      lastModifiedTime:
-                                          context.millisecondsSinceEpoch(),
-                                    )
-                                  : null,
+                              clientAuditDetails:
+                                  (individual.clientAuditDetails?.createdBy !=
+                                              null &&
+                                          individual.clientAuditDetails
+                                                  ?.createdTime !=
+                                              null)
+                                      ? ClientAuditDetails(
+                                          createdBy: individual
+                                              .clientAuditDetails!.createdBy,
+                                          createdTime: individual
+                                              .clientAuditDetails!.createdTime,
+                                          lastModifiedBy:
+                                              currentContext.loggedInUserUuid,
+                                          lastModifiedTime: currentContext
+                                              .millisecondsSinceEpoch(),
+                                        )
+                                      : null,
                               auditDetails: (individual
                                               .auditDetails?.createdBy !=
                                           null &&
@@ -367,9 +369,10 @@ class _IndividualDetailsPageState
                                           individual.auditDetails!.createdBy,
                                       createdTime:
                                           individual.auditDetails!.createdTime,
-                                      lastModifiedBy: context.loggedInUserUuid,
-                                      lastModifiedTime:
-                                          context.millisecondsSinceEpoch(),
+                                      lastModifiedBy:
+                                          currentContext.loggedInUserUuid,
+                                      lastModifiedTime: currentContext
+                                          .millisecondsSinceEpoch(),
                                     )
                                   : null,
                             ),
@@ -380,8 +383,8 @@ class _IndividualDetailsPageState
                         addressModel,
                         householdModel,
                         loading,
-                      ) {
-                        final individual = _getIndividualModel(
+                      ) async {
+                        final individual = await _getIndividualModel(
                           context,
                           form: form,
                         );
@@ -703,11 +706,11 @@ class _IndividualDetailsPageState
     );
   }
 
-  IndividualModel _getIndividualModel(
+  Future<IndividualModel> _getIndividualModel(
     BuildContext context, {
     required FormGroup form,
     IndividualModel? oldIndividual,
-  }) {
+  }) async {
     final dob = form.control(_dobKey).value as DateTime?;
     String? dobString;
     if (dob != null) {
@@ -775,6 +778,22 @@ class _IndividualDetailsPageState
     );
     // String? individualName = form.control(_individualNameKey).value as String?;
 
+    final boundaryBloc = context.read<BoundaryBloc>().state;
+    final code = boundaryBloc.boundaryList.first.code;
+    final bname = boundaryBloc.boundaryList.first.name;
+
+    final locality = code == null || bname == null
+        ? null
+        : LocalityModel(code: code, name: bname);
+
+    String localityCode = locality!.code;
+
+    Set<String>? beneficiaryId = await UniqueIdGeneration().generateUniqueId(
+      localityCode: localityCode,
+      loggedInUserId: context.loggedInUserUuid,
+      returnBothIds: false,
+    );
+
     individual = individual.copyWith(
       name: name.copyWith(
         givenName: form.control(_individualNameKey).value,
@@ -789,7 +808,9 @@ class _IndividualDetailsPageState
       dateOfBirth: dobString,
       identifiers: [
         identifier.copyWith(
-          identifierId: context.loggedInUserUuid,
+          identifierId: widget.isEditMode
+              ? beneficiaryId.first
+              : context.loggedInUserUuid,
           identifierType: widget.isEditMode
               ? IdentifierTypes.uniqueBeneficiaryID.toValue()
               : IdentifierTypes.defaultID.toValue(),
@@ -954,8 +975,9 @@ class _IndividualDetailsPageState
                         context) ==
                     Constants.height)
             ? individual.additionalFields?.fields
-                    .firstWhere((element) => element.key == Constants.height)
-                    .value ??
+                    .firstWhereOrNull(
+                        (element) => element.key == Constants.height)
+                    ?.value ??
                 ""
             : "",
       ),

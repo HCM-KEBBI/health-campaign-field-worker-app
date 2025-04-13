@@ -5,7 +5,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 import '../blocs/app_initialization/app_initialization.dart';
 import '../blocs/beneficiary_registration/beneficiary_registration.dart';
-import '../blocs/search_beneficiary/individual_global_search.dart';
+// import '../blocs/search_beneficiary/individual_global_search.dart';
 import '../blocs/search_households/search_households.dart';
 import '../models/data_model.dart';
 import '../router/app_router.dart';
