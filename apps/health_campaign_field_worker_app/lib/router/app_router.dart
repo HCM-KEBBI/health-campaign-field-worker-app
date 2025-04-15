@@ -184,7 +184,7 @@ part 'app_router.gr.dart';
             AutoRoute(page: ChecklistViewPage, path: 'view'),
           ],
         ),
-         AutoRoute(
+        AutoRoute(
           page: PerformamnceSummaryReportDetailsPage,
           path: 'performance-summary-report-details',
         ),

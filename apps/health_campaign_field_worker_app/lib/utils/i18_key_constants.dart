@@ -329,6 +329,15 @@ class SearchBeneficiary {
 class BeneficiaryDetails {
   const BeneficiaryDetails();
 
+  String get pregnantWomenLabel => 'PREGNANT_WOMEN_LABEL';
+  String get roomsLabel => 'ROOMS_LABEL';
+  String get childrenLabel => 'CHILDREN_LABEL';
+  String get womenLabel => 'WOMEN_LABEL';
+  String get menLabel => 'MEN_LABEL';
+
+  String get householdMemberSingularSMC => 'BENEFICIARY_HOUSEHOLD_MEMBER_SMC';
+  String get householdMemberPluralSMC => 'BENEFICIARY_HOUSEHOLD_MEMBERS_SMC';
+
   String get beneficiaryWeight => 'BENEFICIARY_WEIGHT';
   String get beneficiaryHeight => 'BENEFICIARY_HEIGHT';
   String get beneficiaryKGUnit => 'BENEFICIARY_KG_UNIT';
@@ -582,6 +591,19 @@ class HouseholdDetails {
 
 class HouseholdOverView {
   const HouseholdOverView();
+  String get householdOverViewHouseholderHeadLabelSMC =>
+      'HOUSEHOLD_OVER_VIEW_HOUSEHOLDER_HEAD_LABEL_SMC';
+
+  String get householdOverViewDeliveredIconLabelSMC =>
+      'HOUSEHOLD_OVER_VIEW_DELIVERED_ICON_LABEL_SMC';
+  String get householdOverViewNotEligibleIconLabelSMC =>
+      'HOUSEHOLD_OVER_VIEW_NOT_ELIGIBLE_ICON_LABEL_SMC';
+  String get householdOverViewBeneficiaryReferredLabelSMC =>
+      'HOUSEHOLD_OVER_VIEW_BENEFICIARY_REFERRED_LABEL_SMC';
+  String get householdOverViewBeneficiaryRefusedLabelSMC =>
+      'HOUSEHOLD_OVER_VIEW_BENEFICIARY_REFUSED_LABEL_SMC';
+  String get householdOverViewNotDeliveredIconLabelSMC =>
+      'HOUSEHOLD_OVER_VIEW_NOT_DELIVERED_ICON_LABEL_SMC';
 
   String get householdOverViewLabel => 'HOUSEHOLD_OVER_VIEW_LABEL';
 
