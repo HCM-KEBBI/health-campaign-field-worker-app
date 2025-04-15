@@ -132,18 +132,18 @@ packages:
     dependency: "direct main"
     description:
       name: auto_route
-      sha256: eb33554581a0a4aa7e6da0f13a44291a55bf71359012f1d9feb41634ff908ff8
+      sha256: "12047baeca0e01df93165ef33275b32119d72699ab9a49dc64c20e78f586f96d"
       url: "https://pub.dev"
     source: hosted
-    version: "7.9.2"
+    version: "5.0.4"
   auto_route_generator:
     dependency: "direct dev"
     description:
       name: auto_route_generator
-      sha256: "11067a3bcd643812518fe26c0c9ec073990286cabfd9d74b6da9ef9b913c4d22"
+      sha256: de5bfbc02ae4eebb339dd90d325749ae7536e903f6513ef72b88954072d72b0e
       url: "https://pub.dev"
     source: hosted
-    version: "7.3.2"
+    version: "5.0.3"
   auto_size_text:
     dependency: "direct main"
     description:
@@ -526,6 +526,14 @@ packages:
       relative: true
     source: path
     version: "0.0.1+8"
+  digit_data_model:
+    dependency: transitive
+    description:
+      name: digit_data_model
+      sha256: "08f5273e691cc16e0f89aefac97887abb63739b7db3a00165c1be269aacedffd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4+1"
   digit_firebase_services:
     dependency: "direct main"
     description:
@@ -533,6 +541,30 @@ packages:
       relative: true
     source: path
     version: "0.0.1"
+  digit_scanner:
+    dependency: transitive
+    description:
+      name: digit_scanner
+      sha256: "9862c4885465bb1942e36dc9b42596c201648db9b0f5ffb8ad768e2409fc2742"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.3+1"
+  digit_showcase:
+    dependency: transitive
+    description:
+      name: digit_showcase
+      sha256: b4f9009c0d1b33b6576fa2d480826cc36f2ba5f62c7330b9f7b436af39508b4e
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
+  digit_ui_components:
+    dependency: transitive
+    description:
+      name: digit_ui_components
+      sha256: d6720339263e48951e747aed31f45795ab7d7b4f0923e0fe13d63c4f83c41d97
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3-beta"
   dio:
     dependency: "direct main"
     description:
@@ -960,6 +992,54 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.0"
+  geolocator:
+    dependency: transitive
+    description:
+      name: geolocator
+      sha256: f4efb8d3c4cdcad2e226af9661eb1a0dd38c71a9494b22526f9da80ab79520e5
+      url: "https://pub.dev"
+    source: hosted
+    version: "10.1.1"
+  geolocator_android:
+    dependency: transitive
+    description:
+      name: geolocator_android
+      sha256: "93906636752ea4d4e778afa981fdfe7409f545b3147046300df194330044d349"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.3.1"
+  geolocator_apple:
+    dependency: transitive
+    description:
+      name: geolocator_apple
+      sha256: c4ecead17985ede9634f21500072edfcb3dba0ef7b97f8d7bc556d2d722b3ba3
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.9"
+  geolocator_platform_interface:
+    dependency: transitive
+    description:
+      name: geolocator_platform_interface
+      sha256: "386ce3d9cce47838355000070b1d0b13efb5bc430f8ecda7e9238c8409ace012"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.4"
+  geolocator_web:
+    dependency: transitive
+    description:
+      name: geolocator_web
+      sha256: "102e7da05b48ca6bf0a5bda0010f886b171d1a08059f01bfe02addd0175ebece"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.1"
+  geolocator_windows:
+    dependency: transitive
+    description:
+      name: geolocator_windows
+      sha256: "53da08937d07c24b0d9952eb57a3b474e29aae2abf9dd717f7e1230995f13f0e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.3"
   glob:
     dependency: transitive
     description:
@@ -1496,6 +1576,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.0"
+  registration_delivery:
+    dependency: "direct main"
+    description:
+      name: registration_delivery
+      sha256: "028a16614818597ab50bd546489c27fc2735a03cd4a180a9569136bd6ebda0e1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4-dev.8-search-fix"
   rxdart:
     dependency: transitive
     description:
@@ -2006,5 +2094,5 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.2.0 <4.0.0"
+  dart: ">=3.2.0 <3.9.0"
   flutter: ">=3.16.0"

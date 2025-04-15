@@ -297,6 +297,9 @@ class Home {
 class SearchBeneficiary {
   const SearchBeneficiary();
 
+  String get beneficiaryIdValidInfoDescription =>
+      'BENEFICIARY_ID_VALID_INFO_DESCRIPTION';
+
   String get statisticsLabelText => 'BENEFICIARY_STATISTICS_LABEL_TEXT';
 
   String get searchIndividualLabelText =>
