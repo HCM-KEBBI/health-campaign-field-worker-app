@@ -13,12 +13,13 @@ import '../../blocs/service/service.dart';
 import '../../blocs/service_definition/service_definition.dart';
 import '../../models/data_model.dart';
 import '../../router/app_router.dart';
-import '../../utils/digit_components_utils.dart';
+import '../../utils/digit_components_utils.dart' as local_utils;
 import '../../utils/i18_key_constants.dart' as i18;
 import '../../utils/utils.dart';
 import '../../widgets/header/back_navigation_help_header.dart';
 import '../../widgets/localized.dart';
 
+@RoutePage()
 class ChecklistViewPage extends LocalizedStatefulWidget {
   final String? referralClientRefId;
   const ChecklistViewPage({
@@ -106,7 +107,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                     listener: (context, state) async {
                       if (state.accuracy != null && triggerLocalization) {
                         triggerLocalization = false;
-                        DigitComponentsUtils().hideDialog(context);
+                        local_utils.DigitComponentsUtils().hideDialog(context);
                         final router = context.router;
                         final locationState =
                             context.read<LocationBloc>().state;
@@ -482,7 +483,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                         label: localizations.translate(
                                           '${value.selectedServiceDefinition?.code}.$code',
                                         ),
-                                        description: description != null
+                                        message: description != null
                                             ? localizations.translate(
                                                 '${value.selectedServiceDefinition?.code}.$description',
                                               )
@@ -507,7 +508,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                           FilteringTextInputFormatter.allow(
                                             RegExp(r'[0-9]'),
                                           ),
-                                          LengthLimitingTextInputFormatter(11),
+                                          // LengthLimitingTextInputFormatter(11),  //TODO: check this later
                                         ],
                                         validator: (value) {
                                           if (((value == null || value == '') &&
@@ -530,7 +531,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                                         label: '${localizations.translate(
                                               '${value.selectedServiceDefinition?.code}.$code',
                                             ).trim()} ${e.required == true ? '*' : ''}',
-                                        description: description != null
+                                        message: description != null
                                             ? localizations.translate(
                                                 '${value.selectedServiceDefinition?.code}.$description',
                                               )
@@ -935,7 +936,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
           label: localizations.translate(
             '${selectedServiceDefinition?.code}.${item.code}',
           ),
-          description: itemDescription != null
+          message: itemDescription != null
               ? localizations.translate(
                   '${selectedServiceDefinition?.code}.$itemDescription',
                 )
@@ -951,7 +952,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
           FilteringTextInputFormatter.allow(
             RegExp(r'[0-9]'),
           ),
-          LengthLimitingTextInputFormatter(11),
+          // LengthLimitingTextInputFormatter(11),  //TODO: check this later
         ],
         validator: (value) {
           if (((value == null || value == '') && item.required == true)) {
@@ -971,7 +972,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
         label: '${localizations.translate(
               '${selectedServiceDefinition?.code}.${item.code}',
             ).trim()} ${item.required == true ? '*' : ''}',
-        description: itemDescription != null
+        message: itemDescription != null
             ? localizations.translate(
                 '${selectedServiceDefinition?.code}.$itemDescription',
               )

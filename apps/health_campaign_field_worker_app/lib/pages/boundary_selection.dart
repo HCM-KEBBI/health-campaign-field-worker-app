@@ -18,6 +18,7 @@ import '../router/app_router.dart';
 import '../utils/utils.dart';
 import '../widgets/localized.dart';
 
+@RoutePage()
 class BoundarySelectionPage extends LocalizedStatefulWidget {
   const BoundarySelectionPage({
     super.key,

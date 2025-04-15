@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:health_campaign_field_worker_app/pages/beneficiary/widgets/consent_household_acknowledgement.dart';
+import 'package:registration_delivery/router/registration_delivery_router.dart';
 
 import '../blocs/beneficiary_registration/beneficiary_registration.dart';
 import '../blocs/inventory_report/inventory_report.dart';
@@ -73,236 +74,262 @@ import '../pages/search_beneficiary.dart';
 import '../pages/search_referrals.dart';
 import '../pages/unauthenticated.dart';
 
+import 'package:registration_delivery/blocs/app_localization.dart';
+
 export 'package:auto_route/auto_route.dart';
 
 part 'app_router.gr.dart';
 
-@MaterialAutoRouter(
-  replaceInRouteName: 'Page,Route',
-  routes: [
+@AutoRouterConfig(
+  // INFO : Need to add the router modules here
+  modules: [
+    RegistrationDeliveryRoute,
+  ],
+)
+class AppRouter extends _$AppRouter {
+  @override
+  RouteType get defaultRouteType => const RouteType.material();
+
+  @override
+  List<AutoRoute> routes = [
     AutoRoute(
-      page: UnauthenticatedPageWrapper,
+      page: UnauthenticatedRouteWrapper.page,
       path: '/',
       children: [
-        AutoRoute(page: LoginPage, path: 'login', initial: true),
+        AutoRoute(page: LoginRoute.page, path: 'login', initial: true),
       ],
     ),
     AutoRoute(
-      page: AuthenticatedPageWrapper,
+      page: AuthenticatedRouteWrapper.page,
       path: '/',
       children: [
-        AutoRoute(page: HomePage, path: 'home'),
-        AutoRoute(page: ProfilePage, path: 'profile'),
+        AutoRoute(page: HomeRoute.page, path: 'home'),
+        AutoRoute(page: ProfileRoute.page, path: 'profile'),
 
-        AutoRoute(page: SearchBeneficiaryPage, path: 'search-beneficiary'),
+        AutoRoute(
+            page: SearchBeneficiaryRoute.page, path: 'search-beneficiary'),
         //AutoRoute(page: QRScannerPage, path: 'scanner'),
         AutoRoute(
-          page: BeneficiariesReportPage,
+          page: BeneficiariesReportRoute.page,
           path: 'beneficiary-downsync-report',
         ),
 
         /// Beneficiary Registration
         AutoRoute(
-          page: BeneficiaryRegistrationWrapperPage,
+          page: BeneficiaryRegistrationWrapperRoute.page,
           path: 'beneficiary-registration',
           children: [
-            AutoRoute(page: IndividualDetailsPage, path: 'individual-details'),
-            AutoRoute(page: HouseHoldDetailsPage, path: 'household-details'),
-            AutoRoute(page: HouseHoldConsentPage, path: 'household-consent'),
             AutoRoute(
-              page: HouseholdLocationPage,
+              page: IndividualDetailsRoute.page,
+              path: 'individual-details',
+            ),
+            AutoRoute(
+              page: HouseHoldDetailsRoute.page,
+              path: 'household-details',
+            ),
+            AutoRoute(
+              page: HouseHoldConsentRoute.page,
+              path: 'household-consent',
+            ),
+            AutoRoute(
+              page: HouseholdLocationRoute.page,
               path: 'household-location',
               initial: true,
             ),
             AutoRoute(
-              page: ConsentHouseholdAcknowledgementPage,
+              page: ConsentHouseholdAcknowledgementRoute.page,
               path: 'consent-household-acknowledgement',
             ),
           ],
         ),
         AutoRoute(
-          page: BeneficiaryWrapperPage,
+          page: BeneficiaryWrapperRoute.page,
           path: 'beneficiary',
           children: [
             AutoRoute(
-              page: HouseholdOverviewPage,
+              page: HouseholdOverviewRoute.page,
               path: 'overview',
               initial: true,
             ),
             AutoRoute(
-              page: BeneficiaryDetailsPage,
+              page: BeneficiaryDetailsRoute.page,
               path: 'beneficiary-details',
             ),
             AutoRoute(
-              page: DeliverInterventionPage,
+              page: DeliverInterventionRoute.page,
               path: 'deliver-intervention',
             ),
             AutoRoute(
-              page: EligibilityChecklistViewPage,
+              page: EligibilityChecklistViewRoute.page,
               path: 'eligibility-checklist',
             ),
-            AutoRoute<List<TaskModel>>(
-              page: SideEffectsPage,
+            AutoRoute(
+              page: SideEffectsRoute.page,
               path: 'side-effects',
             ),
             AutoRoute(
-              page: ReferBeneficiaryPage,
+              page: ReferBeneficiaryRoute.page,
               path: 'refer-beneficiary',
             ),
             AutoRoute(
-              page: IneligibilityReasonsPage,
+              page: IneligibilityReasonsRoute.page,
               path: 'ineligibility-reasons',
             ),
             AutoRoute(
-              page: DoseAdministeredVerificationPage,
+              page: DoseAdministeredVerificationRoute.page,
               path: 'dose-administered-verification',
             ),
             AutoRoute(
-              page: DoseAdministeredPage,
+              page: DoseAdministeredRoute.page,
               path: 'dose-administered',
             ),
             AutoRoute(
-              page: RecordRedosePage,
+              page: RecordRedoseRoute.page,
               path: 'record-redose',
             ),
             AutoRoute(
-              page: SplashAcknowledgementPage,
+              page: SplashAcknowledgementRoute.page,
               path: 'splash-acknowledgement',
             ),
             AutoRoute(
-              page: ReasonForDeletionPage,
+              page: ReasonForDeletionRoute.page,
               path: 'reason-for-deletion',
             ),
             AutoRoute(
-              page: RecordPastDeliveryDetailsPage,
+              page: RecordPastDeliveryDetailsRoute.page,
               path: 'record-past-delivery-details',
             ),
             AutoRoute(
-              page: HouseholdAcknowledgementPage,
+              page: HouseholdAcknowledgementRoute.page,
               path: 'household-acknowledgement',
             ),
-            AutoRoute(page: ChecklistViewPage, path: 'view'),
+            AutoRoute(page: ChecklistViewRoute.page, path: 'view'),
           ],
         ),
         AutoRoute(
-          page: PerformamnceSummaryReportDetailsPage,
+          page: PerformamnceSummaryReportDetailsRoute.page,
           path: 'performance-summary-report-details',
         ),
 
-        AutoRoute(page: ChecklistWrapperPage, path: 'checklist', children: [
-          AutoRoute(
-            page: ChecklistPage,
-            path: '',
-          ),
-          AutoRoute(page: ChecklistBoundaryViewPage, path: 'view-boundary'),
-          AutoRoute(page: ChecklistViewPage, path: 'view'),
-          AutoRoute(page: ChecklistPreviewPage, path: 'preview'),
-        ]),
         AutoRoute(
-          page: BeneficiaryAcknowledgementPage,
+            page: ChecklistWrapperRoute.page,
+            path: 'checklist',
+            children: [
+              AutoRoute(
+                page: ChecklistRoute.page,
+                path: '',
+              ),
+              AutoRoute(
+                  page: ChecklistBoundaryViewRoute.page, path: 'view-boundary'),
+              AutoRoute(page: ChecklistViewRoute.page, path: 'view'),
+              AutoRoute(page: ChecklistPreviewRoute.page, path: 'preview'),
+            ]),
+        AutoRoute(
+          page: BeneficiaryAcknowledgementRoute.page,
           path: 'beneficiary-acknowledgement',
         ),
-        AutoRoute(page: AcknowledgementPage, path: 'acknowledgement'),
+        AutoRoute(page: AcknowledgementRoute.page, path: 'acknowledgement'),
         AutoRoute(
-          page: ComplaintsAcknowledgementPage,
+          page: ComplaintsAcknowledgementRoute.page,
           path: 'complaints-acknowledgement',
         ),
 
         /// Inventory Routes
         AutoRoute(
-          page: RecordStockWrapperPage,
+          page: RecordStockWrapperRoute.page,
           path: 'record-stock',
           children: [
             AutoRoute(
-              page: WarehouseDetailsPage,
+              page: WarehouseDetailsRoute.page,
               path: 'warehouse-details',
               initial: true,
             ),
-            AutoRoute(page: StockDetailsPage, path: 'details'),
+            AutoRoute(page: StockDetailsRoute.page, path: 'details'),
           ],
         ),
-        AutoRoute(page: SearchReferralsPage, path: 'search-referrals'),
+        AutoRoute(page: SearchReferralsRoute.page, path: 'search-referrals'),
         AutoRoute(
-          page: HFCreateReferralWrapperPage,
+          page: HFCreateReferralWrapperRoute.page,
           path: 'hf-referral',
           children: [
             AutoRoute(
-              page: ReferralFacilityPage,
+              page: ReferralFacilityRoute.page,
               path: 'facility-details',
               initial: true,
             ),
             AutoRoute(
-              page: RecordReferralDetailsPage,
+              page: RecordReferralDetailsRoute.page,
               path: 'referral-details',
             ),
             AutoRoute(
-              page: ReferralReasonChecklistPage,
+              page: ReferralReasonChecklistRoute.page,
               path: 'referral-reason',
             ),
             AutoRoute(
-              page: ReferralReasonCheckListPreviewPage,
+              page: ReferralReasonCheckListPreviewRoute.page,
               path: 'referral-reason-view',
             ),
           ],
         ),
-        AutoRoute(page: ManageStocksPage, path: 'manage-stocks'),
-        AutoRoute(page: StockReconciliationPage, path: 'stock-reconciliation'),
-        AutoRoute<FacilityModel>(
-          page: FacilitySelectionPage,
+        AutoRoute(page: ManageStocksRoute.page, path: 'manage-stocks'),
+        AutoRoute(
+            page: StockReconciliationRoute.page, path: 'stock-reconciliation'),
+        AutoRoute(
+          page: FacilitySelectionRoute.page,
           path: 'select-facilities',
         ),
-        AutoRoute<ProjectFacilityModel>(
-          page: ProjectFacilitySelectionPage,
+        AutoRoute(
+          page: ProjectFacilitySelectionRoute.page,
           path: 'select-project-facilities',
         ),
         AutoRoute(
-          page: InventoryReportSelectionPage,
+          page: InventoryReportSelectionRoute.page,
           path: 'inventory-report-selection',
         ),
         AutoRoute(
-          page: InventoryReportDetailsPage,
+          page: InventoryReportDetailsRoute.page,
           path: 'inventory-report-details',
         ),
 
         /// Project Selection
         AutoRoute(
-          page: ProjectSelectionPage,
+          page: ProjectSelectionRoute.page,
           path: 'select-project',
           initial: true,
         ),
 
         /// Boundary Selection
         AutoRoute(
-          page: BoundarySelectionPage,
+          page: BoundarySelectionRoute.page,
           path: 'select-boundary',
         ),
 
-        AutoRoute(page: UserQRDetailsPage, path: 'user-qr-code'),
+        AutoRoute(page: UserQRDetailsRoute.page, path: 'user-qr-code'),
 
         /// Complaints Inbox
         AutoRoute(
-          page: ComplaintsInboxWrapperPage,
+          page: ComplaintsInboxWrapperRoute.page,
           path: 'complaints-inbox',
           children: [
             AutoRoute(
-              page: ComplaintsInboxPage,
+              page: ComplaintsInboxRoute.page,
               path: 'complaints-inbox-items',
               initial: true,
             ),
             AutoRoute(
-              page: ComplaintsInboxFilterPage,
+              page: ComplaintsInboxFilterRoute.page,
               path: 'complaints-inbox-filter',
             ),
             AutoRoute(
-              page: ComplaintsInboxSearchPage,
+              page: ComplaintsInboxSearchRoute.page,
               path: 'complaints-inbox-search',
             ),
             AutoRoute(
-              page: ComplaintsInboxSortPage,
+              page: ComplaintsInboxSortRoute.page,
               path: 'complaints-inbox-sort',
             ),
             AutoRoute(
-              page: ComplaintsDetailsViewPage,
+              page: ComplaintsDetailsViewRoute.page,
               path: 'complaints-inbox-view-details',
             ),
           ],
@@ -310,26 +337,284 @@ part 'app_router.gr.dart';
 
         /// Complaints registration
         AutoRoute(
-          page: ComplaintsRegistrationWrapperPage,
+          page: ComplaintsRegistrationWrapperRoute.page,
           path: 'complaints-registration',
           children: [
             AutoRoute(
-              page: ComplaintTypePage,
+              page: ComplaintTypeRoute.page,
               path: 'complaints-type',
               initial: true,
             ),
             AutoRoute(
-              page: ComplaintsLocationPage,
+              page: ComplaintsLocationRoute.page,
               path: 'complaints-location',
             ),
             AutoRoute(
-              page: ComplaintsDetailsPage,
+              page: ComplaintsDetailsRoute.page,
               path: 'complaints-details',
             ),
           ],
         ),
       ],
     ),
-  ],
-)
-class AppRouter extends _$AppRouter {}
+  ];
+}
+
+
+
+// @MaterialAutoRouter(
+//   replaceInRouteName: 'Page,Route',
+//   routes: [
+//     AutoRoute(
+//       page: UnauthenticatedPageWrapper,
+//       path: '/',
+//       children: [
+//         AutoRoute(page: LoginPage, path: 'login', initial: true),
+//       ],
+//     ),
+//     AutoRoute(
+//       page: AuthenticatedPageWrapper,
+//       path: '/',
+//       children: [
+//         AutoRoute(page: HomePage, path: 'home'),
+//         AutoRoute(page: ProfilePage, path: 'profile'),
+
+//         AutoRoute(page: SearchBeneficiaryPage, path: 'search-beneficiary'),
+//         //AutoRoute(page: QRScannerPage, path: 'scanner'),
+//         AutoRoute(
+//           page: BeneficiariesReportPage,
+//           path: 'beneficiary-downsync-report',
+//         ),
+
+//         /// Beneficiary Registration
+//         AutoRoute(
+//           page: BeneficiaryRegistrationWrapperPage,
+//           path: 'beneficiary-registration',
+//           children: [
+//             AutoRoute(page: IndividualDetailsPage, path: 'individual-details'),
+//             AutoRoute(page: HouseHoldDetailsPage, path: 'household-details'),
+//             AutoRoute(page: HouseHoldConsentPage, path: 'household-consent'),
+//             AutoRoute(
+//               page: HouseholdLocationPage,
+//               path: 'household-location',
+//               initial: true,
+//             ),
+//             AutoRoute(
+//               page: ConsentHouseholdAcknowledgementPage,
+//               path: 'consent-household-acknowledgement',
+//             ),
+//           ],
+//         ),
+//         AutoRoute(
+//           page: BeneficiaryWrapperPage,
+//           path: 'beneficiary',
+//           children: [
+//             AutoRoute(
+//               page: HouseholdOverviewPage,
+//               path: 'overview',
+//               initial: true,
+//             ),
+//             AutoRoute(
+//               page: BeneficiaryDetailsPage,
+//               path: 'beneficiary-details',
+//             ),
+//             AutoRoute(
+//               page: DeliverInterventionPage,
+//               path: 'deliver-intervention',
+//             ),
+//             AutoRoute(
+//               page: EligibilityChecklistViewPage,
+//               path: 'eligibility-checklist',
+//             ),
+//             AutoRoute<List<TaskModel>>(
+//               page: SideEffectsPage,
+//               path: 'side-effects',
+//             ),
+//             AutoRoute(
+//               page: ReferBeneficiaryPage,
+//               path: 'refer-beneficiary',
+//             ),
+//             AutoRoute(
+//               page: IneligibilityReasonsPage,
+//               path: 'ineligibility-reasons',
+//             ),
+//             AutoRoute(
+//               page: DoseAdministeredVerificationPage,
+//               path: 'dose-administered-verification',
+//             ),
+//             AutoRoute(
+//               page: DoseAdministeredPage,
+//               path: 'dose-administered',
+//             ),
+//             AutoRoute(
+//               page: RecordRedosePage,
+//               path: 'record-redose',
+//             ),
+//             AutoRoute(
+//               page: SplashAcknowledgementPage,
+//               path: 'splash-acknowledgement',
+//             ),
+//             AutoRoute(
+//               page: ReasonForDeletionPage,
+//               path: 'reason-for-deletion',
+//             ),
+//             AutoRoute(
+//               page: RecordPastDeliveryDetailsPage,
+//               path: 'record-past-delivery-details',
+//             ),
+//             AutoRoute(
+//               page: HouseholdAcknowledgementPage,
+//               path: 'household-acknowledgement',
+//             ),
+//             AutoRoute(page: ChecklistViewPage, path: 'view'),
+//           ],
+//         ),
+//         AutoRoute(
+//           page: PerformamnceSummaryReportDetailsPage,
+//           path: 'performance-summary-report-details',
+//         ),
+
+//         AutoRoute(page: ChecklistWrapperPage, path: 'checklist', children: [
+//           AutoRoute(
+//             page: ChecklistPage,
+//             path: '',
+//           ),
+//           AutoRoute(page: ChecklistBoundaryViewPage, path: 'view-boundary'),
+//           AutoRoute(page: ChecklistViewPage, path: 'view'),
+//           AutoRoute(page: ChecklistPreviewPage, path: 'preview'),
+//         ]),
+//         AutoRoute(
+//           page: BeneficiaryAcknowledgementPage,
+//           path: 'beneficiary-acknowledgement',
+//         ),
+//         AutoRoute(page: AcknowledgementPage, path: 'acknowledgement'),
+//         AutoRoute(
+//           page: ComplaintsAcknowledgementPage,
+//           path: 'complaints-acknowledgement',
+//         ),
+
+//         /// Inventory Routes
+//         AutoRoute(
+//           page: RecordStockWrapperPage,
+//           path: 'record-stock',
+//           children: [
+//             AutoRoute(
+//               page: WarehouseDetailsPage,
+//               path: 'warehouse-details',
+//               initial: true,
+//             ),
+//             AutoRoute(page: StockDetailsPage, path: 'details'),
+//           ],
+//         ),
+//         AutoRoute(page: SearchReferralsPage, path: 'search-referrals'),
+//         AutoRoute(
+//           page: HFCreateReferralWrapperPage,
+//           path: 'hf-referral',
+//           children: [
+//             AutoRoute(
+//               page: ReferralFacilityPage,
+//               path: 'facility-details',
+//               initial: true,
+//             ),
+//             AutoRoute(
+//               page: RecordReferralDetailsPage,
+//               path: 'referral-details',
+//             ),
+//             AutoRoute(
+//               page: ReferralReasonChecklistPage,
+//               path: 'referral-reason',
+//             ),
+//             AutoRoute(
+//               page: ReferralReasonCheckListPreviewPage,
+//               path: 'referral-reason-view',
+//             ),
+//           ],
+//         ),
+//         AutoRoute(page: ManageStocksPage, path: 'manage-stocks'),
+//         AutoRoute(page: StockReconciliationPage, path: 'stock-reconciliation'),
+//         AutoRoute<FacilityModel>(
+//           page: FacilitySelectionPage,
+//           path: 'select-facilities',
+//         ),
+//         AutoRoute<ProjectFacilityModel>(
+//           page: ProjectFacilitySelectionPage,
+//           path: 'select-project-facilities',
+//         ),
+//         AutoRoute(
+//           page: InventoryReportSelectionPage,
+//           path: 'inventory-report-selection',
+//         ),
+//         AutoRoute(
+//           page: InventoryReportDetailsPage,
+//           path: 'inventory-report-details',
+//         ),
+
+//         /// Project Selection
+//         AutoRoute(
+//           page: ProjectSelectionPage,
+//           path: 'select-project',
+//           initial: true,
+//         ),
+
+//         /// Boundary Selection
+//         AutoRoute(
+//           page: BoundarySelectionPage,
+//           path: 'select-boundary',
+//         ),
+
+//         AutoRoute(page: UserQRDetailsPage, path: 'user-qr-code'),
+
+//         /// Complaints Inbox
+//         AutoRoute(
+//           page: ComplaintsInboxWrapperPage,
+//           path: 'complaints-inbox',
+//           children: [
+//             AutoRoute(
+//               page: ComplaintsInboxPage,
+//               path: 'complaints-inbox-items',
+//               initial: true,
+//             ),
+//             AutoRoute(
+//               page: ComplaintsInboxFilterPage,
+//               path: 'complaints-inbox-filter',
+//             ),
+//             AutoRoute(
+//               page: ComplaintsInboxSearchPage,
+//               path: 'complaints-inbox-search',
+//             ),
+//             AutoRoute(
+//               page: ComplaintsInboxSortPage,
+//               path: 'complaints-inbox-sort',
+//             ),
+//             AutoRoute(
+//               page: ComplaintsDetailsViewPage,
+//               path: 'complaints-inbox-view-details',
+//             ),
+//           ],
+//         ),
+
+//         /// Complaints registration
+//         AutoRoute(
+//           page: ComplaintsRegistrationWrapperPage,
+//           path: 'complaints-registration',
+//           children: [
+//             AutoRoute(
+//               page: ComplaintTypePage,
+//               path: 'complaints-type',
+//               initial: true,
+//             ),
+//             AutoRoute(
+//               page: ComplaintsLocationPage,
+//               path: 'complaints-location',
+//             ),
+//             AutoRoute(
+//               page: ComplaintsDetailsPage,
+//               path: 'complaints-details',
+//             ),
+//           ],
+//         ),
+//       ],
+//     ),
+//   ],
+// )
+// class AppRouter extends _$AppRouter {}

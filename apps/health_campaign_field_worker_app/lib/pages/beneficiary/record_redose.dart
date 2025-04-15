@@ -28,6 +28,7 @@ import '../../widgets/component_wrapper/product_variant_bloc_wrapper.dart';
 import '../../widgets/header/back_navigation_help_header.dart';
 import '../../widgets/localized.dart';
 
+@RoutePage()
 class RecordRedosePage extends LocalizedStatefulWidget {
   final bool isEditing;
   final List<TaskModel> tasks;
@@ -479,7 +480,7 @@ class _RecordRedosePageState extends LocalizedState<RecordRedosePage> {
                                                         i18.deliverIntervention
                                                             .reasonForRedoseLabel,
                                                       ),
-                                                      readOnly: false,
+                                                      isDisabled: false,
                                                       isRequired: true,
                                                       validationMessages: {
                                                         'required': (object) =>

@@ -15,6 +15,7 @@ import '../../../widgets/header/back_navigation_help_header.dart';
 import '../../../widgets/localized.dart';
 import '../../inventory/project_facility_selection.dart';
 
+@RoutePage()
 class ReferralFacilityPage extends LocalizedStatefulWidget {
   final bool isEditing;
 

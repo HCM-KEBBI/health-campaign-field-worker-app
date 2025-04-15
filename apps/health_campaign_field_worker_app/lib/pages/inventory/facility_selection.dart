@@ -10,6 +10,7 @@ import '../../router/app_router.dart';
 import '../../widgets/header/back_navigation_help_header.dart';
 import '../../utils/i18_key_constants.dart' as i18;
 
+@RoutePage()
 class FacilitySelectionPage extends StatelessWidget {
   final List<FacilityModel> facilities;
 

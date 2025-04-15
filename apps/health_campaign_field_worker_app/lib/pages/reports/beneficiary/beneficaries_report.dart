@@ -15,6 +15,7 @@ import '../../../utils/utils.dart';
 import '../../../widgets/header/back_navigation_help_header.dart';
 import '../../../widgets/localized.dart';
 
+@RoutePage()
 class BeneficiariesReportPage extends LocalizedStatefulWidget {
   const BeneficiariesReportPage({super.key});
 

@@ -13,6 +13,7 @@ import '../../blocs/side_effects/side_effects.dart';
 import '../../models/data_model.dart';
 import '../../utils/extensions/extensions.dart';
 
+@RoutePage()
 class BeneficiaryWrapperPage extends StatelessWidget {
   final HouseholdMemberWrapper wrapper;
   final bool isEditing;

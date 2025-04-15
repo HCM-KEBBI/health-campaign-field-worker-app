@@ -11,7 +11,9 @@ import '../../../utils/extensions/extensions.dart';
 import '../../../widgets/component_wrapper/facility_bloc_wrapper.dart';
 import '../../../widgets/component_wrapper/product_variant_bloc_wrapper.dart';
 
-class RecordStockWrapperPage extends StatelessWidget with AutoRouteWrapper {
+@RoutePage()
+class RecordStockWrapperPage extends StatelessWidget
+    implements AutoRouteWrapper {
   final StockRecordEntryType type;
 
   const RecordStockWrapperPage({

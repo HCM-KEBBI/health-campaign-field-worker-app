@@ -21,6 +21,7 @@ import '../../../widgets/inventory/no_facilities_assigned_dialog.dart';
 import '../../../widgets/localized.dart';
 import '../facility_selection.dart';
 
+@RoutePage()
 class StockReconciliationPage extends LocalizedStatefulWidget {
   const StockReconciliationPage({
     super.key,
@@ -502,7 +503,7 @@ class _StockReconciliationPageState
                                       cancelText: localizations.translate(
                                         i18.common.coreCommonCancel,
                                       ),
-                                      onChanged: (control) {
+                                      onChangeOfDate: (control) {
                                         final stockReconciliationBloc = context
                                             .read<StockReconciliationBloc>();
 

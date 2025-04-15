@@ -22,6 +22,7 @@ import '../../widgets/header/back_navigation_help_header.dart';
 import '../../widgets/localized.dart';
 import 'widgets/record_delivery_cycle.dart';
 
+@RoutePage()
 class BeneficiaryDetailsPage extends LocalizedStatefulWidget {
   const BeneficiaryDetailsPage({
     super.key,

@@ -21,6 +21,7 @@ import '../../widgets/inventory/no_facilities_assigned_dialog.dart';
 import '../../widgets/localized.dart';
 import '../inventory/facility_selection.dart';
 
+@RoutePage()
 class ReferBeneficiaryPage extends LocalizedStatefulWidget {
   final bool isEditing;
   final String projectBeneficiaryClientRefId;

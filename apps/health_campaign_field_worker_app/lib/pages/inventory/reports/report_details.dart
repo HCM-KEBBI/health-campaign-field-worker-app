@@ -20,8 +20,9 @@ import '../../../widgets/localized.dart';
 import '../../../widgets/reports/readonly_pluto_grid.dart';
 import '../facility_selection.dart';
 
+@RoutePage()
 class InventoryReportDetailsPage extends LocalizedStatefulWidget
-    with AutoRouteWrapper {
+    implements AutoRouteWrapper {
   final InventoryReportType reportType;
 
   const InventoryReportDetailsPage({

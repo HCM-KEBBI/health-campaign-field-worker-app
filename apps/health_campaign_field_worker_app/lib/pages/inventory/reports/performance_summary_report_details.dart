@@ -17,8 +17,9 @@ import '../../../utils/utils.dart';
 import '../../../widgets/header/back_navigation_help_header.dart';
 import '../../../widgets/reports/readonly_pluto_grid.dart';
 
+@RoutePage()
 class PerformamnceSummaryReportDetailsPage extends LocalizedStatefulWidget
-    with AutoRouteWrapper {
+    implements AutoRouteWrapper {
   const PerformamnceSummaryReportDetailsPage({
     super.key,
     super.appLocalizations,

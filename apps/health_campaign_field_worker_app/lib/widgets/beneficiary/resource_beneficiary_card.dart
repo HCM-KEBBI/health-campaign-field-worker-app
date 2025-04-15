@@ -67,7 +67,7 @@ class _ResourceBeneficiaryCardState
                         label: '${localizations.translate(
                           i18.deliverIntervention.resourceDeliveredLabel,
                         )}*',
-                        readOnly: true,
+                        isDisabled: true,
                         menuItems: productVariants,
                         formControlName:
                             'resourceDelivered.${widget.cardIndex}',
@@ -81,7 +81,7 @@ class _ResourceBeneficiaryCardState
                         readOnly: true,
                         formControlName:
                             'quantityDistributed.${widget.cardIndex}',
-                       // form: widget.form,
+                        // form: widget.form,
                         label: '${localizations.translate(
                           widget.isAdministered
                               ? i18.deliverIntervention.redoseQuantityLabel

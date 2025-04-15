@@ -8,6 +8,7 @@ import '../../utils/extensions/extensions.dart';
 import '../../widgets/header/back_navigation_help_header.dart';
 import '../../widgets/localized.dart';
 
+@RoutePage()
 class ManageStocksPage extends LocalizedStatefulWidget {
   const ManageStocksPage({
     super.key,

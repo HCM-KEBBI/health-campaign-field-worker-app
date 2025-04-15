@@ -19,6 +19,7 @@ import '../../../widgets/localized.dart';
 import '../../digit_scanner.dart';
 import '../facility_selection.dart';
 
+@RoutePage()
 class WarehouseDetailsPage extends LocalizedStatefulWidget {
   const WarehouseDetailsPage({
     super.key,

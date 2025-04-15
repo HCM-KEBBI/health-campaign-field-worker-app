@@ -10,6 +10,7 @@ import '../../blocs/search_households/search_households.dart';
 import '../../models/entities/identifier_types.dart';
 import '../../models/entities/individual.dart';
 
+@RoutePage()
 class BeneficiaryAcknowledgementPage extends LocalizedStatefulWidget {
   final bool? enableViewHousehold;
   final IndividualModel? individual;

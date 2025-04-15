@@ -29,6 +29,7 @@ import '../widgets/home/home_item_card.dart';
 import '../widgets/localized.dart';
 import '../widgets/progress_bar/beneficiary_progress.dart';
 
+@RoutePage()
 class HomePage extends LocalizedStatefulWidget {
   const HomePage({
     super.key,

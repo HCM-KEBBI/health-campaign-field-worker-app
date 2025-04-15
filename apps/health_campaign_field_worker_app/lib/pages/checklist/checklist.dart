@@ -15,6 +15,7 @@ import '../../widgets/action_card/action_card.dart';
 import '../../widgets/header/back_navigation_help_header.dart';
 import '../../widgets/localized.dart';
 
+@RoutePage()
 class ChecklistPage extends LocalizedStatefulWidget {
   const ChecklistPage({
     Key? key,
