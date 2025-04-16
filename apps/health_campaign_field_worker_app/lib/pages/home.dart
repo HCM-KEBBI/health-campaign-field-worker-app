@@ -11,12 +11,19 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:health_campaign_field_worker_app/blocs/hcm_attendance_bloc.dart';
 import 'package:overlay_builder/overlay_builder.dart';
+import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
+import 'package:registration_delivery/utils/utils.dart'
+    as registration_delivery_utils;
+// import 'package:registration_delivery/utils/utils.dart';
 
+import '../blocs/app_initialization/app_initialization.dart';
 import '../blocs/auth/auth.dart';
 import '../blocs/search_households/search_households.dart';
 import '../blocs/search_referrals/search_referrals.dart';
 import '../blocs/sync/sync.dart';
 import '../data/data_repository.dart';
+import '../data/local_store/no_sql/schema/app_configuration.dart';
+import '../data/local_store/no_sql/schema/service_registry.dart';
 import '../data/local_store/secure_store/secure_store.dart';
 import '../data/local_store/sql_store/sql_store.dart';
 import '../models/data_model.dart';
@@ -61,6 +68,7 @@ class _HomePageState extends LocalizedState<HomePage> {
         }
       }
     });
+    setPackagesSingleton(context);
   }
 
   //  Be sure to cancel subscription after you are done
@@ -346,7 +354,7 @@ class _HomePageState extends LocalizedState<HomePage> {
         onPressed: () async {
           final searchBloc = context.read<SearchHouseholdsBloc>();
           await context.router.push(
-            SearchBeneficiaryRoute(),
+            RegistrationDeliveryWrapperRoute(),
           );
           searchBloc.add(const SearchHouseholdsClearEvent());
         },
@@ -585,4 +593,50 @@ class _HomePageState extends LocalizedState<HomePage> {
           );
     }
   }
+}
+
+void setPackagesSingleton(BuildContext context) {
+  context.read<AppInitializationBloc>().state.maybeWhen(
+        orElse: () {},
+        initialized: (appConfiguration, serviceRegistryList) =>
+            registration_delivery_utils.RegistrationDeliverySingleton()
+                .setInitialData(
+          loggedInUser: context.loggedInUserModel,
+          loggedInUserUuid: context.loggedInUserUuid,
+          maxRadius: appConfiguration.maxRadius!,
+          projectId: context.projectId,
+          selectedBeneficiaryType: context.customBeneficiaryType,
+          projectType: null, //context.customSelectedProjectType,
+          selectedProject: context.customSelectedProject,
+          genderOptions:
+              appConfiguration.genderOptions!.map((e) => e.code).toList(),
+          idTypeOptions:
+              appConfiguration.idTypeOptions!.map((e) => e.code).toList(),
+          householdDeletionReasonOptions: appConfiguration
+              .householdDeletionReasonOptions!
+              .map((e) => e.code)
+              .toList(),
+          householdMemberDeletionReasonOptions: appConfiguration
+              .householdMemberDeletionReasonOptions!
+              .map((e) => e.code)
+              .toList(),
+          deliveryCommentOptions: appConfiguration.deliveryCommentOptions!
+              .map((e) => e.code)
+              .toList(),
+          symptomsTypes:
+              appConfiguration.symptomsTypes?.map((e) => e.code).toList(),
+          searchHouseHoldFilter: null,
+          // appConfiguration.searchHouseHoldFilters != null
+          //     ? appConfiguration.searchHouseHoldFilters!
+          //         .map((e) => e.code)
+          //         .toList()
+          //     : [],
+          referralReasons:
+              appConfiguration.referralReasons?.map((e) => e.code).toList(),
+          houseStructureTypes: null,
+          // appConfiguration.houseStructureTypes?.map((e) => e.code).toList(),
+          refusalReasons: null,
+          // appConfiguration.refusalReasons?.map((e) => e.code).toList(),
+        ),
+      );
 }

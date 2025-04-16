@@ -450,7 +450,7 @@ class _HouseholdOverviewPageState
 
                                                                   context.router
                                                                       .popUntilRouteWithName(
-                                                                    SearchBeneficiaryRoute
+                                                                    CustomSearchBeneficiaryRoute
                                                                         .name,
                                                                   );
                                                                   context.router

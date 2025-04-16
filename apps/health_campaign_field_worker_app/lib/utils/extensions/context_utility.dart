@@ -24,6 +24,45 @@ extension ContextUtilityExtensions on BuildContext {
     return selectedProject;
   }
 
+  digit_user_model.UserModel? get loggedInUserModel {
+    final userRequestModel = loggedInUser;
+    final userModel = digit_user_model.UserModel(
+      userName: userRequestModel.userName,
+      name: userRequestModel.name,
+      uuid: userRequestModel.uuid,
+      mobileNumber: userRequestModel.mobileNumber,
+      gender: userRequestModel.gender,
+      active: userRequestModel.active,
+      tenantId: userRequestModel.tenantId,
+    );
+
+    return userModel;
+  }
+
+  digit_project_model.ProjectModel get customSelectedProject {
+    final projectBloc = _get<ProjectBloc>();
+
+    final projectState = projectBloc.state;
+    final selectedProject = projectState.selectedProject;
+
+    if (selectedProject == null) {
+      throw AppException('No project is selected');
+    }
+
+    return digit_project_model.ProjectModel(
+      name: selectedProject.name,
+      id: selectedProject.id,
+      projectTypeId: selectedProject.projectTypeId,
+      projectNumber: selectedProject.projectNumber,
+      subProjectTypeId: selectedProject.subProjectTypeId,
+      isTaskEnabled: selectedProject.isTaskEnabled,
+      parent: selectedProject.parent,
+      department: selectedProject.department,
+      referenceId: selectedProject.referenceId,
+      tenantId: selectedProject.tenantId,
+    );
+  }
+
   String get projectId => selectedProject.id;
 
   Cycle get selectedCycle {
@@ -109,6 +148,26 @@ extension ContextUtilityExtensions on BuildContext {
     }
 
     return selectedBeneficiary;
+  }
+
+  digit_beneficiary_type.BeneficiaryType get customBeneficiaryType {
+    final projectBloc = _get<ProjectBloc>();
+
+    final projectState = projectBloc.state;
+
+    final BeneficiaryType selectedBeneficiary =
+        projectState.projectType?.beneficiaryType ==
+                BeneficiaryType.household.toValue()
+            ? BeneficiaryType.household
+            : BeneficiaryType.individual;
+
+    if (selectedBeneficiary == null) {
+      throw AppException('No beneficiary type is selected');
+    }
+
+    return selectedBeneficiary == BeneficiaryType.household
+        ? digit_beneficiary_type.BeneficiaryType.household
+        : digit_beneficiary_type.BeneficiaryType.individual;
   }
 
   BoundaryModel? get boundaryOrNull {

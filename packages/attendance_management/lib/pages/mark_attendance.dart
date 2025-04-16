@@ -580,24 +580,23 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
                       padding: digitDialogOptions.dialogPadding != null
                           ? digitDialogOptions.dialogPadding!
                           : const EdgeInsets.all(kPadding),
-                      child: digitDialogOptions.title != null
-                          ? digitDialogOptions.title!
-                          : Row(
-                              children: [
-                                if (digitDialogOptions.titleIcon != null) ...[
-                                  digitDialogOptions.titleIcon!,
-                                  const SizedBox(width: 8),
-                                ],
-                                Expanded(
-                                  child: Text(
-                                    digitDialogOptions.titleText ?? '',
-                                    textAlign: TextAlign.left,
-                                    style: DigitTheme.instance.mobileTheme
-                                        .textTheme.headlineMedium,
-                                  ),
-                                ),
+                      child: digitDialogOptions.title(context) ??
+                          Row(
+                            children: [
+                              if (digitDialogOptions.titleIcon != null) ...[
+                                digitDialogOptions.titleIcon!,
+                                const SizedBox(width: 8),
                               ],
-                            ),
+                              Expanded(
+                                child: Text(
+                                  digitDialogOptions.titleText ?? '',
+                                  textAlign: TextAlign.left,
+                                  style: DigitTheme.instance.mobileTheme
+                                      .textTheme.headlineMedium,
+                                ),
+                              ),
+                            ],
+                          ),
                     ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width,

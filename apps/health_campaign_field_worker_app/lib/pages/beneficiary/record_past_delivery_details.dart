@@ -169,7 +169,7 @@ class _RecordPastDeliveryDetailsPageState
                                 ));
 
                                 context.router.popUntilRouteWithName(
-                                  SearchBeneficiaryRoute.name,
+                                  CustomSearchBeneficiaryRoute.name,
                                 );
 
                                 Navigator.of(ctx).pop();
@@ -219,7 +219,7 @@ class _RecordPastDeliveryDetailsPageState
                                   context.boundary,
                                 ));
                                 context.router.popUntilRouteWithName(
-                                  SearchBeneficiaryRoute.name,
+                                  CustomSearchBeneficiaryRoute.name,
                                 );
                                 bloc.add(HouseholdOverviewReloadEvent(
                                   projectId: context.projectId,

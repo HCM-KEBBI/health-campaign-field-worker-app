@@ -10,6 +10,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:isar/isar.dart';
 import 'package:location/location.dart';
+import 'package:registration_delivery/blocs/search_households/search_bloc_common_wrapper.dart';
+
+import 'package:registration_delivery/blocs/app_localization.dart'
+    as registration_delivery_localization;
 
 import 'blocs/app_initialization/app_initialization.dart';
 import 'blocs/auth/auth.dart';
@@ -29,6 +33,8 @@ import 'router/app_router.dart';
 import 'utils/environment_config.dart';
 import 'utils/utils.dart';
 import 'widgets/network_manager_provider_wrapper.dart';
+
+import 'package:digit_scanner/blocs/scanner.dart';
 
 class MainApplication extends StatefulWidget {
   final Dio client;
@@ -73,6 +79,14 @@ class MainApplicationState extends State<MainApplication>
           sql: widget.sql,
           child: MultiBlocProvider(
             providers: [
+              BlocProvider(
+                create: (_) {
+                  return DigitScannerBloc(
+                    const DigitScannerState(),
+                  );
+                },
+                lazy: false,
+              ),
               BlocProvider(
                 create: (_) {
                   return LocationBloc(location: Location())
@@ -323,6 +337,14 @@ class MainApplicationState extends State<MainApplication>
                               GlobalMaterialLocalizations.delegate,
                               attendance_localization.AttendanceLocalization
                                   .getDelegate(
+                                getLocalizationString(
+                                  widget.isar,
+                                  defaultLocale.toString(),
+                                ),
+                                appConfig.languages!,
+                              ),
+                              registration_delivery_localization
+                                  .RegistrationDeliveryLocalization.getDelegate(
                                 getLocalizationString(
                                   widget.isar,
                                   defaultLocale.toString(),

@@ -1,14 +1,17 @@
 import 'dart:io';
-
 import 'package:digit_components/theme/digit_theme.dart';
 import 'package:digit_components/widgets/digit_card.dart';
 import 'package:digit_components/widgets/digit_elevated_button.dart';
 import 'package:digit_components/widgets/scrollable_content.dart';
+import 'package:digit_data_model/data/local_store/sql_store/sql_store.dart'
+    as digit_sql;
+import 'package:digit_data_model/data/oplog/oplog.dart' as digit_oplog;
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_delivery/data/repositories/local/registration_delivery_address.dart';
 
 import '../blocs/app_initialization/app_initialization.dart';
 import '../data/data_repository.dart';
@@ -227,6 +230,12 @@ class NetworkManagerProviderWrapper extends StatelessWidget {
           SideEffectOpLogManager(isar),
         ),
       ),
+      // RepositoryProvider<RegistrationDeliveryAddressRepo>(
+      //   create: (_) => RegistrationDeliveryAddressRepo(
+      //     sql as digit_sql.LocalSqlDataStore,
+      //     digit_oplog.AddressOpLogManager(isar),
+      //   ),
+      // ),
       RepositoryProvider<
           LocalRepository<StockReconciliationModel,
               StockReconciliationSearchModel>>(

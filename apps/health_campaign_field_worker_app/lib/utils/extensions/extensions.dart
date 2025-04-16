@@ -1,5 +1,12 @@
 // Importing necessary packages and files
 import 'package:collection/collection.dart';
+import 'package:digit_data_model/models/entities/beneficiary_type.dart'
+    as digit_beneficiary_type;
+import 'package:digit_data_model/models/entities/user.dart' as digit_user_model;
+import 'package:digit_data_model/models/entities/project_type.dart'
+    as digit_project_type_model;
+import 'package:digit_data_model/models/entities/project.dart'
+    as digit_project_model;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';

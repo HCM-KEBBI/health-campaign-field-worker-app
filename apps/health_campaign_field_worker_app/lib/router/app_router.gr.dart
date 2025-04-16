@@ -287,6 +287,17 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    CustomSearchBeneficiaryRoute.name: (routeData) {
+      final args = routeData.argsAs<CustomSearchBeneficiaryRouteArgs>(
+          orElse: () => const CustomSearchBeneficiaryRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomSearchBeneficiaryPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
     DeliverInterventionRoute.name: (routeData) {
       final args = routeData.argsAs<DeliverInterventionRouteArgs>(
           orElse: () => const DeliverInterventionRouteArgs());
@@ -656,17 +667,6 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
-    SearchBeneficiaryRoute.name: (routeData) {
-      final args = routeData.argsAs<SearchBeneficiaryRouteArgs>(
-          orElse: () => const SearchBeneficiaryRouteArgs());
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: SearchBeneficiaryPage(
-          key: args.key,
-          appLocalizations: args.appLocalizations,
-        ),
-      );
-    },
     SearchReferralsRoute.name: (routeData) {
       final args = routeData.argsAs<SearchReferralsRouteArgs>(
           orElse: () => const SearchReferralsRouteArgs());
@@ -754,7 +754,7 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
-    RegistrationDeliveryRoute().pagesMap,
+    ...RegistrationDeliveryRoute().pagesMap,
   };
 }
 
@@ -1712,6 +1712,45 @@ class ConsentHouseholdAcknowledgementRouteArgs {
   @override
   String toString() {
     return 'ConsentHouseholdAcknowledgementRouteArgs{key: $key, appLocalizations: $appLocalizations, enableViewHousehold: $enableViewHousehold}';
+  }
+}
+
+/// generated route for
+/// [CustomSearchBeneficiaryPage]
+class CustomSearchBeneficiaryRoute
+    extends PageRouteInfo<CustomSearchBeneficiaryRouteArgs> {
+  CustomSearchBeneficiaryRoute({
+    Key? key,
+    RegistrationDeliveryLocalization? appLocalizations,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomSearchBeneficiaryRoute.name,
+          args: CustomSearchBeneficiaryRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomSearchBeneficiaryRoute';
+
+  static const PageInfo<CustomSearchBeneficiaryRouteArgs> page =
+      PageInfo<CustomSearchBeneficiaryRouteArgs>(name);
+}
+
+class CustomSearchBeneficiaryRouteArgs {
+  const CustomSearchBeneficiaryRouteArgs({
+    this.key,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final RegistrationDeliveryLocalization? appLocalizations;
+
+  @override
+  String toString() {
+    return 'CustomSearchBeneficiaryRouteArgs{key: $key, appLocalizations: $appLocalizations}';
   }
 }
 
@@ -3059,44 +3098,6 @@ class ReferralReasonChecklistRouteArgs {
   @override
   String toString() {
     return 'ReferralReasonChecklistRouteArgs{key: $key, appLocalizations: $appLocalizations, isEditing: $isEditing, referralClientRefId: $referralClientRefId}';
-  }
-}
-
-/// generated route for
-/// [SearchBeneficiaryPage]
-class SearchBeneficiaryRoute extends PageRouteInfo<SearchBeneficiaryRouteArgs> {
-  SearchBeneficiaryRoute({
-    Key? key,
-    RegistrationDeliveryLocalization? appLocalizations,
-    List<PageRouteInfo>? children,
-  }) : super(
-          SearchBeneficiaryRoute.name,
-          args: SearchBeneficiaryRouteArgs(
-            key: key,
-            appLocalizations: appLocalizations,
-          ),
-          initialChildren: children,
-        );
-
-  static const String name = 'SearchBeneficiaryRoute';
-
-  static const PageInfo<SearchBeneficiaryRouteArgs> page =
-      PageInfo<SearchBeneficiaryRouteArgs>(name);
-}
-
-class SearchBeneficiaryRouteArgs {
-  const SearchBeneficiaryRouteArgs({
-    this.key,
-    this.appLocalizations,
-  });
-
-  final Key? key;
-
-  final RegistrationDeliveryLocalization? appLocalizations;
-
-  @override
-  String toString() {
-    return 'SearchBeneficiaryRouteArgs{key: $key, appLocalizations: $appLocalizations}';
   }
 }
 
