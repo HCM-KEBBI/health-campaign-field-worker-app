@@ -3,27 +3,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../blocs/beneficiary_registration/beneficiary_registration.dart';
-import '../../models/data_model.dart';
+import '../../blocs/household_overview/household_overview.dart';
+import '../../blocs/search_households/search_households.dart';
+import '../../models/entities/household.dart';
+import '../../models/entities/household_member.dart';
+import '../../models/entities/individual.dart';
+import '../../models/entities/project_beneficiary.dart';
+import '../../models/entities/referral.dart';
+import '../../models/entities/side_effect.dart';
+import '../../models/entities/task.dart';
 import '../../utils/extensions/extensions.dart';
-import '../../widgets/boundary_selection_wrapper.dart';
+import '../../utils/registration_delivery_singleton.dart';
 
 class BeneficiaryRegistrationWrapperPage extends StatelessWidget
-    with AutoRouteWrapper {
+    implements AutoRouteWrapper {
   final BeneficiaryRegistrationState initialState;
 
   const BeneficiaryRegistrationWrapperPage({
-    Key? key,
+    super.key,
     required this.initialState,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    return const BoundarySelectionWrapper(child: AutoRouter());
+    return const AutoRouter();
   }
 
   @override
   Widget wrappedRoute(BuildContext context) {
-    final beneficiaryType = context.beneficiaryType;
+    final beneficiaryType = RegistrationDeliverySingleton().beneficiaryType;
     final individual =
         context.repository<IndividualModel, IndividualSearchModel>();
 
@@ -35,17 +43,77 @@ class BeneficiaryRegistrationWrapperPage extends StatelessWidget
 
     final projectBeneficiary = context
         .repository<ProjectBeneficiaryModel, ProjectBeneficiarySearchModel>();
+    final task = context.repository<TaskModel, TaskSearchModel>();
+    final sideEffect =
+        context.repository<SideEffectModel, SideEffectSearchModel>();
+    final referral = context.repository<ReferralModel, ReferralSearchModel>();
 
     return BlocProvider(
-      create: (context) => BeneficiaryRegistrationBloc(
-        initialState,
+      create: (_) => HouseholdOverviewBloc(
+        HouseholdOverviewState(
+          householdMemberWrapper: HouseholdMemberWrapper(
+            household: initialState.householdModel!,
+            headOfHousehold: initialState.maybeWhen(
+                orElse: () => null,
+                editHousehold: (addressModel,
+                        householdModel,
+                        individualModel,
+                        registrationDate,
+                        projectBeneficiaryModel,
+                        loading,
+                        headOfHousehold) =>
+                    headOfHousehold!),
+            members: initialState.maybeWhen(
+              orElse: () => null,
+              editHousehold: (addressModel,
+                      householdModel,
+                      individualModel,
+                      registrationDate,
+                      projectBeneficiaryModel,
+                      loading,
+                      headOfHousehold) =>
+                  individualModel,
+            ),
+            projectBeneficiaries: initialState.maybeWhen(
+              orElse: () => null,
+              editHousehold: (addressModel,
+                      householdModel,
+                      individualModel,
+                      registrationDate,
+                      projectBeneficiaryModel,
+                      loading,
+                      headOfHousehold) =>
+                  projectBeneficiaryModel != null
+                      ? [projectBeneficiaryModel]
+                      : [],
+            ),
+          ),
+        ),
         individualRepository: individual,
         householdRepository: household,
         householdMemberRepository: householdMember,
         projectBeneficiaryRepository: projectBeneficiary,
-        beneficiaryType: beneficiaryType,
+        beneficiaryType: RegistrationDeliverySingleton().beneficiaryType!,
+        taskDataRepository: task,
+        sideEffectDataRepository: sideEffect,
+        referralDataRepository: referral,
+      )..add(HouseholdOverviewReloadEvent(
+          projectId: RegistrationDeliverySingleton().selectedProject!.id,
+          projectBeneficiaryType:
+              RegistrationDeliverySingleton().beneficiaryType!,
+        )),
+      child: BlocProvider(
+        create: (context) => BeneficiaryRegistrationBloc(
+          initialState,
+          individualRepository: individual,
+          householdRepository: household,
+          householdMemberRepository: householdMember,
+          projectBeneficiaryRepository: projectBeneficiary,
+          taskDataRepository: task,
+          beneficiaryType: beneficiaryType!,
+        ),
+        child: this,
       ),
-      child: this,
     );
   }
 }

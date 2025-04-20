@@ -6,18 +6,20 @@ import '../../models/data_model.dart';
 
 class BeneficiaryCard extends StatelessWidget {
   final String title;
-  final String subtitle;
-  final String description;
+  final String? subtitle;
+  final String? description;
   final String? status;
   final String? statusType;
+  final List<String>? fields;
 
   const BeneficiaryCard({
     super.key,
     required this.title,
-    required this.subtitle,
-    required this.description,
+    this.subtitle,
+    this.description,
     this.status,
     this.statusType,
+    this.fields,
   });
 
   @override
@@ -29,7 +31,7 @@ class BeneficiaryCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.all(4),
+          padding: const EdgeInsets.all(2),
           child: Text(
             title,
             style: theme.textTheme.headlineSmall,
@@ -37,7 +39,9 @@ class BeneficiaryCard extends StatelessWidget {
         ),
         Offstage(
           offstage: status == null,
-          child: status == Status.delivered.toValue()
+          child: status == Status.visited.toValue() ||
+                  status == Status.registered.toValue() ||
+                  status == Status.administeredSuccess.toValue()
               ? DigitIconButton(
                   icon: Icons.check_circle,
                   iconText:
@@ -53,20 +57,22 @@ class BeneficiaryCard extends StatelessWidget {
                   iconColor: theme.colorScheme.error,
                 ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(4),
-          child: Text(
-            subtitle,
-            style: theme.textTheme.bodyMedium,
+        if (subtitle != null)
+          Padding(
+            padding: const EdgeInsets.all(2),
+            child: Text(
+              subtitle!,
+              style: theme.textTheme.bodyMedium,
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(4),
-          child: Text(
-            description,
-            style: theme.textTheme.bodySmall,
+        if (description != null)
+          Padding(
+            padding: const EdgeInsets.all(2),
+            child: Text(
+              description!,
+              style: theme.textTheme.bodySmall,
+            ),
           ),
-        ),
       ],
     );
   }

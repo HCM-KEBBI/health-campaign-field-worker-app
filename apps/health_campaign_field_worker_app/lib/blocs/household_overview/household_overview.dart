@@ -15,6 +15,7 @@ typedef HouseholdOverviewEmitter = Emitter<HouseholdOverviewState>;
 
 class HouseholdOverviewBloc
     extends Bloc<HouseholdOverviewEvent, HouseholdOverviewState> {
+  final BeneficiaryType beneficiaryType;
   final IndividualDataRepository individualRepository;
   final HouseholdDataRepository householdRepository;
   final HouseholdMemberDataRepository householdMemberRepository;
@@ -32,6 +33,7 @@ class HouseholdOverviewBloc
     required this.taskDataRepository,
     required this.sideEffectDataRepository,
     required this.referralDataRepository,
+    required this.beneficiaryType,
   }) {
     on(_handleDeleteHousehold);
     on(_handleDeleteIndividual);
@@ -61,7 +63,9 @@ class HouseholdOverviewBloc
     final members = await householdMemberRepository.search(
       HouseholdMemberSearchModel(
         householdClientReferenceId:
-            state.householdMemberWrapper.household.clientReferenceId,
+            state.householdMemberWrapper.household != null
+                ? state.householdMemberWrapper.household?.clientReferenceId
+                : null,
       ),
     );
 
@@ -71,7 +75,7 @@ class HouseholdOverviewBloc
     );
 
     final householdId =
-        state.householdMemberWrapper.household.clientReferenceId;
+        state.householdMemberWrapper.household?.clientReferenceId;
 
     // Check if the current household has any members.
     if (!groupedHouseholds.containsKey(householdId)) {
@@ -92,7 +96,8 @@ class HouseholdOverviewBloc
 
     // Search for households with the specified client reference ID.
     final households = await householdRepository.search(
-      HouseholdSearchModel(clientReferenceId: [householdId]),
+      HouseholdSearchModel(
+          clientReferenceId: householdId != null ? [householdId] : []),
     );
 
     // Check if any households were found.
@@ -161,10 +166,9 @@ class HouseholdOverviewBloc
     }
 
     // Search for tasks associated with project beneficiaries.
-    final tasks = await taskDataRepository.search(TaskSearchModel(
-      projectBeneficiaryClientReferenceId:
-          projectBeneficiaries.map((e) => e.clientReferenceId).toList(),
-    ));
+    var tasks = await taskDataRepository.search(TaskSearchModel(
+        projectBeneficiaryClientReferenceId:
+            projectBeneficiaries.map((e) => e.clientReferenceId).toList()));
 
     // Search for adverse events associated with tasks.
     final sideEffects =
@@ -216,7 +220,6 @@ class HouseholdOverviewBloc
       clientReferenceId: [event.householdModel.clientReferenceId],
     )))
             .firstOrNull;
-
     await householdRepository.delete(
       event.householdModel.copyWith(
         id: existingHousehold?.id,
@@ -238,7 +241,6 @@ class HouseholdOverviewBloc
         rowVersion: existingIndividual?.rowVersion ?? 1,
         nonRecoverableError: existingIndividual?.nonRecoverableError ?? false,
       ));
-
       if (event.projectBeneficiaryType == BeneficiaryType.individual) {
         // Search for project beneficiary associated with the deleted individual.
         final projectBeneficiaries = await projectBeneficiaryRepository.search(
@@ -248,7 +250,6 @@ class HouseholdOverviewBloc
             ],
           ),
         );
-
         // Delete the associated project beneficiaries.
         for (final projectBeneficiary in projectBeneficiaries) {
           await projectBeneficiaryRepository.delete(
@@ -326,7 +327,6 @@ class HouseholdOverviewBloc
       rowVersion: existingIndividual?.rowVersion ?? 1,
       nonRecoverableError: existingIndividual?.nonRecoverableError ?? false,
     ));
-
     if (event.projectBeneficiaryType == BeneficiaryType.individual) {
       // Search for project beneficiary associated with the deleted individual.
       final projectBeneficiaries = await projectBeneficiaryRepository.search(
@@ -336,7 +336,6 @@ class HouseholdOverviewBloc
           ],
         ),
       );
-
       // Delete the associated project beneficiaries.
       for (final projectBeneficiary in projectBeneficiaries) {
         await projectBeneficiaryRepository.delete(

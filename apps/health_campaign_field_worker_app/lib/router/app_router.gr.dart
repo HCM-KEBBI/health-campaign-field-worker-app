@@ -136,7 +136,6 @@ class _$AppRouter extends RootStackRouter {
           key: args.key,
           appLocalizations: args.appLocalizations,
           enableViewHousehold: args.enableViewHousehold,
-          individual: args.individual,
         ),
       );
     },
@@ -331,13 +330,13 @@ class _$AppRouter extends RootStackRouter {
       );
     },
     HouseHoldDetailsRoute.name: (routeData) {
-      final args = routeData.argsAs<HouseHoldDetailsRouteArgs>(
-          orElse: () => const HouseHoldDetailsRouteArgs());
+      final args = routeData.argsAs<HouseHoldDetailsRouteArgs>();
       return MaterialPageX<dynamic>(
         routeData: routeData,
         child: HouseHoldDetailsPage(
           key: args.key,
           appLocalizations: args.appLocalizations,
+          isEligible: args.isEligible,
         ),
       );
     },
@@ -1511,7 +1510,6 @@ class BeneficiaryAcknowledgementRoute
     Key? key,
     AppLocalizations? appLocalizations,
     bool? enableViewHousehold,
-    IndividualModel? individual,
   }) : super(
           BeneficiaryAcknowledgementRoute.name,
           path: 'beneficiary-acknowledgement',
@@ -1519,7 +1517,6 @@ class BeneficiaryAcknowledgementRoute
             key: key,
             appLocalizations: appLocalizations,
             enableViewHousehold: enableViewHousehold,
-            individual: individual,
           ),
         );
 
@@ -1531,7 +1528,6 @@ class BeneficiaryAcknowledgementRouteArgs {
     this.key,
     this.appLocalizations,
     this.enableViewHousehold,
-    this.individual,
   });
 
   final Key? key;
@@ -1540,11 +1536,9 @@ class BeneficiaryAcknowledgementRouteArgs {
 
   final bool? enableViewHousehold;
 
-  final IndividualModel? individual;
-
   @override
   String toString() {
-    return 'BeneficiaryAcknowledgementRouteArgs{key: $key, appLocalizations: $appLocalizations, enableViewHousehold: $enableViewHousehold, individual: $individual}';
+    return 'BeneficiaryAcknowledgementRouteArgs{key: $key, appLocalizations: $appLocalizations, enableViewHousehold: $enableViewHousehold}';
   }
 }
 
@@ -2131,7 +2125,7 @@ class IndividualDetailsRoute extends PageRouteInfo<IndividualDetailsRouteArgs> {
   IndividualDetailsRoute({
     Key? key,
     AppLocalizations? appLocalizations,
-    bool isHeadOfHousehold = false,
+    bool isHeadOfHousehold = true,
   }) : super(
           IndividualDetailsRoute.name,
           path: 'individual-details',
@@ -2149,7 +2143,7 @@ class IndividualDetailsRouteArgs {
   const IndividualDetailsRouteArgs({
     this.key,
     this.appLocalizations,
-    this.isHeadOfHousehold = false,
+    this.isHeadOfHousehold = true,
   });
 
   final Key? key;
@@ -2170,12 +2164,14 @@ class HouseHoldDetailsRoute extends PageRouteInfo<HouseHoldDetailsRouteArgs> {
   HouseHoldDetailsRoute({
     Key? key,
     AppLocalizations? appLocalizations,
+    required bool isEligible,
   }) : super(
           HouseHoldDetailsRoute.name,
           path: 'household-details',
           args: HouseHoldDetailsRouteArgs(
             key: key,
             appLocalizations: appLocalizations,
+            isEligible: isEligible,
           ),
         );
 
@@ -2186,15 +2182,18 @@ class HouseHoldDetailsRouteArgs {
   const HouseHoldDetailsRouteArgs({
     this.key,
     this.appLocalizations,
+    required this.isEligible,
   });
 
   final Key? key;
 
   final AppLocalizations? appLocalizations;
 
+  final bool isEligible;
+
   @override
   String toString() {
-    return 'HouseHoldDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+    return 'HouseHoldDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations, isEligible: $isEligible}';
   }
 }
 

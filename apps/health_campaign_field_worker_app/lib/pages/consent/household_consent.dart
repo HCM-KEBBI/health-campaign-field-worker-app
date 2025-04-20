@@ -61,6 +61,7 @@ class _HouseHoldConsentPageState extends LocalizedState<HouseHoldConsentPage> {
                             addressModel,
                             householdModel,
                             individualModel,
+                            projectBeneficiaryModel,
                             registrationDate,
                             searchQuery,
                             loading,
@@ -144,12 +145,12 @@ class _HouseHoldConsentPageState extends LocalizedState<HouseHoldConsentPage> {
                                 memberCount: 0,
                               );
 
-                              bloc.add(
-                                BeneficiaryRegistrationSaveHouseholdConsentEvent(
-                                  household: household,
-                                  isConsent: isConsent,
-                                ),
-                              );
+                              // bloc.add(
+                              //   BeneficiaryRegistrationSaveHouseholdConsentEvent(
+                              //     household: household,
+                              //     isConsent: isConsent,
+                              //   ),
+                              // );
                               // clear search on consent being no
                               final searchBloc =
                                   context.read<SearchHouseholdsBloc>();
@@ -159,15 +160,18 @@ class _HouseHoldConsentPageState extends LocalizedState<HouseHoldConsentPage> {
                               context.router
                                   .push(ConsentHouseholdAcknowledgementRoute());
                             } else {
-                              context.router.push(HouseHoldDetailsRoute());
+                              context.router.push(
+                                  HouseHoldDetailsRoute(isEligible: false));
                             }
                           },
                           editHousehold: (
-                            addressModel,
+                            address,
                             householdModel,
                             individuals,
                             registrationDate,
+                            projectBeneficiaryModel,
                             loading,
+                            headOfHousehold,
                           ) {
                             (router.parent() as StackRouter).pop();
                           },

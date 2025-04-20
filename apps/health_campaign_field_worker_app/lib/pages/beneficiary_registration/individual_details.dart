@@ -1,32 +1,35 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/utils/date_utils.dart';
-import 'package:digit_components/widgets/atoms/digit_checkbox.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
-import 'package:digit_components/widgets/digit_dob_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:health_campaign_field_worker_app/blocs/delivery_intervention/deliver_intervention.dart';
-import 'package:health_campaign_field_worker_app/blocs/project/project.dart';
-import 'package:health_campaign_field_worker_app/models/project_type/project_type_model.dart';
+import 'package:health_campaign_field_worker_app/router/app_router.dart';
 import 'package:intl/intl.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
-import '../../../utils/validations.dart' as validation;
-import '../../blocs/app_initialization/app_initialization.dart';
+import '../../../../utils/i18_key_constants.dart' as i18;
+import '../../../utils/utils.dart' as utils;
 import '../../blocs/beneficiary_registration/beneficiary_registration.dart';
-import '../../blocs/household_overview/household_overview.dart';
+import '../../blocs/boundary/boundary.dart';
+import '../../blocs/digit_scanner/digit_scanner.dart';
 import '../../blocs/search_households/search_households.dart';
-import '../../data/local_store/no_sql/schema/app_configuration.dart';
 import '../../models/data_model.dart';
 import '../../models/entities/identifier_types.dart';
-import '../../router/app_router.dart';
-import '../../utils/environment_config.dart';
-import '../../utils/i18_key_constants.dart' as i18;
-import '../../utils/utils.dart';
+import '../../models/entities/locality.dart';
+import '../../utils/constants.dart';
+import '../../utils/registration_delivery_singleton.dart';
+import '../../widgets/components/custom_digit_dob_picker.dart';
+import '../../widgets/components/selection_card.dart';
 import '../../widgets/header/back_navigation_help_header.dart';
 import '../../widgets/localized.dart';
+import '../../widgets/widgets/showcase/individual_details.dart';
+
+final individualDetailsShowcaseData = IndividualDetailsShowcaseData();
+// import 'package:registration_delivery/blocs/app_localization.dart'
+// as registration_delivery_localization;
 
 class IndividualDetailsPage extends LocalizedStatefulWidget {
   final bool isHeadOfHousehold;
@@ -34,49 +37,30 @@ class IndividualDetailsPage extends LocalizedStatefulWidget {
   const IndividualDetailsPage({
     super.key,
     super.appLocalizations,
-    this.isHeadOfHousehold = false,
+    this.isHeadOfHousehold = true,
   });
 
   @override
-  State<IndividualDetailsPage> createState() => _IndividualDetailsPageState();
+  State<IndividualDetailsPage> createState() => IndividualDetailsPageState();
 }
 
-class _IndividualDetailsPageState
-    extends LocalizedState<IndividualDetailsPage> {
+class IndividualDetailsPageState extends LocalizedState<IndividualDetailsPage> {
   static const _individualNameKey = 'individualName';
   static const _individualLastNameKey = 'individualLastName';
   static const _dobKey = 'dob';
   static const _genderKey = 'gender';
-  static const _weight = 'weight';
-  static const _height = 'height';
   static const _mobileNumberKey = 'mobileNumber';
+  static const _beneficiaryIdKey = 'beneficiaryId';
+  bool isDuplicateTag = false;
+  static const maxLength = 200;
+  final clickedStatus = ValueNotifier<bool>(false);
   DateTime now = DateTime.now();
+  bool isEditIndividual = false;
+  Set<String>? beneficiaryId;
 
-  bool isHeadAgeValid = true;
-
-  final ValueNotifier<dynamic> heightWeight = ValueNotifier(null);
-
-  void updateStatus(FormGroup form, dynamic age, BuildContext context) {
-    // Updating the Value updateStatuseNotifier
-
-    if (age == null) {
-      if (heightWeight.value != "") {
-        heightWeight.value = ""; // Only update if necessary
-        form.control(_weight).value = "";
-        form.control(_height).value = "";
-      }
-    } else {
-      final cat = getCategory(getAgeMonths(age), context);
-      final newValue =
-          (cat == Constants.height || cat == Constants.weight) ? cat : "";
-
-      form.control(_weight).value = "";
-      form.control(_height).value = "";
-
-      if (heightWeight.value != newValue) {
-        heightWeight.value = newValue; // Update only if changed
-      }
-    }
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -85,12 +69,7 @@ class _IndividualDetailsPageState
     final router = context.router;
     final theme = Theme.of(context);
     DateTime before150Years = DateTime(now.year - 150, now.month, now.day);
-
-    final individual = bloc.state.mapOrNull<IndividualModel>(
-      editIndividual: (value) {
-        return value.individualModel;
-      },
-    );
+    final beneficiaryType = RegistrationDeliverySingleton().beneficiaryType!;
 
     return Scaffold(
       body: ReactiveFormBuilder(
@@ -101,14 +80,11 @@ class _IndividualDetailsPageState
             state.mapOrNull(
               persisted: (value) {
                 if (value.navigateToRoot) {
-                  (router.parent() as StackRouter).pop();
-                } else {
                   Future.delayed(
                     const Duration(
-                      milliseconds: 200,
+                      milliseconds: 500,
                     ),
                     () {
-                      (router.parent() as StackRouter).pop();
                       context.read<SearchHouseholdsBloc>().add(
                             SearchHouseholdsByHouseholdsEvent(
                               householdModel: value.householdModel,
@@ -117,10 +93,28 @@ class _IndividualDetailsPageState
                             ),
                           );
                     },
-                  ).then((value1) => {
-                        router.push(BeneficiaryAcknowledgementRoute(
+                  ).then((value) => {
+                        context.router.push(BeneficiaryAcknowledgementRoute(
                           enableViewHousehold: true,
-                          individual: value.individualModel,
+                        )),
+                      });
+                } else {
+                  Future.delayed(
+                    const Duration(
+                      milliseconds: 500,
+                    ),
+                    () {
+                      context.read<SearchHouseholdsBloc>().add(
+                            SearchHouseholdsByHouseholdsEvent(
+                              householdModel: value.householdModel,
+                              projectId: context.projectId,
+                              isProximityEnabled: false,
+                            ),
+                          );
+                    },
+                  ).then((value) => {
+                        context.router.push(BeneficiaryAcknowledgementRoute(
+                          enableViewHousehold: widget.isHeadOfHousehold,
                         )),
                       });
                 }
@@ -128,329 +122,356 @@ class _IndividualDetailsPageState
             );
           },
           builder: (context, state) {
-            form.control(_dobKey).valueChanges.listen((value) {
-              if (value == null) {
-                updateStatus(form, null, context);
-              } else {
-                DigitDOBAge age = DigitDateUtils.calculateAge(value);
-
-                updateStatus(form, age, context);
-              }
-            });
-
             return ScrollableContent(
               enableFixedButton: true,
-              header: const Column(children: [
-                BackNavigationHelpHeaderWidget(),
+              header: Column(children: [
+                BackNavigationHelpHeaderWidget(
+                  showHelp: false,
+                  handleback: () {
+                    if (isEditIndividual) {
+                      final parent = context.router.parent() as StackRouter;
+                      parent.pop();
+                    } else {
+                      context.router.pop();
+                    }
+                  },
+                ),
               ]),
               footer: DigitCard(
-                margin: const EdgeInsets.only(left: 0, right: 0, top: 10),
-                child: DigitElevatedButton(
-                  onPressed: () async {
-                    if (form.control(_dobKey).value == null) {
-                      form.control(_dobKey).setErrors({'': true});
-                    }
-                    if (widget.isHeadOfHousehold) {
-                      final value = form.control(_dobKey).value;
-                      DigitDOBAge age = DigitDateUtils.calculateAge(value);
-                      isHeadAgeValid = age.years >= 18;
-                    }
+                margin: const EdgeInsets.fromLTRB(0, kPadding, 0, 0),
+                padding: const EdgeInsets.fromLTRB(kPadding, 0, kPadding, 0),
+                child: ValueListenableBuilder(
+                  valueListenable: clickedStatus,
+                  builder: (context, bool isClicked, _) {
+                    return DigitElevatedButton(
+                      onPressed: isClicked
+                          ? null
+                          : () async {
+                              final boundaryBloc =
+                                  context.read<BoundaryBloc>().state;
+                              final code = boundaryBloc.boundaryList.first.code;
+                              final bname =
+                                  boundaryBloc.boundaryList.first.name;
 
-                    if (!isHeadAgeValid) {
-                      await DigitToast.show(
-                        context,
-                        options: DigitToastOptions(
-                          localizations.translate(
-                            i18.individualDetails.headAgeValidError,
-                          ),
-                          true,
-                          theme,
-                        ),
-                      );
+                              final locality = code == null || bname == null
+                                  ? null
+                                  : LocalityModel(code: code, name: bname);
 
-                      return;
-                    }
+                              String localityCode = locality!.code;
 
-                    final String checkCategory = getCategory(
-                        getAgeMonths(
-                          DigitDateUtils.calculateAge(
-                            form.control(_dobKey).value,
-                          ),
-                        ),
-                        context);
+                              beneficiaryId =
+                                  await UniqueIdGeneration().generateUniqueId(
+                                localityCode: localityCode,
+                                loggedInUserId: context.loggedInUserUuid,
+                                returnCombinedIds: false,
+                              );
+                              DateTime? dob = form.control(_dobKey).value;
+                              final age = DigitDateUtils.calculateAge(dob!);
+                              if ((age.years == 0 && age.months == 0) ||
+                                  age.years >= 150 && age.months > 0) {
+                                form.control(_dobKey).setErrors({'': true});
+                              }
 
-                    switch (checkCategory) {
-                      case Constants.height:
-                        dynamic value = form.control(_height).value;
-                        form.control(_height).value =
-                            value == "" ? form.control(_weight).value : value;
-                        value = form.control(_height).value;
-                        if (value == null || value == "") {
-                          await DigitToast.show(
-                            context,
-                            options: DigitToastOptions(
-                              localizations.translate(
-                                i18.individualDetails.heightErrorValidationText,
-                              ),
-                              true,
-                              theme,
-                            ),
-                          );
+                              if (form.control(_genderKey).value == null) {
+                                setState(() {
+                                  form
+                                      .control(_genderKey)
+                                      .setErrors({'': true});
+                                });
+                              }
+                              final userId = RegistrationDeliverySingleton()
+                                  .loggedInUserUuid;
+                              final projectId =
+                                  RegistrationDeliverySingleton().projectId;
+                              form.markAllAsTouched();
+                              if (!form.valid) return;
+                              FocusManager.instance.primaryFocus?.unfocus();
 
-                          return;
-                        }
-                        break;
-                      case Constants.weight:
-                        dynamic value = form.control(_weight).value;
-                        form.control(_weight).value =
-                            value == "" ? form.control(_height).value : value;
-                        value = form.control(_weight).value;
-                        if (value == null || value == "") {
-                          await DigitToast.show(
-                            context,
-                            options: DigitToastOptions(
-                              localizations.translate(
-                                i18.individualDetails.weightErrorValidationText,
-                              ),
-                              true,
-                              theme,
-                            ),
-                          );
-
-                          return;
-                        }
-                        break;
-
-                      default:
-                    }
-
-                    final userId = context.loggedInUserUuid;
-                    final projectId = context.projectId;
-                    form.markAllAsTouched();
-                    if (!form.valid) return;
-                    FocusManager.instance.primaryFocus?.unfocus();
-
-                    state.maybeWhen(
-                      orElse: () {
-                        return;
-                      },
-                      create: (
-                        addressModel,
-                        householdModel,
-                        individualModel,
-                        registrationDate,
-                        searchQuery,
-                        loading,
-                        isHeadOfHousehold,
-                      ) async {
-                        final individual = _getIndividualModel(
-                          context,
-                          form: form,
-                          oldIndividual: null,
-                        );
-
-                        final locationBloc = context.read<LocationBloc>();
-                        final locationInitialState = locationBloc.state;
-                        final initialLat = locationInitialState.latitude;
-                        final initialLng = locationInitialState.longitude;
-                        final initialAccuracy = locationInitialState.accuracy;
-                        if (addressModel != null &&
-                            (addressModel.latitude == null ||
-                                addressModel.longitude == null ||
-                                addressModel.locationAccuracy == null)) {
-                          bloc.add(
-                            BeneficiaryRegistrationSaveAddressEvent(
-                              addressModel.copyWith(
-                                latitude:
-                                    initialLat ?? addressModel.locationAccuracy,
-                                longitude:
-                                    initialLng ?? addressModel.locationAccuracy,
-                                locationAccuracy: initialAccuracy ??
-                                    addressModel.locationAccuracy,
-                              ),
-                            ),
-                          );
-                        }
-
-                        final boundary = context.boundary;
-
-                        bloc.add(
-                          BeneficiaryRegistrationSaveIndividualDetailsEvent(
-                            model: individual,
-                            isHeadOfHousehold: widget.isHeadOfHousehold,
-                          ),
-                        );
-
-                        final submit = await DigitDialog.show<bool>(
-                          context,
-                          options: DigitDialogOptions(
-                            titleText: localizations.translate(
-                              i18.deliverIntervention.dialogTitle,
-                            ),
-                            contentText: localizations.translate(
-                              i18.deliverIntervention.dialogContent,
-                            ),
-                            primaryAction: DigitDialogActions(
-                              label: localizations.translate(
-                                i18.common.coreCommonSubmit,
-                              ),
-                              action: (context) {
-                                Navigator.of(
+                              if (age.years < 18 && widget.isHeadOfHousehold) {
+                                await DigitToast.show(
                                   context,
-                                  rootNavigator: true,
-                                ).pop(true);
-                              },
-                            ),
-                            secondaryAction: DigitDialogActions(
-                              label: localizations.translate(
-                                i18.common.coreCommonCancel,
-                              ),
-                              action: (context) => Navigator.of(
+                                  options: DigitToastOptions(
+                                    localizations.translate(i18
+                                        .individualDetails.headAgeValidError),
+                                    true,
+                                    theme,
+                                  ),
+                                );
+
+                                return;
+                              }
+
+                              final submit = await DigitDialog.show<bool>(
                                 context,
-                                rootNavigator: true,
-                              ).pop(false),
-                            ),
-                          ),
-                        );
+                                options: DigitDialogOptions(
+                                  titleText: localizations.translate(
+                                    i18.deliverIntervention.dialogTitle,
+                                  ),
+                                  contentText: localizations.translate(
+                                    i18.deliverIntervention.dialogContent,
+                                  ),
+                                  primaryAction: DigitDialogActions(
+                                    label: localizations.translate(
+                                      i18.common.coreCommonSubmit,
+                                    ),
+                                    action: (context) {
+                                      clickedStatus.value = true;
+                                      Navigator.of(
+                                        context,
+                                        rootNavigator: true,
+                                      ).pop(true);
+                                    },
+                                  ),
+                                  secondaryAction: DigitDialogActions(
+                                    label: localizations.translate(
+                                      i18.common.coreCommonCancel,
+                                    ),
+                                    action: (context) => Navigator.of(
+                                      context,
+                                      rootNavigator: true,
+                                    ).pop(false),
+                                  ),
+                                ),
+                              );
 
-                        if (submit ?? false) {
-                          bloc.add(
-                            BeneficiaryRegistrationCreateEvent(
-                              projectId: projectId,
-                              userUuid: userId,
-                              boundary: boundary,
-                            ),
-                          );
-                        }
-                      },
-                      editIndividual: (
-                        householdModel,
-                        individualModel,
-                        addressModel,
-                        loading,
-                      ) {
-                        final individual = _getIndividualModel(
-                          context,
-                          form: form,
-                          oldIndividual: individualModel,
-                        );
+                              if (!(submit ?? false)) {
+                                return;
+                              }
 
-                        bloc.add(
-                          BeneficiaryRegistrationUpdateIndividualDetailsEvent(
-                            addressModel: addressModel,
-                            model: individual.copyWith(
-                              clientAuditDetails: (individual
-                                              .clientAuditDetails?.createdBy !=
-                                          null &&
-                                      individual.clientAuditDetails
-                                              ?.createdTime !=
-                                          null)
-                                  ? ClientAuditDetails(
-                                      createdBy: individual
-                                          .clientAuditDetails!.createdBy,
-                                      createdTime: individual
-                                          .clientAuditDetails!.createdTime,
-                                      lastModifiedBy: context.loggedInUserUuid,
-                                      lastModifiedTime:
-                                          context.millisecondsSinceEpoch(),
-                                    )
-                                  : null,
-                              auditDetails: (individual
-                                              .auditDetails?.createdBy !=
-                                          null &&
-                                      individual.auditDetails?.createdTime !=
-                                          null)
-                                  ? AuditDetails(
-                                      createdBy:
-                                          individual.auditDetails!.createdBy,
-                                      createdTime:
-                                          individual.auditDetails!.createdTime,
-                                      lastModifiedBy: context.loggedInUserUuid,
-                                      lastModifiedTime:
-                                          context.millisecondsSinceEpoch(),
-                                    )
-                                  : null,
-                            ),
-                          ),
-                        );
-                      },
-                      addMember: (
-                        addressModel,
-                        householdModel,
-                        loading,
-                      ) {
-                        final individual = _getIndividualModel(
-                          context,
-                          form: form,
-                        );
+                              state.maybeWhen(
+                                orElse: () {
+                                  return;
+                                },
+                                create: (
+                                  addressModel,
+                                  householdModel,
+                                  individualModel,
+                                  projectBeneficiaryModel,
+                                  registrationDate,
+                                  searchQuery,
+                                  loading,
+                                  isHeadOfHousehold,
+                                ) {
+                                  final individual = _getIndividualModel(
+                                      context,
+                                      form: form,
+                                      oldIndividual: null,
+                                      beneficiaryId: beneficiaryId!.first);
+                                  isEditIndividual = false;
+                                  final boundary =
+                                      RegistrationDeliverySingleton().boundary;
 
-                        bloc.add(
-                          BeneficiaryRegistrationAddMemberEvent(
-                            beneficiaryType: context.beneficiaryType,
-                            householdModel: householdModel,
-                            individualModel: individual,
-                            addressModel: addressModel,
-                            userUuid: userId,
-                            projectId: context.projectId,
-                          ),
-                        );
-                      },
+                                  bloc.add(
+                                    BeneficiaryRegistrationSaveIndividualDetailsEvent(
+                                      model: individual,
+                                      isHeadOfHousehold:
+                                          widget.isHeadOfHousehold,
+                                    ),
+                                  );
+                                  final scannerBloc =
+                                      context.read<DigitScannerBloc>();
+
+                                  if (scannerBloc.state.duplicate) {
+                                    DigitToast.show(
+                                      context,
+                                      options: DigitToastOptions(
+                                        localizations.translate(
+                                          i18.deliverIntervention
+                                              .resourceAlreadyScanned,
+                                        ),
+                                        true,
+                                        theme,
+                                      ),
+                                    );
+                                  } else {
+                                    if (context.mounted) {
+                                      final scannerBloc =
+                                          context.read<DigitScannerBloc>();
+                                      bloc.add(
+                                        BeneficiaryRegistrationSummaryEvent(
+                                          projectId: projectId!,
+                                          userUuid: userId!,
+                                          boundary: boundary!,
+                                          tag: scannerBloc
+                                                  .state.qrCodes.isNotEmpty
+                                              ? scannerBloc.state.qrCodes.first
+                                              : null,
+                                        ),
+                                      );
+                                      // router.push(SummaryRoute());
+
+                                      bloc.add(
+                                        BeneficiaryRegistrationCreateEvent(
+                                            projectId: projectId,
+                                            userUuid: userId,
+                                            boundary: boundary,
+                                            tag: scannerBloc
+                                                    .state.qrCodes.isNotEmpty
+                                                ? scannerBloc
+                                                    .state.qrCodes.first
+                                                : null,
+                                            navigateToSummary: false),
+                                      );
+                                    }
+                                  }
+                                },
+                                editIndividual: (
+                                  householdModel,
+                                  individualModel,
+                                  addressModel,
+                                  projectBeneficiaryModel,
+                                  loading,
+                                ) {
+                                  // clickedStatus.value = true;
+                                  isEditIndividual = true;
+                                  final scannerBloc =
+                                      context.read<DigitScannerBloc>();
+                                  var individual = _getIndividualModel(
+                                    context,
+                                    form: form,
+                                    oldIndividual: individualModel,
+                                  );
+
+                                  final tag =
+                                      scannerBloc.state.qrCodes.isNotEmpty
+                                          ? scannerBloc.state.qrCodes.first
+                                          : null;
+
+                                  if (tag != null &&
+                                      tag != projectBeneficiaryModel?.tag &&
+                                      scannerBloc.state.duplicate) {
+                                    DigitToast.show(
+                                      context,
+                                      options: DigitToastOptions(
+                                        localizations.translate(
+                                          i18.deliverIntervention
+                                              .resourceAlreadyScanned,
+                                        ),
+                                        true,
+                                        theme,
+                                      ),
+                                    );
+                                  } else {
+                                    bloc.add(
+                                      BeneficiaryRegistrationUpdateIndividualDetailsEvent(
+                                        addressModel: addressModel,
+                                        householdModel: householdModel,
+                                        model: individual.copyWith(
+                                          clientAuditDetails: (individual
+                                                          .clientAuditDetails
+                                                          ?.createdBy !=
+                                                      null &&
+                                                  individual.clientAuditDetails
+                                                          ?.createdTime !=
+                                                      null)
+                                              ? ClientAuditDetails(
+                                                  createdBy: individual
+                                                      .clientAuditDetails!
+                                                      .createdBy,
+                                                  createdTime: individual
+                                                      .clientAuditDetails!
+                                                      .createdTime,
+                                                  lastModifiedBy:
+                                                      RegistrationDeliverySingleton()
+                                                          .loggedInUserUuid,
+                                                  lastModifiedTime: context
+                                                      .millisecondsSinceEpoch(),
+                                                )
+                                              : null,
+                                        ),
+                                        tag: scannerBloc
+                                                .state.qrCodes.isNotEmpty
+                                            ? scannerBloc.state.qrCodes.first
+                                            : null,
+                                      ),
+                                    );
+                                  }
+                                },
+                                addMember: (
+                                  addressModel,
+                                  householdModel,
+                                  loading,
+                                ) {
+                                  // clickedStatus.value = true;
+                                  final individual = _getIndividualModel(
+                                      context,
+                                      form: form,
+                                      beneficiaryId: beneficiaryId!.first);
+
+                                  bloc.add(
+                                    BeneficiaryRegistrationAddMemberEvent(
+                                        beneficiaryType:
+                                            RegistrationDeliverySingleton()
+                                                .beneficiaryType!,
+                                        householdModel: householdModel,
+                                        individualModel: individual,
+                                        addressModel: addressModel,
+                                        userUuid:
+                                            RegistrationDeliverySingleton()
+                                                .loggedInUserUuid!,
+                                        projectId:
+                                            RegistrationDeliverySingleton()
+                                                .projectId!),
+                                  );
+                                },
+                              );
+                            },
+                      child: Center(
+                        child: Text(
+                          state.mapOrNull(
+                                editIndividual: (value) => localizations
+                                    .translate(i18.common.coreCommonSave),
+                              ) ??
+                              localizations
+                                  .translate(i18.common.coreCommonSubmit),
+                        ),
+                      ),
                     );
                   },
-                  child: Center(
-                    child: Text(
-                      state.mapOrNull(
-                            editIndividual: (value) => localizations
-                                .translate(i18.common.coreCommonSave),
-                          ) ??
-                          localizations.translate(i18.common.coreCommonSubmit),
-                    ),
-                  ),
                 ),
               ),
-              children: [
-                DigitCard(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        localizations.translate(
-                          widget.isHeadOfHousehold
-                              ? i18.individualDetails
-                                  .headHouseholdDetailsLabelText
-                              : i18.individualDetails
-                                  .childIndividualsDetailsLabelText,
-                        ),
-                        style: theme.textTheme.displayMedium,
-                      ),
-                      Column(
-                        children: [
-                          DigitTextFormField(
-                            formControlName: _individualNameKey,
-                            label: localizations.translate(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: DigitCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: kPadding),
+                          child: Text(
+                            localizations.translate(
                               widget.isHeadOfHousehold
-                                  ? i18.individualDetails.firstNameHeadLabelText
+                                  ? i18.individualDetails
+                                      .individualsDetailsLabelText
                                   : i18.individualDetails
-                                      .childFirstNameLabelText,
+                                      .individualsChildDetailsLabelText,
                             ),
-                            maxLength: 200,
-                            isRequired: true,
-                            validationMessages: {
-                              'required': (object) => localizations.translate(
-                                    i18.individualDetails
-                                        .firstNameIsRequiredError,
-                                  ),
-                              'minLength': (object) => localizations.translate(
-                                    i18.individualDetails.firstNameLengthError,
-                                  ),
-                              'maxLength': (object) => localizations.translate(
-                                    i18.individualDetails.firstNameLengthError,
-                                  ),
-                              "min3": (object) => localizations.translate(
-                                    i18.common.min3CharsRequired,
-                                  ),
-                            },
+                            style: theme.textTheme.displayMedium,
+                          ),
+                        ),
+                        Column(children: [
+                          individualDetailsShowcaseData.nameOfIndividual
+                              .buildWith(
+                            child: DigitTextFormField(
+                              formControlName: _individualNameKey,
+                              label: localizations.translate(
+                                widget.isHeadOfHousehold
+                                    ? i18.individualDetails
+                                        .firstNameHeadLabelText
+                                    : i18.individualDetails
+                                        .childFirstNameLabelText,
+                              ),
+                              isRequired: true,
+                              validationMessages: {
+                                'required': (object) => localizations.translate(
+                                      '${i18.individualDetails.nameLabelText}_IS_REQUIRED',
+                                    ),
+                                'maxLength': (object) => localizations
+                                    .translate(i18.common.maxCharsRequired)
+                                    .replaceAll('{}', maxLength.toString()),
+                              },
+                            ),
                           ),
                           DigitTextFormField(
                             formControlName: _individualLastNameKey,
@@ -478,16 +499,20 @@ class _IndividualDetailsPageState
                                   ),
                             },
                           ),
-                          Offstage(
-                            offstage: !widget.isHeadOfHousehold,
-                            child: DigitCheckbox(
-                              label: localizations.translate(
-                                i18.individualDetails.checkboxLabelText,
-                              ),
-                              value: widget.isHeadOfHousehold,
-                            ),
+                          // solution customisation
+                          // Offstage(
+                          //   offstage: !widget.isHeadOfHousehold,
+                          //   child: DigitCheckbox(
+                          //     label: localizations.translate(
+                          //       i18.individualDetails.checkboxLabelText,
+                          //     ),
+                          //     value: widget.isHeadOfHousehold,
+                          //   ),
+                          // ),
+                          const SizedBox(
+                            height: 10,
                           ),
-                          DigitDobPicker(
+                          CustomDigitDobPicker(
                             datePickerFormControl: _dobKey,
                             datePickerLabel: localizations.translate(
                               i18.individualDetails.dobLabelText,
@@ -518,13 +543,10 @@ class _IndividualDetailsPageState
                               // Handle changes to the control's value here
                               final value = formControl.value;
                               if (value == null) {
-                                updateStatus(form, null, context);
                                 formControl.setErrors({'': true});
                               } else {
                                 DigitDOBAge age =
                                     DigitDateUtils.calculateAge(value);
-
-                                updateStatus(form, age, context);
                                 if ((age.years == 0 && age.months == 0) ||
                                     age.months > 11 ||
                                     (age.years > 150 ||
@@ -536,161 +558,113 @@ class _IndividualDetailsPageState
                               }
                             },
                           ),
-                          BlocBuilder<AppInitializationBloc,
-                              AppInitializationState>(
-                            builder: (context, state) => state.maybeWhen(
-                              orElse: () => const Offstage(),
-                              initialized: (appConfiguration, _) {
-                                final genderOptions =
-                                    appConfiguration.genderOptions ??
-                                        <GenderOptions>[];
 
-                                return DigitDropdown<String>(
-                                  label: localizations.translate(
-                                    i18.individualDetails.genderLabelText,
-                                  ),
-                                  valueMapper: (value) =>
-                                      localizations.translate(value),
-                                  initialValue: genderOptions.firstOrNull?.name,
-                                  menuItems: genderOptions
-                                      .map(
-                                        (e) => e.name,
-                                      )
-                                      .toList(),
-                                  formControlName: _genderKey,
-                                  isRequired: true,
-                                  validationMessages: {
-                                    'required': (object) =>
-                                        localizations.translate(
-                                          i18.common.corecommonRequired,
-                                        ),
-                                  },
-                                );
-                              },
-                            ),
-                          ),
-                          Offstage(
-                            offstage: widget.isHeadOfHousehold,
-                            child: ValueListenableBuilder<dynamic>(
-                              valueListenable: heightWeight,
-                              builder: (context, isVisible, child) {
-                                String? formControlKey;
-
-                                bool isIndividual = false;
-                                if (isVisible != null) {
-                                  isIndividual = true;
-                                }
-
-                                if (isVisible == Constants.weight) {
-                                  formControlKey = _weight;
-                                } else if (isVisible == Constants.height) {
-                                  formControlKey = _height;
-                                } else if (isVisible == "" && isIndividual) {
-                                  formControlKey = isVisible;
-                                } else if ((individual != null &&
-                                    getCategory(
-                                            getAgeMonths(
-                                              DigitDateUtils.calculateAge(
-                                                DateFormat('dd/MM/yyyy').parse(
-                                                  individual.dateOfBirth!,
-                                                ),
-                                              ),
-                                            ),
-                                            context) ==
-                                        Constants.weight)) {
-                                  formControlKey = _weight;
-                                } else if ((individual != null &&
-                                    getCategory(
-                                            getAgeMonths(
-                                              DigitDateUtils.calculateAge(
-                                                DateFormat('dd/MM/yyyy').parse(
-                                                  individual.dateOfBirth!,
-                                                ),
-                                              ),
-                                            ),
-                                            context) ==
-                                        Constants.height)) {
-                                  formControlKey = _height;
-                                }
-
-                                if (formControlKey == null ||
-                                    formControlKey == "") {
-                                  return const SizedBox(); // Return empty widget if no valid key
-                                }
-
-                                return DigitTextFormField(
-                                  key: ValueKey(
-                                    formControlKey,
-                                  ), // Ensure new key when control changes
-                                  maxLength: formControlKey == _weight ? 4 : 3,
-                                  inputFormatters: formControlKey == _weight
-                                      ? [
-                                          FilteringTextInputFormatter.allow(
-                                            RegExp(r'^\d*\.?\d{0,2}'),
-                                          ),
-                                        ]
-                                      : [
-                                          FilteringTextInputFormatter
-                                              .digitsOnly,
-                                        ],
-                                  formControlName: formControlKey,
-                                  label: localizations.translate(
-                                    formControlKey == _weight
-                                        ? i18.individualDetails
-                                            .weightHeadLabelText
-                                        : i18.individualDetails
-                                            .heightHeadLabelText,
-                                  ),
-                                  isRequired:
-                                      true, // If it's being rendered, it's required
-                                  validationMessages: {
-                                    'minAllowed': (object) =>
-                                        localizations.translate(
-                                          formControlKey == _weight
-                                              ? i18.individualDetails
-                                                  .minWeightLengthError
-                                              : i18.individualDetails
-                                                  .minHeightLengthError,
-                                        ),
-                                    'maxAllowed': (object) =>
-                                        localizations.translate(
-                                          formControlKey == _weight
-                                              ? i18.individualDetails
-                                                  .maxWeightLengthError
-                                              : i18.individualDetails
-                                                  .maxHeightLengthError,
-                                        ),
-                                  },
-                                );
-                              },
-                            ),
-                          ),
-                          Offstage(
-                            offstage: !widget.isHeadOfHousehold,
-                            child: DigitTextFormField(
-                              keyboardType: TextInputType.number,
-                              formControlName: _mobileNumberKey,
-                              label: localizations.translate(
-                                i18.individualDetails.mobileNumberLabelText,
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                                kPadding, 0, kPadding, 0),
+                            child: SelectionBox<String>(
+                              isRequired: true,
+                              title: localizations.translate(
+                                i18.individualDetails.genderLabelText,
                               ),
-                              maxLength: 11,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
-                                  RegExp("[0-9]"),
+                              allowMultipleSelection: false,
+                              width: 148,
+                              initialSelection:
+                                  form.control(_genderKey).value != null
+                                      ? [form.control(_genderKey).value]
+                                      : [],
+                              options: RegistrationDeliverySingleton()
+                                  .genderOptions!
+                                  .map(
+                                    (e) => e,
+                                  )
+                                  .toList(),
+                              onSelectionChanged: (value) {
+                                setState(() {
+                                  if (value.isNotEmpty) {
+                                    form.control(_genderKey).value =
+                                        value.first;
+                                  } // todo verify this
+                                  else if (true) {
+                                    form.control(_genderKey).value = null;
+                                    setState(() {
+                                      form
+                                          .control(_genderKey)
+                                          .setErrors({'': true});
+                                    });
+                                  }
+                                });
+                              },
+                              valueMapper: (value) {
+                                return localizations.translate(
+                                    'CORE_COMMON_${value.toUpperCase()}');
+                              },
+                              errorMessage: form.control(_genderKey).hasErrors
+                                  ? localizations
+                                      .translate(i18.common.corecommonRequired)
+                                  : null,
+                            ),
+                          ),
+                        ]),
+                        Offstage(
+                          offstage: !widget.isHeadOfHousehold,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                                kPadding - 4, 0, kPadding - 4, 0),
+                            child:
+                                individualDetailsShowcaseData.mobile.buildWith(
+                              child: DigitTextFormField(
+                                keyboardType: TextInputType.number,
+                                formControlName: _mobileNumberKey,
+                                maxLength: 9,
+                                label: localizations.translate(
+                                  i18.individualDetails.mobileNumberLabelText,
                                 ),
-                              ],
+                                validationMessages: {
+                                  'mobileNumber': (object) =>
+                                      localizations.translate(i18
+                                          .individualDetails
+                                          .mobileNumberInvalidFormatValidationMessage),
+                                  'maxLength': (object) =>
+                                      localizations.translate(i18
+                                          .individualDetails
+                                          .mobileNumberLengthValidationMessage),
+                                  'minLength': (object) =>
+                                      localizations.translate(i18
+                                          .individualDetails
+                                          .mobileMinLengthValidationMessage),
+                                },
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Offstage(
+                          offstage: widget.isHeadOfHousehold,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                                kPadding - 4, 0, kPadding - 4, 0),
+                            child: DigitTextFormField(
+                              formControlName: _beneficiaryIdKey,
+                              label: localizations.translate(
+                                i18.individualDetails
+                                    .previousCycleBeneficiaryLabelText,
+                              ),
                               validationMessages: {
-                                'mobileNumber': (object) =>
-                                    localizations.translate(i18
-                                        .individualDetails
-                                        .mobileNumberInvalidFormatValidationMessage),
+                                'min3': (object) => localizations
+                                    .translate(i18.common.min3CharsRequired)
+                                    .replaceAll('{}', ''),
+                                'maxLength': (object) => localizations
+                                    .translate(i18.common.maxCharsRequired)
+                                    .replaceAll('{}', maxLength.toString()),
                               },
                             ),
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -703,30 +677,33 @@ class _IndividualDetailsPageState
 
   IndividualModel _getIndividualModel(
     BuildContext context, {
+    final beneficiaryId,
     required FormGroup form,
     IndividualModel? oldIndividual,
   }) {
-    final dob = form.control(_dobKey).value as DateTime?;
+    final dob = form.control(_dobKey).value == null
+        ? null
+        : form.control(_dobKey).value as DateTime?;
     String? dobString;
     if (dob != null) {
-      dobString = DateFormat('dd/MM/yyyy').format(dob);
+      dobString = DateFormat(Constants().dateFormat).format(dob);
     }
 
     var individual = oldIndividual;
     individual ??= IndividualModel(
-      clientReferenceId: IdGen.i.identifier,
-      tenantId: envConfig.variables.tenantId,
+      clientReferenceId: utils.IdGen.i.identifier,
+      tenantId: RegistrationDeliverySingleton().tenantId,
       rowVersion: 1,
       auditDetails: AuditDetails(
-        createdBy: context.loggedInUserUuid,
+        createdBy: RegistrationDeliverySingleton().loggedInUserUuid!,
         createdTime: context.millisecondsSinceEpoch(),
-        lastModifiedBy: context.loggedInUserUuid,
+        lastModifiedBy: RegistrationDeliverySingleton().loggedInUserUuid,
         lastModifiedTime: context.millisecondsSinceEpoch(),
       ),
       clientAuditDetails: ClientAuditDetails(
-        createdBy: context.loggedInUserUuid,
+        createdBy: RegistrationDeliverySingleton().loggedInUserUuid!,
         createdTime: context.millisecondsSinceEpoch(),
-        lastModifiedBy: context.loggedInUserUuid,
+        lastModifiedBy: RegistrationDeliverySingleton().loggedInUserUuid,
         lastModifiedTime: context.millisecondsSinceEpoch(),
       ),
     );
@@ -734,18 +711,18 @@ class _IndividualDetailsPageState
     var name = individual.name;
     name ??= NameModel(
       individualClientReferenceId: individual.clientReferenceId,
-      tenantId: envConfig.variables.tenantId,
+      tenantId: RegistrationDeliverySingleton().tenantId,
       rowVersion: 1,
       auditDetails: AuditDetails(
-        createdBy: context.loggedInUserUuid,
+        createdBy: RegistrationDeliverySingleton().loggedInUserUuid!,
         createdTime: context.millisecondsSinceEpoch(),
-        lastModifiedBy: context.loggedInUserUuid,
+        lastModifiedBy: RegistrationDeliverySingleton().loggedInUserUuid,
         lastModifiedTime: context.millisecondsSinceEpoch(),
       ),
       clientAuditDetails: ClientAuditDetails(
-        createdBy: context.loggedInUserUuid,
+        createdBy: RegistrationDeliverySingleton().loggedInUserUuid!,
         createdTime: context.millisecondsSinceEpoch(),
-        lastModifiedBy: context.loggedInUserUuid,
+        lastModifiedBy: RegistrationDeliverySingleton().loggedInUserUuid,
         lastModifiedTime: context.millisecondsSinceEpoch(),
       ),
     );
@@ -755,27 +732,38 @@ class _IndividualDetailsPageState
         : null;
 
     identifier ??= IdentifierModel(
-      clientReferenceId: IdGen.i.identifier,
-      tenantId: envConfig.variables.tenantId,
+      clientReferenceId: individual.clientReferenceId,
+      tenantId: RegistrationDeliverySingleton().tenantId,
       rowVersion: 1,
       auditDetails: AuditDetails(
-        createdBy: context.loggedInUserUuid,
+        createdBy: RegistrationDeliverySingleton().loggedInUserUuid!,
         createdTime: context.millisecondsSinceEpoch(),
-        lastModifiedBy: context.loggedInUserUuid,
+        lastModifiedBy: RegistrationDeliverySingleton().loggedInUserUuid,
         lastModifiedTime: context.millisecondsSinceEpoch(),
       ),
       clientAuditDetails: ClientAuditDetails(
-        createdBy: context.loggedInUserUuid,
+        createdBy: RegistrationDeliverySingleton().loggedInUserUuid!,
         createdTime: context.millisecondsSinceEpoch(),
-        lastModifiedBy: context.loggedInUserUuid,
+        lastModifiedBy: RegistrationDeliverySingleton().loggedInUserUuid,
         lastModifiedTime: context.millisecondsSinceEpoch(),
       ),
     );
-    // String? individualName = form.control(_individualNameKey).value as String?;
 
+    List<IdentifierModel>? identifiers = individual.identifiers;
+    if (isEditIndividual == false) {
+      identifiers?.add(IdentifierModel(
+        clientReferenceId: individual.clientReferenceId,
+        identifierId: beneficiaryId,
+        identifierType: IdentifierTypes.uniqueBeneficiaryID.toValue(),
+        clientAuditDetails: individual.clientAuditDetails,
+        auditDetails: individual.auditDetails,
+      ));
+    }
+
+    String? individualName = form.control(_individualNameKey).value as String?;
     individual = individual.copyWith(
       name: name.copyWith(
-        givenName: form.control(_individualNameKey).value,
+        givenName: individualName?.trim(),
         familyName:
             (form.control(_individualLastNameKey).value as String).trim(),
       ),
@@ -785,204 +773,101 @@ class _IndividualDetailsPageState
               .byName(form.control(_genderKey).value.toString().toLowerCase()),
       mobileNumber: form.control(_mobileNumberKey).value,
       dateOfBirth: dobString,
-      identifiers: [
-        identifier.copyWith(
-          identifierId: context.loggedInUserUuid,
-          identifierType: IdentifierTypes.defaultID.toValue(),
-        ),
-      ],
+      identifiers: isEditIndividual
+          ? identifiers
+          : [
+              identifier.copyWith(
+                identifierId: beneficiaryId,
+                identifierType: IdentifierTypes.uniqueBeneficiaryID.toValue(),
+              ),
+            ],
     );
-    final cycleIndex =
-        context.selectedCycle.id == 0 ? "" : "0${context.selectedCycle.id}";
 
-    final projectTypeId = context.selectedProjectType == null
-        ? ""
-        : context.selectedProjectType!.id;
+    final previousBeneficiaryId =
+        form.control(_beneficiaryIdKey).value as String?;
+
     individual = individual.copyWith(
-      additionalFields: individual.additionalFields == null
-          ? IndividualAdditionalFields(
-              version: 1,
-              fields: [
-                AdditionalField(
-                  "projectId",
-                  context.projectId,
-                ),
-                if (cycleIndex.isNotEmpty)
-                  AdditionalField(
-                    "cycleIndex",
-                    cycleIndex,
-                  ),
-                if (projectTypeId.isNotEmpty)
-                  AdditionalField(
-                    "projectTypeId",
-                    projectTypeId,
-                  ),
-                if (getCategory(
-                        getAgeMonths(
-                          DigitDateUtils.calculateAge(
-                            DateFormat('dd/MM/yyyy').parse(
-                              dobString!,
-                            ),
-                          ),
-                        ),
-                        context) ==
-                    Constants.height)
-                  AdditionalField(
-                    Constants.height,
-                    (form.control(_height).value).toString().length == 1
-                        ? '0${(form.control(_height).value)}'
-                        : (form.control(_height).value),
-                  ),
-                if (getCategory(
-                        getAgeMonths(
-                          DigitDateUtils.calculateAge(
-                            DateFormat('dd/MM/yyyy').parse(
-                              dobString,
-                            ),
-                          ),
-                        ),
-                        context) ==
-                    Constants.weight)
-                  AdditionalField(
-                    Constants.weight,
-                    (form.control(_weight).value).toString().length == 1
-                        ? '0${(form.control(_weight).value)}'
-                        : (form.control(_weight).value),
-                  ),
-              ],
-            )
-          : individual.additionalFields!.copyWith(
-              fields: [
-                // Filter out any existing `Constants.weight` or `Constants.height` fields
-                ...individual.additionalFields!.fields.where(
-                  (field) =>
-                      field.key != Constants.weight &&
-                      field.key != Constants.height,
-                ),
-                // Add new `Constants.height` field if the condition matches
-                if (getCategory(
-                        getAgeMonths(
-                          DigitDateUtils.calculateAge(
-                            DateFormat('dd/MM/yyyy').parse(dobString!),
-                          ),
-                        ),
-                        context) ==
-                    Constants.height)
-                  AdditionalField(
-                    Constants.height,
-                    (form.control(_height).value).toString().length == 1
-                        ? '0${(form.control(_height).value)}'
-                        : (form.control(_height).value),
-                  ),
-                if (getCategory(
-                        getAgeMonths(
-                          DigitDateUtils.calculateAge(
-                            DateFormat('dd/MM/yyyy').parse(dobString!),
-                          ),
-                        ),
-                        context) ==
-                    Constants.weight)
-                  AdditionalField(
-                    Constants.weight,
-                    (form.control(_weight).value).toString().length == 1
-                        ? '0${(form.control(_weight).value)}'
-                        : (form.control(_weight).value),
-                  ),
-              ],
-            ),
-    );
+        additionalFields:
+            previousBeneficiaryId != null && previousBeneficiaryId.isNotEmpty
+                ? IndividualAdditionalFields(version: 1, fields: [
+                    AdditionalField(_beneficiaryIdKey, previousBeneficiaryId)
+                  ])
+                : null);
 
     return individual;
   }
 
   FormGroup buildForm(BeneficiaryRegistrationState state) {
-    final individual = state.mapOrNull<IndividualModel>(
-      editIndividual: (value) {
-        return value.individualModel;
+    final individual =
+        state.mapOrNull<IndividualModel>(editIndividual: (value) {
+      isEditIndividual = true;
+      if (value.projectBeneficiaryModel?.tag != null) {
+        context.read<DigitScannerBloc>().add(DigitScannerScanEvent(
+            barCode: [], qrCode: [value.projectBeneficiaryModel!.tag!]));
+      }
+
+      return value.individualModel;
+    }, create: (value) {
+      return value.individualModel;
+    }, summary: (value) {
+      return value.individualModel;
+    }, editHousehold: (value) {
+      isEditIndividual = true;
+      return value.headOfHousehold;
+    });
+
+    final searchQuery = state.mapOrNull<String>(
+      create: (value) {
+        return value.searchQuery;
       },
     );
+
+    final beneficiaryId = individual?.additionalFields?.fields
+        .firstWhereOrNull((element) => element.key == _beneficiaryIdKey)
+        ?.value;
 
     return fb.group(<String, Object>{
       _individualNameKey: FormControl<String>(
         validators: [
           Validators.required,
-          CustomValidator.requiredMin3,
-          Validators.maxLength(validation.individual.nameMaxLength),
+          CustomValidator.requiredMin,
+          Validators.maxLength(200),
         ],
-        value: individual?.name?.givenName,
+        value: individual?.name?.givenName ?? searchQuery?.trim(),
       ),
       _individualLastNameKey: FormControl<String>(
         validators: [
           Validators.required,
-          CustomValidator.requiredMin3,
-          Validators.maxLength(validation.individual.nameMaxLength),
+          CustomValidator.requiredMin,
+          Validators.maxLength(200),
         ],
         value: individual?.name?.familyName ?? '',
       ),
-      _weight: FormControl<String>(
-        value: (individual != null &&
-                getCategory(
-                        getAgeMonths(
-                          DigitDateUtils.calculateAge(
-                            DateFormat('dd/MM/yyyy').parse(
-                              individual.dateOfBirth!,
-                            ),
-                          ),
-                        ),
-                        context) ==
-                    Constants.weight)
-            ? individual.additionalFields?.fields
-                    .firstWhere((element) => element.key == Constants.weight)
-                    .value ??
-                ""
-            : "",
-      ),
-      _height: FormControl<String>(
-        value: (individual != null &&
-                getCategory(
-                        getAgeMonths(
-                          DigitDateUtils.calculateAge(
-                            DateFormat('dd/MM/yyyy').parse(
-                              individual.dateOfBirth!,
-                            ),
-                          ),
-                        ),
-                        context) ==
-                    Constants.height)
-            ? individual.additionalFields?.fields
-                    .firstWhere((element) => element.key == Constants.height)
-                    .value ??
-                ""
-            : "",
-      ),
       _dobKey: FormControl<DateTime>(
         value: individual?.dateOfBirth != null
-            ? DateFormat('dd/MM/yyyy').parse(
+            ? DateFormat(Constants().dateFormat).parse(
                 individual!.dateOfBirth!,
               )
             : null,
       ),
-      _genderKey: FormControl<String>(
-        validators: [
-          Validators.required,
-        ],
-        value: context.read<AppInitializationBloc>().state.maybeWhen(
-              orElse: () => null,
-              initialized: (appConfiguration, serviceRegistryList) {
-                final options =
-                    appConfiguration.genderOptions ?? <GenderOptions>[];
-
-                return options.map((e) => e.code).firstWhereOrNull(
-                      (element) =>
-                          element.toLowerCase() == individual?.gender?.name,
-                    );
-              },
-            ),
-      ),
+      _genderKey: FormControl<String>(value: getGenderOptions(individual)),
+      _beneficiaryIdKey: FormControl<String>(validators: [
+        utils.CustomValidator.requiredMin3,
+        Validators.maxLength(200),
+      ], value: beneficiaryId),
       _mobileNumberKey:
           FormControl<String>(value: individual?.mobileNumber, validators: [
-        CustomValidator.validMobileNumber,
+        utils.CustomValidator.validMobileNumber,
+        Validators.maxLength(9),
       ]),
     });
+  }
+
+  getGenderOptions(IndividualModel? individual) {
+    final options = RegistrationDeliverySingleton().genderOptions;
+
+    return options?.map((e) => e).firstWhereOrNull(
+          (element) => element.toLowerCase() == individual?.gender?.name,
+        );
   }
 }

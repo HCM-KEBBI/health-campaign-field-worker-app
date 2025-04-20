@@ -160,41 +160,41 @@ class _HouseholdOverviewPageState
                                             state
                                                 .householdMemberWrapper
                                                 .headOfHousehold
-                                                .name
+                                                ?.name
                                                 ?.givenName,
                                             state
                                                 .householdMemberWrapper
                                                 .headOfHousehold
-                                                .name
+                                                ?.name
                                                 ?.familyName,
                                           ].whereNotNull().join(' '),
                                           localizations.translate(
                                             i18.householdLocation
                                                 .administrationAreaFormLabel,
                                           ): state.householdMemberWrapper
-                                              .household.address?.addressLine1,
+                                              .household?.address?.addressLine1,
                                           localizations.translate(
                                             i18.deliverIntervention
                                                 .memberCountText,
                                           ): state.householdMemberWrapper
-                                              .household.memberCount,
+                                              .household?.memberCount,
                                         },
                                       ),
                                     ),
                                     Column(
                                       children: state
-                                          .householdMemberWrapper.members
+                                          .householdMemberWrapper.members!
                                           .map(
                                         (e) {
                                           final isHead = state
                                                   .householdMemberWrapper
                                                   .headOfHousehold
-                                                  .clientReferenceId ==
+                                                  ?.clientReferenceId ==
                                               e.clientReferenceId;
                                           final projectBeneficiaryId = state
                                               .householdMemberWrapper
                                               .projectBeneficiaries
-                                              .firstWhereOrNull((b) =>
+                                              ?.firstWhereOrNull((b) =>
                                                   b.beneficiaryClientReferenceId ==
                                                   e.clientReferenceId)
                                               ?.clientReferenceId;
@@ -226,12 +226,12 @@ class _HouseholdOverviewPageState
                                                                   state
                                                                       .householdMemberWrapper
                                                                       .projectBeneficiaries
-                                                                      .first,
+                                                                      ?.first,
                                                                 ]
                                                               : state
                                                                   .householdMemberWrapper
                                                                   .projectBeneficiaries
-                                                                  .where(
+                                                                  ?.where(
                                                                     (element) =>
                                                                         element
                                                                             .beneficiaryClientReferenceId ==
@@ -246,8 +246,8 @@ class _HouseholdOverviewPageState
                                                               element
                                                                   .projectBeneficiaryClientReferenceId ==
                                                               projectBeneficiary
-                                                                  .first
-                                                                  .clientReferenceId)
+                                                                  ?.first
+                                                                  ?.clientReferenceId)
                                                           .toList();
                                                       final referralData = state
                                                           .householdMemberWrapper
@@ -256,8 +256,8 @@ class _HouseholdOverviewPageState
                                                               element
                                                                   .projectBeneficiaryClientReferenceId ==
                                                               projectBeneficiary
-                                                                  .first
-                                                                  .clientReferenceId)
+                                                                  ?.first
+                                                                  ?.clientReferenceId)
                                                           .toList();
                                                       final sideEffectData = taskdata !=
                                                                   null &&
@@ -358,7 +358,7 @@ class _HouseholdOverviewPageState
                                                                     e,
                                                                 householdModel: state
                                                                     .householdMemberWrapper
-                                                                    .household,
+                                                                    .household!,
                                                                 addressModel:
                                                                     address
                                                                         .first,
@@ -393,7 +393,7 @@ class _HouseholdOverviewPageState
                                                                       .projectId,
                                                                   householdModel: state
                                                                       .householdMemberWrapper
-                                                                      .household,
+                                                                      .household!,
                                                                   projectBeneficiaryType:
                                                                       beneficiaryType,
                                                                 ),
@@ -581,7 +581,7 @@ class _HouseholdOverviewPageState
                                             final wrapper =
                                                 state.householdMemberWrapper;
                                             final address =
-                                                wrapper.household.address;
+                                                wrapper.household?.address;
 
                                             if (address == null) return;
 
@@ -593,7 +593,7 @@ class _HouseholdOverviewPageState
                                                     BeneficiaryRegistrationAddMemberState(
                                                   addressModel: address,
                                                   householdModel:
-                                                      wrapper.household,
+                                                      wrapper.household!,
                                                 ),
                                                 children: [
                                                   IndividualDetailsRoute(),
@@ -611,7 +611,7 @@ class _HouseholdOverviewPageState
                                             searchBloc.add(
                                               SearchHouseholdsByHouseholdsEvent(
                                                 householdModel:
-                                                    wrapper.household,
+                                                    wrapper.household!,
                                                 projectId: projectId,
                                                 isProximityEnabled: false,
                                               ),

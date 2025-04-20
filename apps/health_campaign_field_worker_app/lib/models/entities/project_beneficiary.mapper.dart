@@ -22,16 +22,19 @@ class ProjectBeneficiarySearchModelMapper
   @override
   final String id = 'ProjectBeneficiarySearchModel';
 
-  static String? _$id(ProjectBeneficiarySearchModel v) => v.id;
-  static const Field<ProjectBeneficiarySearchModel, String> _f$id =
+  static List<String>? _$id(ProjectBeneficiarySearchModel v) => v.id;
+  static const Field<ProjectBeneficiarySearchModel, List<String>> _f$id =
       Field('id', _$id, opt: true);
   static String? _$projectId(ProjectBeneficiarySearchModel v) => v.projectId;
   static const Field<ProjectBeneficiarySearchModel, String> _f$projectId =
       Field('projectId', _$projectId, opt: true);
-  static String? _$beneficiaryId(ProjectBeneficiarySearchModel v) =>
+  static List<String>? _$beneficiaryId(ProjectBeneficiarySearchModel v) =>
       v.beneficiaryId;
-  static const Field<ProjectBeneficiarySearchModel, String> _f$beneficiaryId =
-      Field('beneficiaryId', _$beneficiaryId, opt: true);
+  static const Field<ProjectBeneficiarySearchModel, List<String>>
+      _f$beneficiaryId = Field('beneficiaryId', _$beneficiaryId, opt: true);
+  static List<String>? _$tag(ProjectBeneficiarySearchModel v) => v.tag;
+  static const Field<ProjectBeneficiarySearchModel, List<String>> _f$tag =
+      Field('tag', _$tag, opt: true);
   static List<String>? _$beneficiaryClientReferenceId(
           ProjectBeneficiarySearchModel v) =>
       v.beneficiaryClientReferenceId;
@@ -53,12 +56,12 @@ class ProjectBeneficiarySearchModelMapper
       _f$beneficiaryRegistrationDateGte = Field(
           'beneficiaryRegistrationDateGte', _$beneficiaryRegistrationDateGte,
           opt: true);
-  static int? _$limit(ProjectBeneficiarySearchModel v) => v.limit;
-  static const Field<ProjectBeneficiarySearchModel, int> _f$limit =
-      Field('limit', _$limit, opt: true);
   static int? _$offset(ProjectBeneficiarySearchModel v) => v.offset;
   static const Field<ProjectBeneficiarySearchModel, int> _f$offset =
       Field('offset', _$offset, opt: true);
+  static int? _$limit(ProjectBeneficiarySearchModel v) => v.limit;
+  static const Field<ProjectBeneficiarySearchModel, int> _f$limit =
+      Field('limit', _$limit, opt: true);
   static List<String>? _$clientReferenceId(ProjectBeneficiarySearchModel v) =>
       v.clientReferenceId;
   static const Field<ProjectBeneficiarySearchModel, List<String>>
@@ -98,11 +101,12 @@ class ProjectBeneficiarySearchModelMapper
     #id: _f$id,
     #projectId: _f$projectId,
     #beneficiaryId: _f$beneficiaryId,
+    #tag: _f$tag,
     #beneficiaryClientReferenceId: _f$beneficiaryClientReferenceId,
     #beneficiaryRegistrationDateLte: _f$beneficiaryRegistrationDateLte,
     #beneficiaryRegistrationDateGte: _f$beneficiaryRegistrationDateGte,
-    #limit: _f$limit,
     #offset: _f$offset,
+    #limit: _f$limit,
     #clientReferenceId: _f$clientReferenceId,
     #tenantId: _f$tenantId,
     #dateOfRegistration: _f$dateOfRegistration,
@@ -127,13 +131,14 @@ class ProjectBeneficiarySearchModelMapper
         id: data.dec(_f$id),
         projectId: data.dec(_f$projectId),
         beneficiaryId: data.dec(_f$beneficiaryId),
+        tag: data.dec(_f$tag),
         beneficiaryClientReferenceId: data.dec(_f$beneficiaryClientReferenceId),
         beneficiaryRegistrationDateLte:
             data.dec(_f$beneficiaryRegistrationDateLte),
         beneficiaryRegistrationDateGte:
             data.dec(_f$beneficiaryRegistrationDateGte),
-        limit: data.dec(_f$limit),
         offset: data.dec(_f$offset),
+        limit: data.dec(_f$limit),
         clientReferenceId: data.dec(_f$clientReferenceId),
         tenantId: data.dec(_f$tenantId),
         dateOfRegistration: data.dec(_f$dateOfRegistration),
@@ -201,20 +206,25 @@ abstract class ProjectBeneficiarySearchModelCopyWith<
     $R,
     $In extends ProjectBeneficiarySearchModel,
     $Out> implements EntitySearchModelCopyWith<$R, $In, $Out> {
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get id;
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>?
+      get beneficiaryId;
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get tag;
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>?
       get beneficiaryClientReferenceId;
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>?
       get clientReferenceId;
   @override
   $R call(
-      {String? id,
+      {List<String>? id,
       String? projectId,
-      String? beneficiaryId,
+      List<String>? beneficiaryId,
+      List<String>? tag,
       List<String>? beneficiaryClientReferenceId,
       DateTime? beneficiaryRegistrationDateLte,
       DateTime? beneficiaryRegistrationDateGte,
-      int? limit,
       int? offset,
+      int? limit,
       List<String>? clientReferenceId,
       String? tenantId,
       int? dateOfRegistration,
@@ -234,6 +244,26 @@ class _ProjectBeneficiarySearchModelCopyWithImpl<$R, $Out>
   @override
   late final ClassMapperBase<ProjectBeneficiarySearchModel> $mapper =
       ProjectBeneficiarySearchModelMapper.ensureInitialized();
+  @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get id =>
+      $value.id != null
+          ? ListCopyWith($value.id!, (v, t) => ObjectCopyWith(v, $identity, t),
+              (v) => call(id: v))
+          : null;
+  @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>?
+      get beneficiaryId => $value.beneficiaryId != null
+          ? ListCopyWith(
+              $value.beneficiaryId!,
+              (v, t) => ObjectCopyWith(v, $identity, t),
+              (v) => call(beneficiaryId: v))
+          : null;
+  @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get tag =>
+      $value.tag != null
+          ? ListCopyWith($value.tag!, (v, t) => ObjectCopyWith(v, $identity, t),
+              (v) => call(tag: v))
+          : null;
   @override
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>?
       get beneficiaryClientReferenceId =>
@@ -256,11 +286,12 @@ class _ProjectBeneficiarySearchModelCopyWithImpl<$R, $Out>
           {Object? id = $none,
           Object? projectId = $none,
           Object? beneficiaryId = $none,
+          Object? tag = $none,
           Object? beneficiaryClientReferenceId = $none,
           Object? beneficiaryRegistrationDateLte = $none,
           Object? beneficiaryRegistrationDateGte = $none,
-          Object? limit = $none,
           Object? offset = $none,
+          Object? limit = $none,
           Object? clientReferenceId = $none,
           Object? tenantId = $none,
           Object? dateOfRegistration = $none,
@@ -269,14 +300,15 @@ class _ProjectBeneficiarySearchModelCopyWithImpl<$R, $Out>
         if (id != $none) #id: id,
         if (projectId != $none) #projectId: projectId,
         if (beneficiaryId != $none) #beneficiaryId: beneficiaryId,
+        if (tag != $none) #tag: tag,
         if (beneficiaryClientReferenceId != $none)
           #beneficiaryClientReferenceId: beneficiaryClientReferenceId,
         if (beneficiaryRegistrationDateLte != $none)
           #beneficiaryRegistrationDateLte: beneficiaryRegistrationDateLte,
         if (beneficiaryRegistrationDateGte != $none)
           #beneficiaryRegistrationDateGte: beneficiaryRegistrationDateGte,
-        if (limit != $none) #limit: limit,
         if (offset != $none) #offset: offset,
+        if (limit != $none) #limit: limit,
         if (clientReferenceId != $none) #clientReferenceId: clientReferenceId,
         if (tenantId != $none) #tenantId: tenantId,
         if (dateOfRegistration != $none)
@@ -289,6 +321,7 @@ class _ProjectBeneficiarySearchModelCopyWithImpl<$R, $Out>
           id: data.get(#id, or: $value.id),
           projectId: data.get(#projectId, or: $value.projectId),
           beneficiaryId: data.get(#beneficiaryId, or: $value.beneficiaryId),
+          tag: data.get(#tag, or: $value.tag),
           beneficiaryClientReferenceId: data.get(#beneficiaryClientReferenceId,
               or: $value.beneficiaryClientReferenceId),
           beneficiaryRegistrationDateLte: data.get(
@@ -297,8 +330,8 @@ class _ProjectBeneficiarySearchModelCopyWithImpl<$R, $Out>
           beneficiaryRegistrationDateGte: data.get(
               #beneficiaryRegistrationDateGte,
               or: $value.beneficiaryRegistrationDateGte),
-          limit: data.get(#limit, or: $value.limit),
           offset: data.get(#offset, or: $value.offset),
+          limit: data.get(#limit, or: $value.limit),
           clientReferenceId:
               data.get(#clientReferenceId, or: $value.clientReferenceId),
           tenantId: data.get(#tenantId, or: $value.tenantId),
@@ -344,6 +377,9 @@ class ProjectBeneficiaryModelMapper
   static String? _$beneficiaryId(ProjectBeneficiaryModel v) => v.beneficiaryId;
   static const Field<ProjectBeneficiaryModel, String> _f$beneficiaryId =
       Field('beneficiaryId', _$beneficiaryId, opt: true);
+  static String? _$tag(ProjectBeneficiaryModel v) => v.tag;
+  static const Field<ProjectBeneficiaryModel, String> _f$tag =
+      Field('tag', _$tag, opt: true);
   static String? _$beneficiaryClientReferenceId(ProjectBeneficiaryModel v) =>
       v.beneficiaryClientReferenceId;
   static const Field<ProjectBeneficiaryModel, String>
@@ -394,6 +430,7 @@ class ProjectBeneficiaryModelMapper
     #id: _f$id,
     #projectId: _f$projectId,
     #beneficiaryId: _f$beneficiaryId,
+    #tag: _f$tag,
     #beneficiaryClientReferenceId: _f$beneficiaryClientReferenceId,
     #nonRecoverableError: _f$nonRecoverableError,
     #clientReferenceId: _f$clientReferenceId,
@@ -422,6 +459,7 @@ class ProjectBeneficiaryModelMapper
         id: data.dec(_f$id),
         projectId: data.dec(_f$projectId),
         beneficiaryId: data.dec(_f$beneficiaryId),
+        tag: data.dec(_f$tag),
         beneficiaryClientReferenceId: data.dec(_f$beneficiaryClientReferenceId),
         nonRecoverableError: data.dec(_f$nonRecoverableError),
         clientReferenceId: data.dec(_f$clientReferenceId),
@@ -507,6 +545,7 @@ abstract class ProjectBeneficiaryModelCopyWith<
       String? id,
       String? projectId,
       String? beneficiaryId,
+      String? tag,
       String? beneficiaryClientReferenceId,
       bool? nonRecoverableError,
       String? clientReferenceId,
@@ -549,6 +588,7 @@ class _ProjectBeneficiaryModelCopyWithImpl<$R, $Out>
           Object? id = $none,
           Object? projectId = $none,
           Object? beneficiaryId = $none,
+          Object? tag = $none,
           Object? beneficiaryClientReferenceId = $none,
           Object? nonRecoverableError = $none,
           String? clientReferenceId,
@@ -563,6 +603,7 @@ class _ProjectBeneficiaryModelCopyWithImpl<$R, $Out>
         if (id != $none) #id: id,
         if (projectId != $none) #projectId: projectId,
         if (beneficiaryId != $none) #beneficiaryId: beneficiaryId,
+        if (tag != $none) #tag: tag,
         if (beneficiaryClientReferenceId != $none)
           #beneficiaryClientReferenceId: beneficiaryClientReferenceId,
         if (nonRecoverableError != $none)
@@ -583,6 +624,7 @@ class _ProjectBeneficiaryModelCopyWithImpl<$R, $Out>
       id: data.get(#id, or: $value.id),
       projectId: data.get(#projectId, or: $value.projectId),
       beneficiaryId: data.get(#beneficiaryId, or: $value.beneficiaryId),
+      tag: data.get(#tag, or: $value.tag),
       beneficiaryClientReferenceId: data.get(#beneficiaryClientReferenceId,
           or: $value.beneficiaryClientReferenceId),
       nonRecoverableError:

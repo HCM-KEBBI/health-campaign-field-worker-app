@@ -131,6 +131,13 @@ class Constants {
   static const int mlPerBottle = 30;
   static const String reDoseQuantityKey = 'reDoseQuantity';
 
+  final String dateFormat = 'dd/MM/yyyy';
+  final String communityHealthWorker = 'Community Health Worker';
+  final String deliveryTeam = 'Delivery Team';
+  final String notAvailable = 'N/A';
+  final String dateTimeExtFormat = 'dd-MM-yyyy';
+  final String dateMonthYearFormat = 'dd MMM yyyy';
+
   static List<LocalRepository> getLocalRepositories(
     LocalSqlDataStore sql,
     Isar isar,

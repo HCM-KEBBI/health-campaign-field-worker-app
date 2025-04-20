@@ -54,7 +54,7 @@ class _ReasonForDeletionPageState
                                 HouseholdOverviewDeleteIndividualEvent(
                                   projectId: ctx.projectId,
                                   householdModel:
-                                      state.householdMemberWrapper.household,
+                                      state.householdMemberWrapper.household!,
                                   individualModel: state.selectedIndividual!,
                                   projectBeneficiaryType:
                                       context.beneficiaryType,
@@ -64,11 +64,12 @@ class _ReasonForDeletionPageState
                                 HouseholdOverviewDeleteHouseholdEvent(
                                   projectId: context.projectId,
                                   householdModel:
-                                      state.householdMemberWrapper.household,
-                                  members: state.householdMemberWrapper.members,
+                                      state.householdMemberWrapper.household!,
+                                  members:
+                                      state.householdMemberWrapper.members!,
                                   projectBeneficiaryModel: state
                                       .householdMemberWrapper
-                                      .projectBeneficiaries
+                                      .projectBeneficiaries!
                                       .first,
                                   projectBeneficiaryType:
                                       context.beneficiaryType,

@@ -58,9 +58,9 @@ class _BeneficiaryDetailsPageState
           // Filtering project beneficiaries based on the selected individual
           final projectBeneficiary =
               context.beneficiaryType != BeneficiaryType.individual
-                  ? [householdMemberWrapper.projectBeneficiaries.first]
+                  ? [householdMemberWrapper.projectBeneficiaries?.first]
                   : householdMemberWrapper.projectBeneficiaries
-                      .where(
+                      ?.where(
                         (element) =>
                             element.beneficiaryClientReferenceId ==
                             state.selectedIndividual?.clientReferenceId,
@@ -72,7 +72,7 @@ class _BeneficiaryDetailsPageState
           final taskData = state.householdMemberWrapper.tasks
               ?.where((element) =>
                   element.projectBeneficiaryClientReferenceId ==
-                      projectBeneficiary.first.clientReferenceId &&
+                      projectBeneficiary?.first?.clientReferenceId &&
                   element.status != Status.beneficiaryRefused.toValue() &&
                   element.status != Status.beneficiaryReferred.toValue())
               .toList();
@@ -346,7 +346,7 @@ class _BeneficiaryDetailsPageState
                                   ): context.beneficiaryType !=
                                           BeneficiaryType.individual
                                       ? householdMemberWrapper
-                                          .headOfHousehold.name?.givenName
+                                          .headOfHousehold?.name?.givenName
                                       : state.selectedIndividual?.name
                                                   ?.givenName !=
                                               null
@@ -357,7 +357,7 @@ class _BeneficiaryDetailsPageState
                                   ): context.beneficiaryType !=
                                           BeneficiaryType.individual
                                       ? householdMemberWrapper
-                                              .headOfHousehold.identifiers
+                                              .headOfHousehold?.identifiers
                                               ?.lastWhere(
                                                 (e) =>
                                                     e.identifierType ==
@@ -387,7 +387,7 @@ class _BeneficiaryDetailsPageState
                                     final dob = context.beneficiaryType !=
                                             BeneficiaryType.individual
                                         ? householdMemberWrapper
-                                            .headOfHousehold.dateOfBirth
+                                            .headOfHousehold?.dateOfBirth
                                         : state.selectedIndividual?.dateOfBirth;
                                     if (dob == null || dob.isEmpty) {
                                       return '--';
@@ -416,7 +416,7 @@ class _BeneficiaryDetailsPageState
                                           BeneficiaryType.individual
                                       ? localizations.translate(
                                           householdMemberWrapper
-                                                  .headOfHousehold.gender?.name
+                                                  .headOfHousehold?.gender?.name
                                                   .toUpperCase() ??
                                               '--',
                                         )
@@ -442,11 +442,11 @@ class _BeneficiaryDetailsPageState
                                       .deliverIntervention
                                       .dateOfRegistrationLabel): () {
                                     final date = projectBeneficiary
-                                        .first.dateOfRegistration;
+                                        ?.first?.dateOfRegistration;
 
                                     final registrationDate =
                                         DateTime.fromMillisecondsSinceEpoch(
-                                      date,
+                                      date!,
                                     );
 
                                     return DateFormat('dd MMMM yyyy')

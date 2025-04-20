@@ -162,7 +162,7 @@ class _RecordPastDeliveryDetailsPageState
                                         .state
                                         .householdMemberWrapper
                                         .projectBeneficiaries
-                                        .map((e) => e.clientReferenceId)
+                                        ?.map((e) => e.clientReferenceId)
                                         .toList(),
                                   ),
                                 ));

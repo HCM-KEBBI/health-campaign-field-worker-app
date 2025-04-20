@@ -1,12 +1,17 @@
 // GENERATED using mason_cli
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../models/data_model.dart';
-import '../../models/entities/identifier_types.dart';
-import '../../utils/environment_config.dart';
+import '../../models/entities/beneficiary_type.dart';
+import '../../models/entities/household.dart';
+import '../../models/entities/locality.dart';
+import '../../models/entities/project_beneficiary.dart';
+import '../../models/entities/status.dart';
+import '../../utils/registration_delivery_singleton.dart';
 import '../../utils/typedefs.dart';
 import '../../utils/utils.dart';
 
@@ -25,9 +30,9 @@ class BeneficiaryRegistrationBloc
 
   final ProjectBeneficiaryDataRepository projectBeneficiaryRepository;
 
-  final BeneficiaryType beneficiaryType;
+  final TaskDataRepository taskDataRepository;
 
-  // final TaskDataRepository taskDataRepository;
+  final BeneficiaryType beneficiaryType;
 
   BeneficiaryRegistrationBloc(
     super.initialState, {
@@ -35,17 +40,18 @@ class BeneficiaryRegistrationBloc
     required this.householdRepository,
     required this.householdMemberRepository,
     required this.projectBeneficiaryRepository,
+    required this.taskDataRepository,
     required this.beneficiaryType,
-    // required this.taskDataRepository,
   }) {
     on(_handleSaveAddress);
+    on(_handleSaveHouseDetails);
     on(_handleSaveHouseholdDetails);
     on(_handleSaveIndividualDetails);
     on(_handleCreate);
     on(_handleUpdateHousehold);
     on(_handleUpdateIndividual);
     on(_handleAddMember);
-    on(_handleSaveHouseholdConsent);
+    on(_handleSummary);
   }
 
   //_handleSaveAddress event can be used for saving address details to the form
@@ -66,28 +72,20 @@ class BeneficiaryRegistrationBloc
     );
   }
 
-  FutureOr<void> _handleSaveHouseholdConsent(
-    BeneficiaryRegistrationSaveHouseholdConsentEvent event,
+  //_handleSaveHouseDetails event can be used for saving house details to the form
+  FutureOr<void> _handleSaveHouseDetails(
+    BeneficiaryRegistrationSaveHouseDetailsEvent event,
     BeneficiaryRegistrationEmitter emit,
   ) async {
-    final household = event.household;
-    await state.maybeMap(
+    state.maybeMap(
       orElse: () {
         throw const InvalidRegistrationStateException();
       },
       editHousehold: (value) {
-        emit(value.copyWith(
-          householdModel: event.household,
-        ));
+        emit(value.copyWith(householdModel: event.model));
       },
-      create: (value) async {
-        await householdRepository.create(
-          household,
-        );
-
-        emit(value.copyWith(
-          householdModel: event.household,
-        ));
+      create: (value) {
+        emit(value.copyWith(householdModel: event.model));
       },
     );
   }
@@ -111,6 +109,12 @@ class BeneficiaryRegistrationBloc
           registrationDate: event.registrationDate,
         ));
       },
+      summary: (value) {
+        emit(value.copyWith(
+          householdModel: event.household,
+          registrationDate: event.registrationDate,
+        ));
+      },
     );
   }
 
@@ -122,7 +126,7 @@ class BeneficiaryRegistrationBloc
       orElse: () {
         throw const InvalidRegistrationStateException();
       },
-      create: (value) async {
+      create: (value) {
         emit(value.copyWith(
           isHeadOfHousehold: event.isHeadOfHousehold,
           individualModel: event.model,
@@ -136,6 +140,60 @@ class BeneficiaryRegistrationBloc
     );
   }
 
+  FutureOr<void> _handleSummary(
+    BeneficiaryRegistrationSummaryEvent event,
+    BeneficiaryRegistrationEmitter emit,
+  ) async {
+    await state.maybeMap(
+      orElse: () {
+        throw const InvalidRegistrationStateException();
+      },
+      create: (value) async {
+        final individual = value.individualModel;
+        final household = value.householdModel;
+        final address = value.addressModel;
+        final code = event.boundary.code;
+        final name = event.boundary.name;
+        final locality = code == null || name == null
+            ? null
+            : LocalityModel(code: code, name: name);
+        emit(BeneficiaryRegistrationSummaryState(
+            navigateToRoot: false,
+            householdModel: household?.copyWith(
+                address: address?.copyWith(
+              relatedClientReferenceId: household.clientReferenceId,
+              auditDetails: individual?.auditDetails,
+              clientAuditDetails: individual?.clientAuditDetails,
+              locality: locality,
+            )),
+            individualModel: individual,
+            projectBeneficiaryModel: ProjectBeneficiaryModel(
+              tag: event.tag,
+              rowVersion: 1,
+              tenantId: RegistrationDeliverySingleton().tenantId,
+              clientReferenceId: IdGen.i.identifier,
+              dateOfRegistration: DateTime.now().millisecondsSinceEpoch,
+              projectId: event.projectId,
+              beneficiaryClientReferenceId:
+                  beneficiaryType == BeneficiaryType.individual
+                      ? individual?.clientReferenceId
+                      : household?.clientReferenceId,
+              clientAuditDetails: ClientAuditDetails(
+                createdTime: DateTime.now().millisecondsSinceEpoch,
+                lastModifiedTime: DateTime.now().millisecondsSinceEpoch,
+                lastModifiedBy: event.userUuid,
+                createdBy: event.userUuid,
+              ),
+              auditDetails: AuditDetails(
+                createdBy: event.userUuid,
+                createdTime: DateTime.now().millisecondsSinceEpoch,
+              ),
+            ),
+            isHeadOfHousehold: value.isHeadOfHousehold));
+      },
+    );
+  }
+
   FutureOr<void> _handleCreate(
     BeneficiaryRegistrationCreateEvent event,
     BeneficiaryRegistrationEmitter emit,
@@ -144,8 +202,104 @@ class BeneficiaryRegistrationBloc
       orElse: () {
         throw const InvalidRegistrationStateException();
       },
+      persisted: (value) {},
+      summary: (value) async {
+        if (event.navigateToSummary) {
+          emit(BeneficiaryRegistrationState.create(
+              addressModel: value.householdModel?.address,
+              householdModel: value.householdModel,
+              individualModel: value.individualModel,
+              projectBeneficiaryModel: value.projectBeneficiaryModel));
+        } else {
+          final individual = value.individualModel;
+          final household = value.householdModel;
+          final address = value.householdModel?.address;
+
+          if (individual == null) {
+            throw const InvalidRegistrationStateException(
+              'Individual cannot be null',
+            );
+          } else if (household == null) {
+            throw const InvalidRegistrationStateException(
+              'Household cannot be null',
+            );
+          }
+
+          try {
+            final createdAt = DateTime.now().millisecondsSinceEpoch;
+
+            emit(value.copyWith(loading: true));
+
+            final code = event.boundary.code;
+            final name = event.boundary.name;
+
+            final locality = code == null || name == null
+                ? null
+                : LocalityModel(code: code, name: name);
+            await householdRepository.create(
+              household.copyWith(
+                address: address?.copyWith(
+                  relatedClientReferenceId: household.clientReferenceId,
+                  auditDetails: individual.auditDetails,
+                  clientAuditDetails: individual.clientAuditDetails,
+                  locality: locality,
+                ),
+              ),
+            );
+            final initialModifiedAt = DateTime.now().millisecondsSinceEpoch;
+            await individualRepository.create(
+              individual.copyWith(
+                address: [
+                  address!.copyWith(
+                    relatedClientReferenceId: individual.clientReferenceId,
+                    auditDetails: individual.auditDetails,
+                    clientAuditDetails: individual.clientAuditDetails,
+                    locality: locality,
+                  ),
+                ],
+              ),
+            );
+
+            await projectBeneficiaryRepository.create(
+              value.projectBeneficiaryModel!,
+            );
+
+            await householdMemberRepository.create(
+              HouseholdMemberModel(
+                householdClientReferenceId: household.clientReferenceId,
+                individualClientReferenceId: individual.clientReferenceId,
+                isHeadOfHousehold: value.isHeadOfHousehold,
+                tenantId: RegistrationDeliverySingleton().tenantId,
+                rowVersion: 1,
+                clientReferenceId: IdGen.i.identifier,
+                clientAuditDetails: ClientAuditDetails(
+                  createdTime: createdAt,
+                  lastModifiedTime: initialModifiedAt,
+                  lastModifiedBy: event.userUuid,
+                  createdBy: event.userUuid,
+                ),
+                auditDetails: AuditDetails(
+                  createdBy: event.userUuid,
+                  createdTime: createdAt,
+                ),
+              ),
+            );
+          } catch (error) {
+            rethrow;
+          } finally {
+            emit(
+              BeneficiaryRegistrationPersistedState(
+                navigateToRoot: false,
+                householdModel: household,
+                addressModel: address,
+                individualModel: individual,
+              ),
+            );
+          }
+        }
+      },
       create: (value) async {
-        IndividualModel? individual = value.individualModel;
+        final individual = value.individualModel;
         final household = value.householdModel;
         final address = value.addressModel;
         final dateOfRegistration = value.registrationDate;
@@ -168,33 +322,17 @@ class BeneficiaryRegistrationBloc
           );
         }
 
-        final createdAt = DateTime.now().millisecondsSinceEpoch;
-
-        emit(value.copyWith(loading: true));
-
         try {
+          final createdAt = DateTime.now().millisecondsSinceEpoch;
+
+          emit(value.copyWith(loading: true));
+
           final code = event.boundary.code;
           final name = event.boundary.name;
 
           final locality = code == null || name == null
               ? null
               : LocalityModel(code: code, name: name);
-          List<IdentifierModel>? identifiers =
-              value.individualModel?.identifiers;
-          String localityCode = locality!.code;
-          final beneficiaryId = await UniqueIdGeneration().generateUniqueId(
-            localityCode: localityCode,
-            loggedInUserId: event.userUuid,
-            returnBothIds: false,
-          );
-          identifiers?.add(IdentifierModel(
-            clientReferenceId: value.individualModel!.clientReferenceId,
-            identifierId: beneficiaryId.first,
-            identifierType: IdentifierTypes.uniqueBeneficiaryID.toValue(),
-            clientAuditDetails: individual.clientAuditDetails,
-            auditDetails: individual.auditDetails,
-          ));
-
           await householdRepository.create(
             household.copyWith(
               address: address.copyWith(
@@ -206,59 +344,29 @@ class BeneficiaryRegistrationBloc
             ),
           );
           final initialModifiedAt = DateTime.now().millisecondsSinceEpoch;
-          individual = individual.copyWith(
-            identifiers: identifiers,
-            address: [
-              address.copyWith(
-                relatedClientReferenceId: individual.clientReferenceId,
-                auditDetails: individual.auditDetails,
-                clientAuditDetails: individual.clientAuditDetails,
-                locality: locality,
-              ),
-            ],
-          );
           await individualRepository.create(
-            individual,
+            individual.copyWith(
+              address: [
+                address.copyWith(
+                  relatedClientReferenceId: individual.clientReferenceId,
+                  auditDetails: individual.auditDetails,
+                  clientAuditDetails: individual.clientAuditDetails,
+                  locality: locality,
+                ),
+              ],
+            ),
           );
 
           await projectBeneficiaryRepository.create(
-            ProjectBeneficiaryModel(
-              rowVersion: 1,
-              tenantId: envConfig.variables.tenantId,
-              clientReferenceId: IdGen.i.identifier,
-              dateOfRegistration: dateOfRegistration.millisecondsSinceEpoch,
-              projectId: event.projectId,
-              beneficiaryClientReferenceId:
-                  beneficiaryType == BeneficiaryType.individual
-                      ? individual.clientReferenceId
-                      : household.clientReferenceId,
-              clientAuditDetails: ClientAuditDetails(
-                createdTime: createdAt,
-                lastModifiedTime: initialModifiedAt,
-                lastModifiedBy: event.userUuid,
-                createdBy: event.userUuid,
-              ),
-              auditDetails: AuditDetails(
-                createdBy: event.userUuid,
-                createdTime: createdAt,
-              ),
-            ),
+            value.projectBeneficiaryModel!,
           );
-          var cycleIndex = "";
-          if (household.additionalFields != null) {
-            final fields = household.additionalFields!.fields
-                .where((element) => element.key == "cycleIndex");
-            if (fields.isNotEmpty) {
-              cycleIndex = fields.first.value.toString();
-            }
-          }
 
           await householdMemberRepository.create(
             HouseholdMemberModel(
               householdClientReferenceId: household.clientReferenceId,
               individualClientReferenceId: individual.clientReferenceId,
               isHeadOfHousehold: value.isHeadOfHousehold,
-              tenantId: envConfig.variables.tenantId,
+              tenantId: RegistrationDeliverySingleton().tenantId,
               rowVersion: 1,
               clientReferenceId: IdGen.i.identifier,
               clientAuditDetails: ClientAuditDetails(
@@ -270,13 +378,6 @@ class BeneficiaryRegistrationBloc
               auditDetails: AuditDetails(
                 createdBy: event.userUuid,
                 createdTime: createdAt,
-              ),
-              additionalFields: HouseholdMemberAdditionalFields(
-                version: 1,
-                fields: [
-                  if (cycleIndex.isNotEmpty)
-                    AdditionalField("cycleIndex", cycleIndex),
-                ],
               ),
             ),
           );
@@ -288,6 +389,7 @@ class BeneficiaryRegistrationBloc
             BeneficiaryRegistrationPersistedState(
               navigateToRoot: false,
               householdModel: household,
+              addressModel: address,
               individualModel: individual,
             ),
           );
@@ -313,13 +415,15 @@ class BeneficiaryRegistrationBloc
           )))
                   .firstOrNull;
           await householdRepository.update(
-            value.householdModel.copyWith(
+            event.household.copyWith(
               clientAuditDetails: ClientAuditDetails(
-                createdBy: value.householdModel.clientAuditDetails!.createdBy,
+                createdBy: value.householdModel.clientAuditDetails?.createdBy ??
+                    value.householdModel.auditDetails!.createdBy.toString(),
                 createdTime:
-                    value.householdModel.clientAuditDetails!.createdTime,
+                    value.householdModel.clientAuditDetails?.createdTime ??
+                        value.householdModel.auditDetails!.createdTime,
                 lastModifiedBy:
-                    value.householdModel.clientAuditDetails!.lastModifiedBy,
+                    RegistrationDeliverySingleton().loggedInUserUuid,
                 lastModifiedTime: DateTime.now().millisecondsSinceEpoch,
               ),
               memberCount: event.household.memberCount,
@@ -333,6 +437,69 @@ class BeneficiaryRegistrationBloc
                   existingHousehold?.nonRecoverableError ?? false,
             ),
           );
+          final projectBeneficiary = await projectBeneficiaryRepository.search(
+            ProjectBeneficiarySearchModel(
+              projectId: RegistrationDeliverySingleton().projectId.toString(),
+              beneficiaryClientReferenceId:
+                  beneficiaryType == BeneficiaryType.individual
+                      ? getIndividualBeneficiaryClientReferenceId(
+                          value.individualModel)
+                      : [event.household.clientReferenceId],
+            ),
+          );
+
+          if (projectBeneficiary.isNotEmpty) {
+            if (projectBeneficiary.first.tag != event.tag) {
+              await projectBeneficiaryRepository
+                  .update(projectBeneficiary.first.copyWith(tag: event.tag));
+            }
+
+            var task = await taskDataRepository.search(TaskSearchModel(
+              projectBeneficiaryClientReferenceId:
+                  projectBeneficiary.map((e) => e.clientReferenceId).toList(),
+            ));
+
+            if (task.isNotEmpty) {
+              if (task.last.status == Status.closeHousehold.toValue()) {
+                await taskDataRepository.update(task.last
+                    .copyWith(status: Status.notAdministered.toValue()));
+              }
+            }
+          } else {
+            for (var element in value.individualModel) {
+              await projectBeneficiaryRepository.create(ProjectBeneficiaryModel(
+                  rowVersion: 1,
+                  clientReferenceId: IdGen.i.identifier,
+                  dateOfRegistration: DateTime.now().millisecondsSinceEpoch,
+                  projectId: RegistrationDeliverySingleton().projectId,
+                  tenantId: RegistrationDeliverySingleton().tenantId,
+                  beneficiaryClientReferenceId:
+                      beneficiaryType == BeneficiaryType.individual
+                          ? element.clientReferenceId
+                          : value.householdModel.clientReferenceId,
+                  clientAuditDetails: ClientAuditDetails(
+                    createdBy: RegistrationDeliverySingleton()
+                        .loggedInUserUuid
+                        .toString(),
+                    createdTime: DateTime.now().millisecondsSinceEpoch,
+                    lastModifiedTime: DateTime.now().millisecondsSinceEpoch,
+                    lastModifiedBy: RegistrationDeliverySingleton()
+                        .loggedInUserUuid
+                        .toString(),
+                  ),
+                  auditDetails: AuditDetails(
+                    createdBy: RegistrationDeliverySingleton()
+                        .loggedInUserUuid
+                        .toString(),
+                    createdTime: DateTime.now().millisecondsSinceEpoch,
+                    lastModifiedTime: DateTime.now().millisecondsSinceEpoch,
+                    lastModifiedBy: RegistrationDeliverySingleton()
+                        .loggedInUserUuid
+                        .toString(),
+                  )));
+            }
+          }
+
           for (var element in value.individualModel) {
             final IndividualModel? existingIndividual =
                 (await individualRepository.search(IndividualSearchModel(
@@ -357,16 +524,16 @@ class BeneficiaryRegistrationBloc
               ),
             );
           }
-        } catch (error) {
-          rethrow;
-        } finally {
           emit(value.copyWith(loading: false));
           emit(
             BeneficiaryRegistrationPersistedState(
               householdModel: value.householdModel,
+              isEdit: true,
             ),
           );
-        }
+        } catch (error) {
+          rethrow;
+        } finally {}
       },
     );
   }
@@ -389,24 +556,51 @@ class BeneficiaryRegistrationBloc
               ),
             ],
           );
+
+          final projectBeneficiary = await projectBeneficiaryRepository.search(
+            ProjectBeneficiarySearchModel(
+              beneficiaryClientReferenceId: [
+                beneficiaryType == BeneficiaryType.individual
+                    ? event.model.clientReferenceId
+                    : event.householdModel.clientReferenceId,
+              ],
+            ),
+          );
           final IndividualModel? existingIndividual =
               (await individualRepository.search(IndividualSearchModel(
             clientReferenceId: [individual.clientReferenceId],
           )))
                   .firstOrNull;
-
           await individualRepository.update(individual.copyWith(
             id: existingIndividual?.id,
             rowVersion: existingIndividual?.rowVersion ?? 1,
             nonRecoverableError:
                 existingIndividual?.nonRecoverableError ?? false,
           ));
+          if (projectBeneficiary.isNotEmpty) {
+            if (projectBeneficiary.first.tag != event.tag) {
+              await projectBeneficiaryRepository
+                  .update(projectBeneficiary.first.copyWith(tag: event.tag));
+            }
+            var task = await taskDataRepository.search(TaskSearchModel(
+              projectBeneficiaryClientReferenceId:
+                  projectBeneficiary.map((e) => e.clientReferenceId).toList(),
+            ));
+
+            if (task.isNotEmpty) {
+              if (task.last.status == Status.closeHousehold.toValue()) {
+                await taskDataRepository.update(task.last
+                    .copyWith(status: Status.notAdministered.toValue()));
+              }
+            }
+          }
         } catch (error) {
           rethrow;
         } finally {
           emit(value.copyWith(loading: false));
           emit(BeneficiaryRegistrationPersistedState(
             householdModel: value.householdModel,
+            projectBeneficiaryModel: value.projectBeneficiaryModel,
           ));
         }
       },
@@ -426,38 +620,11 @@ class BeneficiaryRegistrationBloc
         try {
           final createdAt = DateTime.now().millisecondsSinceEpoch;
           final initialModifiedAt = DateTime.now().millisecondsSinceEpoch;
-          List<IdentifierModel>? identifiers =
-              event.individualModel.identifiers;
-          String localityCode = value.addressModel.locality!.code;
-          final beneficiaryId = await UniqueIdGeneration().generateUniqueId(
-            localityCode: localityCode,
-            loggedInUserId: event.userUuid,
-            returnBothIds: false,
-          );
-          identifiers?.add(IdentifierModel(
-            clientReferenceId: event.individualModel.clientReferenceId,
-            identifierId: beneficiaryId.first,
-            identifierType: IdentifierTypes.uniqueBeneficiaryID.toValue(),
-            clientAuditDetails: ClientAuditDetails(
-              createdTime: createdAt,
-              lastModifiedTime: initialModifiedAt,
-              lastModifiedBy: event.userUuid,
-              createdBy: event.userUuid,
-            ),
-            auditDetails: AuditDetails(
-              createdBy: event.userUuid,
-              createdTime: createdAt,
-              lastModifiedTime: createdAt,
-              lastModifiedBy: event.userUuid,
-            ),
-          ));
 
           await individualRepository.create(
             event.individualModel.copyWith(
-              identifiers: identifiers,
               address: [
                 value.addressModel.copyWith(
-                  id: null,
                   relatedClientReferenceId:
                       event.individualModel.clientReferenceId,
                   auditDetails: AuditDetails(
@@ -476,20 +643,12 @@ class BeneficiaryRegistrationBloc
               ],
             ),
           );
-          var cycleIndex = "";
-          if (value.householdModel.additionalFields != null) {
-            final fields = value.householdModel.additionalFields!.fields
-                .where((element) => element.key == "cycleIndex");
-            if (fields.isNotEmpty) {
-              cycleIndex = fields.first.value.toString();
-            }
-          }
-
           if (event.beneficiaryType == BeneficiaryType.individual) {
             await projectBeneficiaryRepository.create(
               ProjectBeneficiaryModel(
+                tag: event.tag,
                 rowVersion: 1,
-                tenantId: envConfig.variables.tenantId,
+                tenantId: RegistrationDeliverySingleton().tenantId,
                 clientReferenceId: IdGen.i.identifier,
                 dateOfRegistration: DateTime.now().millisecondsSinceEpoch,
                 projectId: event.projectId,
@@ -516,7 +675,7 @@ class BeneficiaryRegistrationBloc
               individualClientReferenceId:
                   event.individualModel.clientReferenceId,
               isHeadOfHousehold: false,
-              tenantId: envConfig.variables.tenantId,
+              tenantId: RegistrationDeliverySingleton().tenantId,
               rowVersion: 1,
               clientReferenceId: IdGen.i.identifier,
               auditDetails: AuditDetails(
@@ -528,13 +687,6 @@ class BeneficiaryRegistrationBloc
                 lastModifiedTime: initialModifiedAt,
                 lastModifiedBy: event.userUuid,
                 createdBy: event.userUuid,
-              ),
-              additionalFields: HouseholdMemberAdditionalFields(
-                version: 1,
-                fields: [
-                  if (cycleIndex.isNotEmpty)
-                    AdditionalField("cycleIndex", cycleIndex),
-                ],
               ),
             ),
           );
@@ -549,6 +701,11 @@ class BeneficiaryRegistrationBloc
       },
     );
   }
+
+  getIndividualBeneficiaryClientReferenceId(
+      List<IndividualModel> individualModel) {
+    return individualModel.map((e) => e.clientReferenceId).toList();
+  }
 }
 
 @freezed
@@ -557,10 +714,9 @@ class BeneficiaryRegistrationEvent with _$BeneficiaryRegistrationEvent {
     AddressModel model,
   ) = BeneficiaryRegistrationSaveAddressEvent;
 
-  const factory BeneficiaryRegistrationEvent.saveHouseholdConsent({
-    required HouseholdModel household,
-    required bool isConsent,
-  }) = BeneficiaryRegistrationSaveHouseholdConsentEvent;
+  const factory BeneficiaryRegistrationEvent.saveHouseDetails({
+    required HouseholdModel model,
+  }) = BeneficiaryRegistrationSaveHouseDetailsEvent;
 
   const factory BeneficiaryRegistrationEvent.saveHouseholdDetails({
     required HouseholdModel household,
@@ -578,24 +734,42 @@ class BeneficiaryRegistrationEvent with _$BeneficiaryRegistrationEvent {
     required AddressModel addressModel,
     required String userUuid,
     required String projectId,
+    String? tag,
     required BeneficiaryType beneficiaryType,
   }) = BeneficiaryRegistrationAddMemberEvent;
 
   const factory BeneficiaryRegistrationEvent.updateHouseholdDetails({
     required HouseholdModel household,
     AddressModel? addressModel,
+    String? tag,
   }) = BeneficiaryRegistrationUpdateHouseholdDetailsEvent;
 
   const factory BeneficiaryRegistrationEvent.updateIndividualDetails({
     required IndividualModel model,
+    String? tag,
+    required HouseholdModel householdModel,
     required AddressModel addressModel,
   }) = BeneficiaryRegistrationUpdateIndividualDetailsEvent;
 
-  const factory BeneficiaryRegistrationEvent.create({
-    required String userUuid,
-    required String projectId,
-    required BoundaryModel boundary,
-  }) = BeneficiaryRegistrationCreateEvent;
+  const factory BeneficiaryRegistrationEvent.create(
+          {required String userUuid,
+          required String projectId,
+          required BoundaryModel boundary,
+          String? tag,
+          @Default(true) bool navigateToSummary}) =
+      BeneficiaryRegistrationCreateEvent;
+
+  const factory BeneficiaryRegistrationEvent.summary(
+          {required String userUuid,
+          required String projectId,
+          required BoundaryModel boundary,
+          String? tag,
+          @Default(true) bool navigateToSummary}) =
+      BeneficiaryRegistrationSummaryEvent;
+
+  const factory BeneficiaryRegistrationEvent.validate({
+    required String tag,
+  }) = BeneficiaryRegistrationTagEvent;
 }
 
 @freezed
@@ -604,6 +778,7 @@ class BeneficiaryRegistrationState with _$BeneficiaryRegistrationState {
     AddressModel? addressModel,
     HouseholdModel? householdModel,
     IndividualModel? individualModel,
+    ProjectBeneficiaryModel? projectBeneficiaryModel,
     DateTime? registrationDate,
     String? searchQuery,
     @Default(false) bool loading,
@@ -615,13 +790,16 @@ class BeneficiaryRegistrationState with _$BeneficiaryRegistrationState {
     required HouseholdModel householdModel,
     required List<IndividualModel> individualModel,
     required DateTime registrationDate,
+    ProjectBeneficiaryModel? projectBeneficiaryModel,
     @Default(false) bool loading,
+    IndividualModel? headOfHousehold,
   }) = BeneficiaryRegistrationEditHouseholdState;
 
   const factory BeneficiaryRegistrationState.editIndividual({
     required HouseholdModel householdModel,
     required IndividualModel individualModel,
     required AddressModel addressModel,
+    ProjectBeneficiaryModel? projectBeneficiaryModel,
     @Default(false) bool loading,
   }) = BeneficiaryRegistrationEditIndividualState;
 
@@ -635,7 +813,24 @@ class BeneficiaryRegistrationState with _$BeneficiaryRegistrationState {
     @Default(true) bool navigateToRoot,
     required HouseholdModel householdModel,
     IndividualModel? individualModel,
+    ProjectBeneficiaryModel? projectBeneficiaryModel,
+    DateTime? registrationDate,
+    AddressModel? addressModel,
+    @Default(false) bool loading,
+    @Default(false) bool isEdit,
+    @Default(false) bool isHeadOfHousehold,
   }) = BeneficiaryRegistrationPersistedState;
+
+  const factory BeneficiaryRegistrationState.summary({
+    @Default(true) bool navigateToRoot,
+    HouseholdModel? householdModel,
+    IndividualModel? individualModel,
+    ProjectBeneficiaryModel? projectBeneficiaryModel,
+    DateTime? registrationDate,
+    AddressModel? addressModel,
+    @Default(false) bool loading,
+    @Default(false) bool isHeadOfHousehold,
+  }) = BeneficiaryRegistrationSummaryState;
 }
 
 class InvalidRegistrationStateException implements Exception {

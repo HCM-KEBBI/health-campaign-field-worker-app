@@ -100,7 +100,7 @@ class ProjectBeneficiaryLocalRepository
                         .isIn(query.beneficiaryClientReferenceId!),
                   if (query.id != null)
                     sql.projectBeneficiary.id.equals(
-                      query.id!,
+                      query.id!.first,
                     ),
                   if (query.projectId != null)
                     sql.projectBeneficiary.projectId.equals(
@@ -108,7 +108,7 @@ class ProjectBeneficiaryLocalRepository
                     ),
                   if (query.beneficiaryId != null)
                     sql.projectBeneficiary.beneficiaryId.equals(
-                      query.beneficiaryId!,
+                      query.beneficiaryId!.first,
                     ),
                   if (query.dateOfRegistrationTime != null)
                     sql.projectBeneficiary.dateOfRegistration.equals(

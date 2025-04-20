@@ -8,69 +8,73 @@ import '../../data/local_store/sql_store/sql_store.dart';
 part 'project_beneficiary.mapper.dart';
 
 @MappableClass(ignoreNull: true, discriminatorValue: MappableClass.useAsDefault)
-class ProjectBeneficiarySearchModel extends EntitySearchModel with ProjectBeneficiarySearchModelMappable {
-  final String? id;
+class ProjectBeneficiarySearchModel extends EntitySearchModel
+    with ProjectBeneficiarySearchModelMappable {
+  final List<String>? id;
   final String? projectId;
-  final String? beneficiaryId;
+  final List<String>? beneficiaryId;
+  final List<String>? tag;
   final List<String>? beneficiaryClientReferenceId;
   final DateTime? beneficiaryRegistrationDateLte;
   final DateTime? beneficiaryRegistrationDateGte;
-  final int? limit;
   final int? offset;
+  final int? limit;
   final List<String>? clientReferenceId;
   final String? tenantId;
   final DateTime? dateOfRegistrationTime;
-  
+
   ProjectBeneficiarySearchModel({
     this.id,
     this.projectId,
     this.beneficiaryId,
+    this.tag,
     this.beneficiaryClientReferenceId,
     this.beneficiaryRegistrationDateLte,
     this.beneficiaryRegistrationDateGte,
-    this.limit,
     this.offset,
+    this.limit,
     this.clientReferenceId,
     this.tenantId,
     int? dateOfRegistration,
     super.boundaryCode,
     super.isDeleted,
-  }): dateOfRegistrationTime = dateOfRegistration == null
-      ? null
-      : DateTime.fromMillisecondsSinceEpoch(dateOfRegistration),
-   super();
+  })  : dateOfRegistrationTime = dateOfRegistration == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(dateOfRegistration),
+        super();
 
   @MappableConstructor()
   ProjectBeneficiarySearchModel.ignoreDeleted({
     this.id,
     this.projectId,
     this.beneficiaryId,
+    this.tag,
     this.beneficiaryClientReferenceId,
     this.beneficiaryRegistrationDateLte,
     this.beneficiaryRegistrationDateGte,
-    this.limit,
     this.offset,
+    this.limit,
     this.clientReferenceId,
     this.tenantId,
     int? dateOfRegistration,
     super.boundaryCode,
-  }): dateOfRegistrationTime = dateOfRegistration == null
-  ? null
-      : DateTime.fromMillisecondsSinceEpoch(dateOfRegistration),
-   super(isDeleted: false);
+  })  : dateOfRegistrationTime = dateOfRegistration == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(dateOfRegistration),
+        super(isDeleted: false);
 
   int? get dateOfRegistration => dateOfRegistrationTime?.millisecondsSinceEpoch;
-  
 }
 
 @MappableClass(ignoreNull: true, discriminatorValue: MappableClass.useAsDefault)
-class ProjectBeneficiaryModel extends EntityModel with ProjectBeneficiaryModelMappable {
-
+class ProjectBeneficiaryModel extends EntityModel
+    with ProjectBeneficiaryModelMappable {
   static const schemaName = 'ProjectBeneficiary';
 
   final String? id;
   final String? projectId;
   final String? beneficiaryId;
+  final String? tag;
   final String? beneficiaryClientReferenceId;
   final bool? nonRecoverableError;
   final String clientReferenceId;
@@ -84,19 +88,21 @@ class ProjectBeneficiaryModel extends EntityModel with ProjectBeneficiaryModelMa
     this.id,
     this.projectId,
     this.beneficiaryId,
+    this.tag,
     this.beneficiaryClientReferenceId,
     this.nonRecoverableError = false,
     required this.clientReferenceId,
     this.tenantId,
     this.rowVersion,
     required int dateOfRegistration,
-    super.auditDetails,super.clientAuditDetails,
+    super.auditDetails,
+    super.clientAuditDetails,
     super.isDeleted = false,
-  }): dateOfRegistrationTime = DateTime.fromMillisecondsSinceEpoch(dateOfRegistration),
-      super();
+  })  : dateOfRegistrationTime =
+            DateTime.fromMillisecondsSinceEpoch(dateOfRegistration),
+        super();
 
-  int  get dateOfRegistration => dateOfRegistrationTime.millisecondsSinceEpoch;
-  
+  int get dateOfRegistration => dateOfRegistrationTime.millisecondsSinceEpoch;
 
   ProjectBeneficiaryCompanion get companion {
     return ProjectBeneficiaryCompanion(
@@ -119,16 +125,16 @@ class ProjectBeneficiaryModel extends EntityModel with ProjectBeneficiaryModelMa
       tenantId: Value(tenantId),
       rowVersion: Value(rowVersion),
       dateOfRegistration: Value(dateOfRegistration),
-      );
+    );
   }
 }
 
 @MappableClass(ignoreNull: true, discriminatorValue: MappableClass.useAsDefault)
-class ProjectBeneficiaryAdditionalFields extends AdditionalFields with ProjectBeneficiaryAdditionalFieldsMappable {
+class ProjectBeneficiaryAdditionalFields extends AdditionalFields
+    with ProjectBeneficiaryAdditionalFieldsMappable {
   ProjectBeneficiaryAdditionalFields({
     super.schema = 'ProjectBeneficiary',
     required super.version,
     super.fields,
   });
 }
-

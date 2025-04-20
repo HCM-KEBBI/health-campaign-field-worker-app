@@ -29,7 +29,94 @@ const referBeneficiary = ReferBeneficiary();
 const ineligibilityReasons = IneligibilityReasons();
 const scanner = Scanner();
 
+const householdLocationShowcase = HouseholdLocationShowcase();
+const householdDetailsShowcase = HouseholdDetailsShowcase();
+const individualDetailsShowcase = IndividualDetailsShowcase();
+
 const summaryReport = SummaryReport();
+
+class IndividualDetailsShowcase {
+  const IndividualDetailsShowcase();
+
+  String get firstNameOfIndividual {
+    return 'INDIVIDUAL_DETAILS_SHOWCASE_FIRST_NAME_OF_INDIVIDUAL';
+  }
+
+  String get lastNameOfIndividual {
+    return 'INDIVIDUAL_DETAILS_SHOWCASE_LAST_NAME_OF_INDIVIDUAL';
+  }
+
+  String get headOfHousehold {
+    return 'INDIVIDUAL_DETAILS_SHOWCASE_HEAD_OF_HOUSEHOLD';
+  }
+
+  String get age {
+    return 'INDIVIDUAL_DETAILS_SHOWCASE_AGE';
+  }
+
+  String get dateOfBirth {
+    return 'INDIVIDUAL_DETAILS_SHOWCASE_DATE_OF_BIRTH';
+  }
+
+  String get gender {
+    return 'INDIVIDUAL_DETAILS_SHOWCASE_GENDER';
+  }
+
+  String get mobile {
+    return 'INDIVIDUAL_DETAILS_SHOWCASE_MOBILE';
+  }
+
+  String get idType {
+    return 'INDIVIDUAL_DETAILS_SHOWCASE_ID_TYPE';
+  }
+}
+
+class HouseholdDetailsShowcase {
+  const HouseholdDetailsShowcase();
+
+  String get dateOfRegistration {
+    return 'HOUSEHOLD_DETAILS_SHOWCASE_DATE_OF_REGISTRATION';
+  }
+
+  String get numberOfMembersLivingInHousehold {
+    return 'HOUSEHOLD_DETAILS_SHOWCASE_NUMBER_OF_MEMBERS_LIVING_IN_HOUSEHOLD';
+  }
+
+  String get numberOfPregnantWomenInHousehold =>
+      'HOUSEHOLD_DETAILS_SHOWCASE_NO_OF_PREGNANT_WOMEN_IN_HOUSEHOLD';
+
+  String get numberOfChildrenBelow5InHousehold =>
+      'HOUSEHOLD_DETAILS_SHOWCASE_NO_OF_CHILD_BELOW_5_IN_HOUSEHOLD';
+
+  String get numberOfRoomsInHousehold =>
+      'HOUSE_DETAILS_SHOWCASE_NO_OF_ROOMS_IN_HOUSEHOLD';
+
+  String get typeOfStructure => 'HOUSE_DETAILS_SHOWCASE_TYPE_OF_STRUCTURE';
+}
+
+class HouseholdLocationShowcase {
+  const HouseholdLocationShowcase();
+
+  String get administrativeArea {
+    return 'HOUSEHOLD_LOCATION_SHOWCASE_ADMINISTRATIVE_AREA';
+  }
+
+  String get gpsAccuracy {
+    return 'HOUSEHOLD_LOCATION_SHOWCASE_GPS_ACCURACY_LABEL';
+  }
+
+  String get landmark {
+    return 'HOUSEHOLD_LOCATION_SHOWCASE_LANDMARK';
+  }
+
+  String get address {
+    return 'HOUSEHOLD_LOCATION_SHOWCASE_ADDRESS';
+  }
+
+  String get postalCode {
+    return 'HOUSEHOLD_LOCATION_SHOWCASE_POSTAL_CODE';
+  }
+}
 
 class SummaryReport {
   const SummaryReport();
@@ -45,6 +132,8 @@ class SummaryReport {
 
 class Common {
   const Common();
+
+  String get coreCommonLoadingText => 'CORE_COMMON_LOADING_TEXT';
 
   String get coreCommonContinue => 'CORE_COMMON_CONTINUE';
 
@@ -297,6 +386,15 @@ class Home {
 class SearchBeneficiary {
   const SearchBeneficiary();
 
+  String get applyFilter => 'APPLY_FILTER';
+
+  String get clearFilter => 'CLEAR_FILTER';
+
+  String get filterLabel => 'FILTER_LABEL';
+
+  String get beneficiaryIdValidInfoDescription =>
+      'BENEFICIARY_ID_VALID_INFO_DESCRIPTION';
+
   String get statisticsLabelText => 'BENEFICIARY_STATISTICS_LABEL_TEXT';
 
   String get searchIndividualLabelText =>
@@ -328,6 +426,28 @@ class SearchBeneficiary {
 
 class BeneficiaryDetails {
   const BeneficiaryDetails();
+
+  String get noOfMenCountLabel => 'NO_OF_MEN_LABEL';
+
+  String get noOfWomenCountLabel => 'NO_OF_WOMEN_LABEL';
+
+  String get noOfMembersAlertTitle => 'MEMBERS_ALERT_TITLE';
+  String get noOfMembersAlertContent => 'MEMBERS_ALERT_CONTENT';
+  String get noOfMembersAlertYes => 'MEMBERS_ALERT_YES';
+  String get noOfMembersAlertNo => 'MEMBERS_ALERT_NO';
+
+  String get pregnantWomenLabel => 'PREGNANT_WOMEN_LABEL';
+  String get roomsLabel => 'ROOMS_LABEL';
+  String get childrenLabel => 'CHILDREN_LABEL';
+  String get womenLabel => 'WOMEN_LABEL';
+  String get menLabel => 'MEN_LABEL';
+
+  String get commentsLabel => 'REFUSAL_COMMENTS_LABEL';
+  String get refusalCommentsRequried => 'REFUSAL_COMMENTS_REQUIRED';
+  String get commentSummaryLabel => 'SUMMARY_COMMENT_LABEL';
+  String get wastedQuantityLabel => 'SUMMARY_WASTED_QUANTITY_LABEL';
+  String get householdMemberSingular => 'BENEFICIARY_HOUSEHOLD_MEMBER';
+  String get householdMemberPlural => 'BENEFICIARY_HOUSEHOLD_MEMBERS';
 
   String get beneficiaryWeight => 'BENEFICIARY_WEIGHT';
   String get beneficiaryHeight => 'BENEFICIARY_HEIGHT';
@@ -433,6 +553,16 @@ class BeneficiaryDetails {
 class IndividualDetails {
   const IndividualDetails();
 
+  String get previousCycleBeneficiaryLabelText =>
+      'PREVIOUS_CYCLE_BENEFICIARY_LABEL';
+
+  String get mobileMinLengthValidationMessage => 'MOBILE_MIN_LENGTH_VALIDATION';
+
+  String get mobileNumberLengthValidationMessage =>
+      'INDIVIDUAL_DETAILS_MOBILE_NUMBER_LENGTH';
+
+  String get individualsChildDetailsLabelText => 'INDIVIDUAL_CHILD_LABEL_TEXT';
+
   String get maxWeightLengthError => "MAX_WEIGHT_LENGTH_ERROR";
 
   String get minWeightLengthError => "MIN_WEIGHT_LENGTH_ERROR";
@@ -518,6 +648,11 @@ class IndividualDetails {
 class HouseholdLocation {
   const HouseholdLocation();
 
+  String get gpsAccuracyLabel => 'CLOSE_HOUSEHOLD_GPS_ACCURACY_LABEL';
+
+  String get householdLocationDescriptionText =>
+      'HOUSEHOLD_LOCATION_DESCRIPTION_TEXT';
+
   String get householdLocationLabelText => 'HOUSEHOLD_LOCATION_LABEL_TEXT';
 
   String get administrationAreaFormLabel => 'ADMINISTRATION_AREA_FORM_LABEL';
@@ -557,6 +692,14 @@ class AcknowledgementSuccess {
 
 class HouseholdDetails {
   const HouseholdDetails();
+
+  String get noOfChildrenBelow5YearsLabel => 'NO_OF_CHILDREN_BELOW_5_YR_LABEL';
+
+  String get noOfPregnantWomenCountLabel => 'NO_OF_PREGNANT_WOMEN_LABEL';
+
+  String get householdDetailsDescription => 'HOUSEHOLD_DETAILS_DESCRIPTION';
+
+  String get memberCountError => 'MEMBER_COUNT_ERROR';
 
   String get householdDetailsLabel => 'HOUSEHOLD_DETAILS_LABEL';
 
@@ -611,6 +754,9 @@ class HouseholdOverView {
 
   String get householdOverViewNotDeliveredIconLabel =>
       'HOUSEHOLD_OVER_VIEW_NOT_DELIVERED_ICON_LABEL';
+
+  String get householdOverViewBeneficiaryRefusedLabel =>
+      'HOUSEHOLD_OVER_VIEW_BENEFICIARY_REFUSED_LABEL';
 
   String get householdOverViewNotEligibleIconLabel =>
       'HOUSEHOLD_OVER_VIEW_NOT_ELIGIBLE_ICON_LABEL';
@@ -678,6 +824,8 @@ class MemberCard {
 
 class DeliverIntervention {
   const DeliverIntervention();
+
+  String get resourceAlreadyScanned => 'RESOURCE_ALREADY_SCANNED';
 
   String get deliverInterventionLabel => 'DELIVER_INTERVENTION_LABEL';
   String get recordRedoseLabel => 'DELIVER_INTERVENTION_RECORD_REDOSE_LABEL';

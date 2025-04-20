@@ -8,6 +8,7 @@ import 'package:stream_transform/stream_transform.dart';
 
 import '../../data/repositories/local/address.dart';
 import '../../models/data_model.dart';
+import '../../utils/global_search_parameters.dart';
 import '../../utils/typedefs.dart';
 
 part 'search_households.freezed.dart';
@@ -275,7 +276,7 @@ class SearchHouseholdsBloc
       final householdId = entry.key;
 
       final exisitingHousehold = state.householdMembers.firstWhereOrNull(
-        (element) => element.household.clientReferenceId == householdId,
+        (element) => element.household?.clientReferenceId == householdId,
       );
       if (exisitingHousehold != null) continue;
       if (householdId == null) continue;
@@ -517,7 +518,7 @@ class SearchHouseholdsBloc
       final householdId = entry.key;
 
       final exisitingHousehold = state.householdMembers.firstWhereOrNull(
-        (element) => element.household.clientReferenceId == householdId,
+        (element) => element.household?.clientReferenceId == householdId,
       );
       if (exisitingHousehold != null) continue;
       if (householdId == null) continue;
@@ -698,6 +699,19 @@ class SearchHouseholdsEvent with _$SearchHouseholdsEvent {
     required int limit,
   }) = SearchHouseholdsByProximityEvent;
 
+  const factory SearchHouseholdsEvent.searchByTag({
+    required String tag,
+    required String projectId,
+  }) = SearchHouseholdsByTagEvent;
+
+  const factory SearchHouseholdsEvent.individualGlobalSearch({
+    required GlobalSearchParameters globalSearchParams,
+  }) = IndividualGlobalSearchEvent;
+
+  const factory SearchHouseholdsEvent.houseHoldGlobalSearch({
+    required GlobalSearchParameters globalSearchParams,
+  }) = HouseHoldGlobalSearchEvent;
+
   const factory SearchHouseholdsEvent.clear() = SearchHouseholdsClearEvent;
 
   const factory SearchHouseholdsEvent.load() = SearchHouseholdsLoadingEvent;
@@ -712,11 +726,13 @@ class SearchHouseholdsState with _$SearchHouseholdsState {
     String? searchQuery,
     @Default(0) int offset,
     @Default(10) int limit,
+    String? tag,
     @Default([]) List<HouseholdMemberWrapper> householdMembers,
     @Default(0) int registeredHouseholds,
     @Default(0) int deliveredInterventions,
     @Default(0) int sideEffectsObserved,
     @Default(0) int referralsDone,
+    @Default(0) int totalResults,
   }) = _SearchHouseholdsState;
 
   bool get resultsNotFound {
@@ -730,10 +746,10 @@ class SearchHouseholdsState with _$SearchHouseholdsState {
 @freezed
 class HouseholdMemberWrapper with _$HouseholdMemberWrapper {
   const factory HouseholdMemberWrapper({
-    required HouseholdModel household,
-    required IndividualModel headOfHousehold,
-    required List<IndividualModel> members,
-    required List<ProjectBeneficiaryModel> projectBeneficiaries,
+    required HouseholdModel? household,
+    required IndividualModel? headOfHousehold,
+    required List<IndividualModel>? members,
+    required List<ProjectBeneficiaryModel>? projectBeneficiaries,
     double? distance,
     List<TaskModel>? tasks,
     List<SideEffectModel>? sideEffects,

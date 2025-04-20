@@ -89,9 +89,9 @@ class _DeliverInterventionPageState
 
               final projectBeneficiary =
                   context.beneficiaryType != BeneficiaryType.individual
-                      ? [householdMemberWrapper.projectBeneficiaries.first]
+                      ? [householdMemberWrapper.projectBeneficiaries?.first]
                       : householdMemberWrapper.projectBeneficiaries
-                          .where(
+                          ?.where(
                             (element) =>
                                 element.beneficiaryClientReferenceId ==
                                 state.selectedIndividual?.clientReferenceId,
@@ -101,7 +101,7 @@ class _DeliverInterventionPageState
               final projectState = context.read<ProjectBloc>().state;
               final selectedIndividual = state.selectedIndividual;
               final projectBeneficiaryClientReferenceId =
-                  projectBeneficiary.first.clientReferenceId;
+                  projectBeneficiary?.first?.clientReferenceId;
 
               return Scaffold(
                 body: state.loading
@@ -291,8 +291,8 @@ class _DeliverInterventionPageState
                                                           oldTask: null,
                                                           projectBeneficiaryClientReferenceId:
                                                               projectBeneficiary
-                                                                  .first
-                                                                  .clientReferenceId,
+                                                                  ?.first
+                                                                  ?.clientReferenceId,
                                                           dose:
                                                               deliveryInterventionstate
                                                                   .dose,
@@ -304,7 +304,7 @@ class _DeliverInterventionPageState
                                                           address:
                                                               householdMemberWrapper
                                                                   .members
-                                                                  .first
+                                                                  ?.first
                                                                   .address
                                                                   ?.first,
                                                           latitude: lat,

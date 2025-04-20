@@ -12,6 +12,7 @@ import '../../blocs/service_definition/service_definition.dart';
 import '../../blocs/side_effects/side_effects.dart';
 import '../../models/data_model.dart';
 import '../../utils/extensions/extensions.dart';
+import '../../utils/registration_delivery_singleton.dart';
 
 class BeneficiaryWrapperPage extends StatelessWidget {
   final HouseholdMemberWrapper wrapper;
@@ -88,6 +89,7 @@ class BeneficiaryWrapperPage extends StatelessWidget {
             taskDataRepository: task,
             sideEffectDataRepository: sideEffect,
             referralDataRepository: referral,
+            beneficiaryType: RegistrationDeliverySingleton().beneficiaryType!,
           ),
         ),
         BlocProvider(
@@ -127,7 +129,7 @@ class BeneficiaryWrapperPage extends StatelessWidget {
             )..add(DeliverInterventionSearchEvent(TaskSearchModel(
                 projectBeneficiaryClientReferenceId: houseHoldOverviewState
                     .householdMemberWrapper.projectBeneficiaries
-                    .map((e) => e.clientReferenceId)
+                    ?.map((e) => e.clientReferenceId)
                     .toList(),
               ))),
             child: BlocProvider(
@@ -140,7 +142,7 @@ class BeneficiaryWrapperPage extends StatelessWidget {
               )..add(ReferralSearchEvent(ReferralSearchModel(
                   projectBeneficiaryClientReferenceId: houseHoldOverviewState
                       .householdMemberWrapper.projectBeneficiaries
-                      .map((e) => e.clientReferenceId)
+                      ?.map((e) => e.clientReferenceId)
                       .toList(),
                 ))),
               child: BlocProvider(

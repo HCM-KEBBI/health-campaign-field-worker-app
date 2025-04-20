@@ -77,6 +77,14 @@ class StatusMapper extends EnumMapper<Status> {
         return "TO_ADMINISTER";
       case Status.beneficiaryIneligible:
         return "BENEFICIARY_INELIGIBLE";
+      case Status.registered:
+        return "REGISTERED";
+      case Status.notRegistered:
+        return "NOT_REGISTERED";
+      case Status.notAdministered:
+        return "NOT_ADMINISTERED";
+      case Status.closeHousehold:
+        return "CLOSED_HOUSEHOLD";
     }
   }
 }
