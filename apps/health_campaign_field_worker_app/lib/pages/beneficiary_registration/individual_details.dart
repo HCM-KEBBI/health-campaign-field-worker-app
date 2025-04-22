@@ -59,7 +59,7 @@ class _IndividualDetailsPageState
 
   final ValueNotifier<dynamic> heightWeight = ValueNotifier(null);
 
-  Set<String>? identifierIdGenerated;
+  Set<String>? beneficiaryIdGenerated;
 
   void updateStatus(FormGroup form, dynamic age, BuildContext context) {
     // Updating the Value updateStatuseNotifier
@@ -95,7 +95,7 @@ class _IndividualDetailsPageState
 
     String localityCode = locality!.code;
 
-    identifierIdGenerated = await UniqueIdGeneration().generateUniqueId(
+    beneficiaryIdGenerated = await UniqueIdGeneration().generateUniqueId(
       localityCode: localityCode,
       loggedInUserId: context.loggedInUserUuid,
       returnBothIds: false,
@@ -802,6 +802,13 @@ class _IndividualDetailsPageState
     );
     // String? individualName = form.control(_individualNameKey).value as String?;
 
+    bool beneficiaryIdNotAvailable = individual.identifiers?.firstWhereOrNull(
+          (element) =>
+              element.identifierType ==
+              IdentifierTypes.uniqueBeneficiaryID.toValue(),
+        ) ==
+        null;
+
     individual = individual.copyWith(
       name: name.copyWith(
         givenName: form.control(_individualNameKey).value,
@@ -815,15 +822,18 @@ class _IndividualDetailsPageState
       mobileNumber: form.control(_mobileNumberKey).value,
       dateOfBirth: dobString,
       identifiers: [
-        identifier.copyWith(
-          identifierId: widget.isEditMode && identifierIdGenerated != null
-              ? identifierIdGenerated!.first
-              : context.loggedInUserUuid,
-          // identifierType: IdentifierTypes.defaultID.toValue(),
-          identifierType: widget.isEditMode
-              ? IdentifierTypes.uniqueBeneficiaryID.toValue()
-              : IdentifierTypes.defaultID.toValue(),
-        ),
+        if (!widget.isEditMode)
+          identifier.copyWith(
+            identifierId: context.loggedInUserUuid,
+            identifierType: IdentifierTypes.defaultID.toValue(),
+          ),
+        if (widget.isEditMode &&
+            beneficiaryIdNotAvailable &&
+            beneficiaryIdGenerated != null)
+          identifier.copyWith(
+            identifierId: beneficiaryIdGenerated!.first,
+            identifierType: IdentifierTypes.uniqueBeneficiaryID.toValue(),
+          ),
       ],
     );
     final cycleIndex =
