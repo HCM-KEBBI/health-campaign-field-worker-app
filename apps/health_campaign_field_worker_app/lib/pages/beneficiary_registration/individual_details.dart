@@ -16,6 +16,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 import '../../../utils/validations.dart' as validation;
 import '../../blocs/app_initialization/app_initialization.dart';
 import '../../blocs/beneficiary_registration/beneficiary_registration.dart';
+import '../../blocs/boundary/boundary.dart';
 import '../../blocs/household_overview/household_overview.dart';
 import '../../blocs/search_households/search_households.dart';
 import '../../data/local_store/no_sql/schema/app_configuration.dart';
@@ -29,11 +30,13 @@ import '../../widgets/header/back_navigation_help_header.dart';
 import '../../widgets/localized.dart';
 
 class IndividualDetailsPage extends LocalizedStatefulWidget {
+  final bool isEditMode;
   final bool isHeadOfHousehold;
 
   const IndividualDetailsPage({
     super.key,
     super.appLocalizations,
+    this.isEditMode = false,
     this.isHeadOfHousehold = false,
   });
 
@@ -56,6 +59,8 @@ class _IndividualDetailsPageState
 
   final ValueNotifier<dynamic> heightWeight = ValueNotifier(null);
 
+  Set<String>? identifierIdGenerated;
+
   void updateStatus(FormGroup form, dynamic age, BuildContext context) {
     // Updating the Value updateStatuseNotifier
 
@@ -77,6 +82,30 @@ class _IndividualDetailsPageState
         heightWeight.value = newValue; // Update only if changed
       }
     }
+  }
+
+  getBeneficiaryId() async {
+    final boundaryBloc = context.read<BoundaryBloc>().state;
+    final code = boundaryBloc.boundaryList.first.code;
+    final bname = boundaryBloc.boundaryList.first.name;
+
+    final locality = code == null || bname == null
+        ? null
+        : LocalityModel(code: code, name: bname);
+
+    String localityCode = locality!.code;
+
+    identifierIdGenerated = await UniqueIdGeneration().generateUniqueId(
+      localityCode: localityCode,
+      loggedInUserId: context.loggedInUserUuid,
+      returnBothIds: false,
+    );
+  }
+
+  @override
+  initState() {
+    super.initState();
+    getBeneficiaryId();
   }
 
   @override
@@ -787,8 +816,13 @@ class _IndividualDetailsPageState
       dateOfBirth: dobString,
       identifiers: [
         identifier.copyWith(
-          identifierId: context.loggedInUserUuid,
-          identifierType: IdentifierTypes.defaultID.toValue(),
+          identifierId: widget.isEditMode && identifierIdGenerated != null
+              ? identifierIdGenerated!.first
+              : context.loggedInUserUuid,
+          // identifierType: IdentifierTypes.defaultID.toValue(),
+          identifierType: widget.isEditMode
+              ? IdentifierTypes.uniqueBeneficiaryID.toValue()
+              : IdentifierTypes.defaultID.toValue(),
         ),
       ],
     );
@@ -950,8 +984,9 @@ class _IndividualDetailsPageState
                         context) ==
                     Constants.height)
             ? individual.additionalFields?.fields
-                    .firstWhere((element) => element.key == Constants.height)
-                    .value ??
+                    .firstWhereOrNull(
+                        (element) => element.key == Constants.height)
+                    ?.value ??
                 ""
             : "",
       ),

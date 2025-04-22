@@ -28,13 +28,40 @@ class _SearchBeneficiaryPageState
     extends LocalizedState<SearchBeneficiaryPage> {
   final TextEditingController searchController = TextEditingController();
   bool isProximityEnabled = false;
+  bool isSearchByBeneficaryIdEnabled = false;
 
   double lat = 0.0;
   double long = 0.0;
 
+  RegExp pattern = RegExp(r'^[0-9A-Z-]+$');
+
   @override
   void initState() {
     super.initState();
+  }
+
+  bool isBeneficiaryIdValid(String value) {
+    if (value.trim().length != 14) return false;
+    for (var i = 0; i < value.length; i++) {
+      if ((i == 4 || i == 9) && value[i] != '-')
+        return false;
+      else if (isLowerCase(value[i])) return false;
+    }
+    return true;
+  }
+
+  bool isLowerCase(String ch) {
+    return ch.codeUnitAt(0) >= 97 && ch.codeUnitAt(0) <= 122;
+  }
+
+  bool isBeneficiaryIdValidPattern(String value) {
+    bool isValid = true;
+    if (value.trim().length > 14) {
+      isValid = false;
+    } else if (!pattern.hasMatch(value.trim())) {
+      isValid = false;
+    }
+    return isValid;
   }
 
   @override
@@ -164,6 +191,20 @@ class _SearchBeneficiaryPageState
                                                 limit: bloc.state.limit,
                                                 offset: 0,
                                               ));
+                                            } else if (isSearchByBeneficaryIdEnabled &&
+                                                isBeneficiaryIdValid(
+                                                  value.trim(),
+                                                )) {
+                                              bloc.add(
+                                                const SearchHouseholdsLoadingEvent(),
+                                              );
+                                              bloc.add(SearchHouseholdsEvent
+                                                  .searchByBeneficiaryId(
+                                                beneficiaryId: value.trim(),
+                                                projectId: context.projectId,
+                                                limit: bloc.state.limit,
+                                                offset: 0,
+                                              ));
                                             } else {
                                               bloc.add(
                                                 const SearchHouseholdsClearEvent(),
@@ -193,76 +234,113 @@ class _SearchBeneficiaryPageState
                                         },
                                       ),
                                       locationState.latitude != null
-                                          ? Row(
+                                          ? Column(
                                               children: [
-                                                Switch(
-                                                  value: isProximityEnabled,
-                                                  onChanged: (value) {
-                                                    searchController.clear();
-                                                    final bloc = context.read<
-                                                        SearchHouseholdsBloc>();
-                                                    bloc.add(
-                                                      const SearchHouseholdsClearEvent(),
-                                                    );
+                                                Row(
+                                                  children: [
+                                                    Switch(
+                                                      value: isProximityEnabled,
+                                                      onChanged: (value) {
+                                                        searchController
+                                                            .clear();
+                                                        final bloc = context.read<
+                                                            SearchHouseholdsBloc>();
+                                                        bloc.add(
+                                                          const SearchHouseholdsClearEvent(),
+                                                        );
 
-                                                    setState(() {
-                                                      isProximityEnabled =
-                                                          value;
-                                                      lat = locationState
-                                                          .latitude!;
-                                                      long = locationState
-                                                          .longitude!;
-                                                    });
+                                                        setState(() {
+                                                          isProximityEnabled =
+                                                              value;
+                                                          lat = locationState
+                                                              .latitude!;
+                                                          long = locationState
+                                                              .longitude!;
+                                                        });
 
-                                                    if (locationState
-                                                            .hasPermissions &&
-                                                        value &&
-                                                        locationState
-                                                                .latitude !=
-                                                            null &&
-                                                        locationState
-                                                                .longitude !=
-                                                            null &&
-                                                        appConfig.maxRadius !=
-                                                            null &&
-                                                        isProximityEnabled) {
-                                                      final bloc = context.read<
-                                                          SearchHouseholdsBloc>();
-                                                      bloc.add(
-                                                        const SearchHouseholdsLoadingEvent(),
-                                                      );
-                                                      bloc.add(
-                                                        SearchHouseholdsEvent
-                                                            .searchByProximity(
-                                                          latitude:
-                                                              locationState
-                                                                  .latitude!,
-                                                          longititude:
-                                                              locationState
-                                                                  .longitude!,
-                                                          projectId:
-                                                              context.projectId,
-                                                          maxRadius: appConfig
-                                                              .maxRadius!,
-                                                          limit:
-                                                              bloc.state.limit,
-                                                          offset: 0,
-                                                        ),
-                                                      );
-                                                    } else {
-                                                      final bloc = context.read<
-                                                          SearchHouseholdsBloc>();
-                                                      bloc.add(
-                                                        const SearchHouseholdsClearEvent(),
-                                                      );
-                                                    }
-                                                  },
+                                                        if (locationState
+                                                                .hasPermissions &&
+                                                            value &&
+                                                            locationState
+                                                                    .latitude !=
+                                                                null &&
+                                                            locationState
+                                                                    .longitude !=
+                                                                null &&
+                                                            appConfig
+                                                                    .maxRadius !=
+                                                                null &&
+                                                            isProximityEnabled) {
+                                                          final bloc = context.read<
+                                                              SearchHouseholdsBloc>();
+                                                          bloc.add(
+                                                            const SearchHouseholdsLoadingEvent(),
+                                                          );
+                                                          bloc.add(
+                                                            SearchHouseholdsEvent
+                                                                .searchByProximity(
+                                                              latitude:
+                                                                  locationState
+                                                                      .latitude!,
+                                                              longititude:
+                                                                  locationState
+                                                                      .longitude!,
+                                                              projectId: context
+                                                                  .projectId,
+                                                              maxRadius: appConfig
+                                                                  .maxRadius!,
+                                                              limit: bloc
+                                                                  .state.limit,
+                                                              offset: 0,
+                                                            ),
+                                                          );
+                                                        } else {
+                                                          final bloc = context.read<
+                                                              SearchHouseholdsBloc>();
+                                                          bloc.add(
+                                                            const SearchHouseholdsClearEvent(),
+                                                          );
+                                                        }
+                                                      },
+                                                    ),
+                                                    Text(
+                                                      localizations.translate(
+                                                        i18.searchBeneficiary
+                                                            .proximityLabel,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                                Text(
-                                                  localizations.translate(
-                                                    i18.searchBeneficiary
-                                                        .proximityLabel,
-                                                  ),
+                                                Row(
+                                                  children: [
+                                                    Switch(
+                                                      value:
+                                                          isSearchByBeneficaryIdEnabled,
+                                                      onChanged: (value) {
+                                                        searchController
+                                                            .clear();
+                                                        final bloc = context.read<
+                                                            SearchHouseholdsBloc>();
+                                                        bloc.add(
+                                                          const SearchHouseholdsClearEvent(),
+                                                        );
+                                                        setState(() {
+                                                          isSearchByBeneficaryIdEnabled =
+                                                              value;
+                                                          isProximityEnabled =
+                                                              false;
+                                                          searchController
+                                                              .clear();
+                                                          // blocWrapper
+                                                          //     .clearEvent();
+                                                        });
+                                                      },
+                                                    ),
+                                                    Text(
+                                                      localizations.translate(
+                                                          'SEARCH_BY_BENEFICIARY_ID'),
+                                                    ),
+                                                  ],
                                                 ),
                                               ],
                                             )
@@ -272,11 +350,26 @@ class _SearchBeneficiaryPageState
                                 },
                               ),
                               const SizedBox(height: kPadding * 2),
-                              if (searchState.resultsNotFound)
+                              if (!isSearchByBeneficaryIdEnabled &&
+                                  searchState.resultsNotFound &&
+                                  !searchState.loading)
                                 DigitInfoCard(
                                   description: localizations.translate(
                                     i18.searchBeneficiary
                                         .beneficiaryHouseHoldInfoDescription,
+                                  ),
+                                  title: localizations.translate(
+                                    i18.searchBeneficiary.beneficiaryInfoTitle,
+                                  ),
+                                ),
+                              if (isSearchByBeneficaryIdEnabled &&
+                                  searchController.text.trim().isNotEmpty &&
+                                  !isBeneficiaryIdValidPattern(
+                                      searchController.text.trim()))
+                                DigitInfoCard(
+                                  description: localizations.translate(
+                                    i18.searchBeneficiary
+                                        .beneficiaryIdValidInfoDescription,
                                   ),
                                   title: localizations.translate(
                                     i18.searchBeneficiary.beneficiaryInfoTitle,
@@ -311,12 +404,38 @@ class _SearchBeneficiaryPageState
                                   onOpenPressed: () async {
                                     final bloc =
                                         context.read<SearchHouseholdsBloc>();
+                                    if (i.projectBeneficiaries.isEmpty) {
+                                      await context.router.push(
+                                        BeneficiaryRegistrationWrapperRoute(
+                                          initialState:
+                                              BeneficiaryRegistrationState
+                                                  .editHousehold(
+                                            householdModel: i.household!,
+                                            individualModel: i.members!,
+                                            registrationDate: DateTime.now(),
+                                            // projectBeneficiaryModel:
+                                            //     (i.projectBeneficiaries ??
+                                            //                 [])
+                                            //             .isNotEmpty
+                                            //         ? i
+                                            //             .projectBeneficiaries
+                                            //             ?.last
+                                            //         : null,
+                                            addressModel: i
+                                                .headOfHousehold!.address!.last,
+                                            // headOfHousehold:
+                                            //     i.headOfHousehold,
+                                          ),
+                                        ),
+                                      );
+                                    } else {
+                                      await context.router.push(
+                                        BeneficiaryWrapperRoute(
+                                          wrapper: i,
+                                        ),
+                                      );
+                                    }
 
-                                    await context.router.push(
-                                      BeneficiaryWrapperRoute(
-                                        wrapper: i,
-                                      ),
-                                    );
                                     setState(() {
                                       isProximityEnabled = false;
                                     });

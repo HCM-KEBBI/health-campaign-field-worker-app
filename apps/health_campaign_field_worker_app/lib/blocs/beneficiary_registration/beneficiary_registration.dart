@@ -333,6 +333,47 @@ class BeneficiaryRegistrationBloc
                   existingHousehold?.nonRecoverableError ?? false,
             ),
           );
+          final projectBeneficiary = await projectBeneficiaryRepository.search(
+            ProjectBeneficiarySearchModel(
+              projectId: event.projectId,
+              beneficiaryClientReferenceId:
+                  beneficiaryType == BeneficiaryType.individual
+                      ? getIndividualBeneficiaryClientReferenceId(
+                          value.individualModel,
+                        )
+                      : [event.household.clientReferenceId],
+            ),
+          );
+
+          if (projectBeneficiary.isNotEmpty) {
+            await projectBeneficiaryRepository.update(projectBeneficiary.first);
+          } else {
+            for (var element in value.individualModel) {
+              await projectBeneficiaryRepository.create(ProjectBeneficiaryModel(
+                rowVersion: 1,
+                clientReferenceId: IdGen.i.identifier,
+                dateOfRegistration: DateTime.now().millisecondsSinceEpoch,
+                projectId: event.projectId,
+                tenantId: envConfig.variables.tenantId,
+                beneficiaryClientReferenceId:
+                    beneficiaryType == BeneficiaryType.individual
+                        ? element.clientReferenceId
+                        : value.householdModel.clientReferenceId,
+                clientAuditDetails: ClientAuditDetails(
+                  createdBy: event.userUuid,
+                  createdTime: DateTime.now().millisecondsSinceEpoch,
+                  lastModifiedTime: DateTime.now().millisecondsSinceEpoch,
+                  lastModifiedBy: event.userUuid,
+                ),
+                auditDetails: AuditDetails(
+                  createdBy: event.userUuid,
+                  createdTime: DateTime.now().millisecondsSinceEpoch,
+                  lastModifiedTime: DateTime.now().millisecondsSinceEpoch,
+                  lastModifiedBy: event.userUuid,
+                ),
+              ));
+            }
+          }
           for (var element in value.individualModel) {
             final IndividualModel? existingIndividual =
                 (await individualRepository.search(IndividualSearchModel(
@@ -401,6 +442,14 @@ class BeneficiaryRegistrationBloc
             nonRecoverableError:
                 existingIndividual?.nonRecoverableError ?? false,
           ));
+          final projectBeneficiary = await projectBeneficiaryRepository.search(
+            ProjectBeneficiarySearchModel(
+              beneficiaryClientReferenceId: [event.model.clientReferenceId],
+            ),
+          );
+          if (projectBeneficiary.isNotEmpty) {
+            await projectBeneficiaryRepository.update(projectBeneficiary.first);
+          }
         } catch (error) {
           rethrow;
         } finally {
@@ -549,6 +598,11 @@ class BeneficiaryRegistrationBloc
       },
     );
   }
+
+  getIndividualBeneficiaryClientReferenceId(
+      List<IndividualModel> individualModel) {
+    return individualModel.map((e) => e.clientReferenceId).toList();
+  }
 }
 
 @freezed
@@ -582,6 +636,8 @@ class BeneficiaryRegistrationEvent with _$BeneficiaryRegistrationEvent {
   }) = BeneficiaryRegistrationAddMemberEvent;
 
   const factory BeneficiaryRegistrationEvent.updateHouseholdDetails({
+    required String userUuid,
+    required String projectId,
     required HouseholdModel household,
     AddressModel? addressModel,
   }) = BeneficiaryRegistrationUpdateHouseholdDetailsEvent;

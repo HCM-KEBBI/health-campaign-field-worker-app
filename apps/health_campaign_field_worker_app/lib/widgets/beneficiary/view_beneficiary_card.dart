@@ -346,8 +346,12 @@ class _ViewBeneficiaryCardState extends LocalizedState<ViewBeneficiaryCard> {
                       borderRadius: BorderRadius.zero,
                     ),
                   ),
-                  label:
-                      localizations.translate(i18.searchBeneficiary.iconLabel),
+                  label: householdMember.projectBeneficiaries.isEmpty
+                      ? localizations
+                          .translate(i18.searchBeneficiary.iconEditLabel)
+                      : localizations.translate(
+                          i18.searchBeneficiary.iconLabel,
+                        ),
                   onPressed: widget.onOpenPressed,
                 ),
               ),

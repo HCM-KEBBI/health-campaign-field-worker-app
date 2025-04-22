@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -109,14 +110,14 @@ class MemberCard extends StatelessWidget {
                               ),
                               child: Text(
                                 individual.identifiers!
-                                        .lastWhere(
+                                        .lastWhereOrNull(
                                           (e) =>
                                               e.identifierType ==
                                               IdentifierTypes
                                                   .uniqueBeneficiaryID
                                                   .toValue(),
                                         )
-                                        .identifierId ??
+                                        ?.identifierId ??
                                     localizations
                                         .translate(i18.common.noResultsFound),
                                 style: theme.textTheme.headlineSmall,
