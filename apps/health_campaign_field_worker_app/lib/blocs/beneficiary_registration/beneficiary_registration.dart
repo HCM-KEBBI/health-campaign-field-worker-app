@@ -27,7 +27,7 @@ class BeneficiaryRegistrationBloc
 
   final BeneficiaryType beneficiaryType;
 
-  // final TaskDataRepository taskDataRepository;
+  final TaskDataRepository taskDataRepository;
 
   BeneficiaryRegistrationBloc(
     super.initialState, {
@@ -36,7 +36,7 @@ class BeneficiaryRegistrationBloc
     required this.householdMemberRepository,
     required this.projectBeneficiaryRepository,
     required this.beneficiaryType,
-    // required this.taskDataRepository,
+    required this.taskDataRepository,
   }) {
     on(_handleSaveAddress);
     on(_handleSaveHouseholdDetails);
