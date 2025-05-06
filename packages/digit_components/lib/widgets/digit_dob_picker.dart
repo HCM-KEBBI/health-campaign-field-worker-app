@@ -18,6 +18,7 @@ class DigitDobPicker extends StatelessWidget {
   final String cancelText;
   final String confirmText;
   final DateTime? initialDate;
+  final DateTime? finalDate;
   final void Function(FormControl<dynamic>)? onChangeOfFormControl;
 
   const DigitDobPicker({
@@ -32,8 +33,9 @@ class DigitDobPicker extends StatelessWidget {
     required this.separatorLabel,
     required this.yearsAndMonthsErrMsg,
     this.initialDate,
-    required this.confirmText,
-    required this.cancelText,
+    this.finalDate,
+    this.confirmText = 'OK',
+    this.cancelText = 'Cancel',
     this.onChangeOfFormControl,
   });
 
@@ -69,7 +71,7 @@ class DigitDobPicker extends StatelessWidget {
               cancelText: cancelText,
               confirmText: confirmText,
               onChangeOfFormControl: onChangeOfFormControl,
-              end: DateTime.now(),
+              end: finalDate ?? DateTime.now(),
             ),
             const SizedBox(height: 16),
             // Text widget to display a separator label between the date picker and age fields
@@ -169,19 +171,10 @@ class DobValueAccessor extends ControlValueAccessor<DateTime, DigitDOBAge> {
     if (viewValue == null || (viewValue.years == 0 && viewValue.months == 0)) {
       return null;
     } else {
-      final months = viewValue.months;
-      final days = DigitDateUtils.yearsMonthsDaysToDays(
-          viewValue.years, viewValue.months, viewValue.days);
-
-      final calculatedDate = DateTime.now().subtract(Duration(days: days));
-
-      return (viewValue.years == 0 && months == 0) || months > 11
+      return (viewValue.years == 0 && viewValue.months == 0) ||
+              viewValue.months > 11
           ? null
-          : DateTime(
-              calculatedDate.year,
-              calculatedDate.month,
-              1,
-            );
+          : DigitDateUtils.calculateDob(viewValue);
     }
   }
 }

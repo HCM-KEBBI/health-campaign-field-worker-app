@@ -70,8 +70,12 @@ class _IndividualDetailsPageState
       final newValue =
           (cat == Constants.height || cat == Constants.weight) ? cat : "";
 
-      form.control(_weight).value = "";
-      form.control(_height).value = "";
+      if (cat == Constants.height) {
+        form.control(_weight).value = "";
+      } else {
+        form.control(_weight).value = "";
+        form.control(_height).value = "";
+      }
 
       if (heightWeight.value != newValue) {
         heightWeight.value = newValue; // Update only if changed
