@@ -338,7 +338,9 @@ class _SearchBeneficiaryPageState
                                                     ),
                                                     Text(
                                                       localizations.translate(
-                                                          'SEARCH_BY_BENEFICIARY_ID'),
+                                                        i18.searchBeneficiary
+                                                            .searchByBeneficiaryIdText,
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -365,7 +367,8 @@ class _SearchBeneficiaryPageState
                               if (isSearchByBeneficaryIdEnabled &&
                                   searchController.text.trim().isNotEmpty &&
                                   !isBeneficiaryIdValidPattern(
-                                      searchController.text.trim()))
+                                    searchController.text.trim(),
+                                  ))
                                 DigitInfoCard(
                                   description: localizations.translate(
                                     i18.searchBeneficiary
@@ -410,21 +413,11 @@ class _SearchBeneficiaryPageState
                                           initialState:
                                               BeneficiaryRegistrationState
                                                   .editHousehold(
-                                            householdModel: i.household!,
-                                            individualModel: i.members!,
+                                            householdModel: i.household,
+                                            individualModel: i.members,
                                             registrationDate: DateTime.now(),
-                                            // projectBeneficiaryModel:
-                                            //     (i.projectBeneficiaries ??
-                                            //                 [])
-                                            //             .isNotEmpty
-                                            //         ? i
-                                            //             .projectBeneficiaries
-                                            //             ?.last
-                                            //         : null,
-                                            addressModel: i
-                                                .headOfHousehold!.address!.last,
-                                            // headOfHousehold:
-                                            //     i.headOfHousehold,
+                                            addressModel:
+                                                i.headOfHousehold.address!.last,
                                           ),
                                         ),
                                       );

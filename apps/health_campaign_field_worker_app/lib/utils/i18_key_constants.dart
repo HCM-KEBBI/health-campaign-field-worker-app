@@ -316,6 +316,8 @@ class SearchBeneficiary {
   String get beneficiaryHouseHoldInfoDescription =>
       'BENEFICIARY_HOUSEHOLD_INFO_DESCRIPTION';
 
+  String get searchByBeneficiaryIdText => 'SEARCH_BY_BENEFICIARY_ID';
+
   String get beneficiaryInfoTitle => 'BENEFICIARY_INFO_TITLE';
 
   String get beneficiaryAddActionLabel => 'BENEFICIARY_ADD_ACTION_LABEL';
