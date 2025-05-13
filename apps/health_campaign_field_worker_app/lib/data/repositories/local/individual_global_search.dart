@@ -29,23 +29,23 @@ class IndividualGlobalSearchRepository extends LocalRepository {
     dynamic selectQuery;
     late int? count = params.totalCount == 0 ? 0 : params.totalCount;
 
-    var BeneficiarySelectQuery =
+    var beneficiarySelectQuery =
         await _beneficiaryIdSearch(selectQuery, params, super.sql);
 
     // Return empty list if no results found
-    if (BeneficiarySelectQuery == null) {
+    if (beneficiarySelectQuery == null) {
       return [];
     } else {
       // Get total count if offset is zero and filters are applied
       if (params.offset == 0) {
-        count = await _getTotalCount(BeneficiarySelectQuery, params, super.sql);
+        count = await _getTotalCount(beneficiarySelectQuery, params, super.sql);
       }
-      await BeneficiarySelectQuery.limit(
+      await beneficiarySelectQuery.limit(
         params.limit ?? 50,
         offset: params.offset ?? 0,
       );
 
-      final results = await BeneficiarySelectQuery.get();
+      final results = await beneficiarySelectQuery.get();
 
       return _returnIndividualModel(results, count);
     }
@@ -114,119 +114,6 @@ class IndividualGlobalSearchRepository extends LocalRepository {
         ]),
     ]));
   }
-
-  // filterSearch(selectQuery, GlobalSearchParameters params, String filter,
-  //     LocalSqlDataStore sql) async {
-  //   var sql = super.sql;
-  //   if (selectQuery == null) {
-  //     if (filter == Status.registered.name ||
-  //         filter == Status.notRegistered.name) {
-  //       selectQuery = sql.individual.select().join([
-  //         if (params.nameSearch == null || !params.isProximityEnabled)
-  //           leftOuterJoin(
-  //               sql.projectBeneficiary,
-  //               sql.projectBeneficiary.beneficiaryClientReferenceId
-  //                   .equalsExp(sql.individual.clientReferenceId))
-  //       ])
-  //         ..where(filter == Status.registered.name
-  //             ? sql.projectBeneficiary.beneficiaryClientReferenceId.isNotNull()
-  //             : sql.projectBeneficiary.beneficiaryClientReferenceId.isNull());
-  //     } else if (filter == Status.beneficiaryReferred.name) {
-  //       selectQuery = sql.referral.select().join([
-  //         if (params.nameSearch == null || !params.isProximityEnabled)
-  //           leftOuterJoin(
-  //               sql.projectBeneficiary,
-  //               sql.projectBeneficiary.beneficiaryClientReferenceId.equalsExp(
-  //                   sql.referral.projectBeneficiaryClientReferenceId))
-  //       ])
-  //         ..where(sql.referral.projectId.equals(params.projectId!));
-  //     } else {
-  //       var filterSearchQuery =
-  //           await filterTasks(selectQuery, filter, sql, params);
-
-  //       selectQuery = filterSearchQuery;
-  //     }
-  //   } else if (selectQuery != null) {
-  //     if (filter == Status.registered.name ||
-  //         filter == Status.notRegistered.name) {
-  //       selectQuery = selectQuery.join([
-  //         if (params.nameSearch == null && !params.isProximityEnabled)
-  //           leftOuterJoin(
-  //               sql.projectBeneficiary,
-  //               sql.projectBeneficiary.beneficiaryClientReferenceId
-  //                   .equalsExp(sql.individual.clientReferenceId))
-  //       ])
-  //         ..where(filter == Status.registered.name
-  //             ? sql.projectBeneficiary.beneficiaryClientReferenceId.isNotNull()
-  //             : sql.projectBeneficiary.beneficiaryClientReferenceId.isNull());
-  //     } else if (filter == Status.beneficiaryReferred.name) {
-  //       selectQuery = selectQuery.join([
-  //         leftOuterJoin(
-  //             sql.referral,
-  //             sql.referral.projectBeneficiaryClientReferenceId
-  //                 .equalsExp(sql.projectBeneficiary.clientReferenceId))
-  //       ])
-  //         ..where(sql.referral.projectId.equals(params.projectId!));
-  //     } else {
-  //       var filterSearchQuery =
-  //           await filterTasks(selectQuery, filter, sql, params);
-  //       selectQuery = filterSearchQuery;
-  //     }
-  //   }
-  //   return selectQuery;
-  // }
-
-  // filterTasks(selectQuery, String filter, LocalSqlDataStore sql,
-  //     GlobalSearchParameters params) {
-  //   final statusMap = {
-  //     Status.delivered.name: Status.delivered,
-  //     Status.notAdministered.name: Status.notAdministered,
-  //     Status.visited.name: Status.visited,
-  //     Status.notVisited.name: Status.notVisited,
-  //     Status.beneficiaryRefused.name: Status.beneficiaryRefused,
-  //     Status.beneficiaryReferred.name: Status.beneficiaryReferred,
-  //     Status.administeredSuccess.name: Status.administeredSuccess,
-  //     Status.administeredFailed.name: Status.administeredFailed,
-  //     Status.inComplete.name: Status.inComplete,
-  //     Status.toAdminister.name: Status.toAdminister,
-  //     Status.closeHousehold.name: Status.closeHousehold,
-  //   };
-  //   var appliedFilter = statusMap[filter]!.toValue();
-  //   if (selectQuery == null) {
-  //     selectQuery = sql.select(sql.task).join([
-  //       leftOuterJoin(
-  //           sql.projectBeneficiary,
-  //           sql.projectBeneficiary.clientReferenceId
-  //               .equalsExp(sql.task.projectBeneficiaryClientReferenceId)),
-  //       leftOuterJoin(
-  //           sql.individual,
-  //           sql.individual.clientReferenceId.equalsExp(
-  //               sql.projectBeneficiary.beneficiaryClientReferenceId)),
-  //     ])
-  //       ..where(sql.task.status.equals(
-  //         appliedFilter,
-  //       ));
-  //     if (!(params.filter!.contains(Status.notRegistered.name))) {
-  //       selectQuery
-  //           .where(sql.projectBeneficiary.projectId.equals(params.projectId!));
-  //     }
-  //   } else {
-  //     selectQuery = selectQuery.join([
-  //       leftOuterJoin(
-  //           sql.task,
-  //           sql.task.projectBeneficiaryClientReferenceId
-  //               .equalsExp(sql.projectBeneficiary.clientReferenceId))
-  //     ])
-  //       ..where(sql.task.status.equals(statusMap[filter]!.toValue()));
-
-  //     if (!(params.filter!.contains(Status.notRegistered.name))) {
-  //       selectQuery
-  //           .where(sql.projectBeneficiary.projectId.equals(params.projectId!));
-  //     }
-  //   }
-
-  //   return selectQuery;
-  // }
 
   joinName(LocalSqlDataStore sql) {
     return leftOuterJoin(

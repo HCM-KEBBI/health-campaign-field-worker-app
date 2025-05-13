@@ -33,7 +33,7 @@ class _SearchBeneficiaryPageState
   double lat = 0.0;
   double long = 0.0;
 
-  RegExp pattern = RegExp(r'^[0-9A-Z-]+$');
+  RegExp pattern = RegExp(r'^[0-9A-Za-z-]+$');
 
   @override
   void initState() {
@@ -41,13 +41,7 @@ class _SearchBeneficiaryPageState
   }
 
   bool isBeneficiaryIdValid(String value) {
-    if (value.trim().length != 14) return false;
-    for (var i = 0; i < value.length; i++) {
-      if ((i == 4 || i == 9) && value[i] != '-')
-        return false;
-      else if (isLowerCase(value[i])) return false;
-    }
-    return true;
+    return value.trim().length >= 14;
   }
 
   bool isLowerCase(String ch) {
@@ -56,11 +50,12 @@ class _SearchBeneficiaryPageState
 
   bool isBeneficiaryIdValidPattern(String value) {
     bool isValid = true;
-    if (value.trim().length > 14) {
+    if (value.trim().length < 14) {
       isValid = false;
     } else if (!pattern.hasMatch(value.trim())) {
       isValid = false;
     }
+
     return isValid;
   }
 
@@ -252,6 +247,12 @@ class _SearchBeneficiaryPageState
                                                         setState(() {
                                                           isProximityEnabled =
                                                               value;
+                                                          if (value) {
+                                                            if (value) {
+                                                              isSearchByBeneficaryIdEnabled =
+                                                                  !value;
+                                                            }
+                                                          }
                                                           lat = locationState
                                                               .latitude!;
                                                           long = locationState
@@ -327,12 +328,13 @@ class _SearchBeneficiaryPageState
                                                         setState(() {
                                                           isSearchByBeneficaryIdEnabled =
                                                               value;
-                                                          isProximityEnabled =
-                                                              false;
+                                                          if (value) {
+                                                            isProximityEnabled =
+                                                                !value;
+                                                          }
+
                                                           searchController
                                                               .clear();
-                                                          // blocWrapper
-                                                          //     .clearEvent();
                                                         });
                                                       },
                                                     ),
@@ -352,7 +354,14 @@ class _SearchBeneficiaryPageState
                                 },
                               ),
                               const SizedBox(height: kPadding * 2),
-                              if (!isSearchByBeneficaryIdEnabled &&
+                              if ((!isSearchByBeneficaryIdEnabled ||
+                                      (isSearchByBeneficaryIdEnabled &&
+                                          searchController.text
+                                              .trim()
+                                              .isNotEmpty &&
+                                          isBeneficiaryIdValidPattern(
+                                            searchController.text.trim(),
+                                          ))) &&
                                   searchState.resultsNotFound &&
                                   !searchState.loading)
                                 DigitInfoCard(
@@ -407,27 +416,12 @@ class _SearchBeneficiaryPageState
                                   onOpenPressed: () async {
                                     final bloc =
                                         context.read<SearchHouseholdsBloc>();
-                                    if (i.projectBeneficiaries.isEmpty) {
-                                      await context.router.push(
-                                        BeneficiaryRegistrationWrapperRoute(
-                                          initialState:
-                                              BeneficiaryRegistrationState
-                                                  .editHousehold(
-                                            householdModel: i.household,
-                                            individualModel: i.members,
-                                            registrationDate: DateTime.now(),
-                                            addressModel:
-                                                i.headOfHousehold.address!.last,
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      await context.router.push(
-                                        BeneficiaryWrapperRoute(
-                                          wrapper: i,
-                                        ),
-                                      );
-                                    }
+
+                                    await context.router.push(
+                                      BeneficiaryWrapperRoute(
+                                        wrapper: i,
+                                      ),
+                                    );
 
                                     setState(() {
                                       isProximityEnabled = false;

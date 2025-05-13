@@ -783,35 +783,36 @@ class _IndividualDetailsPageState
       ),
     );
 
-    var identifier = (individual.identifiers?.isNotEmpty ?? false)
-        ? individual.identifiers!.first
-        : null;
+    List<IdentifierModel> identifiers = individual.identifiers ?? [];
 
-    identifier ??= IdentifierModel(
-      clientReferenceId: IdGen.i.identifier,
-      tenantId: envConfig.variables.tenantId,
-      rowVersion: 1,
-      auditDetails: AuditDetails(
-        createdBy: context.loggedInUserUuid,
-        createdTime: context.millisecondsSinceEpoch(),
-        lastModifiedBy: context.loggedInUserUuid,
-        lastModifiedTime: context.millisecondsSinceEpoch(),
-      ),
-      clientAuditDetails: ClientAuditDetails(
-        createdBy: context.loggedInUserUuid,
-        createdTime: context.millisecondsSinceEpoch(),
-        lastModifiedBy: context.loggedInUserUuid,
-        lastModifiedTime: context.millisecondsSinceEpoch(),
-      ),
-    );
-    // String? individualName = form.control(_individualNameKey).value as String?;
-
-    bool beneficiaryIdNotAvailable = individual.identifiers?.firstWhereOrNull(
+    bool beneficiaryIdNotAvailable = identifiers.firstWhereOrNull(
           (element) =>
               element.identifierType ==
               IdentifierTypes.uniqueBeneficiaryID.toValue(),
         ) ==
         null;
+
+    if (beneficiaryIdNotAvailable && beneficiaryIdGenerated != null) {
+      identifiers.add(IdentifierModel(
+        identifierId: beneficiaryIdGenerated!.first,
+        identifierType: IdentifierTypes.uniqueBeneficiaryID.toValue(),
+        clientReferenceId: individual.clientReferenceId,
+        tenantId: envConfig.variables.tenantId,
+        rowVersion: 1,
+        auditDetails: AuditDetails(
+          createdBy: context.loggedInUserUuid,
+          createdTime: context.millisecondsSinceEpoch(),
+          lastModifiedBy: context.loggedInUserUuid,
+          lastModifiedTime: context.millisecondsSinceEpoch(),
+        ),
+        clientAuditDetails: ClientAuditDetails(
+          createdBy: context.loggedInUserUuid,
+          createdTime: context.millisecondsSinceEpoch(),
+          lastModifiedBy: context.loggedInUserUuid,
+          lastModifiedTime: context.millisecondsSinceEpoch(),
+        ),
+      ));
+    }
 
     individual = individual.copyWith(
       name: name.copyWith(
@@ -825,20 +826,7 @@ class _IndividualDetailsPageState
               .byName(form.control(_genderKey).value.toString().toLowerCase()),
       mobileNumber: form.control(_mobileNumberKey).value,
       dateOfBirth: dobString,
-      identifiers: [
-        if (!widget.isEditMode)
-          identifier.copyWith(
-            identifierId: context.loggedInUserUuid,
-            identifierType: IdentifierTypes.defaultID.toValue(),
-          ),
-        if (widget.isEditMode &&
-            beneficiaryIdNotAvailable &&
-            beneficiaryIdGenerated != null)
-          identifier.copyWith(
-            identifierId: beneficiaryIdGenerated!.first,
-            identifierType: IdentifierTypes.uniqueBeneficiaryID.toValue(),
-          ),
-      ],
+      identifiers: identifiers,
     );
     final cycleIndex =
         context.selectedCycle.id == 0 ? "" : "0${context.selectedCycle.id}";
