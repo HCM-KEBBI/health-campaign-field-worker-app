@@ -365,9 +365,10 @@ class _HouseholdOverviewPageState
                                                               ),
                                                               children: [
                                                                 IndividualDetailsRoute(
-                                                                  isHeadOfHousehold:
-                                                                      isHead,
-                                                                ),
+                                                                    isHeadOfHousehold:
+                                                                        isHead,
+                                                                    isEditMode:
+                                                                        true),
                                                               ],
                                                             ),
                                                           );

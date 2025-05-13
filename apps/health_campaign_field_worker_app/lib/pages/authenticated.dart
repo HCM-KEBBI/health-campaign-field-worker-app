@@ -20,6 +20,7 @@ import '../data/local_store/no_sql/schema/oplog.dart';
 import '../data/local_store/sql_store/sql_store.dart';
 import '../data/remote_client.dart';
 import '../data/repositories/local/address.dart';
+import '../data/repositories/local/individual_global_search.dart';
 import '../data/repositories/oplog/oplog.dart';
 import '../data/repositories/remote/bandwidth_check.dart';
 
@@ -97,6 +98,12 @@ class AuthenticatedPageWrapper extends StatelessWidget {
             drawer: showDrawer ? const Drawer(child: SideBar()) : null,
             body: MultiBlocProvider(
               providers: [
+                RepositoryProvider<IndividualGlobalSearchRepository>(
+                  create: (context) => IndividualGlobalSearchRepository(
+                    context.read<LocalSqlDataStore>(),
+                    IndividualOpLogManager(context.read<Isar>()),
+                  ),
+                ),
                 BlocProvider(
                   create: (context) {
                     final isar = context.read<Isar>();
@@ -124,6 +131,11 @@ class AuthenticatedPageWrapper extends StatelessWidget {
                           .repository<SideEffectModel, SideEffectSearchModel>(),
                       referralDataRepository: context
                           .repository<ReferralModel, ReferralSearchModel>(),
+                      projectBeneficiaryRepository: context.repository<
+                          ProjectBeneficiaryModel,
+                          ProjectBeneficiarySearchModel>(),
+                      individualGlobalSearchRepository:
+                          context.read<IndividualGlobalSearchRepository>(),
                     )..add(const SearchHouseholdsClearEvent());
                   },
                 ),
