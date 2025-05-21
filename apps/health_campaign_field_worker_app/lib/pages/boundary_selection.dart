@@ -467,7 +467,7 @@ class _BoundarySelectionPageState
                                               : () async {
                                                   if (!form.valid ||
                                                       validateAllBoundarySelection(
-                                                        context.isDistributor,
+                                                        false,
                                                       )) {
                                                     clickedStatus.value = false;
                                                     await DigitToast.show(
