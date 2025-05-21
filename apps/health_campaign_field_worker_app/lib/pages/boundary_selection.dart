@@ -144,10 +144,8 @@ class _BoundarySelectionPageState
                                         // Call the resetChildDropdowns function when a parent dropdown is selected
                                         resetChildDropdowns(label, state);
                                       },
-                                      isRequired: (labelIndex == 0 ||
-                                              context.isDistributor)
-                                          ? true
-                                          : false,
+                                      isRequired:
+                                          (labelIndex == 0) ? true : false,
                                       validationMessage: (labelIndex == 0 ||
                                               context.isDistributor)
                                           ? localizations.translate(
