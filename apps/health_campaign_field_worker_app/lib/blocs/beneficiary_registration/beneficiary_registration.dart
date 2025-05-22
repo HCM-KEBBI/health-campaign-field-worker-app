@@ -426,14 +426,6 @@ class BeneficiaryRegistrationBloc
             nonRecoverableError:
                 existingIndividual?.nonRecoverableError ?? false,
           ));
-          final projectBeneficiary = await projectBeneficiaryRepository.search(
-            ProjectBeneficiarySearchModel(
-              beneficiaryClientReferenceId: [event.model.clientReferenceId],
-            ),
-          );
-          if (projectBeneficiary.isNotEmpty) {
-            await projectBeneficiaryRepository.update(projectBeneficiary.first);
-          }
         } catch (error) {
           rethrow;
         } finally {
