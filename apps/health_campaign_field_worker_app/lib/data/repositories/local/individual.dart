@@ -91,6 +91,18 @@ class IndividualLocalRepository extends IndividualLocalBaseRepository {
                   sql.individual.auditCreatedBy.equals(
                     userId,
                   ),
+                if (query.identifiers != null &&
+                    query.identifiers!.isNotEmpty &&
+                    query.identifiers!.first.identifierId != null &&
+                    query.identifiers!.first.identifierType != null)
+                  buildAnd([
+                    sql.identifier.identifierId.equals(
+                      query.identifiers!.first.identifierId!,
+                    ),
+                    sql.identifier.identifierType.equals(
+                      query.identifiers!.first.identifierType!,
+                    ),
+                  ]),
               ]),
             )
             ..orderBy([
@@ -264,7 +276,7 @@ class IndividualLocalRepository extends IndividualLocalBaseRepository {
                           : null,
                     ),
                   ],
-                   additionalFields: individual.additionalFields == null
+            additionalFields: individual.additionalFields == null
                 ? null
                 : IndividualAdditionalFieldsMapper.fromJson(
                     individual.additionalFields!,
@@ -352,8 +364,7 @@ class IndividualLocalRepository extends IndividualLocalBaseRepository {
               }).toList())
           .toList();
 
-      final identifierCompanions =
-          identifiersList.expand((e) => [e[0]]).toList();
+      final identifierCompanions = identifiersList.expand((e) => e).toList();
 
       await sql.batch((batch) async {
         final addressList = entities
@@ -372,11 +383,6 @@ class IndividualLocalRepository extends IndividualLocalBaseRepository {
         final addressCompanions = addressList.expand((e) => [e[0]]).toList();
         final nameCompanions = entities.map((e) {
           if (e.name != null) {
-            // batch.deleteWhere(
-            //     sql.name,
-            //     (tbl) => tbl.individualClientReferenceId
-            //         .contains(e.clientReferenceId),);
-
             return e.name!
                 .copyWith(
                   individualClientReferenceId: e.clientReferenceId,

@@ -62,6 +62,8 @@ class MockHouseholdMemberRepository extends Mock
 class MockProjectBeneficiaryRepository extends Mock
     implements ProjectBeneficiaryDataRepository {}
 
+class MockTaskRepository extends Mock implements TaskDataRepository {}
+
 class MockAppLocalization extends Mock implements AppLocalizations {}
 
 class FakeRoute extends Fake implements Route {}
@@ -146,6 +148,7 @@ void main() {
                 projectBeneficiaryRepository:
                     MockProjectBeneficiaryRepository(),
                 beneficiaryType: context.beneficiaryType,
+                taskDataRepository: MockTaskRepository(),
               ),
             ),
           ],

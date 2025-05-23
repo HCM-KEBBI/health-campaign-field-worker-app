@@ -34,7 +34,7 @@ mixin _$BeneficiaryRegistrationEvent {
             String projectId,
             BeneficiaryType beneficiaryType)
         addMember,
-    required TResult Function(
+    required TResult Function(String userUuid, String projectId,
             HouseholdModel household, AddressModel? addressModel)
         updateHouseholdDetails,
     required TResult Function(IndividualModel model, AddressModel addressModel)
@@ -61,7 +61,8 @@ mixin _$BeneficiaryRegistrationEvent {
             String projectId,
             BeneficiaryType beneficiaryType)?
         addMember,
-    TResult? Function(HouseholdModel household, AddressModel? addressModel)?
+    TResult? Function(String userUuid, String projectId,
+            HouseholdModel household, AddressModel? addressModel)?
         updateHouseholdDetails,
     TResult? Function(IndividualModel model, AddressModel addressModel)?
         updateIndividualDetails,
@@ -87,7 +88,8 @@ mixin _$BeneficiaryRegistrationEvent {
             String projectId,
             BeneficiaryType beneficiaryType)?
         addMember,
-    TResult Function(HouseholdModel household, AddressModel? addressModel)?
+    TResult Function(String userUuid, String projectId,
+            HouseholdModel household, AddressModel? addressModel)?
         updateHouseholdDetails,
     TResult Function(IndividualModel model, AddressModel addressModel)?
         updateIndividualDetails,
@@ -268,7 +270,7 @@ class _$BeneficiaryRegistrationSaveAddressEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)
         addMember,
-    required TResult Function(
+    required TResult Function(String userUuid, String projectId,
             HouseholdModel household, AddressModel? addressModel)
         updateHouseholdDetails,
     required TResult Function(IndividualModel model, AddressModel addressModel)
@@ -298,7 +300,8 @@ class _$BeneficiaryRegistrationSaveAddressEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)?
         addMember,
-    TResult? Function(HouseholdModel household, AddressModel? addressModel)?
+    TResult? Function(String userUuid, String projectId,
+            HouseholdModel household, AddressModel? addressModel)?
         updateHouseholdDetails,
     TResult? Function(IndividualModel model, AddressModel addressModel)?
         updateIndividualDetails,
@@ -327,7 +330,8 @@ class _$BeneficiaryRegistrationSaveAddressEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)?
         addMember,
-    TResult Function(HouseholdModel household, AddressModel? addressModel)?
+    TResult Function(String userUuid, String projectId,
+            HouseholdModel household, AddressModel? addressModel)?
         updateHouseholdDetails,
     TResult Function(IndividualModel model, AddressModel addressModel)?
         updateIndividualDetails,
@@ -532,7 +536,7 @@ class _$BeneficiaryRegistrationSaveHouseholdConsentEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)
         addMember,
-    required TResult Function(
+    required TResult Function(String userUuid, String projectId,
             HouseholdModel household, AddressModel? addressModel)
         updateHouseholdDetails,
     required TResult Function(IndividualModel model, AddressModel addressModel)
@@ -562,7 +566,8 @@ class _$BeneficiaryRegistrationSaveHouseholdConsentEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)?
         addMember,
-    TResult? Function(HouseholdModel household, AddressModel? addressModel)?
+    TResult? Function(String userUuid, String projectId,
+            HouseholdModel household, AddressModel? addressModel)?
         updateHouseholdDetails,
     TResult? Function(IndividualModel model, AddressModel addressModel)?
         updateIndividualDetails,
@@ -591,7 +596,8 @@ class _$BeneficiaryRegistrationSaveHouseholdConsentEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)?
         addMember,
-    TResult Function(HouseholdModel household, AddressModel? addressModel)?
+    TResult Function(String userUuid, String projectId,
+            HouseholdModel household, AddressModel? addressModel)?
         updateHouseholdDetails,
     TResult Function(IndividualModel model, AddressModel addressModel)?
         updateIndividualDetails,
@@ -799,7 +805,7 @@ class _$BeneficiaryRegistrationSaveHouseholdDetailsEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)
         addMember,
-    required TResult Function(
+    required TResult Function(String userUuid, String projectId,
             HouseholdModel household, AddressModel? addressModel)
         updateHouseholdDetails,
     required TResult Function(IndividualModel model, AddressModel addressModel)
@@ -829,7 +835,8 @@ class _$BeneficiaryRegistrationSaveHouseholdDetailsEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)?
         addMember,
-    TResult? Function(HouseholdModel household, AddressModel? addressModel)?
+    TResult? Function(String userUuid, String projectId,
+            HouseholdModel household, AddressModel? addressModel)?
         updateHouseholdDetails,
     TResult? Function(IndividualModel model, AddressModel addressModel)?
         updateIndividualDetails,
@@ -858,7 +865,8 @@ class _$BeneficiaryRegistrationSaveHouseholdDetailsEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)?
         addMember,
-    TResult Function(HouseholdModel household, AddressModel? addressModel)?
+    TResult Function(String userUuid, String projectId,
+            HouseholdModel household, AddressModel? addressModel)?
         updateHouseholdDetails,
     TResult Function(IndividualModel model, AddressModel addressModel)?
         updateIndividualDetails,
@@ -1067,7 +1075,7 @@ class _$BeneficiaryRegistrationSaveIndividualDetailsEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)
         addMember,
-    required TResult Function(
+    required TResult Function(String userUuid, String projectId,
             HouseholdModel household, AddressModel? addressModel)
         updateHouseholdDetails,
     required TResult Function(IndividualModel model, AddressModel addressModel)
@@ -1097,7 +1105,8 @@ class _$BeneficiaryRegistrationSaveIndividualDetailsEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)?
         addMember,
-    TResult? Function(HouseholdModel household, AddressModel? addressModel)?
+    TResult? Function(String userUuid, String projectId,
+            HouseholdModel household, AddressModel? addressModel)?
         updateHouseholdDetails,
     TResult? Function(IndividualModel model, AddressModel addressModel)?
         updateIndividualDetails,
@@ -1126,7 +1135,8 @@ class _$BeneficiaryRegistrationSaveIndividualDetailsEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)?
         addMember,
-    TResult Function(HouseholdModel household, AddressModel? addressModel)?
+    TResult Function(String userUuid, String projectId,
+            HouseholdModel household, AddressModel? addressModel)?
         updateHouseholdDetails,
     TResult Function(IndividualModel model, AddressModel addressModel)?
         updateIndividualDetails,
@@ -1375,7 +1385,7 @@ class _$BeneficiaryRegistrationAddMemberEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)
         addMember,
-    required TResult Function(
+    required TResult Function(String userUuid, String projectId,
             HouseholdModel household, AddressModel? addressModel)
         updateHouseholdDetails,
     required TResult Function(IndividualModel model, AddressModel addressModel)
@@ -1406,7 +1416,8 @@ class _$BeneficiaryRegistrationAddMemberEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)?
         addMember,
-    TResult? Function(HouseholdModel household, AddressModel? addressModel)?
+    TResult? Function(String userUuid, String projectId,
+            HouseholdModel household, AddressModel? addressModel)?
         updateHouseholdDetails,
     TResult? Function(IndividualModel model, AddressModel addressModel)?
         updateIndividualDetails,
@@ -1436,7 +1447,8 @@ class _$BeneficiaryRegistrationAddMemberEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)?
         addMember,
-    TResult Function(HouseholdModel household, AddressModel? addressModel)?
+    TResult Function(String userUuid, String projectId,
+            HouseholdModel household, AddressModel? addressModel)?
         updateHouseholdDetails,
     TResult Function(IndividualModel model, AddressModel addressModel)?
         updateIndividualDetails,
@@ -1560,7 +1572,11 @@ abstract class _$$BeneficiaryRegistrationUpdateHouseholdDetailsEventImplCopyWith
       __$$BeneficiaryRegistrationUpdateHouseholdDetailsEventImplCopyWithImpl<
           $Res>;
   @useResult
-  $Res call({HouseholdModel household, AddressModel? addressModel});
+  $Res call(
+      {String userUuid,
+      String projectId,
+      HouseholdModel household,
+      AddressModel? addressModel});
 }
 
 /// @nodoc
@@ -1580,10 +1596,20 @@ class __$$BeneficiaryRegistrationUpdateHouseholdDetailsEventImplCopyWithImpl<
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? userUuid = null,
+    Object? projectId = null,
     Object? household = null,
     Object? addressModel = freezed,
   }) {
     return _then(_$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl(
+      userUuid: null == userUuid
+          ? _value.userUuid
+          : userUuid // ignore: cast_nullable_to_non_nullable
+              as String,
+      projectId: null == projectId
+          ? _value.projectId
+          : projectId // ignore: cast_nullable_to_non_nullable
+              as String,
       household: null == household
           ? _value.household
           : household // ignore: cast_nullable_to_non_nullable
@@ -1601,8 +1627,15 @@ class __$$BeneficiaryRegistrationUpdateHouseholdDetailsEventImplCopyWithImpl<
 class _$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl
     implements BeneficiaryRegistrationUpdateHouseholdDetailsEvent {
   const _$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl(
-      {required this.household, this.addressModel});
+      {required this.userUuid,
+      required this.projectId,
+      required this.household,
+      this.addressModel});
 
+  @override
+  final String userUuid;
+  @override
+  final String projectId;
   @override
   final HouseholdModel household;
   @override
@@ -1610,7 +1643,7 @@ class _$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl
 
   @override
   String toString() {
-    return 'BeneficiaryRegistrationEvent.updateHouseholdDetails(household: $household, addressModel: $addressModel)';
+    return 'BeneficiaryRegistrationEvent.updateHouseholdDetails(userUuid: $userUuid, projectId: $projectId, household: $household, addressModel: $addressModel)';
   }
 
   @override
@@ -1618,6 +1651,10 @@ class _$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl &&
+            (identical(other.userUuid, userUuid) ||
+                other.userUuid == userUuid) &&
+            (identical(other.projectId, projectId) ||
+                other.projectId == projectId) &&
             (identical(other.household, household) ||
                 other.household == household) &&
             (identical(other.addressModel, addressModel) ||
@@ -1625,7 +1662,8 @@ class _$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, household, addressModel);
+  int get hashCode =>
+      Object.hash(runtimeType, userUuid, projectId, household, addressModel);
 
   @JsonKey(ignore: true)
   @override
@@ -1656,7 +1694,7 @@ class _$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)
         addMember,
-    required TResult Function(
+    required TResult Function(String userUuid, String projectId,
             HouseholdModel household, AddressModel? addressModel)
         updateHouseholdDetails,
     required TResult Function(IndividualModel model, AddressModel addressModel)
@@ -1665,7 +1703,7 @@ class _$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl
             String userUuid, String projectId, BoundaryModel boundary)
         create,
   }) {
-    return updateHouseholdDetails(household, addressModel);
+    return updateHouseholdDetails(userUuid, projectId, household, addressModel);
   }
 
   @override
@@ -1686,7 +1724,8 @@ class _$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)?
         addMember,
-    TResult? Function(HouseholdModel household, AddressModel? addressModel)?
+    TResult? Function(String userUuid, String projectId,
+            HouseholdModel household, AddressModel? addressModel)?
         updateHouseholdDetails,
     TResult? Function(IndividualModel model, AddressModel addressModel)?
         updateIndividualDetails,
@@ -1694,7 +1733,8 @@ class _$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl
             String userUuid, String projectId, BoundaryModel boundary)?
         create,
   }) {
-    return updateHouseholdDetails?.call(household, addressModel);
+    return updateHouseholdDetails?.call(
+        userUuid, projectId, household, addressModel);
   }
 
   @override
@@ -1715,7 +1755,8 @@ class _$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)?
         addMember,
-    TResult Function(HouseholdModel household, AddressModel? addressModel)?
+    TResult Function(String userUuid, String projectId,
+            HouseholdModel household, AddressModel? addressModel)?
         updateHouseholdDetails,
     TResult Function(IndividualModel model, AddressModel addressModel)?
         updateIndividualDetails,
@@ -1724,7 +1765,8 @@ class _$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl
     required TResult orElse(),
   }) {
     if (updateHouseholdDetails != null) {
-      return updateHouseholdDetails(household, addressModel);
+      return updateHouseholdDetails(
+          userUuid, projectId, household, addressModel);
     }
     return orElse();
   }
@@ -1807,10 +1849,14 @@ class _$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl
 abstract class BeneficiaryRegistrationUpdateHouseholdDetailsEvent
     implements BeneficiaryRegistrationEvent {
   const factory BeneficiaryRegistrationUpdateHouseholdDetailsEvent(
-          {required final HouseholdModel household,
+          {required final String userUuid,
+          required final String projectId,
+          required final HouseholdModel household,
           final AddressModel? addressModel}) =
       _$BeneficiaryRegistrationUpdateHouseholdDetailsEventImpl;
 
+  String get userUuid;
+  String get projectId;
   HouseholdModel get household;
   AddressModel? get addressModel;
   @JsonKey(ignore: true)
@@ -1926,7 +1972,7 @@ class _$BeneficiaryRegistrationUpdateIndividualDetailsEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)
         addMember,
-    required TResult Function(
+    required TResult Function(String userUuid, String projectId,
             HouseholdModel household, AddressModel? addressModel)
         updateHouseholdDetails,
     required TResult Function(IndividualModel model, AddressModel addressModel)
@@ -1956,7 +2002,8 @@ class _$BeneficiaryRegistrationUpdateIndividualDetailsEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)?
         addMember,
-    TResult? Function(HouseholdModel household, AddressModel? addressModel)?
+    TResult? Function(String userUuid, String projectId,
+            HouseholdModel household, AddressModel? addressModel)?
         updateHouseholdDetails,
     TResult? Function(IndividualModel model, AddressModel addressModel)?
         updateIndividualDetails,
@@ -1985,7 +2032,8 @@ class _$BeneficiaryRegistrationUpdateIndividualDetailsEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)?
         addMember,
-    TResult Function(HouseholdModel household, AddressModel? addressModel)?
+    TResult Function(String userUuid, String projectId,
+            HouseholdModel household, AddressModel? addressModel)?
         updateHouseholdDetails,
     TResult Function(IndividualModel model, AddressModel addressModel)?
         updateIndividualDetails,
@@ -2197,7 +2245,7 @@ class _$BeneficiaryRegistrationCreateEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)
         addMember,
-    required TResult Function(
+    required TResult Function(String userUuid, String projectId,
             HouseholdModel household, AddressModel? addressModel)
         updateHouseholdDetails,
     required TResult Function(IndividualModel model, AddressModel addressModel)
@@ -2227,7 +2275,8 @@ class _$BeneficiaryRegistrationCreateEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)?
         addMember,
-    TResult? Function(HouseholdModel household, AddressModel? addressModel)?
+    TResult? Function(String userUuid, String projectId,
+            HouseholdModel household, AddressModel? addressModel)?
         updateHouseholdDetails,
     TResult? Function(IndividualModel model, AddressModel addressModel)?
         updateIndividualDetails,
@@ -2256,7 +2305,8 @@ class _$BeneficiaryRegistrationCreateEventImpl
             String projectId,
             BeneficiaryType beneficiaryType)?
         addMember,
-    TResult Function(HouseholdModel household, AddressModel? addressModel)?
+    TResult Function(String userUuid, String projectId,
+            HouseholdModel household, AddressModel? addressModel)?
         updateHouseholdDetails,
     TResult Function(IndividualModel model, AddressModel addressModel)?
         updateIndividualDetails,

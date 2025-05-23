@@ -169,6 +169,76 @@ class _HouseHoldConsentPageState extends LocalizedState<HouseHoldConsentPage> {
                             registrationDate,
                             loading,
                           ) {
+                            var household = householdModel.copyWith(
+                              memberCount: householdModel.memberCount,
+                              address: addressModel,
+                              clientAuditDetails: (householdModel
+                                              .clientAuditDetails?.createdBy !=
+                                          null &&
+                                      householdModel.clientAuditDetails
+                                              ?.createdTime !=
+                                          null)
+                                  ? ClientAuditDetails(
+                                      createdBy: householdModel
+                                          .clientAuditDetails!.createdBy,
+                                      createdTime: householdModel
+                                          .clientAuditDetails!.createdTime,
+                                      lastModifiedBy: householdModel
+                                          .clientAuditDetails!.lastModifiedBy,
+                                      lastModifiedTime:
+                                          DateTime.now().millisecondsSinceEpoch,
+                                    )
+                                  : null,
+                              rowVersion: householdModel.rowVersion,
+                            );
+
+                            bloc.add(
+                              BeneficiaryRegistrationUpdateHouseholdDetailsEvent(
+                                userUuid: context.loggedInUserUuid,
+                                projectId: context.projectId,
+                                household: household.copyWith(
+                                  clientAuditDetails: (addressModel
+                                                  .clientAuditDetails
+                                                  ?.createdBy !=
+                                              null &&
+                                          addressModel.clientAuditDetails
+                                                  ?.createdTime !=
+                                              null)
+                                      ? ClientAuditDetails(
+                                          createdBy: addressModel
+                                              .clientAuditDetails!.createdBy,
+                                          createdTime: addressModel
+                                              .clientAuditDetails!.createdTime,
+                                          lastModifiedBy:
+                                              context.loggedInUserUuid,
+                                          lastModifiedTime:
+                                              context.millisecondsSinceEpoch(),
+                                        )
+                                      : null,
+                                ),
+                                addressModel: addressModel.copyWith(
+                                  clientAuditDetails: (addressModel
+                                                  .clientAuditDetails
+                                                  ?.createdBy !=
+                                              null &&
+                                          addressModel.clientAuditDetails
+                                                  ?.createdTime !=
+                                              null)
+                                      ? ClientAuditDetails(
+                                          createdBy: addressModel
+                                              .clientAuditDetails!.createdBy,
+                                          createdTime: addressModel
+                                              .clientAuditDetails!.createdTime,
+                                          lastModifiedBy:
+                                              context.loggedInUserUuid,
+                                          lastModifiedTime:
+                                              context.millisecondsSinceEpoch(),
+                                        )
+                                      : null,
+                                ),
+                              ),
+                            );
+
                             (router.parent() as StackRouter).pop();
                           },
                         );

@@ -151,7 +151,7 @@ class _HouseholdLocationPageState
                                   addressModel,
                                 ),
                               );
-                              router.push(HouseHoldConsentRoute());
+                              router.push(HouseHoldDetailsRoute());
                             },
                           );
                         },

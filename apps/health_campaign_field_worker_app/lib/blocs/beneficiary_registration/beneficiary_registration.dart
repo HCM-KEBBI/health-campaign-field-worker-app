@@ -27,7 +27,7 @@ class BeneficiaryRegistrationBloc
 
   final BeneficiaryType beneficiaryType;
 
-  // final TaskDataRepository taskDataRepository;
+  final TaskDataRepository taskDataRepository;
 
   BeneficiaryRegistrationBloc(
     super.initialState, {
@@ -36,7 +36,7 @@ class BeneficiaryRegistrationBloc
     required this.householdMemberRepository,
     required this.projectBeneficiaryRepository,
     required this.beneficiaryType,
-    // required this.taskDataRepository,
+    required this.taskDataRepository,
   }) {
     on(_handleSaveAddress);
     on(_handleSaveHouseholdDetails);
@@ -179,21 +179,6 @@ class BeneficiaryRegistrationBloc
           final locality = code == null || name == null
               ? null
               : LocalityModel(code: code, name: name);
-          List<IdentifierModel>? identifiers =
-              value.individualModel?.identifiers;
-          String localityCode = locality!.code;
-          final beneficiaryId = await UniqueIdGeneration().generateUniqueId(
-            localityCode: localityCode,
-            loggedInUserId: event.userUuid,
-            returnBothIds: false,
-          );
-          identifiers?.add(IdentifierModel(
-            clientReferenceId: value.individualModel!.clientReferenceId,
-            identifierId: beneficiaryId.first,
-            identifierType: IdentifierTypes.uniqueBeneficiaryID.toValue(),
-            clientAuditDetails: individual.clientAuditDetails,
-            auditDetails: individual.auditDetails,
-          ));
 
           await householdRepository.create(
             household.copyWith(
@@ -207,7 +192,6 @@ class BeneficiaryRegistrationBloc
           );
           final initialModifiedAt = DateTime.now().millisecondsSinceEpoch;
           individual = individual.copyWith(
-            identifiers: identifiers,
             address: [
               address.copyWith(
                 relatedClientReferenceId: individual.clientReferenceId,
@@ -333,6 +317,47 @@ class BeneficiaryRegistrationBloc
                   existingHousehold?.nonRecoverableError ?? false,
             ),
           );
+          final projectBeneficiary = await projectBeneficiaryRepository.search(
+            ProjectBeneficiarySearchModel(
+              projectId: event.projectId,
+              beneficiaryClientReferenceId:
+                  beneficiaryType == BeneficiaryType.individual
+                      ? getIndividualBeneficiaryClientReferenceId(
+                          value.individualModel,
+                        )
+                      : [event.household.clientReferenceId],
+            ),
+          );
+
+          if (projectBeneficiary.isNotEmpty) {
+            await projectBeneficiaryRepository.update(projectBeneficiary.first);
+          } else {
+            for (var element in value.individualModel) {
+              await projectBeneficiaryRepository.create(ProjectBeneficiaryModel(
+                rowVersion: 1,
+                clientReferenceId: IdGen.i.identifier,
+                dateOfRegistration: DateTime.now().millisecondsSinceEpoch,
+                projectId: event.projectId,
+                tenantId: envConfig.variables.tenantId,
+                beneficiaryClientReferenceId:
+                    beneficiaryType == BeneficiaryType.individual
+                        ? element.clientReferenceId
+                        : value.householdModel.clientReferenceId,
+                clientAuditDetails: ClientAuditDetails(
+                  createdBy: event.userUuid,
+                  createdTime: DateTime.now().millisecondsSinceEpoch,
+                  lastModifiedTime: DateTime.now().millisecondsSinceEpoch,
+                  lastModifiedBy: event.userUuid,
+                ),
+                auditDetails: AuditDetails(
+                  createdBy: event.userUuid,
+                  createdTime: DateTime.now().millisecondsSinceEpoch,
+                  lastModifiedTime: DateTime.now().millisecondsSinceEpoch,
+                  lastModifiedBy: event.userUuid,
+                ),
+              ));
+            }
+          }
           for (var element in value.individualModel) {
             final IndividualModel? existingIndividual =
                 (await individualRepository.search(IndividualSearchModel(
@@ -426,35 +451,9 @@ class BeneficiaryRegistrationBloc
         try {
           final createdAt = DateTime.now().millisecondsSinceEpoch;
           final initialModifiedAt = DateTime.now().millisecondsSinceEpoch;
-          List<IdentifierModel>? identifiers =
-              event.individualModel.identifiers;
-          String localityCode = value.addressModel.locality!.code;
-          final beneficiaryId = await UniqueIdGeneration().generateUniqueId(
-            localityCode: localityCode,
-            loggedInUserId: event.userUuid,
-            returnBothIds: false,
-          );
-          identifiers?.add(IdentifierModel(
-            clientReferenceId: event.individualModel.clientReferenceId,
-            identifierId: beneficiaryId.first,
-            identifierType: IdentifierTypes.uniqueBeneficiaryID.toValue(),
-            clientAuditDetails: ClientAuditDetails(
-              createdTime: createdAt,
-              lastModifiedTime: initialModifiedAt,
-              lastModifiedBy: event.userUuid,
-              createdBy: event.userUuid,
-            ),
-            auditDetails: AuditDetails(
-              createdBy: event.userUuid,
-              createdTime: createdAt,
-              lastModifiedTime: createdAt,
-              lastModifiedBy: event.userUuid,
-            ),
-          ));
 
           await individualRepository.create(
             event.individualModel.copyWith(
-              identifiers: identifiers,
               address: [
                 value.addressModel.copyWith(
                   id: null,
@@ -549,6 +548,11 @@ class BeneficiaryRegistrationBloc
       },
     );
   }
+
+  getIndividualBeneficiaryClientReferenceId(
+      List<IndividualModel> individualModel) {
+    return individualModel.map((e) => e.clientReferenceId).toList();
+  }
 }
 
 @freezed
@@ -582,6 +586,8 @@ class BeneficiaryRegistrationEvent with _$BeneficiaryRegistrationEvent {
   }) = BeneficiaryRegistrationAddMemberEvent;
 
   const factory BeneficiaryRegistrationEvent.updateHouseholdDetails({
+    required String userUuid,
+    required String projectId,
     required HouseholdModel household,
     AddressModel? addressModel,
   }) = BeneficiaryRegistrationUpdateHouseholdDetailsEvent;

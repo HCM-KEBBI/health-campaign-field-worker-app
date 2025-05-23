@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../blocs/beneficiary_registration/beneficiary_registration.dart';
 import '../../models/data_model.dart';
 import '../../utils/extensions/extensions.dart';
+import '../../utils/typedefs.dart';
 import '../../widgets/boundary_selection_wrapper.dart';
 
 class BeneficiaryRegistrationWrapperPage extends StatelessWidget
@@ -36,6 +37,8 @@ class BeneficiaryRegistrationWrapperPage extends StatelessWidget
     final projectBeneficiary = context
         .repository<ProjectBeneficiaryModel, ProjectBeneficiarySearchModel>();
 
+    final taskDataRepository = context.repository<TaskModel, TaskSearchModel>();
+
     return BlocProvider(
       create: (context) => BeneficiaryRegistrationBloc(
         initialState,
@@ -44,6 +47,7 @@ class BeneficiaryRegistrationWrapperPage extends StatelessWidget
         householdMemberRepository: householdMember,
         projectBeneficiaryRepository: projectBeneficiary,
         beneficiaryType: beneficiaryType,
+        taskDataRepository: taskDataRepository,
       ),
       child: this,
     );

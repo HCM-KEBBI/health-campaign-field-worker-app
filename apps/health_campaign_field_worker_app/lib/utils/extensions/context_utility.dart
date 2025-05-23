@@ -123,14 +123,11 @@ extension ContextUtilityExtensions on BuildContext {
     try {
       bool isDownSyncEnabled = loggedInUserRoles
           .where(
-            (role) =>
-                role.code == RolesType.communityDistributor.toValue() ||
-                role.code == RolesType.healthFacilitySupervisor.toValue(),
+            (role) => role.code == RolesType.communityDistributor.toValue(),
           )
           .toList()
           .isNotEmpty;
-      // TODO remove this when downsync is required
-      return false;
+
       return isDownSyncEnabled;
     } catch (_) {
       return false;
