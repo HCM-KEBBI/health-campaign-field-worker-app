@@ -275,6 +275,10 @@ class _DoseAdministeredVerificationPageState
                                                               .toValue(),
                                                           e.deliveryStrategy,
                                                         ),
+                                                        ...getIndividualAdditionalFields(
+                                                          overViewBloc
+                                                              .selectedIndividual,
+                                                        ),
                                                       ],
                                                     ),
                                                   ),

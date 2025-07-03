@@ -179,6 +179,10 @@ class _IneligibilityReasonsPageState
                                                                       ',',
                                                                     ),
                                                                   ),
+                                                                  ...getIndividualAdditionalFields(
+                                                                    state
+                                                                        .selectedIndividual,
+                                                                  ),
                                                                 ],
                                                               ),
                                                               address: widget

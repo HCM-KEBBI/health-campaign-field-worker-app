@@ -248,6 +248,9 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
                                                         'productVariantId',
                                                         widget.productVariantId,
                                                       ),
+                                                    ...getIndividualAdditionalFields(
+                                                      widget.individual,
+                                                    ),
                                                   ],
                                                 ),
                                                 address: widget

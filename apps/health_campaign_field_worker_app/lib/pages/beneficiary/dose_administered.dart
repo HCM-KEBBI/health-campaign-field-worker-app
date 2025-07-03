@@ -210,6 +210,9 @@ class _DoseAdministeredPageState extends LocalizedState<DoseAdministeredPage> {
                                                   .toValue(),
                                               e.deliveryStrategy,
                                             ),
+                                            ...getIndividualAdditionalFields(
+                                              overViewBloc.selectedIndividual,
+                                            ),
                                           ],
                                         ),
                                       ),

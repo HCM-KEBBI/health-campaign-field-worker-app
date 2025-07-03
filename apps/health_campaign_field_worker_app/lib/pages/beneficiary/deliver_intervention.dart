@@ -176,7 +176,7 @@ class _DeliverInterventionPageState
                                         footer: BlocBuilder<
                                             DeliverInterventionBloc,
                                             DeliverInterventionState>(
-                                          builder: (context, state) {
+                                          builder: (context, deliveryState) {
                                             return DigitCard(
                                               margin: const EdgeInsets.fromLTRB(
                                                   0, kPadding, 0, 0),
@@ -309,6 +309,8 @@ class _DeliverInterventionPageState
                                                                   ?.first,
                                                           latitude: lat,
                                                           longitude: long,
+                                                          selectedIndividual: state
+                                                              .selectedIndividual,
                                                         );
 
                                                         context
@@ -561,6 +563,7 @@ class _DeliverInterventionPageState
     AddressModel? address,
     double? latitude,
     double? longitude,
+    IndividualModel? selectedIndividual,
   }) {
     // Initialize task with oldTask if available, or create a new one
     var task = oldTask;
@@ -663,6 +666,10 @@ class _DeliverInterventionPageState
               AdditionalFieldsType.longitude.toValue(),
               longitude,
             ),
+
+          ...getIndividualAdditionalFields(
+            selectedIndividual,
+          ),
         ],
       ),
     );

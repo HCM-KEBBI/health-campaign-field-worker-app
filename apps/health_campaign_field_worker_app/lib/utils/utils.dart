@@ -25,6 +25,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formula_parser/formula_parser.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:gs1_barcode_parser/gs1_barcode_parser.dart';
+import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:uuid/uuid.dart';
@@ -36,6 +37,7 @@ import '../blocs/search_households/search_households.dart';
 import '../data/local_store/no_sql/schema/localization.dart';
 import '../data/local_store/secure_store/secure_store.dart';
 import '../models/data_model.dart';
+import '../models/entities/identifier_types.dart';
 import '../models/project_type/project_type_model.dart';
 import '../router/app_router.dart';
 import '../widgets/progress_indicator/progress_indicator.dart';
@@ -1219,4 +1221,72 @@ class DigitScannerUtils {
     // Wait for 5 seconds before completing the function
     await Future.delayed(const Duration(seconds: 5));
   }
+}
+
+String getIndividualAge(IndividualModel individualModel) {
+  DateTime dateOfBirth =
+      DateFormat("dd/MM/yyyy").parse(individualModel.dateOfBirth ?? '');
+  DigitDOBAge age = DigitDateUtils.calculateAge(dateOfBirth);
+
+  return getAgeMonths(age).toString().length == 1
+      ? '0${getAgeMonths(age)}'
+      : getAgeMonths(age).toString();
+}
+
+String? getIndividualWeight(IndividualModel individualModel) {
+  return individualModel.additionalFields?.fields
+      .firstWhereOrNull((e) => e.key == Constants.weight)
+      ?.value;
+}
+
+String? getIndividualHeight(IndividualModel individualModel) {
+  return individualModel.additionalFields?.fields
+      .firstWhereOrNull((e) => e.key == Constants.height)
+      ?.value;
+}
+
+String? getBeneficiaryId(IndividualModel individualModel) {
+  IdentifierTypes.uniqueBeneficiaryID.toValue();
+
+  return individualModel.identifiers
+      ?.firstWhereOrNull((e) =>
+          e.identifierType == IdentifierTypes.uniqueBeneficiaryID.toValue())
+      ?.identifierId;
+}
+
+List<AdditionalField> getIndividualAdditionalFields(
+  IndividualModel? individualModel,
+) {
+  return [
+    if (individualModel != null)
+      AdditionalField(
+        AdditionalFieldsType.age.toValue(),
+        getIndividualAge(individualModel),
+      ),
+    if (individualModel?.gender != null)
+      AdditionalField(
+        AdditionalFieldsType.gender.toValue(),
+        individualModel?.gender,
+      ),
+    if (individualModel?.clientReferenceId != null)
+      AdditionalField(
+        'individualClientReferenceId',
+        individualModel?.clientReferenceId,
+      ),
+    if (individualModel != null && getBeneficiaryId(individualModel) != null)
+      AdditionalField(
+        'uniqueBeneficiaryId',
+        getBeneficiaryId(individualModel),
+      ),
+    if (individualModel != null && getIndividualHeight(individualModel) != null)
+      AdditionalField(
+        Constants.height,
+        getIndividualHeight(individualModel),
+      ),
+    if (individualModel != null && getIndividualWeight(individualModel) != null)
+      AdditionalField(
+        Constants.weight,
+        getBeneficiaryId(individualModel),
+      ),
+  ];
 }

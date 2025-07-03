@@ -371,6 +371,9 @@ class _EligibilityChecklistViewPageState
                                                     ineligibilityReasons
                                                         .join(","),
                                                   ),
+                                                  ...getIndividualAdditionalFields(
+                                                    widget.individual,
+                                                  ),
                                                 ],
                                               ),
                                               address: widget
