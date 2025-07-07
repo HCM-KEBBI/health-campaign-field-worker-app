@@ -426,6 +426,28 @@ class BeneficiaryRegistrationBloc
             nonRecoverableError:
                 existingIndividual?.nonRecoverableError ?? false,
           ));
+
+          List<AdditionalField> additionalFields =
+              getIndividualAdditionalFields(individual);
+
+          final HouseholdMemberModel? existingHouseholdmember =
+              (await householdMemberRepository
+                      .search(HouseholdMemberSearchModel(
+            individualClientReferenceIds: [individual.clientReferenceId],
+          )))
+                  .firstOrNull;
+
+          if (existingHouseholdmember != null) {
+            await householdMemberRepository
+                .update(existingHouseholdmember.copyWith(
+              additionalFields: additionalFields.isEmpty
+                  ? null
+                  : HouseholdMemberAdditionalFields(
+                      version: 1,
+                      fields: additionalFields,
+                    ),
+            ));
+          }
         } catch (error) {
           rethrow;
         } finally {
