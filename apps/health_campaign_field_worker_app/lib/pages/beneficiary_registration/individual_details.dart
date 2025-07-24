@@ -118,6 +118,7 @@ class _IndividualDetailsPageState
     final router = context.router;
     final theme = Theme.of(context);
     DateTime before150Years = DateTime(now.year - 150, now.month, now.day);
+    DateTime before1Month = DateTime(now.year, now.month - 1, now.day);
 
     final individual = bloc.state.mapOrNull<IndividualModel>(
       editIndividual: (value) {
@@ -541,6 +542,7 @@ class _IndividualDetailsPageState
                               i18.individualDetails.yearsAndMonthsErrorText,
                             ),
                             initialDate: before150Years,
+                            finalDate: before1Month,
                             confirmText: localizations.translate(
                               i18.common.coreCommonOk,
                             ),
